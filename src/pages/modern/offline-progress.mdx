@@ -3,13 +3,357 @@ layout: ../../layouts/Article.astro
 title: Offline Progress
 ---
 
+import OfflineGainCompare from '../../components/OfflineGainCompare.vue';
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
+
 # Offline Progress
 
-The math of being away. Four families: **delta-time extrapolation** (`rate × elapsed`;
-Cookie Clicker, AD), **tick simulation** (run the loop; Melvor, NGU, Synergism, Shark
-Incremental), **bonus-time banking** (offline time becomes a spendable currency burned
-during active play; KTL, Trimps, Cavernous II), and **the cap** (universal — 3h to 72h).
-Banking is the spicy reframe — it keeps the active loop primary instead of turning the
-player into a returning spectator.
+Pecorella's three parts assume the player is at the keyboard. Production is
+$P(t)$, where $t$ is wall-clock seconds while the tab is in focus and
+nothing else. Close the tab and `t` stops. Open it later and you've earned
+zero. None of the cost or prestige math has anywhere to put "the player
+walked away."
 
-*Draft pending — see `TODO.md` Phase 4.*
+The genre had to invent that math. *How much* the game gives you for being
+gone, *how* it computes the gift, and *what* counts as gone all turned out
+to be design choices with non-trivial mathematical content. Four families
+emerged. The first three differ in what they integrate over the away
+window; the fourth is a constraint they all share.
+
+## Delta-time extrapolation
+
+The cheapest strategy treats absence as a single arithmetic operation:
+
+$$
+\text{gain} = R \cdot \min(\Delta t,\ T_\text{cap}) \cdot \alpha
+$$
+
+where $R$ is the player's online production rate at logout, $\Delta t$ is
+wall-clock seconds since `lastDate`, $T_\text{cap}$ is a per-game cap
+(typically one to seventy-two hours), and $\alpha$ is a multiplier on the
+online rate — usually less than one. Cookie Clicker's default is one hour
+of cap and five percent of online rate, with both numbers climbing as the
+player buys upgrades from the Hells / Angels prestige trees:
+
+<Cite repo="cookie-clicker" path="main.js" line="3326-3375" />
+
+```js
+var timeOffline = (Date.now() - Game.lastDate) / 1000;
+// ...
+var maxTime = 60*60;
+if (Game.Has('Belphegor')) maxTime *= 2;
+// ... up through Lucifer doubling, Chimera adding
+var percent = 5;
+if (Game.Has('Angels')) percent += 10;
+// ... up through God +10, Chimera +5
+var timeOfflineOptimal = Math.min(timeOffline, maxTime);
+var timeOfflineReduced = Math.max(0, timeOffline - timeOfflineOptimal);
+var amount = (timeOfflineOptimal + timeOfflineReduced * 0.1)
+           * Game.cookiesPs * (percent / 100);
+```
+
+The `timeOfflineReduced * 0.1` term is the soft-cap variant of the family:
+past the cap, ten percent of the rate keeps trickling. Without that term
+the curve has a hard knee at $T_\text{cap}$ and is flat after; with it the
+curve continues to rise, just at a much shallower slope. Both shapes are
+on the comparison chart further down.
+
+What this approach lacks is any awareness of game-state evolution. If
+during the offline window the player's production *would have* compounded
+— autobuyers triggering, generators producing the prestige currency that
+buys the next generator — extrapolation misses it. The offline player
+gets the rate from the moment they closed the tab, frozen, and multiplied
+out across the cap. The longer the away window or the steeper the
+production curve, the larger the gap between extrapolation and what a
+genuine simulation would have produced.
+
+A small but related mechanism handles the *online* version of the same
+problem. Cookie Clicker accumulates frame-time debt while a tab is
+defocused or laggy and replays it on focus, but caps the accumulator at
+five seconds — so a forgotten tab in a background window doesn't dump an
+hour of cookies on refocus, it dumps five seconds. Offline progress fills
+the gap past five seconds; the in-tab catch-up handles the small one.
+
+## Tick simulation
+
+The second strategy actually runs the game forward. On load, the simulator
+allocates a budget of ticks, advances state through each, and reports the
+total. Production rate evolves with state, so a player who left an
+autobuyer running comes back to a meaningfully different number than
+extrapolation would predict.
+
+The implementation question is the budget. Antimatter Dimensions clamps
+ticks to a minimum width of 33 milliseconds and a maximum count of one
+million; a 24-hour absence at the default options runs whatever ticks fit
+inside that envelope:
+
+<Cite repo="AntimatterDimensionsSourceCode" path="src/core/storage/storage.js" line="83-89" />
+
+```js
+maxOfflineTicks(simulatedMs, defaultTicks = this.offlineTicks) {
+  const tickLimit = Math.clampMax(Math.floor(simulatedMs / 33), 1e6);
+  return Math.clampMax(defaultTicks, tickLimit);
+}
+```
+
+Synergism takes the opposite tack: 200 ticks, no matter the offline
+window. The tick width $\Delta t = T / 200$ stretches as $T$ grows, so a
+72-hour absence runs the same number of update cycles as a 30-second one
+— each just simulates a longer slice of game time:
+
+<Cite repo="SynergismOfficial" path="src/Calculate.ts" line="583-712" />
+
+```ts
+const maximumTimer = (86400 * 3
+  + 7200 * 2 * player.researches[31]
+  + 7200 * 2 * player.researches[32]) * PCoinUpgradeEffects.OFFLINE_TIMER_CAP_BUFF;
+const timeAdd = Math.min(maximumTimer, (updatedTime - player.offlinetick) / 1000);
+const timeTick = timeAdd / 200;
+let resourceTicks = 200;
+```
+
+The two strategies trade off accuracy against load time. Fixed-width ticks
+preserve the simulator's resolution but make a long absence run for a
+long time on the device. Fixed-count ticks finish in bounded wall-clock
+but lose fidelity for state that flips inside a single coarse slice — a
+prestige reset that should fire mid-window doesn't, because the tick
+straddles the threshold. Mature games hide this with auto-prestige
+triggers that fire more than once per tick or with explicit "fast simulate"
+buttons that warn about reduced accuracy.
+
+Trimps exposes both choices to the player explicitly. The
+`offlineProgress.enabled` setting branches between full simulation and a
+delta-time variant called *Trustworthy Trimps* that extrapolates from
+last-online state without running the full loop:
+
+<Cite repo="Trimps" path="main.js" line="3124-3132" />
+
+```js
+function checkOfflineProgress(noTip){
+  if (new Date().getTime() - game.global.lastOnline < 300000) return;
+  if (game.options.menu.offlineProgress.enabled == 1
+   || game.options.menu.offlineProgress.enabled == 2){
+    offlineProgress.start();
+  }
+  else if (game.options.menu.offlineProgress.enabled == 3){
+    trustworthyTrimps(noTip);
+  }
+}
+```
+
+The five-minute floor is the universal "don't bother simulating short
+absences" rule: tab-flip latency isn't offline. Beyond it, the player
+picks: fully simulate the run forward (modes 1–2), or take the
+extrapolated estimate (mode 3) and skip the load-time wait.
+
+## Bonus-time banking
+
+The first two families pay you on return. The third pays you *later* — and
+only if you keep playing.
+
+KTL converts every millisecond of absence into a reservoir called
+`bonusTime`:
+
+<Cite repo="stopsign-games/KTL" path="driver.js" line="14-23" />
+
+```js
+function checkOfflineProgress() {
+  if (data.lastVisit) {
+    const offlineMilliseconds = Date.now() - parseInt(data.lastVisit, 10);
+    if (offlineMilliseconds > 5000) {
+      data.currentGameState.bonusTime += offlineMilliseconds;
+    }
+  }
+}
+```
+
+Nothing happens to the player's resources at this point. They log in,
+balance unchanged, but with a stored quantity they can spend by toggling a
+faster game speed. While `bonusSpeed > 1`, the inner loop processes more
+ticks per real second, debiting the difference from the bank:
+
+<Cite repo="stopsign-games/KTL" path="helpers/interval2.js" line="46-50" />
+
+```js
+if (data.gameSettings.bonusSpeed > 1) {
+  const processedElapsed = ticksProcessed * tickInterval;
+  const bonusTimeConsumed = processedElapsed
+                          * data.gameSettings.gameSpeed
+                          * (data.gameSettings.bonusSpeed - 1);
+  data.currentGameState.bonusTime -= bonusTimeConsumed;
+}
+```
+
+The mathematical content is conservation. Each second of absence buys one
+second of "the next active second runs at $1+s$" where the player picks
+$s$. If the player runs at $2\times$, one offline second buys one
+fast-forward second. If they run at $5\times$, one offline second buys
+one quarter of a fast-forward second. The bank is a budget for spending
+*time inside an active session*, not a deposit of currency.
+
+Trimps' fast-simulate mode is a distant relative — it processes the
+offline window in a tight loop, but it pays out as currency on return, not
+as a banked credit. KTL's pattern is the strict version: the player
+*never* gets the absence as currency. They get it as future speed.
+
+The reframe is the spicy part. The first two families turn the player
+into a returning spectator: log in, look at numbers, decide whether to
+keep playing today. Banking inverts that — coming back is the *cheap*
+moment, and the rewarding moment is whatever active session burns the
+bank later. Active play stays primary. Idle play accumulates fuel for
+active play. The Pecorella loop where the player buys generators that
+produce currency that buys generators is intact; absence just refills the
+fuel tank.
+
+A softer variant shows up in Shark Incremental's *Overtime* aspect, which
+adds a multiplicative term to the minute-hand counter and parallel
+bonus-time accumulator while the game runs in the background:
+
+<Cite repo="SharkGame" path="js/main.js" line="432-444" />
+
+```js
+if (SharkGame.flags.needOfflineProgress && SharkGame.Settings.current.offlineModeActive) {
+  const secondsElapsed = SharkGame.flags.needOfflineProgress;
+  if (SharkGame.Settings.current.idleEnabled) {
+    res.minuteHand.allowMinuteHand();
+    res.minuteHand.updateMinuteHand(secondsElapsed * 1000);
+    if (SharkGame.Aspects.overtime.level) {
+      res.minuteHand.updateMinuteHand(secondsElapsed * 200 * SharkGame.Aspects.overtime.level);
+      res.minuteHand.addBonusTime(secondsElapsed * 200 * SharkGame.Aspects.overtime.level);
+    }
+  } else {
+    main.processSimTime(secondsElapsed / SharkGame.persistentFlags.dialSetting, true);
+  }
+}
+```
+
+The hybrid: some of the offline window lands as immediate progress
+(`updateMinuteHand`), the bonus-aspect portion *also* lands as banked
+time the player burns through later. The two channels coexist because the
+designer wanted both the satisfaction of return-payouts and the active-loop
+incentive that banking creates.
+
+## The cap
+
+All three families inherit the same constraint, and it's the one
+universal in the corpus: a maximum offline window beyond which gain stops
+or trickles.
+
+Caps run from one hour (Cookie Clicker baseline) to seventy-two hours
+(Synergism baseline, before the upgrade ladder). The cap shape matters as
+much as the value. Three patterns appear:
+
+- **Hard cutoff.** Time past the cap returns nothing. Antimatter
+  Dimensions, Synergism. The cap is a wall.
+- **Soft trickle.** Time past the cap returns a fraction (typically 5–10%)
+  of the rate. Cookie Clicker's `timeOfflineReduced * 0.1` is the
+  reference. The wall becomes a slope.
+- **Cap-as-currency.** Time past the cap is silently discarded into the
+  banking reservoir instead of vanishing. Some mid-late-game
+  configurations of Trimps and Shark Incremental do this implicitly via
+  the bonus-aspect path — the cap on instant payouts doesn't affect what
+  flows into the bank.
+
+The cap exists because uncapped offline progress trivializes active play.
+A 30-day absence at full rate would dump enough resource to skip
+content the active player needed weeks for. Caps draw a line: idle time
+counts up to here, after that we want you back at the keyboard. The
+trickle and banking variants soften the line without removing it — the
+player who returns after a week away still gets *something* meaningful,
+but only the active player exhausts it efficiently.
+
+Cap upgradability is a progression hook. Cookie Clicker's Hells double
+the cap once each; Synergism's research extends the base 72h by additional
+fixed hours; Clickpocalypse 2 advertises a 3h → 11h ramp through normal
+play. The cap itself becomes a thing the player buys, and the metaphor —
+"unlocking more time" — sells well even though the operation is just
+raising a constant.
+
+## Comparing the four
+
+<OfflineGainCompare client:visible />
+
+Sliders for the parameters every game tunes: cap, online-rate fraction,
+trickle slope past the cap, and a tick-sim growth rate that lets the
+simulated curve diverge upward from extrapolation. Banking sits as a
+dashed line at zero on this axis by design, with a footnote — its return
+on absence is a balance, not a payout, and the rest of the chart is
+plotting payouts.
+
+The four curves cross at exactly two configurations. With cap = 0, all
+extrapolation-based curves collapse to zero and only banking accrues —
+which is what KTL does for any session shorter than five seconds.
+With trickle = 100% and cap = $\infty$, hard-cap and uncapped converge
+and the genre's offline mechanic dissolves into "the game just ran for
+you while you were away." Most games sit deep in the interior of that
+parameter space because both endpoints break the design.
+
+## What banking is really for
+
+Pecorella's three parts make `t` an axis. Modern *time as a resource*
+makes `t` a quantity the player owns inside an active session. Offline
+progress is the bridge between the two: a way to convert wall-clock
+absence — which the player doesn't experience as gameplay — into something
+the gameplay loop can use.
+
+The three return-payout families convert absence into currency. The
+banking family converts absence into more *gameplay-time-as-resource*.
+That's the move that makes idle and active feel like the same game
+instead of two parallel ones. The Pecorella seesaw of cost versus
+production keeps running while the player is gone, and the modern
+addition is that what they get back from the absence is more
+seesaw-time, not just more numbers.
+
+<Sources
+  cites={[
+    {
+      repo: 'cookie-clicker',
+      path: 'main.js',
+      line: '3326-3375',
+      note: 'Offline gain on save load: hard cap (default 1h, doubled by each Hell upgrade) at 5% of CpS, with 10% trickle on time past the cap.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/storage/storage.js',
+      line: '83-89',
+      note: 'maxOfflineTicks: 33 ms minimum tick width, 1e6 maximum tick count. Tick budget shrinks the longer the absence relative to the configured count.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/game.js',
+      line: '895-912',
+      note: 'simulateTime: ticks the game forward across the offline window honoring the maxOfflineTicks clamp.',
+    },
+    {
+      repo: 'SynergismOfficial',
+      path: 'src/Calculate.ts',
+      line: '583-712',
+      note: 'calculateOffline: 3-day base cap (extensible by research and PseudoCoin upgrades), exactly 200 simulated ticks regardless of cap so tick width = cap / 200.',
+    },
+    {
+      repo: 'Trimps',
+      path: 'main.js',
+      line: '3124-3132',
+      note: 'checkOfflineProgress: 5-minute floor on simulation, then branches between full sim (modes 1–2) and trustworthyTrimps extrapolation (mode 3).',
+    },
+    {
+      repo: 'stopsign-games/KTL',
+      path: 'driver.js',
+      line: '14-23',
+      note: 'checkOfflineProgress: instead of paying currency, the offline interval becomes bonusTime in the player save.',
+    },
+    {
+      repo: 'stopsign-games/KTL',
+      path: 'helpers/interval2.js',
+      line: '46-50',
+      note: 'Bank consumption: while bonusSpeed > 1, each processed tick debits bonusTime by (gameSpeed × (bonusSpeed - 1)) of the elapsed wall-clock.',
+    },
+    {
+      repo: 'SharkGame',
+      path: 'js/main.js',
+      line: '432-444',
+      note: 'Hybrid path: minute-hand instant payout plus optional Overtime aspect that doubles the immediate gain into both the minute hand and a parallel bonus-time bank.',
+    },
+  ]}
+/>
