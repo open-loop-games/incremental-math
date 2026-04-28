@@ -1,0 +1,8 @@
+node_modules
+dist
+.astro
+*.local
+.mcp.json
+.claude/
+.codex
+docs/source/
