@@ -15,7 +15,7 @@ Every post-2016 incremental of any ambition runs on a library that pretends this
 
 ## The 2016 ceiling
 
-JavaScript Numbers are IEEE 754 doubles. The largest representable finite value is `Number.MAX_VALUE` = $1.7976931348623157 \times 10^{308}$. The next operation past that gives back `Infinity`, which is sticky: any further arithmetic propagates it.
+JavaScript Numbers are [IEEE 754 doubles](https://en.wikipedia.org/wiki/Double-precision_floating-point_format). The largest representable finite value is `Number.MAX_VALUE` = $1.7976931348623157 \times 10^{308}$. The next operation past that gives back `Infinity`, which is sticky: any further arithmetic propagates it.
 
 Concretely, `Math.pow(2, 1024)` is `Infinity`. So is `1e308 * 10`. So is the cost of the 7,500th generator in a Pecorella-style seesaw with $\text{cost}_\text{base} = 10$ and $\text{rate}_\text{growth} = 1.10$, since $10 \times 1.10^{7500} \approx 10^{310}$.
 
@@ -27,7 +27,7 @@ The genre's first decade lived inside this ceiling, and its second decade starte
 
 Patashu's `break_infinity.js` was written to keep Antimatter Dimensions running. AD launched in 2016 — the same week as Pecorella's Part I — and within two years had pushed past what JS doubles could carry. Hevipelle, AD's author, needed a number type with the same arithmetic API as `Number` but a much larger ceiling, and Patashu built one.
 
-The storage trick is a pair: `{ mantissa, exponent }`, where the value is $\text{mantissa} \times 10^{\text{exponent}}$. The mantissa is a normal JS Number in the range $[1, 10)$; the exponent is also a normal JS Number, but interpreted as the base-10 exponent rather than as the value itself. The ceiling is now bounded by what a JS Number can hold *as an exponent*: roughly $10^{1.79 \times 10^{308}}$ — a googolplex, then another googolplex's worth, then a few hundred more.
+The storage trick is a pair: `{ mantissa, exponent }`, where the value is $\text{mantissa} \times 10^{\text{exponent}}$. The [mantissa](https://en.wikipedia.org/wiki/Significand) is a normal JS Number in the range $[1, 10)$; the exponent is also a normal JS Number, but interpreted as the base-10 exponent rather than as the value itself. The ceiling is now bounded by what a JS Number can hold *as an exponent*: roughly $10^{1.79 \times 10^{308}}$ — a [googolplex](https://en.wikipedia.org/wiki/Googolplex), then another googolplex's worth, then a few hundred more.
 
 The API is the punchline. Where `Number` has `+`, `*`, `**`, `Math.log10`, etc., a `Decimal` (the type break_infinity exports — confusingly, `break_eternity` later kept the same name) has `.plus`, `.times`, `.pow`, `.log10`. Code looks like:
 
@@ -64,7 +64,7 @@ This is load-bearing. Without it, every cost calculation would do tens of Decima
 - `layer = 0`: the value is `sign × mag` (a normal small number).
 - `layer ≥ 1`: the value is `sign × ` $\underbrace{10^{10^{\cdots^{10^{\text{mag}}}}}}_{\text{layer tens}}$.
 
-This is tetration as a storage primitive. A layer-1 number is what break_infinity stored. A layer-2 number is `10` raised to a break_infinity-sized number. A layer-3 number is `10` raised to *that*. Storage cost grows as `O(layer)` — adding another layer of magnitude is free.
+This is [tetration](https://en.wikipedia.org/wiki/Tetration) as a storage primitive. A layer-1 number is what break_infinity stored. A layer-2 number is `10` raised to a break_infinity-sized number. A layer-3 number is `10` raised to *that*. Storage cost grows as `O(layer)` — adding another layer of magnitude is free.
 
 The practical ceiling is bounded by the JS heap and by what notation libraries can render. In practice you hit display problems or game-design problems long before storage problems.
 
