@@ -3,12 +3,430 @@ layout: ../../layouts/Article.astro
 title: Production Graphs
 ---
 
+import ProductionGraphSim from '../../components/ProductionGraphSim.vue';
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
+
 # Production Graphs
 
-Pecorella's Part II cascade is a linear chain: tier `i` produces tier `i+1`. Modern games
-run DAGs and sometimes cycles — Antimatter Dimensions' antimatter ↔ dimension boosts ↔
-infinity points ↔ eternity, Synergism's particles/quarks/runes/ascensions, NGU's
-energy/magic/R3. The general shape is an adjacency-matrix view of "X produces Y at rate
-r"; Part II's `t^d/d!` is the chain-length-`d` special case.
+Pecorella's Part II writes one shape: tier $i$ produces tier $i+1$ at
+some rate, and the bottom tier turns into currency. The picture is a
+straight line of nodes with arrows pointing one way down it.
+A chain. From that one shape comes the whole $t^d/d!$ family — at
+chain-length $d$, the population of the deepest tier grows as a $d$-th
+order polynomial in time, just like differentiating $\cos(t)$ four times
+recovers $\cos(t)$.
 
-*Draft pending — see `TODO.md` Phase 4.*
+Modern games rarely write that shape. They write a graph. Multiple
+currencies, edges in more than one direction, sometimes loops. The cost
+of doing that is the production curve loses its tidy
+[closed form](https://en.wikipedia.org/wiki/Closed-form_expression) — you
+trade the analytic Part II answer for something you have to integrate
+numerically. The benefit is regimes you cannot make a chain do: a
+deepening DAG so the player feels several levers compounding, or a cycle
+that runs away unless something explicitly tames it.
+
+## The adjacency matrix
+
+Pecorella's chain at length 4 has an
+[adjacency matrix](https://en.wikipedia.org/wiki/Adjacency_matrix) that
+looks like:
+
+$$
+A = \begin{pmatrix}
+0 & r_1 & 0 & 0 \\
+0 & 0 & r_2 & 0 \\
+0 & 0 & 0 & r_3 \\
+0 & 0 & 0 & 0
+\end{pmatrix}
+$$
+
+Read it as "row $i$ produces column $j$ at rate $A_{ij}$ per unit
+time." All the non-zero entries sit on the superdiagonal because the
+chain only produces forward. The dynamics are
+$\dot N = A^\top N + s$, where $s$ is a seed flux into the top tier;
+[forward Euler](https://en.wikipedia.org/wiki/Euler_method) on this
+recurrence is exactly the longhand transcribed from sheet `2a` in
+Pecorella's Part II, and the steady-state solution is the $t^d/d!$ family.
+
+The reframe is the matrix itself. *Anything* that can be written as
+"X produces Y at rate r" fits in $A_{ij}$. A modern game with five
+currencies and seven production relations is just a denser matrix; the
+dynamics equation does not change. Whether the resulting curves are
+analytic or have to be integrated numerically depends on the matrix's
+structure, not on how many entries it has.
+
+The structural distinctions that matter are three:
+
+- **Acyclic and chain-shaped.** The matrix is strictly upper-triangular
+  *and* each row has at most one non-zero entry. Pecorella's case.
+  Closed-form $t^d/d!$ via the Cauchy formula for repeated integration.
+- **Acyclic but branching.** Strictly upper-triangular but rows can have
+  multiple non-zero entries, or columns can have multiple incoming
+  contributions. A
+  [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph). The
+  sink's growth is a sum of polynomials, one per path from a source.
+- **Has a cycle.** Some entry strictly below the diagonal, or a
+  reachable closed loop. The dynamics matrix has a non-trivial
+  spectrum; if the
+  [dominant eigenvalue](https://en.wikipedia.org/wiki/Power_iteration)
+  is positive the system grows exponentially, otherwise it converges to
+  a fixed point.
+
+Every modern production system the corpus contains lands in one of
+these three.
+
+## Universal Paperclips as a worked example
+
+Universal Paperclips is the cleanest small graph in the corpus — six nodes, narrative-driven
+topology shifts, and source code small enough to read in one sitting.
+Stage 1 of the game runs a graph that looks like:
+
+```
+clips ── trust ── (processors, memory) ── creativity ── ops
+  ▲                  │
+  └──── autoclippers ┘
+```
+
+The autoclipper edge is in `main.js` at the per-tick boost:
+
+<Cite repo="paperclips" path="main.js" line="3343-3348" />
+
+```js
+// Auto-Clipper
+    
+if (dismantle<4){
+    clipClick(clipperBoost*(clipmakerLevel/100));
+    clipClick(megaClipperBoost*(megaClipperLevel*5));
+    }
+```
+
+Clips per second is `clipperBoost × clipmakerLevel / 100` plus a
+megaclipper term — a single edge in the matrix from the autoclipper
+node into the clip node, with a rate that scales with how many
+autoclippers the player has bought.
+
+Trust is gated on cumulative clips reaching a Fibonacci threshold:
+
+<Cite repo="paperclips" path="main.js" line="2621-2630" />
+
+```js
+function calculateTrust(){
+    if (clips>(nextTrust-1)){
+        trust = trust +1;
+        displayMessage("Production target met: TRUST INCREASED, additional processor/memory capacity granted");
+        var fibNext = fib1+fib2;
+        nextTrust = fibNext*1000;
+        fib1 = fib2;
+        fib2 = fibNext;
+    }
+}
+```
+
+That is an edge from clips into trust, but the rate is non-linear in
+the source — trust gain per clip *decreases* as clips grow, because the
+threshold spacing is Fibonacci. In matrix terms, the entry
+$A_{\text{clips}\to\text{trust}}$ is itself a function of the clip
+population.
+
+Trust is the budget for processors and memory; processors compute
+creativity:
+
+<Cite repo="paperclips" path="main.js" line="2632-2634" />
+
+```js
+function addProc(){
+        processors=processors+1;
+        creativitySpeed = Math.log10(processors) * Math.pow(processors,1.1) + processors-1;
+```
+
+That gives the chain `clips → trust → processors → creativity` with
+extra player-spent edges (trust does not decay automatically into
+processors; the player picks the split).
+[Operations](https://en.wikipedia.org/wiki/Operations_research) is
+bounded by `memory * 1000` — a soft hard-cap that re-enters as a gating
+on creativity-driven projects elsewhere in the game.
+
+The whole stage 1 graph is:
+
+| edge                                  | rate                                                                                            |
+|---------------------------------------|-------------------------------------------------------------------------------------------------|
+| autoclippers → clips                  | $\text{clipperBoost} \cdot \text{clipmakerLevel} / 100$                                         |
+| clips → trust                         | sparse, Fibonacci-spaced thresholds                                                             |
+| trust → processors\|memory            | player-allocated                                                                                |
+| processors → creativity               | $(\log_{10} p) \cdot p^{1.1} + p - 1$ per tick                                                  |
+| processors → ops                      | continuous, bounded by $\text{memory} \cdot 1000$                                               |
+| funds → autoclippers (purchase)       | exponential cost curve                                                                          |
+| clips → funds (sale)                  | $\text{margin}$ per clip given current $\text{demand}$                                          |
+
+Six nodes, eight edges, no cycles in stage 1 — except for the implicit
+funds-buys-autoclippers-which-make-clips-which-sell-for-funds loop,
+which is the [drone payoff loop](https://en.wikipedia.org/wiki/Feedback)
+the entire early game runs on. The cycle is closed by the *demand
+curve* dropping margin as production rises; without that softcap the
+loop would diverge inside the first minute.
+
+The narrative beats — running out of trust, unlocking marketing,
+acquiring quantum chips, then dismantling everything for the space
+phase — are exactly *topology shifts*. The graph the dynamics run on
+gets edges added and removed as the player progresses. Most of the
+modern genre's deeper currency systems are doing some version of the
+same thing.
+
+## Linear chains: Part II as a special case
+
+Set the matrix to strictly upper-triangular with one entry per row and
+the dynamics fall out of `2a` exactly. With $A_{i,i+1} = r$ for all $i$
+and a constant seed $s$ into the top, the population at depth $d$ is
+
+$$
+N_d(t) \;=\; s \cdot r^{d-1} \cdot \frac{t^d}{d!}
+$$
+
+which is the chain-length-$d$ instance of the
+[Cauchy formula for repeated integration](https://en.wikipedia.org/wiki/Cauchy_formula_for_repeated_integration).
+Each tier integrates the one above; $d$ integrations of a constant
+gives $t^d/d!$. The factorial in the denominator is the only reason
+deep chains do not run away — every additional tier adds a power of
+$t$ and divides by another integer, so the curve grows polynomially
+but the polynomial is anchored.
+
+The first preset in the demo at the bottom of the page reproduces this
+exactly. The chain dynamics produce $A,B,C,D$ curves whose log-log
+slopes are $1, 2, 3, 4$ at small times, with each lower tier crossing
+the one above as $t$ grows. The same picture appears in Antimatter Dimensions and in Derivative
+Clicker, both of which run the chain with $d \in \{4, 5, 8\}$
+depending on which prestige tier is unlocked.
+
+## DAGs: superposition of polynomials
+
+Acyclic but branching. Either a node has multiple feeds, or one feed
+splits to multiple targets. The matrix is still upper-triangular under
+some node ordering — a
+[topological sort](https://en.wikipedia.org/wiki/Topological_sorting)
+exists — but the integral identity from the chain case has to be
+applied per path.
+
+If two source nodes both feed a sink along paths of the same length,
+the sink's population is the sum of the two chain solutions. Same shape,
+different leading coefficient. If the paths have different lengths, the
+longer-path contribution dominates at large $t$ but the shorter-path
+contribution dominates initially — the curve has a knee where the
+longer path catches up.
+
+Synergism writes the densest currency DAG in
+the corpus: particles produced by transcending, transcend shards
+produced by reincarnating, ascension cubes produced by ascending,
+plus a handful of side-channel currencies that drop from various
+unlocks. The particle-gain edge is
+
+<Cite repo="SynergismOfficial" path="src/Synergism.ts" line="3596-3611" />
+
+```ts
+G.reincarnationPointGain = Decimal.floor(
+  Decimal.pow(player.transcendShards.dividedBy(1e300), 0.01)
+)
+if (player.currentChallenge.reincarnation !== 0) {
+  G.reincarnationPointGain = Decimal.pow(G.reincarnationPointGain, 0.01)
+}
+G.reincarnationPointGain = G.reincarnationPointGain.times(
+  +getAchievementReward('particleGain')
+)
+```
+
+The exponent of `0.01` is a deliberate sublinear edge — the source
+currency has to climb six orders of magnitude before the target moves
+one — and the achievement multiplier is a separate edge into the same
+sink from a different source. Reading the file as a whole, every reset
+currency has a similar handful of contributors; the matrix is sparse but
+the columns are not single-entry.
+
+Cell to Singularity writes the
+same shape as a tier ladder where every tier produces the previous tier
+*plus* a special currency that feeds a side track, so the matrix has a
+diagonal-plus-tributary structure. The TMT-derivative lineage —
+Distance Incremental, Incremental Mass Rewritten, Dimensional
+Incremental Rewind — all
+do something similar: each layer's currency produces a small basket of
+boosts that feed back into earlier layers as multipliers, never as
+direct production. The matrix stays acyclic because the boosts touch
+cost coefficients, not state.
+
+## Cycles and feedback
+
+The cycle case is where the genre genuinely had to invent something
+new. Once $A$ has a non-trivial loop, the dynamics matrix has a
+[spectral radius](https://en.wikipedia.org/wiki/Spectral_radius)
+$\rho(A)$, and the system grows like $\rho(A)^t$ — exponential, not
+polynomial. Without intervention the loop diverges; with intervention
+it lands on a fixed point.
+
+The two intervention strategies are *delay* and *softcap*. Delay
+inserts a discrete latency between the producing tick and the consumed
+tick, so the eigenvalue picks up a $1/n$ factor and the growth slows.
+Softcap on the feedback edge — multiplying the rate by something that
+shrinks as the target grows — keeps $\rho(A) \le 1$ asymptotically and
+parks the system at a non-trivial steady state.
+
+NGU Idle is the most
+overt cycle in the corpus. Energy buys magic-related items, magic buys
+energy-related items, and both feed into R3 which boosts both. The
+inner loop is genuinely circular and the only thing keeping it from
+running away is that each "buy" is a discrete one-time purchase whose
+cost climbs faster than the corresponding rate gain — a per-edge
+softcap baked into the cost curve rather than into the production
+rate. The shape is the
+[hard-then-soft pattern](/modern/softcaps) reframed as feedback
+control.
+
+In Universal Paperclips' stage 1, the funds → autoclippers → clips →
+funds loop is held in check by the demand curve dropping margin as
+clip production rises. That is a softcap on the *clips → funds* edge:
+
+<Cite repo="paperclips" path="main.js" line="3353-3357" />
+
+```js
+marketing = (Math.pow(1.1,(marketingLvl-1)));
+demand = (((.8/margin) * marketing * marketingEffectiveness)*demandBoost);
+demand = demand + ((demand/10)*prestigeU);
+```
+
+`demand` is inversely proportional to `margin`, so raising margin
+shrinks demand and the loop self-regulates. The player can buy out of
+this regime by raising marketing, which is the entire mid-game pacing
+mechanism — the cycle's softcap is a *progression resource*, not a
+constant. That move — making the dampener a player-purchasable
+parameter — is the modern flourish.
+
+The cycle preset in the demo below shows the bare math. Without the
+softcap toggle, the feedback edge $B \to A$ produces an exponential
+runaway across all four nodes. With the softcap on, $A$ settles to a
+fixed point near $k$ and the downstream chain $B \to C \to D$ recovers
+its polynomial-in-$t$ shape — the cycle produces an effective seed at
+$A$, and from there the rest of the graph is just a chain again. The
+softcap turns the cycle into a steady source.
+
+## Density and topology shifts
+
+Synergism is the depth case. Particles
+produced by transcending, transcend shards by reincarnating, ascensions
+producing wow cubes, octeracts and ambrosia layered on top, plus
+corruptions that mutate the entire production graph per ascension run.
+That last is the structural move: corruptions are not balance levers
+on rates, they delete and add edges in the matrix between runs. A
+specific corruption combination might disable the ascension → cube
+edge entirely while doubling the particle → upgrade edge weight. Two
+runs with different corruption settings are dynamics on different
+graphs.
+
+NGU Idle does the same
+thing more crudely with rebirth tiers — each rebirth layer adds a new
+node and a new set of edges into and out of the existing graph,
+preserving the lower layers but quietly retiring some of their edges
+as the player ramps the new layer.
+Realm Grinder faction switches do it as a wholesale graph swap — the production
+matrix you run after switching to the Demon faction shares few edges
+with the Fairy production matrix. The dynamics equation is the same;
+the matrix you plug in is not.
+
+The progression a long-running game offers is, in this view, a sequence
+of production graphs, where each prestige or unlock either adds nodes,
+adds edges, or — in the most aggressive cases — replaces the matrix
+wholesale. Pecorella's Part II treats $A$ as fixed; the modern register
+treats $A$ as the thing that itself evolves.
+
+## What this excludes
+
+Loop games — Idle Loops, Omsi Loops, Cavernous II —
+have something that *looks* like a directed graph at first glance: an
+action queue where each action consumes mana and produces some intermediate
+state. But the graph is on actions, not on currencies. The "edges"
+are scheduling constraints (action $i$ must complete before $i+1$
+starts) and the "rates" are mutable durations. The optimization
+problem is sequencing actions to minimize total mana spent; the
+production-graph framing belongs to the
+[time-as-resource](/modern/time-as-resource) page instead, where the
+mutable-duration thread covers it directly.
+
+Worth noting because it is easy to confuse the two — both produce
+[DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph) diagrams
+when drawn — but the math is different. Production-graph dynamics are
+$\dot N = A^\top N + s$ on continuous populations. Loop-action-graph
+dynamics are a discrete scheduling problem. Same diagram, different
+equation.
+
+## The demo
+
+<ProductionGraphSim client:visible />
+
+Three preset topologies on the same four nodes. The chain reproduces
+Pecorella's $t^d/d!$. The DAG-converge case routes two source feeds
+into the same intermediate node, lifting the sink curve above the
+chain's despite using the same total edge weight — the matrix entries
+sum into one column. The cycle preset has $B \to A$ as a feedback
+edge; with no softcap the system runs away exponentially, and the
+softcap toggle turns on a $1/(1 + N_A/k)$ damping that pins $A$ at
+$\sim k$ and recovers polynomial growth downstream.
+
+The chain preset is here as the sanity check on Part II — the same
+forward-Euler integration that produced sheet `2a`'s curves
+reproduces the polynomial slopes when laid out as a graph. The DAG
+and cycle presets are the modern surface area on top.
+
+## Closing
+
+The chain produced the cleanest analytic result in the entire faithful
+section. $t^d/d!$ is the kind of formula that generations of designers
+will reach for, because it carries its own rationale and its own
+factorial-anchored growth. Modern games walked away from it for the
+straightforward reason that one shape is one shape — and a genre that
+runs for a decade needs a vocabulary, not a sentence.
+
+The vocabulary is the matrix. Every multi-currency system, every
+cycle, every cross-tier bonus is just a different choice of $A$. The
+math has not changed. The art is choosing edges that compose into
+regimes the
+player can read — a chain that feels like depth, a DAG that feels like
+acceleration, a cycle that feels alive — without writing a graph the
+player cannot hold in their head.
+
+<Sources
+  cites={[
+    {
+      repo: 'paperclips',
+      path: 'main.js',
+      line: '3343-3348',
+      note: 'Auto-clipper tick: clipperBoost × (clipmakerLevel/100) plus megaclipper contribution drives the clips node every frame.',
+    },
+    {
+      repo: 'paperclips',
+      path: 'main.js',
+      line: '2621-2630',
+      note: 'calculateTrust: trust gains one each time cumulative clips cross the next Fibonacci-spaced threshold (×1000).',
+    },
+    {
+      repo: 'paperclips',
+      path: 'main.js',
+      line: '2632-2634',
+      note: 'addProc: each processor increments creativitySpeed = log10(p) × p^1.1 + p − 1, the processors → creativity edge.',
+    },
+    {
+      repo: 'paperclips',
+      path: 'main.js',
+      line: '3353-3357',
+      note: 'Demand curve: demand ∝ 1/margin, the softcap that closes the funds → autoclippers → clips → funds cycle.',
+    },
+    {
+      repo: 'SynergismOfficial',
+      path: 'src/Synergism.ts',
+      line: '3596-3611',
+      note: 'reincarnationPointGain: transcendShards^0.01 with achievement and upgrade multipliers — a sublinear cross-currency edge with a multiplicative side-channel.',
+    },
+    {
+      repo: 'SynergismOfficial',
+      path: 'src/Statistics.ts',
+      line: '392-426',
+      note: 'allWowCubeStats: 14-entry stat-line array enumerating the contributors to the cube-multiplier column of the production matrix.',
+    },
+  ]}
+/>

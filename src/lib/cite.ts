@@ -26,7 +26,13 @@ interface RepoMeta {
   webBase: string;
   sha: string;
   host: 'github' | 'gitlab' | 'other';
+  /** Prepended to every cite path for repos whose source lives in a subdir. */
+  pathPrefix?: string;
 }
+
+const PATH_PREFIX: Record<string, string> = {
+  paperclips: 'docs/',
+};
 
 let cache: Map<string, RepoMeta> | null = null;
 
@@ -60,7 +66,7 @@ function loadRepoMeta(): Map<string, RepoMeta> {
     let host: RepoMeta['host'] = 'other';
     if (url.includes('github.com')) host = 'github';
     else if (url.includes('gitlab.com')) host = 'gitlab';
-    out.set(repo, { webBase, sha, host });
+    out.set(repo, { webBase, sha, host, pathPrefix: PATH_PREFIX[repo] });
   }
 
   cache = out;
@@ -85,11 +91,12 @@ export function cite(ref: CiteRef): ResolvedCite {
   if (!meta) return { ...ref, url: null, display };
 
   const frag = lineFragment(ref.line);
+  const fullPath = (meta.pathPrefix ?? '') + ref.path;
   let url: string;
   if (meta.host === 'github') {
-    url = `${meta.webBase}/blob/${meta.sha}/${ref.path}${frag}`;
+    url = `${meta.webBase}/blob/${meta.sha}/${fullPath}${frag}`;
   } else if (meta.host === 'gitlab') {
-    url = `${meta.webBase}/-/blob/${meta.sha}/${ref.path}${frag}`;
+    url = `${meta.webBase}/-/blob/${meta.sha}/${fullPath}${frag}`;
   } else {
     url = meta.webBase;
   }
