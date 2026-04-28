@@ -1,0 +1,62 @@
+---
+import '../styles/base.css';
+import 'katex/dist/katex.min.css';
+import { adjacent } from '../data/pages';
+import Sidebar from '../components/Sidebar.astro';
+
+interface MarkdownHeading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  title?: string;
+  frontmatter?: { title?: string };
+  headings?: MarkdownHeading[];
+}
+
+const { title, frontmatter, headings } = Astro.props;
+const pageTitle = title ?? frontmatter?.title ?? 'Untitled';
+
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const { prev, next } = adjacent(currentPath);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle} — The Math of Incremental Games</title>
+  </head>
+  <body>
+    <div class="article-grid">
+      <Sidebar currentPath={currentPath} headings={headings} />
+      <main class="prose">
+        <slot />
+        {
+          (prev || next) && (
+            <nav class="part-nav">
+              {prev ? (
+                <a href={prev.href} class="part-nav-prev">
+                  <span class="part-nav-direction">← previous</span>
+                  <span class="part-nav-title">{prev.title}</span>
+                </a>
+              ) : (
+                <span />
+              )}
+              {next ? (
+                <a href={next.href} class="part-nav-next">
+                  <span class="part-nav-direction">next →</span>
+                  <span class="part-nav-title">{next.title}</span>
+                </a>
+              ) : (
+                <span />
+              )}
+            </nav>
+          )
+        }
+      </main>
+    </div>
+  </body>
+</html>

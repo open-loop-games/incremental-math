@@ -1,0 +1,103 @@
+---
+import { sections } from '../data/pages';
+
+interface MarkdownHeading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  currentPath: string;
+  headings?: MarkdownHeading[];
+}
+
+const { currentPath, headings = [] } = Astro.props;
+const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+<aside class="sidebar" data-sidebar>
+  <button
+    class="sidebar-toggle"
+    type="button"
+    aria-label="Toggle navigation"
+    aria-expanded="false"
+    data-sidebar-toggle
+  >
+    <span class="sidebar-toggle-icon" aria-hidden="true"></span>
+    <span class="sidebar-toggle-label">Menu</span>
+  </button>
+  <nav class="sidebar-content" aria-label="Site navigation">
+    <a class="sidebar-home" href="/" aria-current={currentPath === '/' ? 'page' : undefined}>
+      The Math of Incremental Games
+    </a>
+    <details class="sidebar-section" open>
+      <summary>Sections</summary>
+      {
+        sections.map((s) => (
+          <div class="sidebar-group">
+            <h3 class="sidebar-group-label">{s.label}</h3>
+            <ul class="sidebar-list">
+              {s.pages.map((p) => (
+                <li>
+                  <a
+                    href={p.href}
+                    class:list={['sidebar-link', { active: p.href === currentPath }]}
+                    aria-current={p.href === currentPath ? 'page' : undefined}
+                  >
+                    {p.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </details>
+    {
+      tocItems.length > 0 && (
+        <details class="sidebar-section" open>
+          <summary>On this page</summary>
+          <ul class="sidebar-list toc-list">
+            {tocItems.map((h) => (
+              <li class={`toc-d${h.depth}`}>
+                <a href={`#${h.slug}`} class="sidebar-link">
+                  {h.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )
+    }
+  </nav>
+</aside>
+<button class="sidebar-scrim" type="button" aria-label="Close navigation" data-sidebar-scrim
+></button>
+
+<script is:inline>
+  (function () {
+    const sidebar = document.querySelector('[data-sidebar]');
+    const toggle = document.querySelector('[data-sidebar-toggle]');
+    const scrim = document.querySelector('[data-sidebar-scrim]');
+    if (!sidebar || !toggle) return;
+    function setOpen(open) {
+      sidebar.setAttribute('data-open', open ? 'true' : 'false');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.body.classList.toggle('sidebar-open', open);
+    }
+    toggle.addEventListener('click', () => {
+      setOpen(sidebar.getAttribute('data-open') !== 'true');
+    });
+    scrim?.addEventListener('click', () => setOpen(false));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sidebar.getAttribute('data-open') === 'true') setOpen(false);
+    });
+    // Close drawer when navigating via in-page anchor on mobile
+    sidebar.querySelectorAll('a[href^="#"]').forEach((a) => {
+      a.addEventListener('click', () => {
+        if (window.matchMedia('(max-width: 880px)').matches) setOpen(false);
+      });
+    });
+  })();
+</script>

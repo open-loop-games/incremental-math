@@ -1,0 +1,68 @@
+---
+import { cite, type CiteRef } from '../lib/cite';
+
+interface Props {
+  post?: { url: string; title: string; localMirror?: string };
+  sheets?: string[];
+  cites?: CiteRef[];
+}
+const { post, sheets, cites } = Astro.props;
+const resolved = (cites ?? []).map((c) => cite(c));
+---
+
+<aside class="sources">
+  <h2>Sources</h2>
+  {
+    post && (
+      <p>
+        Original post:{' '}
+        <a href={post.url} target="_blank" rel="noopener noreferrer">
+          {post.title}
+        </a>
+        {post.localMirror && (
+          <>
+            {' '}
+            &mdash; <a href={post.localMirror}>archived mirror</a>
+          </>
+        )}
+      </p>
+    )
+  }
+  {
+    sheets && sheets.length > 0 && (
+      <p>
+        Backing spreadsheets:
+        <ul>
+          {sheets.map((s) => (
+            <li>
+              <a href={`/source/sheets/${encodeURIComponent(s)}`} download={s}>
+                {s}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </p>
+    )
+  }
+  {
+    resolved.length > 0 && (
+      <>
+        <p>Source-code citations (pinned to current submodule SHAs):</p>
+        <ul>
+          {resolved.map((r) => (
+            <li>
+              {r.url ? (
+                <a href={r.url} target="_blank" rel="noopener noreferrer">
+                  <code>{r.display}</code>
+                </a>
+              ) : (
+                <code class="cite-unresolved">{r.display}</code>
+              )}
+              {r.note && <span class="source-note"> &mdash; {r.note}</span>}
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+</aside>

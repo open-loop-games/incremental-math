@@ -1,0 +1,63 @@
+---
+import '../styles/base.css';
+import 'katex/dist/katex.min.css';
+import Sidebar from '../components/Sidebar.astro';
+import { sections } from '../data/pages';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Math of Incremental Games</title>
+  </head>
+  <body>
+    <div class="article-grid">
+      <Sidebar currentPath="/" />
+      <main class="prose">
+        <h1>The Math of Incremental Games</h1>
+        <p>
+          A two-part site. The first part is a faithful distillation of Anthony Pecorella's
+          <em>The Math of Idle Games</em> (October 2016), with every figure re-rendered as a slider-driven
+          demo backed by
+          <code>open-loop-engine</code>. The second part, <em>Modern</em>, picks up where Pecorella
+          stopped — the genre's last decade of math, one focused topic per page, citing source code
+          from the games that introduced each construct.
+        </p>
+        {
+          sections.map((s) => (
+            <section class="section-card">
+              <h2>{s.label}</h2>
+              {s.blurb && <p class="section-blurb">{s.blurb}</p>}
+              {s.originals && (
+                <p class="section-originals">
+                  {s.originals.label}:{' '}
+                  {s.originals.links.map((l, i) => (
+                    <>
+                      {i > 0 && <span class="section-originals-sep"> · </span>}
+                      <a href={l.url} target="_blank" rel="noopener noreferrer">
+                        {l.title}
+                      </a>
+                    </>
+                  ))}
+                </p>
+              )}
+              <ul class="section-list">
+                {s.pages.map((p) => (
+                  <li>
+                    <a href={p.href} class="section-link">
+                      <span class="section-link-title">{p.title}</span>
+                      {p.description && (
+                        <span class="section-link-description">{p.description}</span>
+                      )}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))
+        }
+      </main>
+    </div>
+  </body>
+</html>

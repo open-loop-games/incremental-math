@@ -1,0 +1,20 @@
+---
+import { cite, type CiteRef } from '../lib/cite';
+const props = Astro.props as CiteRef;
+const r = cite(props);
+---
+
+{
+  r.url ? (
+    <a class="cite" href={r.url} target="_blank" rel="noopener noreferrer">
+      <code>{r.display}</code>
+    </a>
+  ) : (
+    <code
+      class="cite cite-unresolved"
+      title="Citation could not be resolved against a known submodule"
+    >
+      {r.display}
+    </code>
+  )
+}
