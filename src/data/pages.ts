@@ -85,13 +85,13 @@ export const sections: PageSection[] = [
         href: '/modern/time-as-resource',
         title: 'Time as a Resource',
         description:
-          'Eternities-per-second, theory in Exponential Idle, time studies: when the clock itself becomes a currency.',
+          'Zero-sum budgets, speed multipliers, mutable durations, and decay: the four ways modern games make time a currency.',
       },
       {
-        href: '/modern/active-idle-hybrid',
-        title: 'Active / Idle Hybrid',
+        href: '/modern/offline-progress',
+        title: 'Offline Progress',
         description:
-          'Melvor, NGU, AD: when offline catch-up becomes a first-class math input, not an afterthought.',
+          'Delta-time extrapolation, tick simulation, bonus-time banking, and the cap: the math of being away.',
       },
       {
         href: '/modern/production-graphs',
@@ -104,6 +104,18 @@ export const sections: PageSection[] = [
         title: 'Synergy Multipliers',
         description:
           'Set-function multipliers that depend on which things you own together — not how many. Greedy is near-optimal.',
+      },
+      {
+        href: '/modern/automation',
+        title: 'Automation',
+        description:
+          'Pecorella’s static Optimal Choice turned into a dynamic policy: autobuyers, priorities, and the curves they produce.',
+      },
+      {
+        href: '/modern/challenges',
+        title: 'Challenges',
+        description:
+          'Hard-mode runs that change the curve’s shape, not just its speed. Prestige loops bigger; challenges loop different.',
       },
     ],
   },
