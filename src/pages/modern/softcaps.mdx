@@ -4,6 +4,9 @@ title: Softcaps
 ---
 
 import SoftcapShapes from '../../components/SoftcapShapes.vue';
+import SqrtSoftcapDemo from '../../components/SqrtSoftcapDemo.vue';
+import LogSoftcapDemo from '../../components/LogSoftcapDemo.vue';
+import PiecewiseSoftcapDemo from '../../components/PiecewiseSoftcapDemo.vue';
 import Cite from '../../components/Cite.astro';
 import Sources from '../../components/Sources.astro';
 
@@ -89,6 +92,8 @@ The strength parameter $p$ doubles as a progression knob:
 
 Cascading these — applying successively harsher $p$ at successively higher thresholds — is what produces the long-game plateau-breakthrough rhythm covered later on this page.
 
+<SqrtSoftcapDemo client:visible />
+
 ### Log softcap — NGU Idle
 
 $$g(x, t) = t + k \cdot \log_{10}(x - t + 1)$$
@@ -126,6 +131,8 @@ The cube root produces $\approx 10^{(\log_{10} c - 12)/3}$ Chips per $c$ cookies
 
 A true logarithmic softcap shows up more often in stat-scaling than in prestige formulas: prestige rewards are *meant* to be felt as the headline progression of an entire run, so a hard log compression would cap the felt reward visibly. Stat softcaps are meant to be noticed only when a particular substat pulls away from the others, where a log flatten is the desired feel.
 
+<LogSoftcapDemo client:visible />
+
 ### Piecewise log — Leaf Blower Revolution
 
 $$g(x, t_1, t_2, \ldots) = \begin{cases} x, & x \le t_1 \\ a_1 + k_1 \cdot \log_{10}(x - t_1 + 1), & t_1 < x \le t_2 \\ a_2 + k_2 \cdot \log_{10}(x - t_2 + 1), & t_2 < x \le t_3 \\ \ldots \end{cases}$$
@@ -149,6 +156,8 @@ The Realm Grinder pre/post-Ascension cost shift sits in the same family but uses
 $$\text{cost}(n) = \begin{cases} c_0 \cdot 1.15^n, & n \le t \\ c_0 \cdot 1.15^t \cdot 1.03^{n-t}, & n > t \end{cases}$$
 
 Mechanically this isn't sublinear — both segments are still exponential, the second is just shallower. It qualifies as a softcap because the *post-threshold derivative* is everywhere smaller than the pre-threshold derivative. What it gives up versus a true sublinear cap is the [asymptote](https://en.wikipedia.org/wiki/Asymptote): the cost still runs away to infinity, just slower. What it gains is a clean threshold the player can see, narrate, and push against — the band itself becomes a feature.
+
+<PiecewiseSoftcapDemo client:visible />
 
 ### Hard-then-soft — Trimps helium and fluffy XP
 

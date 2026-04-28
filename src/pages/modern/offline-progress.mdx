@@ -4,6 +4,8 @@ title: Offline Progress
 ---
 
 import OfflineGainCompare from '../../components/OfflineGainCompare.vue';
+import HardCapDemo from '../../components/HardCapDemo.vue';
+import TickSimDemo from '../../components/TickSimDemo.vue';
 import Cite from '../../components/Cite.astro';
 import Sources from '../../components/Sources.astro';
 
@@ -74,6 +76,8 @@ defocused or laggy and replays it on focus, but caps the accumulator at
 five seconds — so a forgotten tab in a background window doesn't dump an
 hour of cookies on refocus, it dumps five seconds. Offline progress fills
 the gap past five seconds; the in-tab catch-up handles the small one.
+
+<HardCapDemo client:visible />
 
 ## Tick simulation
 
@@ -146,6 +150,8 @@ The five-minute floor is the universal "don't bother simulating short
 absences" rule: tab-flip latency isn't offline. Beyond it, the player
 picks: fully simulate the run forward (modes 1–2), or take the
 extrapolated estimate (mode 3) and skip the load-time wait.
+
+<TickSimDemo client:visible />
 
 ## Bonus-time banking
 

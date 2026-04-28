@@ -3,13 +3,305 @@ layout: ../../layouts/Article.astro
 title: Challenges
 ---
 
+import ChallengeBitmask from '../../components/ChallengeBitmask.vue';
+import CorruptionLoadout from '../../components/CorruptionLoadout.vue';
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
+
 # Challenges
 
-Challenge runs as a first-class modern mechanic. AD challenges (disable a layer, mutate
-an exponent), Synergism corruptions (stackable debuff multipliers persisting across
-ascensions), NGU challenges (re-runs under constraints), Realm Grinder R-challenges. The
-design math: how do you build a "hard mode" that produces a **different curve shape**,
-not just a slower one? Prestige cycles run the same loop bigger; challenges run
-*different loops*.
+Pecorella's three parts cover production, derivatives, and prestige
+cycles. They cover *zero* of what modern games call **challenge runs** —
+opt-in resets where the rules of the game are deliberately worse, and
+the reward for finishing is a permanent buff that bends the
+post-challenge curve upward. The mechanic was rare in 2016 and is now
+near-universal: every long-running idle game in the post-2016 corpus
+ships some flavor of it.
 
-*Draft pending — see `TODO.md` Phase 4.*
+The interesting design question is not *whether* to add a hard mode but
+*what shape of difficulty to add*. A challenge that simply slows the
+production curve produces a slower version of the same loop — boring,
+because the player's optimal strategy doesn't change. A challenge that
+removes a generator tier, or shifts a cost exponent, or stacks
+multipliers across runs, changes the *shape* of the curve. The player's
+strategy has to change with it.
+
+The genre has settled on four genuinely different shapes. They aren't
+variants of one pattern; each one mutates a different part of the
+underlying model.
+
+## Shape 1 — Single-completable, mechanic-mutating
+
+The classic shape. Each challenge in a fixed list is a distinct rule
+mutation: *disable this generator*, *change this cost formula*,
+*replace this currency*. The player runs each once, finishes once, and
+the slot's reward — usually an upgradeable autobuyer or a permanent
+multiplier — is unlocked forever. The challenge itself is a piece of
+content that gets *consumed*.
+
+Antimatter Dimensions is the canonical example. The eight normal
+challenges include "1st Dimension production halts when you buy a 2nd
+Dimension upgrade" (challenge 2), "1st Dimension cost scaling is much
+steeper" (challenge 3), and "buying a higher Dimension erases all
+lower ones" (challenge 4). Each one breaks a specific assumption of the
+base game's loop, forces the player to find a new strategy, and is
+done forever once goal is reached.
+
+<Cite repo="AntimatterDimensionsSourceCode" path="src/core/normal-challenges.js" line="95-112" />
+
+```js
+get isCompleted() {
+  return (player.challenge.normal.completedBits & (1 << this.id)) !== 0;
+}
+
+complete() {
+  player.challenge.normal.completedBits |= 1 << this.id;
+  // ...
+}
+```
+
+The completion state is a single integer's bitmask — one bit per
+challenge. There is no completion *count*; once a bit is set it stays
+set. Eternity Challenges in the same game push this further by adding a
+small `maxCompletions` (typically 5), where each successive run requires
+a higher goal and yields a stronger reward — a hybrid of single-
+completable with a five-step ladder.
+
+The math impact: each challenge changes the shape of one specific
+sub-system. Disabling a generator is a topology change to the
+[production graph](/modern/production-graphs); altering a cost scale
+is a regime shift in the [cost-acceleration](/modern/cost-acceleration)
+curve. The challenge ends and the change is gone — but the *reward* (a
+stronger autobuyer, a new modifier slot) shifts the whole post-challenge
+curve upward.
+
+<ChallengeBitmask client:visible />
+
+## Shape 2 — Stackable debuff
+
+Where AD's challenges are discrete one-shots, Synergism's
+**corruptions** are a continuous additive ladder. Eight named
+corruptions — viscosity, deflation, dilation, hyperchallenge,
+illiteracy, drought, recession, extinction — each take an integer level
+from 0 to ~15. The ascension you run is parameterized by a *loadout*: a
+levels-vector across all eight. Higher levels make the run harder; the
+final run-score multiplier rewards harder loadouts.
+
+<Cite repo="SynergismOfficial" path="src/Corruptions.ts" line="260-279" />
+
+```ts
+get totalCorruptionDifficultyScore () {
+  let basePoints = 400
+  Object.keys(this.#levels).forEach((key) => {
+    basePoints += 16 * Math.pow(this.getTotalLevel(key as keyof Corruptions), 2)
+  })
+  return basePoints
+}
+
+#calcTotalScoreMult () {
+  return productContents(
+    Object.keys(this.#levels).map((key) => {
+      const corrKey = key as keyof Corruptions
+      return this.scoreMult(corrKey)
+    })
+  )
+}
+```
+
+Two things stack at once. The *difficulty score* is `400 + 16 · Σ
+level²` summed across corruptions — a sum of squares, so a few
+high-level corruptions dwarf many low-level ones, and the run gets
+quadratically harder per level. The *score multiplier* is the
+**product** of per-corruption multipliers, structurally identical to
+the [modifier chains](/modifier-chains) covered earlier. Corruptions
+are a modifier chain the player tunes
+*against themselves* — a knob that makes the run harder in exchange for
+a bigger reward at the end.
+
+The persistence is also different from AD. Corruption levels persist
+across ascensions (the loadout you choose is the loadout that runs); you
+can't "complete" a corruption, you can only push it higher. The design
+question becomes "how high can I push it before the gate closes?" — a
+softcap-shaped optimization rather than a checklist.
+
+<CorruptionLoadout client:visible />
+
+## Shape 3 — Parallel re-run
+
+NGU Idle's challenge slots are a third shape: there are several
+challenge tracks (basic, no-rebirth, laser-sword, blind, ND…), each is
+re-runnable from scratch under a constraint, and each run gives a
+proportional reward. The core mechanic isn't single-completable — many
+runs are expected — but it isn't stacking either; each run is an
+isolated re-execution of the base game loop with one knob disabled
+("you cannot rebirth", "you cannot see your stats", "you have no
+adventure-zone gear").
+
+What this produces is *constraint-as-content*. The base game already
+defined an optimal play loop; the challenge takes one input variable to
+that loop and pins it. The player has to re-derive the optimal loop
+without that input. The same time-investment math applies as
+prestige cycles, but the available actions are restricted, so the
+optimum is a different policy altogether.
+
+NGU's source isn't open, so this section runs without a citation, but
+the shape is recognizable: it's the same "slot of re-runnable
+challenges" pattern that recurs in smaller games (Trimps' world-tier
+challenges, several Synergism singularity challenges), and it generally
+co-exists with other shapes in the same game.
+
+## Shape 4 — Challenge as content zone
+
+The fourth shape doesn't graft a constraint onto the existing loop. The
+challenge *is* the content. Trimps' Spire is the clearest example: a
+hand-built tower of fixed enemies with a custom defense-grid mini-game
+on top, distinct currencies (Spirestones), and rewards for partial
+clears. Unlike the previous shapes, you don't *complete* a Spire run by
+hitting the same goal as the base game with a debuff; you complete it
+by finishing the *Spire's* unique mechanic.
+
+Trimps' two follow-up challenges, **Mayhem** and **Pandemonium**, push
+this further by adding a per-completion difficulty escalation. Each
+completion makes the next run harder by a fixed multiplier:
+
+<Cite repo="Trimps" path="config.js" line="5639-5680" />
+
+```js
+Pandemonium: {
+  // ...
+  getEnemyMult: function() {
+    return Math.pow(5, game.global.pandCompletions);
+  },
+  getTrimpMult: function() {
+    return 1 + 0.1 + 0.1 * game.global.pandCompletions;
+  },
+  // ...
+}
+```
+
+`getEnemyMult = 5^completions`. The fourth Pandemonium run is 625× as
+hard as the first. The player's permanent reward grows additively (10%
+per completion) while the next run's difficulty grows
+*multiplicatively* — which is the same `5^N` shape used in the
+[cost-acceleration](/modern/cost-acceleration) page, redirected from
+"how expensive is the next purchase" to "how strong are the next run's
+enemies." The challenge becomes a [modified prestige cycle]
+(/modern/layered-prestige) where the prestige reward and the prestige
+difficulty climb together.
+
+Pandemonium also progressively *removes* equipment slots — every two
+completions another armor or weapon slot becomes unavailable. The
+challenge's content surface shrinks even as its difficulty grows.
+
+## The combinatorial case — Realm Grinder
+
+Realm Grinder doesn't fit any of the four shapes cleanly because it
+combines them. The R-challenges (Reincarnation challenges) are
+single-completable like AD's, but the active *faction* the player
+chose at run start interacts multiplicatively with the challenge
+constraint, which interacts further with research bonuses, which
+interact further with whether the player has unlocked higher-tier
+factions. The result is a combinatorial design space: the same R5
+challenge can be approached as Fairy + heritage A or as Demon +
+heritage B and play out as two different optimization problems.
+
+This is the design-space limit of the four shapes interacting.
+Single-completable times stackable times tunable-loadout produces a
+challenge surface where there's no clean "best strategy" — the player
+finds a sequence of attempts that explores the combination space.
+
+## What the math actually changes
+
+The four shapes are not arbitrary. Each one mutates a *different
+component* of the underlying production model:
+
+- **Single-completable challenges** typically alter the **production
+  graph** topology — a tier disabled, an edge removed, a currency
+  redirected. The effect on the curve is the polynomial-degree shift
+  worked out in [production-graphs](/modern/production-graphs). The
+  reward unlocks a new edge or a stronger node, undoing more than the
+  challenge took away.
+- **Stackable debuffs** are a [modifier chain](/modern/modifier-chains)
+  the player tunes against their own production, with a `Σ level²`
+  difficulty cost and a `Π effect` reward. The chain is structurally
+  identical to a buff chain, applied to the negative side.
+- **Parallel re-runs** pin one input to the existing
+  [optimal-policy](/modern/automation) problem and force the player
+  to find a different policy that still satisfies the goal. The math
+  isn't different; the constraint surface is.
+- **Content-zone challenges** introduce an entire new
+  [production system](/modern/production-graphs) with its own currencies
+  and its own loop. The base game's math becomes a feeder for the
+  zone's math.
+
+Cycle-running (Pecorella's Part III) iterates the *same* loop at higher
+amplitudes. Challenges run *different* loops. The reward structure on
+top of either is the same — finish, gain something permanent — but the
+content the loop produces is qualitatively different. Designers reach
+for challenges when prestige-cycle escalation alone would feel
+repetitive; players reach for them when the base loop's strategy has
+become rote.
+
+## Why the shape matters more than the mechanic
+
+A "hard mode" that multiplies enemy HP by 10× is a slower version of
+the same game. A challenge that disables tier 3 is a *different* game,
+because the player's optimal allocation across tiers 1-2-4-5 is
+nothing like their optimal allocation across all five. The Synergism
+corruptions ladder is yet another game, because the design lives in the
+loadout — choosing *which* corruptions to push and *how much* — rather
+than in any single run's play.
+
+The genre's lesson, ten years after Pecorella, is that the production
+math is most teachable, most replayable, and most intrinsically
+interesting when it can be perturbed in *qualitatively different*
+ways from the base loop. Prestige cycles loop the math at higher
+amplitude. Challenges loop the math under different *equations*. Both
+are necessary; neither replaces the other.
+
+<Sources
+  cites={[
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/normal-challenges.js',
+      line: '95-112',
+      note: 'Normal challenge completion as a bitmask of completed-once flags. complete() flips one bit; isCompleted reads it. The single-completable shape encoded in 4 lines.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/secret-formula/challenges/normal-challenges.js',
+      line: '1-200',
+      note: 'Per-challenge config: each entry pairs a description (the rule mutation) with a reward (an autobuyer unlock). Eight challenges = eight distinct mutations to the base loop.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/eternity-challenge.js',
+      line: '73-100',
+      note: 'Eternity Challenges add maxCompletions (typically 5): hybrid of single-completable with a 5-step ladder. Each completion raises the goal and the reward; once isFullyCompleted, the slot is done.',
+    },
+    {
+      repo: 'SynergismOfficial',
+      path: 'src/Corruptions.ts',
+      line: '260-279',
+      note: 'totalCorruptionDifficultyScore = 400 + 16·Σlevel² across eight corruptions; total score multiplier = product of per-corruption multipliers. Difficulty quadratic in levels, reward multiplicative across the ladder.',
+    },
+    {
+      repo: 'SynergismOfficial',
+      path: 'src/Corruptions.ts',
+      line: '215-242',
+      note: 'corruptionEffects switch — each corruption is a private function (deflationEffect, dilationEffect, hyperchallengeEffect, …) returning a per-level multiplier. The ladder is 8 independent curves stacked into one product.',
+    },
+    {
+      repo: 'Trimps',
+      path: 'config.js',
+      line: '5639-5680',
+      note: 'Pandemonium config — getEnemyMult = 5^completions, getTrimpMult = 1 + 0.1·(1 + completions). Per-completion enemy difficulty grows multiplicatively while reward grows additively; equipment slots progressively removed.',
+    },
+    {
+      repo: 'Trimps',
+      path: 'playerSpire.js',
+      line: '100-140',
+      note: 'Spire trap-grid initialization — each Spire run has its own buyable defense layout (Fire, Frost, Poison, Lightning, Strength, Condenser, Knowledge), distinct currencies (Spirestones), and clear-percentage rewards. The challenge as a self-contained content zone.',
+    },
+  ]}
+/>
