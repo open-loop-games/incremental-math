@@ -3,13 +3,318 @@ layout: ../../layouts/Article.astro
 title: Automation
 ---
 
+import AutomationPolicies from '../../components/AutomationPolicies.vue';
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
+
 # Automation
 
-Pecorella's `1c–1e` Optimal Choice answers "which generator do I buy next?" statically.
-Modern games turn that into a UI surface and a *policy*: AD's autobuyer priority sliders,
-Synergism's auto-everything tiers, NGU's "buy max" toggles. Three canonical policies —
-**buy-when-affordable**, **buy-max-each-tick**, **threshold-based** — produce different
-production-curve shapes. Convergence question: does dynamic autobuy approach the
-static-optimal answer, or systematically deviate?
+Pecorella's Part I closed with the *Optimal Choice* spreadsheet: given your
+current cash and owned counts, score each generator by `cost / income`
+plus `cost / itemIncome` and buy the lowest. It's a static answer to a
+static question — *which one next?* — that the player executes by hand.
 
-*Draft pending — see `TODO.md` Phase 4.*
+Modern games keep the question and replace the player. The same
+score-and-pick logic moves into the engine, runs every tick, and exposes
+its parameters to the player as a UI surface. The player no longer
+*answers* the question; they *configure the policy* that answers it.
+That shift is small in code and large in feel. The Pecorella seesaw
+between cost and production keeps swinging, but the hand on the lever is
+the engine's.
+
+## Three policies, three curves
+
+Three policies cover most of what shipped games actually do. They differ
+only in *when* they spend currency, but the production curves they
+produce diverge sharply.
+
+**Buy-when-affordable.** Each tick, walk the generator list in some
+priority order; buy the first one whose cost is met. Produces steady,
+small purchases. The player feels constantly slightly poor, because the
+balance is drained on every tick that an upgrade is available.
+
+**Buy-max-each-tick.** Each tick, drain the budget: keep buying as long
+as anything is affordable, only stopping when no generator's cost is met.
+Tends to overweight the cheapest tier — when one G1 costs less than one
+G3, dollars flow into G1 first because the inner loop sees it first.
+
+**Threshold-based.** Each tick, only buy if the cost is at most some
+fraction of the current balance — typically expressed as "buy when you
+can afford 10× the cost." Keeps a reserve. Saves up. Lets currency
+accumulate so the *next* purchase can be a higher tier.
+
+The same toy economy under all three:
+
+<AutomationPolicies client:visible />
+
+Three generators with rates 1, 8, 64 and base costs 10, 100, 1000, each
+priced exponentially in owned count. The y-axis is total production rate
+over simulated time. Watch the threshold curve sit *below* the other two
+for the first stretch — it's hoarding — then jump as a high-tier
+purchase clears, and overtake. The buy-max curve climbs fast early,
+because every cent is spent on whatever's cheapest, but it spends those
+cents on G1 long after G2 would be the better marginal buy.
+
+## Priority and the regime collapse
+
+The *priority slider* in the demo is the simplification of every
+priority autobuyer in the genre. At priority = 0 the policy walks
+generators low-to-high; at priority = 1 it walks them high-to-low. Real
+games (Antimatter Dimensions' priority sliders, Synergism's auto-buy
+priorities) expose an integer per generator and sort by it. The two
+slider extremes produce qualitatively different regimes:
+
+- **Low priority everywhere.** Every spare cent goes to G1, then G2,
+  then G3. All tiers grow together because cheap purchases land before
+  the budget can build to expensive ones. The production curve is
+  smooth and roughly polynomial.
+- **High priority everywhere.** The autobuyer holds out for the top
+  tier. Lower tiers accumulate only as side-effects of producing the
+  top-tier currency. The curve is staircased — flat between G3
+  purchases, jumps when one lands.
+
+The real-game version of this is Antimatter Dimensions exposing per-tier
+priority sliders on its dimension autobuyers. The internal state is a
+two-mode flag — buy one, or buy ten — plus the priority order; the
+purchase loop walks dimensions in priority order each tick:
+
+<Cite repo="AntimatterDimensionsSourceCode" path="src/core/autobuyers/antimatter-dimension-autobuyer.js" line="68-124" />
+
+```js
+get mode() { return this.data.mode; }
+
+toggleMode() {
+  this.mode = [AUTOBUYER_MODE.BUY_SINGLE, AUTOBUYER_MODE.BUY_10]
+    .nextSibling(this.mode);
+}
+
+tick() {
+  super.tick();
+  switch (this.mode) {
+    case AUTOBUYER_MODE.BUY_SINGLE: buyOneDimension(this.tier); break;
+    case AUTOBUYER_MODE.BUY_10:     buyMaxDimension(this.tier, this.bulk); break;
+  }
+}
+```
+
+The autobuyer is two literal lines of policy — a mode and a tick —
+plus a wider sea of unlock predicates, intervals, and reset behavior
+that the framework manages. The interesting part of the design is not
+the loop, it's the surface area the player gets to tune: per-tier
+toggle, per-tier mode, interval upgrade, reset behavior on prestige.
+The policy is a config struct.
+
+Synergism takes the same shape and folds the predicate into the toggle
+itself. Each tier of generators has its own auto-buy upgrade, and the
+auto-loop walks tiers in fixed order:
+
+<Cite repo="SynergismOfficial" path="src/Automation.ts" line="50-72" />
+
+```ts
+export const autoUpgrades = () => {
+  if (player.upgrades[90] > 0.5 && player.shoptoggles.generators) {
+    for (let i = 1; i < 6; i++) {
+      if (player.upgrades[100 + i] === 0
+       && player.prestigePoints.gte(Decimal.pow(10, G.upgradeCosts[100 + i]))) {
+        buyGenerator(i, true)
+      }
+    }
+    // ... repeats for tiers 6-10, 11-15, 16-20, each gated on its own currency
+  }
+}
+```
+
+`upgrades[90]` is whether the player has bought the *autobuy generators*
+upgrade. Inside that gate, the loop is the simplest possible:
+buy-when-affordable, low-tier first, no priority. The complexity lives
+in the unlock graph (what each `upgrades[i]` requires), not the policy.
+
+## Does dynamic autobuy converge to the static optimum?
+
+Pecorella's Optimal Choice is a *greedy* answer to a static problem:
+given current state, which single purchase maximizes
+`income / cost`? Run the autobuyer on the same scoring function and you
+get a sequence of greedy moves that, naively, should approximate the
+static optimum.
+
+It systematically doesn't. Two reasons.
+
+The first is *temporal*. Optimal Choice scores a single step. The
+autobuyer makes hundreds of single-step decisions in a row, and each
+decision changes the state the next decision is scored against. A greedy
+sequence is only optimal in the global sense when the scoring function
+is [submodular](https://en.wikipedia.org/wiki/Submodular_set_function)
+and the constraint is matroid-shaped — which is rarely true once
+generators feed each other or once milestones flip on at threshold
+counts. The local greedy step is fine; the long sequence drifts.
+
+The second is *budget shape*. Buy-when-affordable spends every dollar
+the moment it's available, which means the budget never gets large
+enough to consider higher-tier moves. Threshold-based hoards, then
+spends. The static answer to "what should I buy next?" assumes you
+*have* a budget to spend; the autobuyer creates the budget by waiting,
+or denies itself the budget by not waiting. The choice of *when* to
+spend is invisible to the static formulation but dominant in the dynamic
+one.
+
+This is why mature autobuyers are not pure score-and-pick. Antimatter
+Dimensions ships a *bulk* parameter (buy up to N at once) and an
+interval that the player upgrades. Synergism gates each tier on a
+shop-toggle so the player can disable cheap tiers manually once they
+become a drag. The policy has to expose these knobs because the static
+score doesn't know about them.
+
+## Trimps: automation as the late game
+
+The largest single elaboration of automation as a progression vector is
+Trimps. The game's auto-upgrade loop is short — walk the upgrade list,
+buy the first affordable upgrade, optionally branch to auto-prestige
+purchases — but it's wrapped in a setting graph that the player
+configures over hundreds of hours:
+
+<Cite repo="Trimps" path="main.js" line="18435-18465" />
+
+```js
+function autoUpgrades() {
+  autoGoldenUpgrades();
+  var autoUpgradeSetting = game.global.autoUpgrades;
+  var autoPrestigeSetting = game.global.autoPrestiges;
+  if (!autoUpgradeSetting && !autoPrestigeSetting) return;
+  // ... walk game.upgrades, buy the first affordable
+  for (var item in game.upgrades) {
+    if (autoUpgradeSetting == 2 && item == "Coordination") continue;
+    // ...
+    if ((!boughtUpgrade || game.global.gridArray[0].name == "Liquimp")
+        && autoBuyUpgrade(item)) {
+      if (autoUpgradeSetting != 0 && timerCheck) boughtUpgrade = true;
+      else return;
+    }
+  }
+  if (autoPrestigeSetting != 0 && timerCheck) autoPrestiges(equipmentAvailable);
+}
+```
+
+The function itself is buy-when-affordable. What makes Trimps notable is
+that this is one of dozens of automation loops — auto-stance,
+auto-portal, auto-structures, heirloom auto-recycle, the AutoTrimps
+userscript that ships effectively as a community-mod automation layer.
+Each is a separate setting tree the player tunes. Late-game progress is
+gated less by stat numbers than by *how well-configured the automation
+is*. The loop hasn't changed in years; the configuration vocabulary has
+grown.
+
+This is the genre's clearest example of automation as a first-class
+progression mechanic. Pecorella's Optimal Choice answered "what next?"
+in one cell; Trimps answers it across forty knobs that interact with
+challenge runs, heirloom rolls, and equipment crafting. Mastery of the
+game is in large part mastery of those knobs.
+
+## Bitburner: automation as the medium
+
+The post-Pecorella shift in automation goes furthest in Bitburner, where
+the player writes [Netscript](https://github.com/bitburner-official/bitburner-src/blob/dev/markdown/bitburner.md)
+(a JavaScript-flavored API) that runs inside the game world. The "autobuyer" is whatever the player
+writes — a script that scans hostile servers, breaks them, schedules
+hack/grow/weaken loops, and spends earnings on stat-boosting augments.
+The game ships an in-engine code editor, a small standard library
+(`ns.hack`, `ns.grow`, `ns.exec`), and a runtime that meters CPU usage.
+Progress is gated by the player's ability to write better scripts, not
+by the engine's autobuyer settings.
+
+This is automation as content rather than automation as quality-of-life.
+The Pecorella loop where the player is the optimizer evolves through
+two stages: first the engine optimizes (ship an autobuyer), then the
+player programs the optimizer (ship a scripting interface). Bitburner is
+a category that didn't exist when Part I was written, and reframes the
+question of what kind of game an incremental can be — a small but
+durable corner of the genre where automation *is* the gameplay rather
+than a layer over it.
+
+## Survey: where automation lands in the genre
+
+Different games place automation at different points in the progression:
+
+- **Always automatic.** Adventure Capitalist's businesses produce
+  passively after a manager is hired; the player never clicks them. The
+  Pecorella seesaw runs in the background from the moment automation
+  unlocks. Idle gameplay is the default mode.
+- **Conditional auto-prestige.** Cookie Clicker, Antimatter Dimensions,
+  and Synergism all expose a threshold for auto-prestige — reset when
+  prestige currency exceeds X, or when prestige-gain rate falls below
+  Y. Pecorella's Part III cadence question — *when do I prestige?* —
+  becomes a number the player edits.
+- **Auto-cast spells with priority.** Realm Grinder's spell autocast
+  picks one of several spells per tick by player-set priority. Spells
+  are different effects with different costs, so the policy is a small
+  scheduler picking from a queue.
+- **Tiered auto-everything.** Synergism's automation unlocks tier by
+  tier through ascensions and singularities — auto-research, auto-buy
+  per tier, auto-runes, auto-cubes, auto-corruption-loadout.
+  Late-singularity play is configuring the automation graph and
+  watching it run.
+- **Auto-anything as core.** Melvor Idle treats automation as the
+  game: every skill action loops automatically once configured, and
+  offline progress simulates the loop forward. The active gesture is
+  setting up the next loop, not executing the current one.
+- **Stat- and reward-gated unlock.** NGU Idle's BAE (Buy All Enabled)
+  and advanced training, Clicker Heroes' auto-clickers as a resource —
+  automation is rationed and upgraded across runs. The unlock curve
+  is a content surface in its own right.
+
+What unifies the survey is that automation is no longer a single switch.
+It's a graph of small policies, each tunable, each unlocked at a
+different point in progression. Pecorella's spreadsheet was one cell;
+modern games ship dozens of cells, each running a tiny autobuyer the
+player has configured.
+
+## What changed
+
+The static-to-dynamic shift is small in code and large in design space.
+A buy-when-affordable loop is fifteen lines. A threshold-based loop is
+twenty. The interesting design decisions are *which generators get
+their own toggle*, *which conditions gate the toggle's unlock*, *what
+priority order the loop walks*, and *how each prestige layer
+preserves or resets the configuration*. None of those decisions are
+visible in the autobuyer's score function. They're in the surrounding
+configuration graph the player navigates.
+
+The math hasn't changed — Pecorella's `cost/income` is still inside the
+loop somewhere — but the question the math answers has moved up a
+level. Optimal Choice asked which generator to buy. Modern automation
+asks which policy to run, which knobs to expose, and what to do when
+the policy itself becomes a thing the player buys.
+
+<Sources
+  cites={[
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/autobuyers/antimatter-dimension-autobuyer.js',
+      line: '68-124',
+      note: 'AD autobuyer per-tier state: BUY_SINGLE / BUY_10 mode toggle, interval-gated tick, bulk parameter capped at 512. The minimal policy plus a wide setting surface.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/autobuyers/autobuyer.js',
+      line: '4-118',
+      note: 'AutobuyerState / IntervaledAutobuyerState / UpgradeableAutobuyerState — the three-layer base class hierarchy every AD autobuyer extends. Interval-upgrade pricing and reset-on-prestige behavior live here.',
+    },
+    {
+      repo: 'SynergismOfficial',
+      path: 'src/Automation.ts',
+      line: '50-122',
+      note: 'autoUpgrades — walks each generator/upgrade tier in fixed order, buy-when-affordable. Per-tier unlock predicate (player.upgrades[90..99]) gates each block.',
+    },
+    {
+      repo: 'Trimps',
+      path: 'main.js',
+      line: '18435-18465',
+      note: 'autoUpgrades — buy-when-affordable across the upgrade list, branching to autoPrestiges on a 2-second timer. Headlines the late-game progression-by-configuration pattern.',
+    },
+    {
+      repo: 'cookie-clicker',
+      path: 'main.js',
+      line: '10328-10339',
+      note: 'GrandmaSynergy / autoclick upgrades — Cookie Clicker’s automation is a sequence of buyable upgrades, each unlocking one more loop. The "configure the policy" surface is the upgrade list itself.',
+    },
+  ]}
+/>
