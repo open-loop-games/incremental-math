@@ -1,0 +1,120 @@
+---
+layout: ../layouts/Article.astro
+title: Part I — Exponential Growth & The Seesaw
+---
+
+import ExponentialGrowthSim from '../components/ExponentialGrowthSim.vue';
+import MultibuyCalculator from '../components/MultibuyCalculator.vue';
+import OptimalChoiceTable from '../components/OptimalChoiceTable.vue';
+import Sources from '../components/Sources.astro';
+
+# Part I — Exponential Growth & The Seesaw
+
+Faithful walkthrough of Anthony Pecorella's [*The Math of Idle Games, Part I*](https://www.sirpinski.com/the-math-of-idle-games-part-i/) (originally published October 2016). Each chart in the original post is replaced here with an interactive demo wired to the same formulas and parameter ranges Pecorella used. Where Pecorella illustrates a point with a static line, this page renders it as a slider-driven plot so the relationship between the inputs and the curve is the thing you actually play with.
+
+## Terminology
+
+Pecorella opens by pinning down the vocabulary the rest of the math uses.
+
+- **Primary currency.** The number being incremented — usually money. Almost always the long-run goal.
+- **Generator.** An item the player buys that produces primary currency. Its rate is in currency per second.
+- **Primary exchange currency.** Some games (Clicker Heroes, for instance) have generators produce a step-removed currency — DPS — which is then converted to gold. The exchange step gives the designer an extra knob over how the primary currency curves.
+- **Multiplier.** Anything that scales generator output: explicit upgrades, milestone bonuses for owning N of a thing, achievements. Their job is to drag production back up toward the cost line, temporarily.
+- **Prestige.** A reset of most of the game state in exchange for prestige currency or persistent multipliers — a "New Game+" pattern for the long run. Prestige is Part III's territory.
+
+## The seesaw
+
+At the simplest level, an idle game is a tug-of-war between two curves. Cost grows exponentially in the number you already own; production grows linearly.
+
+$$\text{cost}_\text{next} = \text{cost}_\text{base} \times (\text{rate}_\text{growth})^\text{owned}$$
+
+$$\text{production}_\text{total} = (\text{production}_\text{base} \times \text{owned}) \times \text{multipliers}$$
+
+<aside class="aside">
+  <span class="aside-label">Modern API note</span>
+  The cost formula here is `Formula.exponential(level, costBase, rateGrowth)` in `open-loop-engine`'s Profectus/TMT-lineage `Formula` DSL — same expression, but the resulting object also carries a closed-form inverse (`.invert(value)` answers "what level costs *X*?") and integral (`.evaluateIntegral(N)` answers "what does buying *N* in bulk cost?"). Pecorella derived both of those by hand later in Part I as bonus content; the engine bakes them in.
+</aside>
+
+For AdVenture Capitalist's Lemonade Stand, Pecorella uses $\text{rate}_\text{growth} = 1.07$, $\text{cost}_\text{base} = 3.738$ (the first stand is free, so the *second* one is what costs about four currency), and $\text{production}_\text{base} = 1.67/\text{sec}$. With $N = 10$ owned the next stand costs $\approx 7.87$ while production already sits at $16.7/\text{sec}$ — well ahead. The whole point is what happens further out.
+
+The demo below plots both curves on a shared $N$ axis. Default values match Lemonade Stands. Drag the sliders to see how the crossover point — where cost first overtakes production per second — moves.
+
+<ExponentialGrowthSim client:visible />
+
+A few things the chart makes visible that the formulas alone don't:
+
+- **Milestone ×2 bumps.** AdVenture Capitalist (and most games of its lineage) hand out a stacking ×2 multiplier each time the player crosses 25, 50, 100, and 200 owned. Each bump shoves the production line back up under the cost line for a while — this is the "seesaw" actually seesawing. Toggle the bumps off to see the clean linear-vs-exponential race underneath.
+- **Log scale changes the story.** On a linear scale, exponentials look like a hockey stick that crushes everything. The early-game seesaw — where most of the *play* happens — is invisible. Switch to log and the linear production line becomes a slow upward curve, the exponential cost line becomes a straight ramp, and the tradeoff between them is legible across many decades of $N$.
+- **Why it ends.** Mathematically, $n^x$ for $n > 1$ catches and overtakes any polynomial $x^k$ no matter how small $n$ is or how large $k$ is. The crossover may be far out — that's what balancing tunes — but it's inevitable. Once cost is enough decades above production that a single buy takes prohibitively long, the run is effectively over until the player prestiges (Part III) or the designer hands out a new generator (next section).
+- **The multiplier is a business model decision as much as a design one.** AdCap's 1.07 and Cookie Clicker's 1.15 were tuned for browser-era play: long sessions, no monetization pressure, runs that felt expansive. The mobile era pushed the number up. When revenue depends on players hitting walls and paying to bypass them — IAP skips, rewarded ads — a higher multiplier compresses the loop and creates more monetization events per session. Values of 1.20–1.30 became routine in mobile idle from roughly 2015 onward not because the math changed but because the incentive structure behind the parameter did. The Steam desktop revival of the mid-2020s largely unwound this: one-time-purchase games have no reason to manufacture artificial walls, and their players tend toward longer sessions, which rewards the slower end of the spectrum.
+
+## Bulk-buy: closed-form instead of a loop
+
+Pecorella tucks this away as **bonus content** at the end of Part I, but it's the most reusable bit of math in the whole post. The cost of buying $n$ more generators starting from $k$ already owned is the sum of a [geometric series](https://en.wikipedia.org/wiki/Geometric_series):
+
+$$\text{cost}(n) = \text{base} \times \frac{r^k - r^{k+n}}{1 - r}$$
+
+— which is just $\sum_{i=k}^{k+n-1} \text{base} \cdot r^i$ with the closed-form for that sum substituted in. That collapses an O($n$) loop into an O(1) expression. Inverting it (set the cost ≤ current cash, solve for $n$) gives the dual question — "how many can I afford right now?" — also in closed form:
+
+$$n_\text{max} = \left\lfloor \log_r\!\left( r^k - \frac{\text{cash} \cdot (1 - r)}{\text{base}} \right) - k \right\rfloor$$
+
+Pecorella derived both by hand. The demo below uses the engine's `Formula` API to compute the same answers directly from a single declared cost expression — sliders match Pecorella's spreadsheet defaults (base 20, rate 1.05, owned 10, cash 400).
+
+<MultibuyCalculator client:visible />
+
+<aside class="aside">
+  <span class="aside-label">Modern API note</span>
+  The engine collapses both formulas into the cost expression itself. `Formula.exponential(currentlyOwned, baseCost, rateGrowth)` is the per-level cost; `calculateCost(formula, n)` answers "what does buying *n* more cost?"; `formula.invertIntegral(cash + integralAtCurrent) - currentlyOwned` answers "how many can I afford?". The engine uses the *continuous* integral as the closed-form (Pecorella derives the *discrete* geometric-series sum), which is accurate to a few percent for typical incremental ratios and exact when you ask `calculateCost` to direct-sum the tail. Both approaches collapse the loop; the engine's pays in one extra parameter (`directSum`) for picking the speed/exactness tradeoff per call.
+</aside>
+
+## Multiple generators: which is the best buy?
+
+A real game has more than one generator. Once there are five-plus options with their own base income, starting cost, and growth rate, the player is making an economic decision at every purchase opportunity. Pecorella defines "optimal" with a concrete score per candidate purchase:
+
+$$\text{score} = \frac{\text{nextCost}}{\text{totalIncome}} + \frac{\text{nextCost}}{\text{itemBaseIncome}}$$
+
+Read in seconds: how long until you can afford the next one, plus how long that one needs to run before it pays for itself. Pick the generator with the lowest score. Recompute after every purchase.
+
+Defaults below are the actual AdVenture Capitalist values for the first five businesses. Drag the cash slider up and watch the "best buy" highlight shift — and also watch how it shifts again as you raise an early generator's owned count and other generators become viable.
+
+Two caveats Pecorella flags before showing his version of this table:
+
+- **The model simplifies income to per-second.** Real generators in AdCap and its descendants run on a timer — buy a thing, wait $T$ seconds, collect. Treating income as continuous-per-second favors slower, higher-end generators that haven't actually paid out yet.
+- **Players don't actually play this.** The "best buy at every step" policy is far too micromanage-y for a human — *"buy one Gen 2, then three Gen 1s, then a Gen 3, then another Gen 1..."*. Real players bulk-buy or aim at round numbers. The score is a model of theoretical optimum, not a play pattern.
+
+<OptimalChoiceTable client:visible />
+
+<aside class="aside">
+  <span class="aside-label">Modern API note</span>
+  The per-generator cost is `Formula.exponential(owned + 1, startingCost, rateGrowth).evaluate()` — same DSL as the seesaw demo, just instantiated five times. The optimization itself is a hand-rolled `argmin` over the per-generator scores; the engine doesn't bake in a "next-best-buy" primitive because the ratio you optimize is design-dependent (Pecorella's `cost/income + cost/itemIncome` is one common pick, others use plain `cost/income`, `cost/itemIncome`, or [NPV](https://en.wikipedia.org/wiki/Net_present_value) with a discount rate). The closed-form leverage is in the cost expression; the choice criterion stays game-side.
+</aside>
+
+A pattern that pops out as you play with the demo: when *no* milestones are giving anyone a leg up (the default), the **highest-tier generator you can afford is almost always the best buy** as soon as it's affordable. The decision collapses and older generators feel pointless. Milestone bonuses are how Pecorella un-collapses it.
+
+## Milestones reshape the priority order
+
+Pecorella defines two milestone variants in sheets 1d and 1e. Both schedule a multiplier at owned-counts 25, 50, 100, 200, 300, 400, 500, 600, 1000, and the bonuses **stack** as the player crosses each one — same convention Pecorella calls out for 1a (*"a (stacking) x2 multiplier"*). The sheets label their input column "Bonus (not cumulative)" but that's about the input format; each cell is the per-milestone factor, not the running product. The calc sheet then builds the cumulative lookup behind it.
+
+- **Global (sheet 1d).** Every generator shares the same per-milestone factor table: ×5, ×5, ×2, ×2, ×3, ×4, ×2, ×3, ×4. Cross all nine and the running bonus is $5 \times 5 \times 2 \times 2 \times 3 \times 4 \times 2 \times 3 \times 4 = 28{,}800\times$.
+- **Individual (sheet 1e).** Each generator gets its own column. Pecorella's defaults push different generators forward at different points — Gen 2 spikes hard at 50 (×10), Gen 1 spikes at 100 (×10), Gen 3 spikes early at 50 (×8). The priority order shuffles across the run.
+
+The same demo above carries both modes via the radio toggle next to "milestones". Watch the **bonus** column update as you raise an owned count past 25, 50, 100 — each crossing multiplies the column. With **global** the priority shifts but everyone shifts together. With **individual** the next-best-buy genuinely rotates between generators across the run — the decision stays interesting longer because no single generator dominates indefinitely.
+
+<aside class="aside">
+  <span class="aside-label">Modern API note</span>
+  Milestone bonuses aren't part of the cost formula here — they're income-side multipliers that scale how much each generator contributes per owned count. The engine has a different primitive for this: modifier chains. `createMultiplicativeModifier({ multiplier: () => bonusAt(owned, i) })` plus `applyModifier(...)` on each generator's income would compose the same effect declaratively, with the chain visible to debug tooling and the modifier-source attribution panel. Pecorella's spreadsheet bakes the lookup directly into each row's formula; the engine pulls it out into a stack you can introspect. Same math, different ergonomics.
+</aside>
+
+<Sources
+  post={{
+    url: 'https://www.sirpinski.com/the-math-of-idle-games-part-i/',
+    title: 'The Math of Idle Games, Part I — Anthony Pecorella',
+  }}
+  sheets={[
+    '1a. Simple Exponential Growth.xlsx',
+    '1b. Multibuy Calculation Formula.xlsx',
+    '1c. Optimal Choice.xlsx',
+    '1d. Optimal Choice with Global Multipliers.xlsx',
+    '1e. Optimal Choice with Individual Multipliers.xlsx',
+  ]}
+/>
