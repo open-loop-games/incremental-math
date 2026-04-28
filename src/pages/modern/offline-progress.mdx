@@ -155,7 +155,7 @@ only if you keep playing.
 KTL converts every millisecond of absence into a reservoir called
 `bonusTime`:
 
-<Cite repo="stopsign-games/KTL" path="driver.js" line="14-23" />
+<Cite repo="stopsign-games" path="KTL/driver.js" line="14-23" />
 
 ```js
 function checkOfflineProgress() {
@@ -173,7 +173,7 @@ balance unchanged, but with a stored quantity they can spend by toggling a
 faster game speed. While `bonusSpeed > 1`, the inner loop processes more
 ticks per real second, debiting the difference from the bank:
 
-<Cite repo="stopsign-games/KTL" path="helpers/interval2.js" line="46-50" />
+<Cite repo="stopsign-games" path="KTL/helpers/interval2.js" line="46-50" />
 
 ```js
 if (data.gameSettings.bonusSpeed > 1) {
@@ -338,14 +338,14 @@ seesaw-time, not just more numbers.
       note: 'checkOfflineProgress: 5-minute floor on simulation, then branches between full sim (modes 1–2) and trustworthyTrimps extrapolation (mode 3).',
     },
     {
-      repo: 'stopsign-games/KTL',
-      path: 'driver.js',
+      repo: 'stopsign-games',
+      path: 'KTL/driver.js',
       line: '14-23',
       note: 'checkOfflineProgress: instead of paying currency, the offline interval becomes bonusTime in the player save.',
     },
     {
-      repo: 'stopsign-games/KTL',
-      path: 'helpers/interval2.js',
+      repo: 'stopsign-games',
+      path: 'KTL/helpers/interval2.js',
       line: '46-50',
       note: 'Bank consumption: while bonusSpeed > 1, each processed tick debits bonusTime by (gameSpeed × (bonusSpeed - 1)) of the elapsed wall-clock.',
     },
