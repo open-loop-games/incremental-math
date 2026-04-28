@@ -1,0 +1,369 @@
+---
+layout: ../../layouts/Article.astro
+title: Modifier Chains
+---
+
+import ModifierChainBuilder from '../../components/ModifierChainBuilder.vue';
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
+
+# Modifier Chains
+
+Pecorella's framework treats production-side bonuses as a single number.
+Part I introduces "global multipliers" that arrive from milestones; Part I's
+"individual multipliers" upgrade specific generators; together they shift the
+cost-vs-production seesaw without changing its shape. The math, abstractly,
+is one base value multiplied by one bonus.
+
+Practice didn't stay there. Open the source of any production-incremental
+shipped after about 2018 and the per-tick rate is the output of a long
+sequence of additions, multiplications, and an occasional exponent —
+sometimes dozens of them. The genre's vocabulary for that sequence has
+matured from "a function with a lot of `if`s in it" into a typed pipeline
+with first-class introspection. This page is about how that happened, what
+the abstraction buys, and what it doesn't fix.
+
+## The hand-rolled chain
+
+The earliest shipped form is a single function that walks through every
+possible bonus and applies each one if its condition holds. Cookie Clicker
+is the canonical example. `Game.CalculateGains` is several hundred lines
+long and contains over a hundred `mult *= ...` assignments, each gated on a
+specific upgrade, achievement, or building purchase:
+
+<Cite repo="cookie-clicker" path="main.js" line="4938" />
+
+```js
+Game.CalculateGains = function () {
+  Game.cookiesPs = 0;
+  let mult = 1;
+  // ... a few hundred lines later ...
+  if (Game.Has('Sugar baking')) mult *= 1 + Math.min(100, Game.lumps) * 0.01;
+  mult *= 1 + Game.auraMult('Radiant Appetite');
+  // ... and so on, for 100+ branches ...
+  Game.cookiesPs = Game.unbuffedCps; // after all multipliers
+};
+```
+
+The pattern works. It's also where every interesting thing about the
+production formula is buried. To explain to a player why their CpS is
+1.847e7 rather than 1.832e7, you have to step through the function. The UI
+side of the codebase does this by re-deriving each line as prose for the
+tooltip — a separate piece of code that mirrors the calculation and decays
+out of sync the moment a new branch is added. The function is the
+authoritative truth and also a wall of text.
+
+Prestige Tree (Jacorb, 2020) ships a much smaller version of the same
+shape, scoped per layer. The `gainMult` function for the prestige layer
+runs a ladder of nine-ish `if (hasUpgrade(...)) mult = mult.times(...)`
+calls, then returns:
+
+<Cite repo="Prestige-Tree" path="js/layers.js" line="12-27" />
+
+```js
+gainMult() {
+  let mult = new Decimal(1);
+  if (hasAchievement('a', 13)) mult = mult.times(1.1);
+  if (hasAchievement('a', 32)) mult = mult.times(2);
+  if (hasUpgrade('p', 21)) mult = mult.times(1.8);
+  if (hasUpgrade('p', 23)) mult = mult.times(upgradeEffect('p', 23));
+  // ...
+  return mult;
+}
+```
+
+Same pattern, smaller scale. The `if`-chain is still the only place where
+the contributions are listed; rendering them in the UI requires a parallel
+code path.
+
+## TMT: chain shape as interface
+
+The Modding Tree (Acamaeda, 2020 — successor to Prestige Tree) draws a box
+around what every layer's chain looks like. Each layer config slots into
+named hooks that the engine knows about:
+
+<Cite repo="The-Modding-Tree" path="js/Demo/layers/c.js" line="26-42" />
+
+```js
+addLayer('c', {
+  // ...
+  exponent: 0.5,
+  base: 5,
+  softcap: new Decimal(1e100),
+  softcapPower: new Decimal(0.5),
+  gainMult() {
+    let mult = new Decimal(1);
+    if (hasUpgrade(this.layer, 166)) mult = mult.times(2);
+    if (hasUpgrade(this.layer, 120)) mult = mult.times(upgradeEffect(this.layer, 120));
+    return mult;
+  },
+  gainExp() {
+    return new Decimal(1);
+  },
+});
+```
+
+The bodies of `gainMult` and `gainExp` are still hand-rolled `if`-chains,
+but the *outer pipeline* — base → multiplier → exponent → softcap — is no
+longer per-layer code. The engine knows where each piece plugs in, and the
+prestige formula `gain = (base × current^exp)^outerExp × mult`, capped by
+`softcap`, runs once for every layer.
+
+This formalization is small but load-bearing. It's the first version of
+the abstraction where a tool outside the layer can ask "what's this
+layer's exponent?" or "is the softcap engaged?" without re-running the
+function and pattern-matching its output. The slots are the interface, and
+the engine wires what's between them.
+
+What TMT doesn't do: split the *contents* of `gainMult` into anything
+introspectable. Inside that function, the `if` chain still has to be
+re-derived for tooltips by hand.
+
+## Profectus: chain as data
+
+Profectus (thepaperpilot, ongoing — fork of TMT toward a TypeScript,
+Vue-based engine) flips the abstraction one more level. The chain isn't a
+function returning a number; it's an array of typed modifier objects,
+each carrying its own value, label, and toggle predicate:
+
+<Cite repo="Advent-Incremental" path="src/data/layers/cloth.tsx" line="418-459" />
+
+```ts
+const sheepGain = createSequentialModifier(() => [
+  createAdditiveModifier({
+    addend: buildPens.amount,
+    description: 'Build more pens',
+  }),
+  createMultiplicativeModifier({
+    multiplier: 2,
+    description: 'Shepherding for Dummies',
+    enabled: paper.upgrades.clothUpgrade.bought,
+  }),
+  createMultiplicativeModifier({
+    multiplier: hollyEffect,
+    description: 'Holly Level 3',
+    enabled: management.elfTraining.cutterElfTraining.milestones[2].earned,
+  }),
+  createMultiplicativeModifier({
+    multiplier: 2,
+    description: 'Carry cloth in boxes',
+    enabled: boxes.row3Upgrades.clothUpgrade.bought,
+  }),
+  // ...
+]);
+const computedSheepGain = computed(() => sheepGain.apply(1));
+```
+
+Each entry is a plain object describing one contribution. The `enabled`
+predicate is reactive — bought an upgrade somewhere else, the chain
+recomposes. The order in the array is the order the chain applies them.
+
+What this buys, that the function form didn't:
+
+- **Tooltip breakdown for free.** Walk the array, render
+  `description + formattedValue` per row. Nothing in the chain has to be
+  duplicated for display.
+- **Inversion as a property of the abstraction.** Each modifier defines
+  `apply` and `invert`; running the chain backwards reduces in
+  `reduceRight` order with `invert` on each step. "How much base do I
+  need to reach X?" is one call, no bespoke code.
+- **Composition without conditionals.** Adding a bonus is one new entry
+  in the array. The chain doesn't grow an `if` statement; it grows a
+  row.
+- **Attribution.** The engine's modifier registry can ask "where did
+  each contribution to this chain come from?" — the descriptions are
+  the attribution string. <Cite repo="Profectus" path="src/game/modifiers.tsx" line="248-291" />
+
+## Try it
+
+<ModifierChainBuilder client:visible />
+
+Toggle modifiers on or off and the breakdown updates. The code panel
+underneath shows the same chain expressed as the engine's
+`createSequentialModifier` array — only the entries currently active
+appear. The point isn't that one form is shorter (the imperative
+`if`-chain often is, for small chains); the point is that the structured
+form is the *data the engine can introspect*, and a UI panel can render
+the breakdown above directly from it without any extra wiring.
+
+## Add within, multiply across
+
+Most production-incrementals built since about 2017 follow the same design
+rule, sometimes stated explicitly in design docs and sometimes just
+inherited: bonuses *within* a category add, bonuses *across* categories
+multiply. The shape comes out of two pressures.
+
+Pure additive stacking — `base × (1 + sum(bonuses))` — flattens at scale.
+Once `sum(bonuses)` is in the hundreds, a +1% upgrade is a rounding error,
+and the player stops feeling each new contribution. Pure multiplicative
+stacking — `base × prod(bonuses)` — explodes too fast at scale, because
+two `1.5×` bonuses compound to `2.25×` and twenty of them to about `3,300×`
+without anything stopping them. The mixed form gives small upgrades a
+visible home (additive within their category) and lets cross-category
+unlocks feel like step changes (multiplicative outside).
+
+In Cookie Clicker the categories are the building types — kittens, eggs,
+auras — and each `cookiesMultByType` is a category sum, then the outer
+multiplier is the product across types. In Realm Grinder, faction bonuses
+add inside a faction, and alignment, spells, and challenges each
+contribute a separate cross-category multiplier. In Trimps, helium perks
+add within trees, and equipment slots multiply across slots. The
+underlying shape is two-level: an additive chain per category, then a
+multiplicative chain over the per-category outputs.
+
+The structured-modifier form expresses this naturally: each category is
+its own `createSequentialModifier` doing `1 + sum(...)`, and a top-level
+chain does `prod(...)` over those outputs. The function form expresses it
+too, of course, but only by splitting `CalculateGains` into a series of
+helper functions and remembering to keep them in sync. The data form
+makes the two-level shape explicit.
+
+## Order at the boundaries
+
+Most of the chain is order-invariant. Addition commutes;
+multiplication commutes. The modifiers swap freely.
+
+Order does matter at the boundaries:
+
+- **Exponentiation isn't commutative with multiplication.** `(x · m)^e` and
+  `(x^e) · m` differ — a [softcap](https://en.wikipedia.org/wiki/Compression_(geology))-style exponent applied *after*
+  multipliers caps the post-bonus value (the usual choice); applied
+  before, it caps only the base. A 0.9 exponent applied last on a value
+  of 1e6 produces about 2.5e5; the same 0.9 applied first to a base of
+  10, then multiplied by 1e5, produces about 8.0e5. Different curves,
+  same modifiers, different choice.
+- **Caps and floors mid-chain.** A hard cap inserted in the middle
+  truncates intermediate values; subsequent multipliers operate on the
+  truncated number. This is rare in practice; most caps go at the end so
+  they cap the displayed number.
+- **Conditionals on the running value.** Some games softcap based on the
+  current chain output (`if production > X, apply diminishing returns`).
+  That's expressible as a modifier whose `enabled` predicate reads the
+  chain's intermediate state — but reading mid-chain state from inside
+  the chain creates a feedback loop that mature engines work around by
+  computing the predicate from the previous tick's value rather than the
+  current chain.
+
+The convention Profectus and its descendants settled on: the array is
+sequential, exponents go last unless a designer explicitly inserts them
+earlier, and softcaps are typically a single
+`createExponentialModifier` near the end of the chain.
+
+## What this enables in tooling
+
+Once the chain is a data structure, every tool that wants to reason about
+production gets a free hand-hold.
+
+A devtools panel that lists every chain in the engine and renders its
+current breakdown is around forty lines: enumerate the chains, walk each
+one, render `description + value` per modifier. No per-game code.
+
+A balance simulator can ask "if upgrade X were 2× stronger, how would
+late-game production change?" by swapping one modifier's value, replaying
+the run, and diffing. The function form can do the same thing only by
+either re-running the entire game with a different config flag or by
+adding instrumentation directly into `CalculateGains` — neither is
+appropriate for a quick sweep.
+
+An attribution view ("which modifier added the most to your last production
+spike?") is impossible in the function form because individual
+contributions are never named after the multiplications collapse into one
+number. In the data form, you walk the array and the descriptions are
+already there.
+
+The Profectus engine ships a `createModifierSection` helper that takes a
+sequential modifier and renders the JSX breakdown. This is the same
+function the dev panel and the in-game tooltip use; the duplication that
+plagued Cookie Clicker's UI is not architectural here — there's only one
+place the chain lives. The engine in this site exports
+`createModifierChain` with a similar shape, plus a chain registry so
+balance tools can enumerate every chain across the game.
+
+## What this site uses
+
+The Pecorella demos on this site don't use modifier chains internally —
+they're focused on a single formula each, and a chain abstraction would
+hide what the demo is teaching. The page above renders a chain in raw
+`Decimal` math because the lesson is *the chain*, not the engine API.
+
+A real game built on `open-loop-engine` would use
+`createSequentialModifier` directly for any production rate that has more
+than two contributions, and `createModifierChain` (the registry-backed
+version) for chains that other modules push into from outside. The
+attribution facility — `chain.bind({ ... })` — makes balance-sim
+introspection a property of using the engine, not a thing each game
+re-implements.
+
+## What it didn't fix
+
+The structured form moves the complexity around. It doesn't reduce it.
+
+**Designer discipline.** A chain of fifty modifiers is still a chain of
+fifty modifiers. Profectus makes the chain *visible*; the designer is
+still on the hook for whether the chain is *good*. Late-game stalls and
+runaway multipliers happen with structured chains too — the abstraction
+hands you a cleaner inventory of the problem.
+
+**Hidden conditions.** The `enabled` predicate is reactive but invisible
+in the running breakdown. A multiplier that's gated on
+`zone > 100` simply isn't in the breakdown at zone 99, and the player
+has no way to see it's pending. Mature implementations render disabled
+modifiers in a subdued color with a "locked: requires X" annotation, but
+that's a UI choice, not something the chain abstraction enforces.
+
+**Performance overhead.** A chain with thirty modifiers does thirty
+method dispatches per recompute. With Vue's reactivity, each modifier's
+inputs are tracked individually, so a single upgrade purchase triggers
+recomputes only on the chains that actually depend on it — but the
+constant factor is real. Per-tick chains that drive a busy production
+loop get cached at the recompute layer; the chain re-evaluates only when
+its bindings invalidate, not every tick.
+
+**The decision of additive vs. multiplicative is still on the designer.**
+The genre's "add within, multiply across" rule is a heuristic, not a
+property the abstraction can check. A new modifier added at the wrong
+layer either gets lost in noise (additive when it should multiply) or
+explodes (multiplicative when it should add). The chain shape doesn't
+say which.
+
+The abstraction earned its place because it solved a specific problem:
+the function form's hidden contributions made tooltip rendering, balance
+debugging, and inversion each a separate hand-rolled effort, and the
+sum of those efforts cost more than the abstraction did to introduce.
+Once the chain is data, every tool that touches production becomes a
+one-page-of-code problem instead of a re-implementation.
+
+<Sources
+  cites={[
+    {
+      repo: 'cookie-clicker',
+      path: 'main.js',
+      line: '4938',
+      note: 'Game.CalculateGains — the canonical hand-rolled chain. ~600 lines, 100+ multiplications, single function.',
+    },
+    {
+      repo: 'Prestige-Tree',
+      path: 'js/layers.js',
+      line: '12-27',
+      note: 'gainMult on the prestige layer — the per-layer hand-rolled chain pattern that TMT formalized.',
+    },
+    {
+      repo: 'The-Modding-Tree',
+      path: 'js/Demo/layers/c.js',
+      line: '26-42',
+      note: 'TMT layer config showing the named-slot interface (exponent, base, softcap, softcapPower, gainMult, gainExp).',
+    },
+    {
+      repo: 'Profectus',
+      path: 'src/game/modifiers.tsx',
+      line: '248-292',
+      note: 'createSequentialModifier in Profectus — the array-of-modifier-objects abstraction.',
+    },
+    {
+      repo: 'Advent-Incremental',
+      path: 'src/data/layers/cloth.tsx',
+      line: '418-459',
+      note: 'Real-world chain: nine modifiers, mixed additive/multiplicative, reactive enabled predicates.',
+    },
+  ]}
+/>
