@@ -94,10 +94,16 @@ export const sections: PageSection[] = [
           'Melvor, NGU, AD: when offline catch-up becomes a first-class math input, not an afterthought.',
       },
       {
-        href: '/modern/achievement-as-modifier',
-        title: 'Achievement as Modifier',
+        href: '/modern/production-graphs',
+        title: 'Production Graphs',
         description:
-          'Cookie Clicker grandma synergies as the prototype: achievements that feed back into the production curve.',
+          'Part II’s linear cascade generalized to DAGs and cycles: adjacency-matrix production with feedback loops.',
+      },
+      {
+        href: '/modern/synergy-multipliers',
+        title: 'Synergy Multipliers',
+        description:
+          'Set-function multipliers that depend on which things you own together — not how many. Greedy is near-optimal.',
       },
     ],
   },
