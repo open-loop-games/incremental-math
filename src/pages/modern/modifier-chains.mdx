@@ -174,6 +174,117 @@ What this buys, that the function form didn't:
   each contribution to this chain come from?" — the descriptions are
   the attribution string. <Cite repo="Profectus" path="src/game/modifiers.tsx" line="248-291" />
 
+## What 8-deep looks like in shipped games
+
+Engine archaeology is half the story. The other half is what happens when a
+game grows past one or two prestige layers and the chain stops being a
+toy. Once a player is mid-game in any of the post-Pecorella heavyweights,
+their per-tick rate is the product of six to a dozen named contributors,
+each with its own UI surface, source, and rebalance history.
+
+**Synergism** ships the most explicit version of this. Every cube currency
+is computed as a single reduce over a typed array of stat lines. The Wow
+Cubes chain is literally:
+
+<Cite repo="SynergismOfficial" path="src/Statistics.ts" line="392-476" />
+
+```ts
+export const allWowCubeStats: NumberStatLine[] = [
+  { i18n: 'AscensionScore',    stat: () => Math.pow(.../3000, 1/4.1) },
+  { i18n: 'GlobalCube',        stat: () => calculateAllCubeMultiplier() },
+  { i18n: 'SynergismLevel',    stat: () => getLevelReward('wowCubes') },
+  { i18n: 'AchievementBonus',  stat: () => +getAchievementReward('wowCubeGain') },
+  { i18n: 'SeasonPass1',       stat: () => 1 + 2.25 * player.shopUpgrades.seasonPass / 100 },
+  { i18n: 'WowSquare',         stat: () => getTalismanEffects('wowSquare').oddDimBonus },
+  { i18n: 'Researches',        stat: () => /* eight nested research multipliers */ },
+  { i18n: 'Research8x25',      stat: () => 1 + 0.004/100 * player.researches[200] },
+  { i18n: 'AntUpgrade',        stat: () => getAntUpgradeEffect(AntUpgrades.WowCubes).wowCubes },
+  { i18n: 'CubeUpgrades',      stat: () => /* three sub-upgrades */ },
+  { i18n: 'ConstantUpgrade10', stat: () => 1 + 0.01 * Decimal.log(...) * Math.min(1, ...) },
+  { i18n: 'SpiritPower',       stat: () => getRuneSpiritEffect('duplication').wowCubes },
+  { i18n: 'PlatonicOpening',   stat: () => calculateCubeMultiplierPlatonicBlessing() },
+  { i18n: 'Platonic1x1',       stat: () => 1 + 0.00009 * corruptions * platonicUpgrades[1] },
+  { i18n: 'CookieUpgrade13',   stat: () => /* abyssal scaling */ },
+];
+
+export const calculateCubeMultiplier = () =>
+  allWowCubeStats.reduce((a, b) => a * b.stat(), 1);
+```
+
+Fourteen contributors, each with its own i18n key for the UI, each
+expressible as a one-line closure. Tesseracts, Hypercubes, Platonics,
+Hepteracts, and Octeracts each get their own `allXStats` array of similar
+depth — twelve in total. Offerings, obtainium, ascension speed, global
+speed, and quark gain are the same shape. The "modifiers as data" idea
+that Profectus formalized as `createSequentialModifier` is here as a
+plain typed array plus a one-line `reduce` — same abstraction, different
+syntax. Every breakdown panel in the Synergism stats UI is a render of
+one of these arrays.
+
+**Trimps** has the same shape with different vocabulary. Trimp damage is
+computed by `applyMultipliers(multipliers, stat)`, where `multipliers` is
+an object whose keys are named contributors and whose values are
+zero-arg functions:
+
+<Cite repo="Trimps" path="main.js" line="12249-12290" />
+
+```js
+const multipliers = {
+  achievementBonus:  () => 1 + game.global.achievementBonus / 100,
+  goldenBattle:      () => 1 + game.goldenUpgrades.Battle.currentBonus,
+  heirloom:          () => heirloomAttack,
+  challengeSquared:  () => 1 + game.global.totalSquaredReward / 100,
+  titimp:            () => game.global.mapsActive && game.global.titimpLeft > 0 ? 2 : 1,
+  roboTrimp:         () => 1 + 0.2 * game.global.roboTrimpLevel,
+  mapBonus:          () => /* tiered map-stack bonus */,
+  herbalist:         () => game.talents.herbalist.purchased ? game.talents.herbalist.getBonus() : 1,
+  bionic2:           () => /* situational map bonus */,
+  voidPower:         () => /* void-buff bonus */,
+  voidMastery:       () => /* void-mastery 5x */,
+  fluffy:            () => Fluffy.isActive() ? Fluffy.getDamageModifier() : 1,
+  mayhem:            () => game.challenges.Mayhem.getTrimpMult(),
+  pandemonium:       () => game.challenges.Pandemonium.getTrimpMult(),
+  desolation:        () => game.challenges.Desolation.getTrimpMult(),
+  // ...
+};
+function applyMultipliers(multipliers, stat) {
+  Object.keys(multipliers).forEach((key) => { stat *= multipliers[key](); });
+  return stat;
+}
+```
+
+Sixteen-plus entries for one stat. The same harness is used for trimp
+health, block, and gather rate. The keys carry the attribution; the
+fold is one line. Heirlooms, perks, scientists, challenges, heliolith
+bonuses, and challenge-squared all flow through this shape.
+
+**NGU Idle** doesn't ship readable source — the canonical engagement is
+through automation tools and the wiki — but the in-game stat breakdowns
+spell out the same structure for energy power: a base rate multiplied
+through an explicit ladder of `power`, `cap`, `bar`, `speed`, per-zone
+boosts, adventure stat boosts, NGU bonuses, hack bonuses, wish bonuses,
+beard bonuses, and (post-Evil) titan-tier multipliers. Players who
+optimize NGU memorize this ladder; the breakdown panel is one of the
+most-consulted screens in the game.
+
+**Realm Grinder** stacks the same way around faction choice: building
+production runs through faction bonuses, alignment bonus, pact effects,
+spell effects, research, mercenary trades, abdication bonuses, and
+challenge-squared multipliers. The post-Faction-Coins extraction
+documents capture the per-faction production chains as separate
+multipliers folding into a single per-second rate.
+
+The unifying observation: every one of these games converged on the same
+shape — a list of named contributors, each one-line evaluable, folded
+through an associative operator (sum or product) into a single
+displayable number with a per-line breakdown. Engine archaeology says
+the abstraction matured from `if`-chain to typed array; production
+games confirm that once the array exists, it grows to twelve to twenty
+entries per stat and stays manageable because the abstraction is the
+right one. The chains in Synergism's `allWowCubeStats` and Profectus's
+`createSequentialModifier` are the same data structure dressed in
+different module conventions.
+
 ## Try it
 
 <ModifierChainBuilder client:visible />
@@ -364,6 +475,24 @@ one-page-of-code problem instead of a re-implementation.
       path: 'src/data/layers/cloth.tsx',
       line: '418-459',
       note: 'Real-world chain: nine modifiers, mixed additive/multiplicative, reactive enabled predicates.',
+    },
+    {
+      repo: 'SynergismOfficial',
+      path: 'src/Statistics.ts',
+      line: '392-476',
+      note: 'allWowCubeStats — fourteen typed contributors folded by reduce. Tesseracts/Hypercubes/Platonics/Hepteracts/Octeracts follow the same shape.',
+    },
+    {
+      repo: 'SynergismOfficial',
+      path: 'src/Calculate.ts',
+      line: '77-103',
+      note: 'calculateAllCubeMultiplier and the per-tier cube multipliers — one-line reductions over the corresponding stat arrays.',
+    },
+    {
+      repo: 'Trimps',
+      path: 'main.js',
+      line: '12215-12290',
+      note: 'applyMultipliers + the trimp damage multipliers map — sixteen-plus named contributors as zero-arg closures, folded by Object.keys forEach.',
     },
   ]}
 />
