@@ -14,13 +14,13 @@ import Sources from '../../components/Sources.astro';
 
 Pecorella's seesaw assumes one cost line and one production line, both monotone in the number you own, both unbroken across the whole range of play. The math works because the curves are smooth and the parameters never change.
 
-A 2026 incremental almost never ships those curves unmodified. Somewhere along the production path, the cost path, the prestige path, or all three, the slope shifts. The most common shift is downward — past some threshold, the curve flattens. That shift is a *softcap*, and the patterns it follows are the topic of this page.
+A 2026 incremental almost never ships those curves unmodified. Somewhere along the production path, the cost path, the prestige path, or all three, the slope shifts. The most common shift is downward — past some threshold, the curve flattens. That shift is a _softcap_, and the patterns it follows are the topic of this page.
 
 The point of a softcap is to bend a curve, not to stop it. Every shape covered here continues to grow forever; the rate of growth just falls. The reasons to do this — pacing, balance, breakthrough rhythm, monetization gates — are design concerns the page touches but doesn't try to settle. The math is what's load-bearing.
 
 ## What a softcap is, in one sentence
 
-A *softcap* is a piecewise function that returns its input below some threshold and returns a sublinear transformation of its input above. The transformation is [continuous](https://en.wikipedia.org/wiki/Continuous_function) at the threshold (no jump) and [monotonically increasing](https://en.wikipedia.org/wiki/Monotonic_function) everywhere (the player never loses progress by gaining more input).
+A _softcap_ is a piecewise function that returns its input below some threshold and returns a sublinear transformation of its input above. The transformation is [continuous](https://en.wikipedia.org/wiki/Continuous_function) at the threshold (no jump) and [monotonically increasing](https://en.wikipedia.org/wiki/Monotonic_function) everywhere (the player never loses progress by gaining more input).
 
 $$
 f(x) = \begin{cases} x, & x \le t \\ g(x, t), & x > t \end{cases}
@@ -32,11 +32,11 @@ That's the whole framework. The shapes below are five well-trodden picks for $g$
 
 ## Why not a hard cap?
 
-A hard cap is `min(x, c)`. Past the cap, gain is exactly zero. This is the simplest possible choice, and games do use it — Cell to Singularity caps offline accumulation at 10% of online rate; many games bound an inventory slot or a multiplier slot at a fixed integer. Hard caps are appropriate when the value being capped represents a *resource container* (slots, queue depth, simultaneous-effect count) where overflow has no meaning.
+A hard cap is `min(x, c)`. Past the cap, gain is exactly zero. This is the simplest possible choice, and games do use it — Cell to Singularity caps offline accumulation at 10% of online rate; many games bound an inventory slot or a multiplier slot at a fixed integer. Hard caps are appropriate when the value being capped represents a _resource container_ (slots, queue depth, simultaneous-effect count) where overflow has no meaning.
 
-But hard caps applied to a *progression value* have a different effect: they end the relevant gameplay loop. Once the player hits the cap, every subsequent action that would have moved that value does nothing. The number on screen stops responding to clicks. This is felt as a wall, and the wall is exactly the design failure most modern incrementals built their late game to avoid. The genre's working answer is to keep returning *something* per click — even if that something is so small it takes a thousand clicks to be visible — because the rhythm of "click, see number rise" is what the game is. Softcaps preserve the rhythm.
+But hard caps applied to a _progression value_ have a different effect: they end the relevant gameplay loop. Once the player hits the cap, every subsequent action that would have moved that value does nothing. The number on screen stops responding to clicks. This is felt as a wall, and the wall is exactly the design failure most modern incrementals built their late game to avoid. The genre's working answer is to keep returning _something_ per click — even if that something is so small it takes a thousand clicks to be visible — because the rhythm of "click, see number rise" is what the game is. Softcaps preserve the rhythm.
 
-The mathematical version of this argument: a hard cap has a [discontinuous derivative](https://en.wikipedia.org/wiki/Heaviside_step_function) at the cap (slope drops from 1 to 0 instantly); a softcap has a continuous derivative that approaches zero but never hits it. The genre's terminology distinction tracks the math.
+The mathematical version of this argument: a hard cap has a discontinuity in its marginal return at the cap (slope drops from 1 to 0 instantly); a softcap keeps returning some positive marginal gain past the threshold. Some softcaps are smooth at the threshold and some have a visible kink, but none stop the value outright. The genre's terminology distinction tracks that difference.
 
 ## The four canonical shapes
 
@@ -46,7 +46,7 @@ The genre converged on four softcap shapes, each with a recognized lead game whe
 
 $$g(x, t) = t \cdot (x/t)^p, \quad 0 < p < 1$$
 
-The simplest shape and the easiest to read. Past the threshold, the *excess* over the threshold gets a fractional power applied to it. With $p = 0.5$ this is the standard square-root softcap; smaller $p$ is harsher, larger $p$ is gentler.
+The simplest shape and the easiest to read. Past the threshold, the input's ratio to the threshold gets a fractional power applied to it. With $p = 0.5$ this is the standard square-root softcap; smaller $p$ is harsher, larger $p$ is gentler.
 
 Realm Grinder's faction bonuses ride on this family. Goblin Slave Trading scales as $2 \cdot \text{evilBuildings}^{0.7} / 100$ — a power softcap with $p = 0.7$. Fairy Worker is $5 \cdot \ln(1 + \text{assistants})^{2.5} / 100$ — a more exotic power-of-log shape that produces a similar curve in the relevant range. Goblin Mana Bonus is $0.75 \cdot \log_{10}(1 + \text{gold})^{1.25} / 100$, again a fractional-power-of-log. The genre name "sqrt softcap" is a slight misnomer for the whole family — these aren't all square roots, they're various sublinear powers — but the shape and effect are the same: every additional building still contributes, but at a falling marginal rate that keeps any one faction strategy from dominating the others.
 
@@ -56,12 +56,12 @@ A clean general-purpose implementation, from a community-built game framework th
 
 ```js
 function softcap(value, cap, power = 0.5) {
-  if (value <= cap) return value
-  return Math.pow(value, power) * Math.pow(cap, 1 - power)
+  if (value <= cap) return value;
+  return Math.pow(value, power) * Math.pow(cap, 1 - power);
 }
 ```
 
-This is algebraically the same as the displacement form $g(x, t) = t + (x - t)^{1/n}$ (you can verify by substituting $x = t$: both branches return $t$). The multiplicative form is easier to reason about for *scale-free* values — currencies that span many orders of magnitude — because it works on the ratio $x/t$ rather than on the difference, and difference-form arithmetic at $10^{500}$ is asking for trouble.
+This is the scale-free version of the displacement form $g(x, t) = t + (x - t)^p$. Both meet the uncapped branch at $x = t$, but they are not algebraically identical: the multiplicative form works on the ratio $x/t$, while the displacement form works on the excess $x - t$. For currencies that span many orders of magnitude, the ratio form is easier to reason about and safer to compute; difference-form arithmetic at $10^{500}$ is asking for trouble.
 
 The Prestige Tree extension keeps the multiplicative form but factors it into log space:
 
@@ -70,8 +70,8 @@ The Prestige Tree extension keeps the multiplicative form but factors it into lo
 ```js
 function softcap(name, val) {
   // ...
-  if (type === "root") {
-    let mag = getSoftcapData(name, "mag");
+  if (type === 'root') {
+    let mag = getSoftcapData(name, 'mag');
     return val.times(start.pow(mag.sub(1))).root(mag);
   }
   // ...
@@ -82,13 +82,13 @@ function softcap(name, val) {
 
 The strength parameter $p$ doubles as a progression knob:
 
-| $p$  | reduction | feel | typical use |
-|------|-----------|------|-------------|
-| 0.9  | 10%       | barely noticeable | an early-warning softcap before the real one |
-| 0.8  | 20%       | gentle    | first softcap on a long progression |
-| 0.5  | 50%       | moderate  | mid-game regulation; equivalent to sqrt |
-| 0.3  | 70%       | harsh     | late-game wall before a prestige rebreak |
-| 0.1  | 90%       | extreme   | de facto plateau; players need a milestone to bypass |
+| $p$ | reduction | feel              | typical use                                          |
+| --- | --------- | ----------------- | ---------------------------------------------------- |
+| 0.9 | 10%       | barely noticeable | an early-warning softcap before the real one         |
+| 0.8 | 20%       | gentle            | first softcap on a long progression                  |
+| 0.5 | 50%       | moderate          | mid-game regulation; equivalent to sqrt              |
+| 0.3 | 70%       | harsh             | late-game wall before a prestige rebreak             |
+| 0.1 | 90%       | extreme           | de facto plateau; players need a milestone to bypass |
 
 Cascading these — applying successively harsher $p$ at successively higher thresholds — is what produces the long-game plateau-breakthrough rhythm covered later on this page.
 
@@ -122,14 +122,14 @@ Cookie Clicker's prestige formula is often described as a log softcap but is tec
 
 ```js
 Game.HCfactor = 3;
-Game.HowMuchPrestige = function(cookies) {
+Game.HowMuchPrestige = function (cookies) {
   return Math.pow(cookies / 1000000000000, 1 / Game.HCfactor);
-}
+};
 ```
 
-The cube root produces $\approx 10^{(\log_{10} c - 12)/3}$ Chips per $c$ cookies; doubling cookies adds a constant multiplier of $\sqrt[3]{2} \approx 1.26$ to chips. The *purpose* is logarithmic — compress a many-orders-of-magnitude input into a few orders — even when the implementation reaches for a power instead. The two shapes are interchangeable in this regime; the choice between them is whether the designer wants a constant $k$ added per decade (log) or a constant multiplier per doubling (power).
+The cube root produces $\approx 10^{(\log_{10} c - 12)/3}$ Chips per $c$ cookies; doubling cookies adds a constant multiplier of $\sqrt[3]{2} \approx 1.26$ to chips. The _purpose_ is logarithmic — compress a many-orders-of-magnitude input into a few orders — even when the implementation reaches for a power instead. The two shapes are interchangeable in this regime; the choice between them is whether the designer wants a constant $k$ added per decade (log) or a constant multiplier per doubling (power).
 
-A true logarithmic softcap shows up more often in stat-scaling than in prestige formulas: prestige rewards are *meant* to be felt as the headline progression of an entire run, so a hard log compression would cap the felt reward visibly. Stat softcaps are meant to be noticed only when a particular substat pulls away from the others, where a log flatten is the desired feel.
+A true logarithmic softcap shows up more often in stat-scaling than in prestige formulas: prestige rewards are _meant_ to be felt as the headline progression of an entire run, so a hard log compression would cap the felt reward visibly. Stat softcaps are meant to be noticed only when a particular substat pulls away from the others, where a log flatten is the desired feel.
 
 <LogSoftcapDemo client:visible />
 
@@ -155,7 +155,7 @@ The Realm Grinder pre/post-Ascension cost shift sits in the same family but uses
 
 $$\text{cost}(n) = \begin{cases} c_0 \cdot 1.15^n, & n \le t \\ c_0 \cdot 1.15^t \cdot 1.03^{n-t}, & n > t \end{cases}$$
 
-Mechanically this isn't sublinear — both segments are still exponential, the second is just shallower. It qualifies as a softcap because the *post-threshold derivative* is everywhere smaller than the pre-threshold derivative. What it gives up versus a true sublinear cap is the [asymptote](https://en.wikipedia.org/wiki/Asymptote): the cost still runs away to infinity, just slower. What it gains is a clean threshold the player can see, narrate, and push against — the band itself becomes a feature.
+Mechanically this isn't sublinear — both segments are still exponential, the second is just shallower. It qualifies as a softcap because the _post-threshold derivative_ is everywhere smaller than the pre-threshold derivative. What it gives up versus a true sublinear cap is the [asymptote](https://en.wikipedia.org/wiki/Asymptote): the cost still runs away to infinity, just slower. What it gains is a clean threshold the player can see, narrate, and push against — the band itself becomes a feature.
 
 <PiecewiseSoftcapDemo client:visible />
 
@@ -170,7 +170,7 @@ Trimps' helium reward is exactly zero before zone 19 and follows a sublinear sha
 <Cite repo="Trimps" path="main.js" line="4193-4203" />
 
 ```js
-if (what == "helium") level = Math.round((level - 1900) / 100);
+if (what == 'helium') level = Math.round((level - 1900) / 100);
 // ...
 level *= 1.35;
 if (level < 0) level = 0;
@@ -182,11 +182,11 @@ The relevant arithmetic: zone is converted to a level offset by 19 (the `1900 / 
 
 Fluffy XP is the same shape with the threshold expressed as a level requirement: pet level is $\log_4(\text{XP} / 1000)$, so the pet doesn't exist (level zero) below $\text{XP} = 1000$. The logarithmic regime past the threshold is what the previous section covers; the floor at $\text{XP} = 1000$ is what makes it hard-then-soft rather than pure log.
 
-The point of the hard-then-soft shape is to make a resource *visible but inaccessible* — the player sees they're approaching the threshold, sees the resource counter at zero, and gets a milestone moment when the first unit lands. A pure log or sqrt softcap below the threshold would deliver microscopic amounts that round to zero on the HUD; the hard floor turns that rounding into a feature.
+The point of the hard-then-soft shape is to make a resource _visible but inaccessible_ — the player sees they're approaching the threshold, sees the resource counter at zero, and gets a milestone moment when the first unit lands. A pure log or sqrt softcap below the threshold would deliver microscopic amounts that round to zero on the HUD; the hard floor turns that rounding into a feature.
 
 ## Specialty: math-motivated softcaps
 
-Exponential Idle — a mobile theory-grinding incremental — uses softcaps as the *math motivation* of late-game theories rather than as balance patches on otherwise-runaway formulas. Theory 5 introduces a softcap on a particular term as the calculus exercise the theory is built around; later theories construct their progression around the player observing how a particular function $f(x)$ behaves past its softcap regime. The softcap is the puzzle.
+Exponential Idle — a mobile theory-grinding incremental — uses softcaps as the _math motivation_ of late-game theories rather than as balance patches on otherwise-runaway formulas. Theory 5 introduces a softcap on a particular term as the calculus exercise the theory is built around; later theories construct their progression around the player observing how a particular function $f(x)$ behaves past its softcap regime. The softcap is the puzzle.
 
 This is rare in the corpus. Most softcaps are pacing tools — the math is invisible to the player and exists to shape the curve a designer would otherwise have to bound by some other mechanism. Exponential Idle's exposed softcaps are an existence proof that the form has a use beyond curve-shaping; they become a teaching surface for the calculus they implement, and the game's progression is the player learning to read them.
 
@@ -194,12 +194,12 @@ This is rare in the corpus. Most softcaps are pacing tools — the math is invis
 
 $$g(x) = L \cdot \frac{x}{x + k}$$
 
-Approaches a fixed limit $L$ but never reaches it. Rarer in pure progression contexts because progression values benefit from being unbounded, but the cleanest fit when the output represents an *efficiency* — a fraction or percentage that should saturate at 100%.
+Approaches a fixed limit $L$ but never reaches it. Rarer in pure progression contexts because progression values benefit from being unbounded, but the cleanest fit when the output represents an _efficiency_ — a fraction or percentage that should saturate at 100%.
 
 <Cite repo="civ-clicker" path="scripts/civclicker.js" line="2400-2401" />
 
 ```js
-1 - 100 / (graveyard + 100)
+1 - 100 / (graveyard + 100);
 // graveyard = 0    → 0
 // graveyard = 100  → 0.5
 // graveyard = 900  → 0.9
@@ -218,10 +218,10 @@ Move the threshold slider to relocate the bend; each shape's strength parameter 
 
 A few things the chart makes visible:
 
-- **Continuity at the threshold.** Every active shape passes through the same point on the threshold line. There is no jump at the breakpoint — the shape's job starts where the linear baseline would have continued, and it picks up *from* that value, not from zero. This is what distinguishes a softcap from a hard reset.
-- **Order of strength.** With default parameters, the harshness order is `log < power(0.7) < root(2) < piecewise(0.1)`. Log is the most aggressive at any far-from-threshold input; piecewise feels harsh up close but is asymptotically the gentlest of the four because its post-threshold growth is still linear, not sublinear. Sliding the strength of any one curve crosses these orderings — there's no inherent ranking.
-- **What the threshold *means*.** The threshold is the input value at which the bend starts, not the output value. A common reading mistake is to treat the threshold as a number the player will see capped on their HUD; in fact, the threshold is the input where the *change of regime* starts, and the output continues climbing visibly past it. The curve is doing its job specifically when the player is *past* the threshold.
-- **Why log scale changes the question.** On a linear y-axis, the threshold-and-bend story is the visual headline. On log, the post-threshold tails compress and the question shifts to *what's the asymptotic slope?* Linear-baseline shows up as a curve with constant slope $1$ in log space; root and power show up as lines with smaller (but constant) slope; log shows up as concave curves that flatten further; piecewise shows up as a sharp slope change. Both axes are useful for different questions.
+- **Continuity at the threshold.** Every active shape passes through the same point on the threshold line. There is no jump at the breakpoint — the shape's job starts where the linear baseline would have continued, and it picks up _from_ that value, not from zero. This is what distinguishes a softcap from a hard reset.
+- **Order of strength.** With default parameters, the output order is `log < root(2) < power(0.7) < piecewise(0.1)` at far-from-threshold inputs. Log is the most aggressive there; piecewise feels harsh up close but is asymptotically the gentlest of the four because its post-threshold growth is still linear, not sublinear. Sliding the strength of any one curve crosses these orderings — there's no inherent ranking.
+- **What the threshold _means_.** The threshold is the input value at which the bend starts, not the output value. A common reading mistake is to treat the threshold as a number the player will see capped on their HUD; in fact, the threshold is the input where the _change of regime_ starts, and the output continues climbing visibly past it. The curve is doing its job specifically when the player is _past_ the threshold.
+- **Why log scale changes the question.** On a linear y-axis, the threshold-and-bend story is the visual headline. On log, the post-threshold tails compress and the question shifts to _what's the asymptotic slope?_ Linear-baseline shows up as a curve with constant slope $1$ in log space; root and power show up as lines with smaller (but constant) slope; log shows up as concave curves that flatten further; piecewise shows up as a sharp slope change. Both axes are useful for different questions.
 
 ## ExpRoot — the numerical-stability variant
 
@@ -232,10 +232,14 @@ For values that fit comfortably in JS Number, all the shapes above can be implem
 <Cite repo="Prestige-Tree" path="js/sc.js" line="382-384" />
 
 ```js
-if (type === "expRoot") {
-  let mag = getSoftcapData(name, "mag");
-  return Decimal.pow(10,
-    val.log10().root(mag).times(start.log10().pow(Decimal.sub(1, mag.pow(-1))))
+if (type === 'expRoot') {
+  let mag = getSoftcapData(name, 'mag');
+  return Decimal.pow(
+    10,
+    val
+      .log10()
+      .root(mag)
+      .times(start.log10().pow(Decimal.sub(1, mag.pow(-1)))),
   );
 }
 ```
@@ -253,9 +257,9 @@ output = softcap(softcap(softcap(input, t1, p1), t2, p2), t3, p3)
         with p1 > p2 > p3 (each cap is harsher than the last)
 ```
 
-The design intent is *plateau-breakthrough rhythm*. Each cap creates a regime where progress feels slow; each milestone that "unlocks" a cap (effectively multiplying the cap's threshold by a large factor, or reducing the cap's strength toward 1) creates a regime where progress feels fast again. Players spend a few sessions feeling stuck, then a milestone fires and a few sessions feel breezy.
+The design intent is _plateau-breakthrough rhythm_. Each cap creates a regime where progress feels slow; each milestone that "unlocks" a cap (effectively multiplying the cap's threshold by a large factor, or reducing the cap's strength toward 1) creates a regime where progress feels fast again. Players spend a few sessions feeling stuck, then a milestone fires and a few sessions feel breezy.
 
-The Prestige Tree extension of this is to *name* each cap and address it individually:
+The Prestige Tree extension of this is to _name_ each cap and address it individually:
 
 <Cite repo="Prestige-Tree" path="js/sc.js" line="1-100" />
 
@@ -273,7 +277,7 @@ eff = hasChallenge("h", 22) ? softcap("p12_h22", eff) : softcap("p12", eff);
 eff = applyFinalPowers(eff);
 ```
 
-Naming makes per-cap upgrades possible. "Reduces the *p12* softcap by 50%" is a powerful, comprehensible upgrade in a way that "reduces softcaps" generically is not. Named caps also let challenge mode swap the cap variant, which Prestige Tree uses to make Challenge 22 of the Hindrance layer apply an `expRoot` cap where the base game applies `log` — same threshold, but the harsher shape is what makes the challenge a challenge.
+Naming makes per-cap upgrades possible. "Reduces the _p12_ softcap by 50%" is a powerful, comprehensible upgrade in a way that "reduces softcaps" generically is not. Named caps also let challenge mode swap the cap variant, which Prestige Tree uses to make Challenge 22 of the Hindrance layer apply an `expRoot` cap where the base game applies `log` — same threshold, but the harsher shape is what makes the challenge a challenge.
 
 The pattern is content-side, not engine-side. The engine provides the formula primitives (`Decimal.pow`, `Decimal.log10`, `Decimal.root`); the game provides the registry, the named indexing, and the upgrade-interaction layer.
 
@@ -281,11 +285,11 @@ The pattern is content-side, not engine-side. The engine provides the formula pr
 
 Across the analyzed corpus, softcaps cluster on three surfaces:
 
-- **Prestige currency.** The dominant location. The conversion from a primary currency (spanning many orders of magnitude) into a prestige currency (spanning a controlled, designer-chosen range) is essentially what prestige *is* in math terms — and that conversion is overwhelmingly some shape of softcap. Cookie Clicker's cube root, AdVenture Capitalist's square root, Kittens Game's paragon cube root, Calculator Evolution's sixth root, AD's IP formula. A run-ratio plot like Pecorella's Part III is a softcap-of-a-softcap chart; the modern variant is to render the softcap shape itself as a designable knob.
+- **Prestige currency.** The dominant location. The conversion from a primary currency (spanning many orders of magnitude) into a prestige currency (spanning a controlled, designer-chosen range) is essentially what prestige _is_ in math terms — and that conversion is overwhelmingly some shape of softcap. Cookie Clicker's cube root, AdVenture Capitalist's square root, Kittens Game's paragon cube root, Calculator Evolution's sixth root, AD's IP formula. A run-ratio plot like Pecorella's Part III is a softcap-of-a-softcap chart; the modern variant is to render the softcap shape itself as a designable knob.
 - **Stat scaling.** A softcap on a derived stat — energy capacity, magic capacity, building level cap. The point is to keep individual stats from running away from each other; whichever stat the player happened to invest in doesn't dominate. NGU Idle's energy/magic caps are the canonical example.
 - **Building costs.** Less common in pure form (Pecorella's exponential cost is already itself a kind of soft-by-virtue-of-being-slow softcap), but very common as a piecewise shift — Realm Grinder pre/post-Ascension is the lead example, with Antimatter Dimensions' quadratic-in-exponent past a breakpoint as a related variant (covered on the [cost acceleration](/modern/cost-acceleration) page).
 
-The fourth surface — modifier outputs themselves — sometimes shows up but more often the modifier is *defined* as the softcap's output rather than as something separately softcapped. A multiplier that reads "your Heavenly Chips squared, softcapped" is conceptually a softcap, but in code it tends to be a single combined formula rather than a separately-applied softcap on a separate-multiplier value.
+The fourth surface — modifier outputs themselves — sometimes shows up but more often the modifier is _defined_ as the softcap's output rather than as something separately softcapped. A multiplier that reads "your Heavenly Chips squared, softcapped" is conceptually a softcap, but in code it tends to be a single combined formula rather than a separately-applied softcap on a separate-multiplier value.
 
 ## Visibility — show or hide?
 
@@ -293,25 +297,25 @@ A softcap that surprises the player is a UX failure. A softcap the player unders
 
 **Show:** Cookie Clicker, AD, Synergism, Prestige Tree all show their formulas — sometimes hidden behind an opt-in "Nerd Mode" toggle, but exposed. This works for player bases that read formulas as part of the game (the same population that reads the wiki and runs spreadsheets). The downside is it converts the late game into a math problem the player optimizes externally; the upside is it converts the late game into a math problem the player actually likes.
 
-**Hide:** Candy Box, narrative-first games, simulation-heavy games. The formulas are part of the implicit model; the player knows progression has slowed but not exactly when or how. This works for player bases that play for the *feel* of discovery, where exposing the math would shrink the world. The downside is the player can't plan, the upside is they don't have to.
+**Hide:** Candy Box, narrative-first games, simulation-heavy games. The formulas are part of the implicit model; the player knows progression has slowed but not exactly when or how. This works for player bases that play for the _feel_ of discovery, where exposing the math would shrink the world. The downside is the player can't plan, the upside is they don't have to.
 
-**Hybrid (most common in 2026):** show the *fact* of softcapping with a status indicator — usually a color or a small icon next to the affected stat — without showing the formula. Players know progress has slowed and can chase upgrades that affect the cap, without needing to read calculus to understand where they are. Most modifier-stack UIs in modern games do this for the dominant cap on each stat.
+**Hybrid (most common in 2026):** show the _fact_ of softcapping with a status indicator — usually a color or a small icon next to the affected stat — without showing the formula. Players know progress has slowed and can chase upgrades that affect the cap, without needing to read calculus to understand where they are. Most modifier-stack UIs in modern games do this for the dominant cap on each stat.
 
-The visibility decision interacts with the cap's *removability*. A cap the player can never break is an opportunity for hiding (let the player feel the asymptote without staring at it); a cap that's a milestone gate is an opportunity for showing (let the player chase the unlock). Both strategies coexist in shipped games.
+The visibility decision interacts with the cap's _removability_. A cap the player can never break is an opportunity for hiding (let the player feel the asymptote without staring at it); a cap that's a milestone gate is an opportunity for showing (let the player chase the unlock). Both strategies coexist in shipped games.
 
 ## What softcaps don't fix
 
-**Pacing problems past the cap.** A softcap regulates *how fast* progress slows, but it doesn't make slow-progress entertaining. If the post-cap regime has nothing to do but watch a number tick up at a sublinear rate, the cap turns into the wall it was meant to avoid. Modern incrementals usually pair softcaps with *something to do* in the post-cap regime — a side-system that becomes available, a milestone hunt that activates, a new prestige tier that opens. The cap is the regulator; the engagement is a separate design surface.
+**Pacing problems past the cap.** A softcap regulates _how fast_ progress slows, but it doesn't make slow-progress entertaining. If the post-cap regime has nothing to do but watch a number tick up at a sublinear rate, the cap turns into the wall it was meant to avoid. Modern incrementals usually pair softcaps with _something to do_ in the post-cap regime — a side-system that becomes available, a milestone hunt that activates, a new prestige tier that opens. The cap is the regulator; the engagement is a separate design surface.
 
-**Exponential gaps that cancel each other.** Two values both softcapped, one feeding the other, can produce regimes where the upstream cap's reduction exactly cancels a downstream cap's contribution. The result is a quantity that *appears* to be advancing while its propagation downstream is flat. This shows up most often when prestige multipliers are softcapped *and* fed into a softcapped-cost formula; the player optimizes the multiplier, sees the multiplier rise, and doesn't see costs come down at all. Catching these requires running the actual formula chain, not just inspecting each cap individually.
+**Exponential gaps that cancel each other.** Two values both softcapped, one feeding the other, can produce regimes where the upstream cap's reduction exactly cancels a downstream cap's contribution. The result is a quantity that _appears_ to be advancing while its propagation downstream is flat. This shows up most often when prestige multipliers are softcapped _and_ fed into a softcapped-cost formula; the player optimizes the multiplier, sees the multiplier rise, and doesn't see costs come down at all. Catching these requires running the actual formula chain, not just inspecting each cap individually.
 
-**Notation past the cap.** A softcap doesn't slow the *display* of a number, it slows its *meaning*. A value capped at log strength $k = 100$ past threshold $10^{50}$ outputs around 5300 when the input is $10^{100}$ — a five-thousandish output for an input the formatter shows as `1e100`. The player sees `1e100` rolling on the HUD and doesn't see the cap until they look at the output stat. Display layers usually need a parallel "show pre-cap and post-cap separately" affordance for the player to read what's happening; this isn't a softcap problem strictly, but it's a problem softcaps create.
+**Notation past the cap.** A softcap doesn't slow the _display_ of a number, it slows its _meaning_. A value capped at log strength $k = 100$ past threshold $10^{50}$ outputs around 5300 when the input is $10^{100}$ — a five-thousandish output for an input the formatter shows as `1e100`. The player sees `1e100` rolling on the HUD and doesn't see the cap until they look at the output stat. Display layers usually need a parallel "show pre-cap and post-cap separately" affordance for the player to read what's happening; this isn't a softcap problem strictly, but it's a problem softcaps create.
 
 **The decision of when to softcap.** Mathematics doesn't tell you whether to softcap at $10^{20}$ or $10^{50}$, what shape to use, or whether to softcap at all. Those are tuning calls, made by playing the game at the threshold's neighborhood and watching whether the post-threshold regime feels like a slowdown the player will tolerate. This is the same kind of judgment that sets the cost-base growth rate in a Pecorella seesaw — and like that judgment, it's not derivable from first principles, only from observation.
 
 ## What this site uses
 
-Every Pecorella demo on this site renders pure unmodified curves — no softcaps, because Pecorella's framework predates the convention and his teaching point is the unmodified shape. The chart elements showing "milestone bumps" in the Part I demo are the closest thing to a softcap that appears in the faithful section, and those are *upward* bumps, not downward — multipliers the genre had already worked out in 2016, applied at thresholds in the same way modern softcaps would be applied with the slope inverted.
+Every Pecorella demo on this site renders pure unmodified curves — no softcaps, because Pecorella's framework predates the convention and his teaching point is the unmodified shape. The chart elements showing "milestone bumps" in the Part I demo are the closest thing to a softcap that appears in the faithful section, and those are _upward_ bumps, not downward — multipliers the genre had already worked out in 2016, applied at thresholds in the same way modern softcaps would be applied with the slope inverted.
 
 The Modern section pages downstream of this one (cost acceleration, layered prestige) compose softcaps with other modern shapes. The softcap is the building block; the games built on top of it apply it stacked, named, removable, and chained, with the parameters themselves becoming progression knobs on a different time-scale than the input curve. None of which is implementable in a 2016-era runtime — `Math.pow(value, 0.5)` overflows past `1e308`, and the late-game inputs of any game shipping this stuff are years past that ceiling. Softcaps are a 2018+ pattern not because the math is new (the math is from the 1700s) but because the substrate to compute them on real game-state values arrived in 2018.
 
@@ -363,7 +367,7 @@ The Modern section pages downstream of this one (cost acceleration, layered pres
       repo: 'AntimatterDimensionsSourceCode',
       path: 'src/core/tickspeed.js',
       line: '197-266',
-      note: 'FreeTickspeed.fromShards: AD\'s replicanti-adjacent softcap on tickspeed upgrade count. Supporting example of the piecewise family — not the page lead.',
+      note: "FreeTickspeed.fromShards: AD's replicanti-adjacent softcap on tickspeed upgrade count. Supporting example of the piecewise family — not the page lead.",
     },
   ]}
 />

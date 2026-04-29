@@ -6,6 +6,7 @@ import rehypeKatex from 'rehype-katex';
 import rehypeExternalLinks from 'rehype-external-links';
 
 export default defineConfig({
+  base: process.env.BASE_URL ?? '/',
   integrations: [vue(), mdx()],
   markdown: {
     remarkPlugins: [remarkMath],

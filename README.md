@@ -1,24 +1,28 @@
 # incremental-math
 
-A content site replicating and extending Anthony Pecorella's [_The Math of Idle Games_ (Part I–III)](https://www.sirpinski.com/the-math-of-idle-games-part-i/), with live sims and demos backed by [open-loop-engine](../open-loop-engine).
+A content site replicating and extending Anthony Pecorella's [_The Math of Idle Games_ (Part I–III)](https://www.sirpinski.com/the-math-of-idle-games-part-i/), with every chart re-rendered as a live interactive demo.
 
-Faithful re-do first; modern evolution (softcaps, etc.) follows.
+**Live site:** https://namahanna.codeberg.page/incremental-math/
 
-Source pages archived under `docs/source/` (HTML snapshots, gitignored).
+Faithful Pecorella distillation first; modern evolution (softcaps, synergy multipliers, production graphs, etc.) follows in a dedicated section.
+
+Source HTML snapshots of the originals are archived under `docs/source/` (gitignored).
 
 ## Stack
 
-Astro 5 + TypeScript + Vue (for interactive demo islands) + open-loop-engine. Prose lives in `.md` pages; demos are Vue components hydrated per-island via `client:visible`.
+Astro 5 · TypeScript · Vue 3 (demo islands) · open-loop-engine · KaTeX (math rendering)
+
+Prose lives in `.mdx` pages; interactive demos are Vue components hydrated lazily via `client:visible`.
 
 ## Commands
 
 ```bash
 pnpm install          # engine resolves via link: to ../open-loop-engine
 pnpm dev              # Astro dev server
-pnpm build            # astro build (static output to dist/)
+pnpm build            # static output → dist/
 pnpm preview          # preview production build
 pnpm check            # astro check (type + content validation)
-pnpm lint             # eslint src/
+pnpm lint             # eslint
 pnpm format           # prettier --write
 ```
 
@@ -26,14 +30,29 @@ pnpm format           # prettier --write
 
 ```
 src/
-├── pages/             # File-based routing
-│   ├── index.astro    # Landing / TOC
-│   ├── part-i.md      # Part I prose (uses Article layout)
-│   ├── part-ii.md
-│   └── part-iii.md
+├── pages/
+│   ├── index.astro          # Landing / TOC
+│   ├── part-i.mdx           # Pecorella Part I — Cost & Production
+│   ├── part-ii.mdx          # Pecorella Part II — Derivative Growth
+│   ├── part-iii.mdx         # Pecorella Part III — Prestige Cycles
+│   └── modern/              # Post-2016 patterns (independent topics)
+│       ├── big-numbers.mdx
+│       ├── softcaps.mdx
+│       ├── challenges.mdx
+│       ├── offline-progress.mdx
+│       ├── production-graphs.mdx
+│       ├── synergy-multipliers.mdx
+│       ├── modifier-chains.mdx
+│       ├── cost-acceleration.mdx
+│       ├── layered-prestige.mdx
+│       ├── time-as-resource.mdx
+│       └── automation.mdx
 ├── layouts/
-│   └── Article.astro  # Wrapper for prose pages
-├── components/        # Vue demo components — each owns one engine instance
-│                      # Embed in .md pages as: <DemoName client:visible />
-└── styles/base.css    # Prose typography + CSS variables
+│   └── Article.astro        # Prose page wrapper
+├── components/              # Vue demo islands — one engine instance each
+└── styles/base.css          # Typography + CSS variables
 ```
+
+## Deployment
+
+Pushes to `main` trigger a Codeberg Pages deploy via `.forgejo/workflows/deploy.yml`.

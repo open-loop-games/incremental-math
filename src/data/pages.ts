@@ -16,7 +16,7 @@ export interface PageSection {
 
 export const sections: PageSection[] = [
   {
-    label: 'Pecorella (2016)',
+    label: 'Pecorella (2016–2017)',
     blurb:
       'Faithful distillation of Anthony Pecorella’s three-part series, with every chart re-rendered as an interactive demo.',
     originals: {
