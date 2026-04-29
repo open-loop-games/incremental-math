@@ -1,0 +1,698 @@
+{
+  "AntimatterDimensionsSourceCode": {
+    "webBase": "https://github.com/IvarK/AntimatterDimensionsSourceCode",
+    "sha": "8ae221fcb07db667b3d04114c2b977175966611d",
+    "host": "github"
+  },
+  "Prestige-Tree": {
+    "webBase": "https://github.com/Jacorb90/Prestige-Tree",
+    "sha": "cec9198c8ce9a5c6d107179871cbe84fab92ae0d",
+    "host": "github"
+  },
+  "SynergismOfficial": {
+    "webBase": "https://github.com/Pseudo-Corp/SynergismOfficial",
+    "sha": "e899fe060922a1c32b828504a648e8314a4e8f8f",
+    "host": "github"
+  },
+  "progress_knight_quest": {
+    "webBase": "https://github.com/indomit/progress_knight_2",
+    "sha": "2c6c3c6ba45de78280bcc6df58a0a7f923c6a252",
+    "host": "github"
+  },
+  "groundhog-life": {
+    "webBase": "https://github.com/tcztzy/groundhog-life",
+    "sha": "69de52f8210fc07b20128a719507c19a39791328",
+    "host": "github"
+  },
+  "Evolve": {
+    "webBase": "https://github.com/pmotschmann/Evolve",
+    "sha": "f3168211172c11808eb48bc3753642f193e9b5b4",
+    "host": "github"
+  },
+  "shark-incremental": {
+    "webBase": "https://github.com/MrRedShark77/shark-incremental",
+    "sha": "765ab3a43eda351d920ec90b1309788231ef98cb",
+    "host": "github"
+  },
+  "idle-loops-lloyd": {
+    "webBase": "https://github.com/lloyd-delacroix/omsi-loops",
+    "sha": "5008c4a1faca102af543b4f9369f6cef4b763823",
+    "host": "github"
+  },
+  "idle-loops-omsi": {
+    "webBase": "https://github.com/omsi6/omsi6.github.io",
+    "sha": "fa21477d424f3aa1f1bf6deb9f6f83c2569770ab",
+    "host": "github"
+  },
+  "idle-loops-squirrel": {
+    "webBase": "https://github.com/Mopatissier/IdleLoopsReworked",
+    "sha": "8c26016e2c5f18340d46a6dea63dcf7ecc798916",
+    "host": "github"
+  },
+  "SharkGame": {
+    "webBase": "https://github.com/Toby222/SharkGame",
+    "sha": "9634f83166d0ad29db63d24547f55a40f8d80a37",
+    "host": "github"
+  },
+  "arcanum": {
+    "webBase": "https://gitlab.com/mathiashjelm/arcanum",
+    "sha": "5132774a979734bb6523e2c77225930bd497ce91",
+    "host": "gitlab"
+  },
+  "DodecaDragons": {
+    "webBase": "https://github.com/DemoninCG/DodecaDragons",
+    "sha": "0ed545495bc779077a41832b24b164e6d85eeaa1",
+    "host": "github"
+  },
+  "incremental-mass-rewritten": {
+    "webBase": "https://github.com/MrRedShark77/incremental-mass-rewritten",
+    "sha": "e8e1f96f61e7252cd1839a906b8d54f74a215e32",
+    "host": "github"
+  },
+  "dimensional-incremental-rewind": {
+    "webBase": "https://github.com/MrRedShark77/dimensional-incremental-rewind",
+    "sha": "69cd2c744fee49e49616a1f188fd240fc76e9834",
+    "host": "github"
+  },
+  "Advent-Incremental": {
+    "webBase": "https://github.com/thepaperpilot/Advent-Incremental",
+    "sha": "421eea7bd9bea60f10e7856f8d49d7ffba9520d7",
+    "host": "github"
+  },
+  "The-Modding-Tree": {
+    "webBase": "https://github.com/Acamaeda/The-Modding-Tree",
+    "sha": "4d8a86cfb3c59ef3ef4c222f21ef4fbee980c621",
+    "host": "github"
+  },
+  "Nucaranlaeg.github.io": {
+    "webBase": "https://github.com/Nucaranlaeg/Nucaranlaeg.github.io",
+    "sha": "dd9bf72e44e414ea440b216b482ecc61700c5fdd",
+    "host": "github"
+  },
+  "SuperTurtleIdle.github.io": {
+    "webBase": "https://github.com/SuperTurtleIdle/SuperTurtleIdle.github.io",
+    "sha": "7a8cd583917b2ff73f5e85136fd0bb1bfa002383",
+    "host": "github"
+  },
+  "Trimps": {
+    "webBase": "https://github.com/Trimps/Trimps.github.io",
+    "sha": "b9edb1dfee270ebf81bef8d934dc71276bf8d963",
+    "host": "github"
+  },
+  "kittensgame": {
+    "webBase": "https://github.com/nuclear-unicorn/kittensgame",
+    "sha": "5e0794bca2a4408cd8f79317a5f8a457c4b7dd66",
+    "host": "github"
+  },
+  "swarm-simulator": {
+    "webBase": "https://github.com/swarmsim/swarm",
+    "sha": "06b4f404aa324a0b454348508cfa63d5c0f1ff54",
+    "host": "github"
+  },
+  "a-dark-room": {
+    "webBase": "https://github.com/doublespeakgames/adarkroom",
+    "sha": "1fada4620b6c66bd07bf15a3f1eb8223df8bc1d7",
+    "host": "github"
+  },
+  "derivative-clicker": {
+    "webBase": "https://github.com/gzgreg/DerivativeClicker",
+    "sha": "cd1283b93ee29fc736a8becdfeddee4c7968e662",
+    "host": "github"
+  },
+  "candy-box": {
+    "webBase": "https://github.com/candybox2/candybox",
+    "sha": "955eaaa3454b438874c0932f70cff22ec813d922",
+    "host": "github"
+  },
+  "candy-box-2": {
+    "webBase": "https://github.com/candybox2/candybox2.github.io",
+    "sha": "042f6e0ab257b248ea48f7b0b343c2a21cffb13a",
+    "host": "github"
+  },
+  "Biotomata-Game": {
+    "webBase": "https://github.com/Talos0248/Biotomata-Dev",
+    "sha": "fa9ed73c47e0c60bd844ec6af814795e46f93b2e",
+    "host": "github"
+  },
+  "Multiversal-Warrior": {
+    "webBase": "https://github.com/teckentech/Multiversal-Warrior",
+    "sha": "bd4f2f7755a555dade8fdae348fdb08be5ef6b24",
+    "host": "github"
+  },
+  "elemental-inception-incremental": {
+    "webBase": "https://github.com/Nagshell/elemental-inception-incremental",
+    "sha": "676b586e8e3a366429510a787b73262e7846671a",
+    "host": "github"
+  },
+  "the-climb": {
+    "webBase": "https://github.com/tomlipo/the-climb",
+    "sha": "b3a9510f34f210cb3f731932316efe9f100f04f2",
+    "host": "github"
+  },
+  "fundamental": {
+    "webBase": "https://github.com/awWhy/Fundamental",
+    "sha": "5b35bab045f32af849d6a3740244376ae338c11c",
+    "host": "github"
+  },
+  "sandcastle-builder": {
+    "webBase": "https://github.com/eternaldensity/Sandcastle-Builder",
+    "sha": "4ecf1f261420ef0836264910b90f4a37ebdb300b",
+    "host": "github"
+  },
+  "celestial-incremental": {
+    "webBase": "https://github.com/Icecreamdudes/celestial_incremental",
+    "sha": "bb37968181734fc7b9bfbff0b320b68e81a2af12",
+    "host": "github"
+  },
+  "the-silly-caverns": {
+    "webBase": "https://github.com/ambercatgirl/woah-its-rex",
+    "sha": "5ecec58d51f9de96861565ca8081a3bcdddaa2ad",
+    "host": "github"
+  },
+  "download-ram-idle-2": {
+    "webBase": "https://github.com/Squirrel404/download_ram_2",
+    "sha": "fc2618afa7459d01b3689d04f1686982fb33ea06",
+    "host": "github"
+  },
+  "Profectus": {
+    "webBase": "https://github.com/profectus-engine/Profectus",
+    "sha": "d69197d5c7225a0bb58b5a4d5f8e19c1c04a61ea",
+    "host": "github"
+  },
+  "gacha": {
+    "webBase": "https://github.com/ducdat0507/gacha",
+    "sha": "0ef1a1dead021a6b6fe5d5867c866ad0f00e433c",
+    "host": "github"
+  },
+  "stable-jewels": {
+    "webBase": "https://github.com/123ishaTest/stable-jewels",
+    "sha": "e374935344b6f942c5962e5ee55fa98f1167b476",
+    "host": "github"
+  },
+  "little-dig-game": {
+    "webBase": "https://github.com/alecgdouglas/littlediggame",
+    "sha": "81da634873192a846f8ea62caa87d682ffbabf00",
+    "host": "github"
+  },
+  "points-progression": {
+    "webBase": "https://github.com/Troxi54/Points-Progression",
+    "sha": "56ee346a98771cb43d817c5bc7fc40680a9f4ba2",
+    "host": "github"
+  },
+  "industry-idle": {
+    "webBase": "https://github.com/fishpondstudio/IndustryIdle",
+    "sha": "e16783b7a69c6313de2e46e14f1b3e63d565db91",
+    "host": "github"
+  },
+  "civ-clicker": {
+    "webBase": "https://github.com/deathraygames/civ-clicker",
+    "sha": "ca77c8514eb542912bad819add97ab0693eec52b",
+    "host": "github"
+  },
+  "calculator-evolution": {
+    "webBase": "https://github.com/spotky1004/Calculator-Evolution",
+    "sha": "5915cc2917923b8c7c5e646c5304a7ae9db3379f",
+    "host": "github"
+  },
+  "incremental-god-tree": {
+    "webBase": "https://github.com/Icecreamdudes/Incremental-God-Tree",
+    "sha": "184577686cb2a6bfce6c2eed16246dacf8cc4d17",
+    "host": "github"
+  },
+  "check-back-mod": {
+    "webBase": "https://github.com/MarcElAcoplao/CheckBackMod",
+    "sha": "d59ef184d0fe6f5c61b7d05bee5010860bfb9c3f",
+    "host": "github"
+  },
+  "milky-way-idle-moolite": {
+    "webBase": "https://github.com/Ishadijcks/MooLite",
+    "sha": "b800864489645704b3bd3a5910242611f0b4569d",
+    "host": "github"
+  },
+  "level13": {
+    "webBase": "https://github.com/nroutasuo/level13",
+    "sha": "1d63d990a616a48c674061903b39a54e1cf88b47",
+    "host": "github"
+  },
+  "distance-incremental": {
+    "webBase": "https://github.com/Jacorb90/DistInc.github.io",
+    "sha": "6004f940fce82a42dd463dc2e4d50fd65b0dca5f",
+    "host": "github"
+  },
+  "solaris": {
+    "webBase": "https://github.com/idle-js-games/solaris",
+    "sha": "efed2b4c7cbf1f90904037612ca4542faf1b4f04",
+    "host": "github"
+  },
+  "replicanti-incremental": {
+    "webBase": "https://github.com/g1tyx/replicanti-incremental",
+    "sha": "1a6939ea3a515da16ae9c4ea66a0b58815d561ef",
+    "host": "github"
+  },
+  "idle-ant-farm": {
+    "webBase": "https://github.com/g1tyx/idle-ant-farm",
+    "sha": "e7e18308af116fb8fbdf46eb661a13962099fca0",
+    "host": "github"
+  },
+  "1255-burgomaster": {
+    "webBase": "https://github.com/Areso/1255-burgomaster",
+    "sha": "a8ebb11eccb15b3cabafc6bc7908346a9d8f769e",
+    "host": "github"
+  },
+  "amino-idle": {
+    "webBase": "https://github.com/g1tyx/amino-idle",
+    "sha": "8668a41ff1f7feb8466c3a45f6cf769ff97458bb",
+    "host": "github"
+  },
+  "stopsign-games": {
+    "webBase": "https://github.com/StopSign/stopsign.github.io",
+    "sha": "851e37a0e6645e68d975907a47f0f47193ac1bf6",
+    "host": "github"
+  },
+  "a-dark-forest": {
+    "webBase": "https://github.com/TinyTakinTeller/GodotProjectZero",
+    "sha": "fc2143c41212fb009b396128b46aa33aff80fc0f",
+    "host": "github"
+  },
+  "cyberpunk-life": {
+    "webBase": "https://github.com/g1tyx/cyberpunk-life",
+    "sha": "0c8d29388405266932bd5ec62f57d9ee7c9ea43d",
+    "host": "github"
+  },
+  "plinko-incremental": {
+    "webBase": "https://github.com/g1tyx/plinko-incremental",
+    "sha": "30c0294397393e3c447b75103a0b7bb6d91676d2",
+    "host": "github"
+  },
+  "technomancy": {
+    "webBase": "https://github.com/idle-js-games/Technomancy",
+    "sha": "5f4bca20985e91e358893ccbf152c25440ef9811",
+    "host": "github"
+  },
+  "really-grass-cutting-incremental": {
+    "webBase": "https://github.com/MrRedShark77/Really-Grass-Cutting-Incremental",
+    "sha": "2c33dee1e199d9f3ab5071aa0b6f6c0283289126",
+    "host": "github"
+  },
+  "the-game-dev-tree": {
+    "webBase": "https://github.com/thepaperpilot/The-Modding-Tree",
+    "sha": "7b9d5a705536d85324f49a28d86d9995e833224b",
+    "host": "github"
+  },
+  "luts91-games": {
+    "webBase": "https://github.com/Luts91/Luts91.github.io",
+    "sha": "37eea0d4c482ca7c95e965b1569369a9ad236f94",
+    "host": "github"
+  },
+  "terrafold": {
+    "webBase": "https://github.com/StopSign/stopsign.github.io",
+    "sha": "851e37a0e6645e68d975907a47f0f47193ac1bf6",
+    "host": "github"
+  },
+  "structure": {
+    "webBase": "https://github.com/seihoukei/structure",
+    "sha": "678ea9929922b8b22d75f1fc4fd5864fad3d8a2a",
+    "host": "github"
+  },
+  "idle-loops-dmchurch": {
+    "webBase": "https://github.com/dmchurch/omsi-loops",
+    "sha": "fe4a349efb799a56ab548018caca1a1a1aea0c8f",
+    "host": "github"
+  },
+  "progress_knight": {
+    "webBase": "https://github.com/ihtasham42/progress-knight",
+    "sha": "f6dd0c3c444d838f80325bbdca918160b99e89e5",
+    "host": "github"
+  },
+  "progress_knight_reborn": {
+    "webBase": "https://github.com/camerongott/progress-knight",
+    "sha": "757a7c44e823f223cf276a1e87a3277963a2e010",
+    "host": "github"
+  },
+  "progress_knight_2": {
+    "webBase": "https://github.com/Symb1/progress_knight_2",
+    "sha": "5b6b059b1f5ad645837e504bde1d455995d05514",
+    "host": "github"
+  },
+  "iron-idle": {
+    "webBase": "https://github.com/JustinDMS/IronIdle",
+    "sha": "3924c82bf9fe28b2261870cd5ea0d0ea9c9e5192",
+    "host": "github"
+  },
+  "lored-legacy": {
+    "webBase": "https://github.com/Drillur/LORED-Legacy",
+    "sha": "bf8ca7a56fcf34f61c2b4d1ee9b865e3991566ca",
+    "host": "github"
+  },
+  "99managers": {
+    "webBase": "https://codeberg.org/dulvui/99managers-futsal-edition",
+    "sha": "49468260c1d3f593639be1632ee039897e8cff93",
+    "host": "other"
+  },
+  "monster-daycare": {
+    "webBase": "https://github.com/verstraate/monster-daycare",
+    "sha": "3b45655d1aef7ac789b8967cbdf0f3233ddba5d6",
+    "host": "github"
+  },
+  "poder-solar": {
+    "webBase": "https://codeberg.org/antimundo/poder-solar",
+    "sha": "d36a93471e6319de7b53b404c4b8436840e6771d",
+    "host": "other"
+  },
+  "uclicker": {
+    "webBase": "https://github.com/philipcass/uClicker",
+    "sha": "055b8168d8ecc73d3e270af815a3cbeef9060eb6",
+    "host": "github"
+  },
+  "incrielemental": {
+    "webBase": "https://github.com/DerekGooding/IncriElemental",
+    "sha": "22b1d428f1e2a318a6c5d58aa8ed986e8d7d7e87",
+    "host": "github"
+  },
+  "capital-and-cargo": {
+    "webBase": "https://github.com/dhorions/Capital-and-Cargo",
+    "sha": "eb0d7f94de5e23caaab50c96c574c21551cbe954",
+    "host": "github"
+  },
+  "power-idle": {
+    "webBase": "https://github.com/VoidCloud04/Power-Idle",
+    "sha": "e7d45792ebec57ac8218b4587a5f715b01a78c2f",
+    "host": "github"
+  },
+  "colors-runners-clone": {
+    "webBase": "https://github.com/gokhansaldik/Colors_Runners_Clone",
+    "sha": "3fa880cdac84c6aa4d3e9243d9534f826a948f27",
+    "host": "github"
+  },
+  "blorbclicker": {
+    "webBase": "https://github.com/SevenDucks/BlorbClicker",
+    "sha": "b19f552329b912a42364b70be0db53921e11bf96",
+    "host": "github"
+  },
+  "devilf": {
+    "webBase": "https://github.com/ym6745476/devilf",
+    "sha": "98eb6374fc92e2ed1a4849301f92c4ab45ba8a71",
+    "host": "github"
+  },
+  "koinboss": {
+    "webBase": "https://github.com/detri/koinboss",
+    "sha": "82055a733695e12f6844ad9ea2649a74c844f822",
+    "host": "github"
+  },
+  "farcebook": {
+    "webBase": "https://github.com/kitnato/farcebook",
+    "sha": "640d8f3c0b20e88bf4ffc8bf4a672d08bbc2b2ac",
+    "host": "github"
+  },
+  "hundun-idle-all": {
+    "webBase": "https://github.com/hundun000/hundun-idle-all",
+    "sha": "32eb2546c407cd51ef90e1ca6c040496f85e2631",
+    "host": "github"
+  },
+  "idle-siege": {
+    "webBase": "https://github.com/RyanMan56/idle-siege",
+    "sha": "3b028b0cebba08a4dd8c4c028b871f95c458db02",
+    "host": "github"
+  },
+  "galaxy": {
+    "webBase": "https://github.com/thedaian/galaxy",
+    "sha": "9afde86ce36de016a7e4b3dec99833ee429f952a",
+    "host": "github"
+  },
+  "clickgame": {
+    "webBase": "https://github.com/dynamicshroud/clickgame",
+    "sha": "221a9d5af8f751a071e97366fc446cc3cd7878b7",
+    "host": "github"
+  },
+  "enemy-clicker": {
+    "webBase": "https://github.com/SusheelThapa/Enemy-Clicker",
+    "sha": "576ef9e38505d6765d68b9039b4286b29358c838",
+    "host": "github"
+  },
+  "Primordia": {
+    "webBase": "https://github.com/Jacorb90/Primordial-Tree",
+    "sha": "6058a9f4330fdc2f4cdfdbaae3fd33046de4b279",
+    "host": "github"
+  },
+  "planar-pioneers": {
+    "webBase": "https://github.com/thepaperpilot/planar-pioneers",
+    "sha": "39fd5e1c1ff625ead6c04c275160bba77319a32f",
+    "host": "github"
+  },
+  "Universal-Reconstruction": {
+    "webBase": "https://github.com/murapix/Universal-Reconstruction",
+    "sha": "a8cd02c2fd080bc0a4be6fb8ed2da583b7bf82c4",
+    "host": "github"
+  },
+  "kitten-scientists": {
+    "webBase": "https://github.com/kitten-science/kitten-scientists",
+    "sha": "cd12edb4509aab9ce720ac8c13402e7faf47c46e",
+    "host": "github"
+  },
+  "evolve-scripting-edition": {
+    "webBase": "https://github.com/TMVictor/Evolve-Scripting-Edition",
+    "sha": "c88cbff416bcb1880d72abf1d1de7e96796690ca",
+    "host": "github"
+  },
+  "frozen-cookies": {
+    "webBase": "https://github.com/Icehawk78/FrozenCookies",
+    "sha": "4a64057708d4bf182b42889340393d7dcbf46440",
+    "host": "github"
+  },
+  "cookie-monster": {
+    "webBase": "https://github.com/CookieMonsterTeam/CookieMonster",
+    "sha": "7f06fd383a280747200aff8e76280abc5d505ddc",
+    "host": "github"
+  },
+  "autotrimps": {
+    "webBase": "https://github.com/SadAugust/AutoTrimps",
+    "sha": "7341f39464985d88198f15a670a690f293ef6939",
+    "host": "github"
+  },
+  "nguinjector": {
+    "webBase": "https://github.com/rvazarkar/NGUInjector",
+    "sha": "e9b8bdc6224155ac51ba2d7869f5ecebc0c9a094",
+    "host": "github"
+  },
+  "synergism-automation": {
+    "webBase": "https://github.com/Galefury/synergism-automation",
+    "sha": "52b7759caf049424210ba3d450b87ad4e7b58007",
+    "host": "github"
+  },
+  "synergism-hypersynergy": {
+    "webBase": "https://github.com/ahvonenj/synergism-hypersynergy",
+    "sha": "c44bc78babab152fed49f135089f466ed4834975",
+    "host": "github"
+  },
+  "ink": {
+    "webBase": "https://github.com/inkle/ink",
+    "sha": "f4102e90ddf85ca86192d5b0c416060dfdfceec6",
+    "host": "github"
+  },
+  "dialogic": {
+    "webBase": "https://github.com/dialogic-godot/dialogic",
+    "sha": "90f5c153f1429c16eb273309b5a6c288731fce8c",
+    "host": "github"
+  },
+  "yarn-spinner": {
+    "webBase": "https://github.com/YarnSpinnerTool/YarnSpinner",
+    "sha": "8577e250aac50afdc5342d53f0d2f3f5d961e0ff",
+    "host": "github"
+  },
+  "yarn-spinner-unity-samples": {
+    "webBase": "https://github.com/YarnSpinnerTool/YarnSpinner-Unity-Samples",
+    "sha": "b9207ae8ce3678cba36c1629e9a834deb7b9ae90",
+    "host": "github"
+  },
+  "renpy": {
+    "webBase": "https://github.com/renpy/renpy",
+    "sha": "8259a39c44c9bdab65b2204ab8e00d91e3639981",
+    "host": "github"
+  },
+  "openc2e": {
+    "webBase": "https://github.com/openc2e/openc2e",
+    "sha": "2f91af70e50090ed71e79e952ab4d5e831963db0",
+    "host": "github"
+  },
+  "exult": {
+    "webBase": "https://github.com/exult/exult",
+    "sha": "6d31f11ffeb12969a477b1db9ea7849e9cb412e8",
+    "host": "github"
+  },
+  "daggerfall-unity": {
+    "webBase": "https://github.com/Interkarma/daggerfall-unity",
+    "sha": "b8a3ce28950d70304884e910704dbbd548f364ab",
+    "host": "github"
+  },
+  "cataclysm-dda": {
+    "webBase": "https://github.com/CleverRaven/Cataclysm-DDA",
+    "sha": "19a464398fc6953da09311c2104aedad8dc7e0b2",
+    "host": "github"
+  },
+  "tuxemon": {
+    "webBase": "https://github.com/Tuxemon/Tuxemon",
+    "sha": "4c8e496e7dd6e5d2aa5752fc32f70b12950c9989",
+    "host": "github"
+  },
+  "BehaviorTree.CPP": {
+    "webBase": "https://github.com/BehaviorTree/BehaviorTree.CPP",
+    "sha": "e6754eeb550f0c76b82da42e377a4d807ce51a6b",
+    "host": "github"
+  },
+  "fluid-htn": {
+    "webBase": "https://github.com/ptrefall/fluid-hierarchical-task-network",
+    "sha": "e67af264cfdf240053f392d4e0e6c620c454eb97",
+    "host": "github"
+  },
+  "py_trees": {
+    "webBase": "https://github.com/splintered-reality/py_trees",
+    "sha": "591a9f3343fbfc11e4013178034343fee16be89e",
+    "host": "github"
+  },
+  "recastnavigation": {
+    "webBase": "https://github.com/recastnavigation/recastnavigation",
+    "sha": "9f4ce64458dfae86e1239c525ddc219c4e9e06f1",
+    "host": "github"
+  },
+  "Ludii": {
+    "webBase": "https://github.com/Ludeme/Ludii",
+    "sha": "8ba67089dd65129c9256031f00c5a32b4618da76",
+    "host": "github"
+  },
+  "open_spiel": {
+    "webBase": "https://github.com/google-deepmind/open_spiel",
+    "sha": "feab31d385e4aac7093954f6f6656f3d8baa32c9",
+    "host": "github"
+  },
+  "lc0": {
+    "webBase": "https://github.com/LeelaChessZero/lc0",
+    "sha": "909a40826db9e8b221d9209a487daba6ab57e3b7",
+    "host": "github"
+  },
+  "ualbertabot": {
+    "webBase": "https://github.com/davechurchill/ualbertabot",
+    "sha": "558899d8793456f4a6ec4196efbb5235552e24db",
+    "host": "github"
+  },
+  "steamhammer": {
+    "webBase": "https://github.com/kant2002/steamhammer",
+    "sha": "bb4f53792e8541f1214a00d790249201dad503b0",
+    "host": "github"
+  },
+  "McRave": {
+    "webBase": "https://github.com/Cmccrave/McRave",
+    "sha": "17924791b7afbbd627f4f074ef2237f14abcd214",
+    "host": "github"
+  },
+  "Locutus": {
+    "webBase": "https://github.com/bmnielsen/Locutus",
+    "sha": "4e96da0b7e31831ee97aaef153b2bef977a235e1",
+    "host": "github"
+  },
+  "LetaBot": {
+    "webBase": "https://github.com/MartinRooijackers/LetaBot",
+    "sha": "10785b42d79fb95d39816d625ff7a7d6e18356ba",
+    "host": "github"
+  },
+  "wesnoth": {
+    "webBase": "https://github.com/wesnoth/wesnoth",
+    "sha": "ccc6594315d49e95ea08491d24e7ea3b0dfe6f09",
+    "host": "github"
+  },
+  "freeciv": {
+    "webBase": "https://github.com/freeciv/freeciv",
+    "sha": "b3750e8365e84630f9d584a78e232925ca24bab7",
+    "host": "github"
+  },
+  "Quake-III-Arena": {
+    "webBase": "https://github.com/id-Software/Quake-III-Arena",
+    "sha": "dbe4ddb10315479fc00086f08e25d968b4b43c49",
+    "host": "github"
+  },
+  "sauerbraten": {
+    "webBase": "https://github.com/embeddedc/sauerbraten",
+    "sha": "22ddcbc873048208f05852484b5d6be2957dcbd3",
+    "host": "github"
+  },
+  "OpenRA": {
+    "webBase": "https://github.com/OpenRA/OpenRA",
+    "sha": "ef92a448b6f65b9f4fde37f23d8c0591a4659b64",
+    "host": "github"
+  },
+  "spring": {
+    "webBase": "https://github.com/spring/spring",
+    "sha": "2925abc99980eb3b08f421a6a45a184938611c40",
+    "host": "github"
+  },
+  "CircuitAI": {
+    "webBase": "https://github.com/rlcevg/CircuitAI",
+    "sha": "a79d90b36f8d78d72048e8377e9414fe50934de8",
+    "host": "github"
+  },
+  "Shard": {
+    "webBase": "https://github.com/Tarendai/Shard",
+    "sha": "4b1476365f598accfcf274acde6850baaeeb6060",
+    "host": "github"
+  },
+  "0ad": {
+    "webBase": "https://github.com/0ad/0ad",
+    "sha": "61a3b9507d974084e6badb88a0826bd89a6d5b8b",
+    "host": "github"
+  },
+  "angband": {
+    "webBase": "https://github.com/angband/angband",
+    "sha": "64d78d7f6a0453863bd8d83e8fb0db1effb85384",
+    "host": "github"
+  },
+  "TAEB": {
+    "webBase": "https://github.com/TAEB/TAEB",
+    "sha": "efbc879bd011883200c385e3f834249c752a180d",
+    "host": "github"
+  },
+  "angband-grommen": {
+    "webBase": "https://github.com/Grommen/angband",
+    "sha": "27e4ce3d749e7010ea044b4d56c2bb755d60d088",
+    "host": "github"
+  },
+  "Voyager": {
+    "webBase": "https://github.com/MineDojo/Voyager",
+    "sha": "55e45a880755d0c8c66ca7fb5fe7962ac8974f89",
+    "host": "github"
+  },
+  "generative_agents": {
+    "webBase": "https://github.com/joonspk-research/generative_agents",
+    "sha": "fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4",
+    "host": "github"
+  },
+  "openmw": {
+    "webBase": "https://github.com/OpenMW/openmw",
+    "sha": "19e8ce3c8d441c9696a3a0c189df1b1bc16c3a28",
+    "host": "github"
+  },
+  "endless-sky": {
+    "webBase": "https://github.com/endless-sky/endless-sky",
+    "sha": "9a070498526d083b269c0ee64df0494fb8e8b15a",
+    "host": "github"
+  },
+  "AdmiralAI": {
+    "webBase": "https://github.com/Yexo/AdmiralAI",
+    "sha": "897d768dc0b2928140539db1259ed36c9632cd90",
+    "host": "github"
+  },
+  "crawl_navigator": {
+    "webBase": "https://github.com/boogabee/crawl_navigator",
+    "sha": "2fbb97662d62eee983d14a590a493cb7c3812ab8",
+    "host": "github"
+  },
+  "cookie-clicker": {
+    "webBase": "https://github.com/ozh/cookieclicker",
+    "sha": "1b6c091be1df25853817e4ace82e160984581e37",
+    "host": "github"
+  },
+  "paperclips": {
+    "webBase": "https://github.com/jgmize/paperclips",
+    "sha": "d1e9177d02f7460363ebc7d28fe133228db18ed5",
+    "host": "github",
+    "pathPrefix": "docs/"
+  }
+}
