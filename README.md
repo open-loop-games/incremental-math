@@ -6,7 +6,7 @@ A content site replicating and extending Anthony Pecorella's [_The Math of Idle 
 
 Faithful Pecorella distillation first; modern evolution (softcaps, synergy multipliers, production graphs, etc.) follows in a dedicated section.
 
-Source HTML snapshots of the originals are archived under `docs/source/` (gitignored).
+Source HTML snapshots of the originals are archived under `docs/source/` (gitignored). The backing GDC spreadsheets are served from `public/source/sheets/` and available at `/incremental-math/source/sheets/` on the live site.
 
 ## Stack
 
