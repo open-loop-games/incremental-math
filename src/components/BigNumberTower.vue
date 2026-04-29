@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { Decimal } from 'open-loop-engine/primitives';
+import { Decimal } from '../lib/decimal';
 
 // We use Decimal.toString() rather than the engine's `format` for this demo because
 // the lesson is the layer structure itself — toString renders layer-N as a stack of
@@ -110,12 +110,16 @@ const dyings = computed(() => {
     <div class="demo-controls">
       <label>
         <span class="demo-label">tower depth = {{ step }}</span>
-        <input type="range" v-model.number="step" :min="0" :max="maxStep" />
+        <input
+          v-model.number="step"
+          type="range"
+          :min="0"
+          :max="maxStep"
+        >
       </label>
       <p class="tower-caption">
         Each row applies <code>10<sup>x</sup></code> to the previous row, starting at
-        <code>x = {{ seed }}</code>. The three columns are the same arithmetic in three different number
-        representations.
+        <code>x = {{ seed }}</code>. The three columns are the same arithmetic in three different number representations.
       </p>
     </div>
     <table class="tower-table">
@@ -137,8 +141,12 @@ const dyings = computed(() => {
           }"
         >
           <td>{{ r.step }}</td>
-          <td :class="{ 'tower-cell-dead': r.native.startsWith('∞') }">{{ r.native }}</td>
-          <td :class="{ 'tower-cell-dead': r.bi.startsWith('∞') }">{{ r.bi }}</td>
+          <td :class="{ 'tower-cell-dead': r.native.startsWith('∞') }">
+            {{ r.native }}
+          </td>
+          <td :class="{ 'tower-cell-dead': r.bi.startsWith('∞') }">
+            {{ r.bi }}
+          </td>
           <td>
             {{ r.be }}
             <span class="tower-layer">L{{ r.beLayer }}</span>
@@ -147,14 +155,10 @@ const dyings = computed(() => {
       </tbody>
     </table>
     <div class="tower-summary">
-      <span v-if="dyings.nat >= 0">
-        Native dies at step {{ dyings.nat }}.
-      </span>
+      <span v-if="dyings.nat >= 0"> Native dies at step {{ dyings.nat }}. </span>
       <span v-else>Native still alive at step {{ step }}.</span>
       {{ ' ' }}
-      <span v-if="dyings.bi >= 0">
-        break_infinity dies at step {{ dyings.bi }}.
-      </span>
+      <span v-if="dyings.bi >= 0"> break_infinity dies at step {{ dyings.bi }}. </span>
       <span v-else>break_infinity still alive at step {{ step }}.</span>
       {{ ' ' }}
       <span>break_eternity continues; storage cost is one extra layer per ~step.</span>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { format } from 'open-loop-engine/primitives';
+import { format } from '../lib/decimal';
 
 const xMax = ref(10000);
 const threshold = ref(1000);

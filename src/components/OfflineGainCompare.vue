@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { format } from 'open-loop-engine/primitives';
+import { format } from '../lib/decimal';
 
 // Offline-gain-vs-time-away curves for the four families described in the
 // page. Operates on JS Number — the lesson is curve shape, not big-number
@@ -185,60 +185,155 @@ function setVisible(key: string, value: boolean) {
     <div class="ogc-controls">
       <label>
         <span class="demo-label">x range = 0..{{ hoursMax.toFixed(0) }} h away</span>
-        <input type="range" v-model.number="hoursMax" min="3" max="168" step="1" />
+        <input
+          v-model.number="hoursMax"
+          type="range"
+          min="3"
+          max="168"
+          step="1"
+        >
       </label>
       <label>
         <span class="demo-label">online rate = {{ format(ratePerHour) }} / h</span>
-        <input type="range" v-model.number="ratePerHour" min="100" max="100000" step="100" />
+        <input
+          v-model.number="ratePerHour"
+          type="range"
+          min="100"
+          max="100000"
+          step="100"
+        >
       </label>
       <label>
         <span class="demo-label">offline cap = {{ offlineCap.toFixed(1) }} h</span>
-        <input type="range" v-model.number="offlineCap" min="0.5" max="72" step="0.5" />
+        <input
+          v-model.number="offlineCap"
+          type="range"
+          min="0.5"
+          max="72"
+          step="0.5"
+        >
       </label>
       <label>
         <span class="demo-label">offline rate = {{ offlinePct.toFixed(0) }} % of online</span>
-        <input type="range" v-model.number="offlinePct" min="5" max="100" step="1" />
+        <input
+          v-model.number="offlinePct"
+          type="range"
+          min="5"
+          max="100"
+          step="1"
+        >
       </label>
       <label>
         <span class="demo-label">trickle past cap = {{ (trickleFrac * 100).toFixed(0) }} %</span>
-        <input type="range" v-model.number="trickleFrac" min="0" max="0.5" step="0.01" />
+        <input
+          v-model.number="trickleFrac"
+          type="range"
+          min="0"
+          max="0.5"
+          step="0.01"
+        >
       </label>
       <label>
         <span class="demo-label">tick-sim rate growth = {{ (tickRateGrowth * 100).toFixed(1) }} %/h</span>
-        <input type="range" v-model.number="tickRateGrowth" min="0" max="0.5" step="0.005" />
+        <input
+          v-model.number="tickRateGrowth"
+          type="range"
+          min="0"
+          max="0.5"
+          step="0.005"
+        >
       </label>
       <label class="ogc-toggle">
-        <input type="checkbox" v-model="logScale" />
+        <input
+          v-model="logScale"
+          type="checkbox"
+        >
         log y-scale
       </label>
     </div>
 
     <div class="ogc-legend">
-      <label v-for="c in curves" :key="c.key" class="ogc-legend-item">
+      <label
+        v-for="c in curves"
+        :key="c.key"
+        class="ogc-legend-item"
+      >
         <input
           type="checkbox"
           :checked="c.visible"
           @change="setVisible(c.key, ($event.target as HTMLInputElement).checked)"
+        >
+        <span
+          class="ogc-swatch"
+          :style="{ background: c.color }"
         />
-        <span class="ogc-swatch" :style="{ background: c.color }" />
         <span>{{ c.label }}</span>
       </label>
     </div>
 
-    <svg :viewBox="`0 0 ${W} ${H}`" class="ogc-chart" role="img" aria-label="Offline gain comparison">
-      <line :x1="PAD.l" :y1="PAD.t" :x2="PAD.l" :y2="PAD.t + PH" class="ogc-axis" />
-      <line :x1="PAD.l" :y1="PAD.t + PH" :x2="W - PAD.r" :y2="PAD.t + PH" class="ogc-axis" />
+    <svg
+      :viewBox="`0 0 ${W} ${H}`"
+      class="ogc-chart"
+      role="img"
+      aria-label="Offline gain comparison"
+    >
+      <line
+        :x1="PAD.l"
+        :y1="PAD.t"
+        :x2="PAD.l"
+        :y2="PAD.t + PH"
+        class="ogc-axis"
+      />
+      <line
+        :x1="PAD.l"
+        :y1="PAD.t + PH"
+        :x2="W - PAD.r"
+        :y2="PAD.t + PH"
+        class="ogc-axis"
+      />
       <g>
-        <g v-for="t in yScale.ticks" :key="t.label">
-          <line :x1="PAD.l" :y1="t.y" :x2="W - PAD.r" :y2="t.y" class="ogc-grid" />
-          <text :x="PAD.l - 8" :y="t.y + 3" text-anchor="end" class="ogc-tick">{{ t.label }}</text>
+        <g
+          v-for="t in yScale.ticks"
+          :key="t.label"
+        >
+          <line
+            :x1="PAD.l"
+            :y1="t.y"
+            :x2="W - PAD.r"
+            :y2="t.y"
+            class="ogc-grid"
+          />
+          <text
+            :x="PAD.l - 8"
+            :y="t.y + 3"
+            text-anchor="end"
+            class="ogc-tick"
+          >{{ t.label }}</text>
         </g>
       </g>
       <g>
-        <text v-for="nx in X_TICKS" :key="nx" :x="xTickPos(nx)" :y="H - PAD.b + 16" text-anchor="middle" class="ogc-tick">{{ nx }}</text>
+        <text
+          v-for="nx in X_TICKS"
+          :key="nx"
+          :x="xTickPos(nx)"
+          :y="H - PAD.b + 16"
+          text-anchor="middle"
+          class="ogc-tick"
+        >{{ nx }}</text>
       </g>
-      <text :x="PAD.l + PW / 2" :y="H - 6" text-anchor="middle" class="ogc-tick">hours away</text>
-      <text :x="14" :y="PAD.t + PH / 2" text-anchor="middle" class="ogc-tick" :transform="`rotate(-90 14 ${PAD.t + PH / 2})`">production received on return</text>
+      <text
+        :x="PAD.l + PW / 2"
+        :y="H - 6"
+        text-anchor="middle"
+        class="ogc-tick"
+      >hours away</text>
+      <text
+        :x="14"
+        :y="PAD.t + PH / 2"
+        text-anchor="middle"
+        class="ogc-tick"
+        :transform="`rotate(-90 14 ${PAD.t + PH / 2})`"
+      >production received on return</text>
 
       <line
         v-if="offlineCap < hoursMax"
@@ -248,7 +343,12 @@ function setVisible(key: string, value: boolean) {
         :y2="PAD.t + PH"
         class="ogc-cap"
       />
-      <text v-if="offlineCap < hoursMax" :x="capX + 4" :y="PAD.t + 12" class="ogc-cap-label">cap</text>
+      <text
+        v-if="offlineCap < hoursMax"
+        :x="capX + 4"
+        :y="PAD.t + 12"
+        class="ogc-cap-label"
+      >cap</text>
 
       <path
         v-for="c in curves"

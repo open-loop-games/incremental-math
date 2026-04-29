@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { format } from 'open-loop-engine/primitives';
+import { format } from '../lib/decimal';
 
 // Tick-sim vs flat-extrapolation: same baseline rate; tick-sim compounds
 // at growth-per-hour while the sim runs (clamped to budget). The flat
@@ -93,43 +93,19 @@ const ratioAtBudget = computed(() => {
     <div class="tsd-controls">
       <label>
         <span class="demo-label">x range = 0..{{ hoursMax.toFixed(0) }} h</span>
-        <input
-          v-model.number="hoursMax"
-          type="range"
-          min="3"
-          max="168"
-          step="1"
-        >
+        <input v-model.number="hoursMax" type="range" min="3" max="168" step="1" />
       </label>
       <label>
         <span class="demo-label">baseline rate = {{ format(ratePerHour) }} / h</span>
-        <input
-          v-model.number="ratePerHour"
-          type="range"
-          min="100"
-          max="100000"
-          step="100"
-        >
+        <input v-model.number="ratePerHour" type="range" min="100" max="100000" step="100" />
       </label>
       <label>
         <span class="demo-label">rate growth = {{ (tickRateGrowth * 100).toFixed(1) }} %/h</span>
-        <input
-          v-model.number="tickRateGrowth"
-          type="range"
-          min="0"
-          max="0.5"
-          step="0.005"
-        >
+        <input v-model.number="tickRateGrowth" type="range" min="0" max="0.5" step="0.005" />
       </label>
       <label>
         <span class="demo-label">sim budget = {{ simBudget.toFixed(1) }} h</span>
-        <input
-          v-model.number="simBudget"
-          type="range"
-          :min="0.5"
-          :max="hoursMax"
-          step="0.5"
-        >
+        <input v-model.number="simBudget" type="range" :min="0.5" :max="hoursMax" step="0.5" />
       </label>
     </div>
     <p class="tsd-readout">
@@ -144,37 +120,11 @@ const ratioAtBudget = computed(() => {
       role="img"
       aria-label="Tick simulation vs flat extrapolation"
     >
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t"
-        :x2="PAD.l"
-        :y2="PAD.t + PH"
-        class="tsd-axis"
-      />
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t + PH"
-        :x2="W - PAD.r"
-        :y2="PAD.t + PH"
-        class="tsd-axis"
-      />
-      <g
-        v-for="t in yScale.ticks"
-        :key="t.label"
-      >
-        <line
-          :x1="PAD.l"
-          :y1="t.y"
-          :x2="W - PAD.r"
-          :y2="t.y"
-          class="tsd-grid"
-        />
-        <text
-          :x="PAD.l - 8"
-          :y="t.y + 3"
-          text-anchor="end"
-          class="tsd-tick"
-        >{{ t.label }}</text>
+      <line :x1="PAD.l" :y1="PAD.t" :x2="PAD.l" :y2="PAD.t + PH" class="tsd-axis" />
+      <line :x1="PAD.l" :y1="PAD.t + PH" :x2="W - PAD.r" :y2="PAD.t + PH" class="tsd-axis" />
+      <g v-for="t in yScale.ticks" :key="t.label">
+        <line :x1="PAD.l" :y1="t.y" :x2="W - PAD.r" :y2="t.y" class="tsd-grid" />
+        <text :x="PAD.l - 8" :y="t.y + 3" text-anchor="end" class="tsd-tick">{{ t.label }}</text>
       </g>
       <text
         v-for="nx in X_TICKS"
@@ -186,12 +136,7 @@ const ratioAtBudget = computed(() => {
       >
         {{ nx }}
       </text>
-      <text
-        :x="PAD.l + PW / 2"
-        :y="H - 4"
-        text-anchor="middle"
-        class="tsd-tick"
-      >hours away</text>
+      <text :x="PAD.l + PW / 2" :y="H - 4" text-anchor="middle" class="tsd-tick">hours away</text>
       <line
         v-if="simBudget < hoursMax"
         :x1="budgetX"
@@ -200,22 +145,11 @@ const ratioAtBudget = computed(() => {
         :y2="PAD.t + PH"
         class="tsd-budget"
       />
-      <text
-        v-if="simBudget < hoursMax"
-        :x="budgetX + 4"
-        :y="PAD.t + 12"
-        class="tsd-budget-label"
-      >
+      <text v-if="simBudget < hoursMax" :x="budgetX + 4" :y="PAD.t + 12" class="tsd-budget-label">
         sim budget
       </text>
-      <path
-        :d="pathFlat"
-        class="tsd-line tsd-flat"
-      />
-      <path
-        :d="pathSim"
-        class="tsd-line tsd-sim"
-      />
+      <path :d="pathFlat" class="tsd-line tsd-flat" />
+      <path :d="pathSim" class="tsd-line tsd-sim" />
     </svg>
     <p class="tsd-legend">
       <span class="tsd-swatch tsd-sim-swatch" /> tick simulation

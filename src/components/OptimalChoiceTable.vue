@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { Decimal, format } from 'open-loop-engine/primitives';
-import { Formula } from 'open-loop-engine/core';
+import { Decimal, format } from '../lib/decimal';
+import { exponentialCost } from '../lib/formula';
 
 interface GenConfig {
   name: string;
@@ -89,8 +89,7 @@ const rows = computed<GenRow[]>(() => {
     const currentBonus = bonusAt(o, i, mode);
     const nextBonus = bonusAt(o + 1, i, mode);
     const contribution = new Decimal(cfg.baseIncome).mul(o).mul(currentBonus);
-    const formula = Formula.exponential(o + 1, cfg.startingCost, cfg.rateGrowth);
-    const nextCost = new Decimal(formula.evaluate());
+    const nextCost = exponentialCost(o + 1, cfg.startingCost, cfg.rateGrowth);
     const nextCostNum = nextCost.toNumber();
     const effectiveItemIncome = cfg.baseIncome * nextBonus;
     const score =
@@ -124,48 +123,23 @@ const rows = computed<GenRow[]>(() => {
     <div class="oct-controls">
       <label>
         <span class="demo-label">cash = {{ format(cash) }}</span>
-        <input
-          v-model.number="cashExp"
-          type="range"
-          min="0"
-          max="12"
-          step="0.05"
-        >
+        <input v-model.number="cashExp" type="range" min="0" max="12" step="0.05" />
       </label>
       <div class="oct-owned-grid">
-        <label
-          v-for="(_, i) in GENERATORS"
-          :key="i"
-        >
+        <label v-for="(_, i) in GENERATORS" :key="i">
           <span class="demo-label">{{ GENERATORS[i].name }} owned = {{ owned[i] }}</span>
-          <input
-            v-model.number="owned[i]"
-            type="range"
-            min="0"
-            max="200"
-            step="1"
-          >
+          <input v-model.number="owned[i]" type="range" min="0" max="200" step="1" />
         </label>
       </div>
     </div>
 
     <div class="oct-summary">
       <span>milestones:</span>
-      <label><input
-        v-model="milestoneMode"
-        type="radio"
-        value="none"
-      > none</label>
-      <label><input
-        v-model="milestoneMode"
-        type="radio"
-        value="global"
-      > global (1d)</label>
-      <label><input
-        v-model="milestoneMode"
-        type="radio"
-        value="individual"
-      > individual (1e)</label>
+      <label><input v-model="milestoneMode" type="radio" value="none" /> none</label>
+      <label><input v-model="milestoneMode" type="radio" value="global" /> global (1d)</label>
+      <label
+        ><input v-model="milestoneMode" type="radio" value="individual" /> individual (1e)</label
+      >
       <span class="oct-summary-spacer">·</span>
       total income = <strong>{{ format(totalIncome) }}</strong> / sec
     </div>

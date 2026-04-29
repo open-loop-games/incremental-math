@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { format } from 'open-loop-engine/primitives';
+import { format } from '../lib/decimal';
 
 const xMax = ref(1000);
 const threshold = ref(100);
@@ -73,76 +73,27 @@ function xTickPos(n: number): number {
     <div class="sqd-controls">
       <label>
         <span class="demo-label">x range = 0..{{ xMax.toFixed(0) }}</span>
-        <input
-          v-model.number="xMax"
-          type="range"
-          min="100"
-          max="100000"
-          step="100"
-        >
+        <input v-model.number="xMax" type="range" min="100" max="100000" step="100" />
       </label>
       <label>
         <span class="demo-label">threshold = {{ threshold.toFixed(0) }}</span>
-        <input
-          v-model.number="threshold"
-          type="range"
-          :min="10"
-          :max="xMax"
-          step="1"
-        >
+        <input v-model.number="threshold" type="range" :min="10" :max="xMax" step="1" />
       </label>
       <label>
         <span class="demo-label">root order n = {{ rootN.toFixed(1) }}</span>
-        <input
-          v-model.number="rootN"
-          type="range"
-          min="1.5"
-          max="6"
-          step="0.1"
-        >
+        <input v-model.number="rootN" type="range" min="1.5" max="6" step="0.1" />
       </label>
     </div>
     <p class="sqd-formula">
       <code>y = threshold + (x − threshold)^(1/{{ rootN.toFixed(1) }})</code>
       <span class="sqd-aside">past threshold; below it, <code>y = x</code></span>
     </p>
-    <svg
-      :viewBox="`0 0 ${W} ${H}`"
-      class="sqd-chart"
-      role="img"
-      aria-label="Root softcap"
-    >
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t"
-        :x2="PAD.l"
-        :y2="PAD.t + PH"
-        class="sqd-axis"
-      />
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t + PH"
-        :x2="W - PAD.r"
-        :y2="PAD.t + PH"
-        class="sqd-axis"
-      />
-      <g
-        v-for="t in yScale.ticks"
-        :key="t.label"
-      >
-        <line
-          :x1="PAD.l"
-          :y1="t.y"
-          :x2="W - PAD.r"
-          :y2="t.y"
-          class="sqd-grid"
-        />
-        <text
-          :x="PAD.l - 8"
-          :y="t.y + 3"
-          text-anchor="end"
-          class="sqd-tick"
-        >{{ t.label }}</text>
+    <svg :viewBox="`0 0 ${W} ${H}`" class="sqd-chart" role="img" aria-label="Root softcap">
+      <line :x1="PAD.l" :y1="PAD.t" :x2="PAD.l" :y2="PAD.t + PH" class="sqd-axis" />
+      <line :x1="PAD.l" :y1="PAD.t + PH" :x2="W - PAD.r" :y2="PAD.t + PH" class="sqd-axis" />
+      <g v-for="t in yScale.ticks" :key="t.label">
+        <line :x1="PAD.l" :y1="t.y" :x2="W - PAD.r" :y2="t.y" class="sqd-grid" />
+        <text :x="PAD.l - 8" :y="t.y + 3" text-anchor="end" class="sqd-tick">{{ t.label }}</text>
       </g>
       <text
         v-for="nx in X_TICKS"
@@ -154,26 +105,10 @@ function xTickPos(n: number): number {
       >
         {{ nx }}
       </text>
-      <line
-        :x1="thresholdX"
-        :x2="thresholdX"
-        :y1="PAD.t"
-        :y2="PAD.t + PH"
-        class="sqd-threshold"
-      />
-      <text
-        :x="thresholdX + 4"
-        :y="PAD.t + 12"
-        class="sqd-threshold-label"
-      >threshold</text>
-      <path
-        :d="pathLinear"
-        class="sqd-line sqd-linear"
-      />
-      <path
-        :d="pathSoft"
-        class="sqd-line sqd-soft"
-      />
+      <line :x1="thresholdX" :x2="thresholdX" :y1="PAD.t" :y2="PAD.t + PH" class="sqd-threshold" />
+      <text :x="thresholdX + 4" :y="PAD.t + 12" class="sqd-threshold-label">threshold</text>
+      <path :d="pathLinear" class="sqd-line sqd-linear" />
+      <path :d="pathSoft" class="sqd-line sqd-soft" />
     </svg>
     <p class="sqd-legend">
       <span class="sqd-swatch sqd-soft-swatch" /> root softcap

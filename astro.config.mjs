@@ -15,12 +15,4 @@ export default defineConfig({
       [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
     ],
   },
-  vite: {
-    optimizeDeps: {
-      // open-loop-engine is a `link:` dep so its transitive deps don't show up in
-      // package.json; pre-declare them so Vite pre-bundles on first start instead of
-      // racing with on-demand requests when a new component imports the engine.
-      include: ['break_eternity.js', 'eternal_notations'],
-    },
-  },
 });

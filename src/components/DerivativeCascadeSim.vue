@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onUnmounted, watch } from 'vue';
-import { Decimal, format } from 'open-loop-engine/primitives';
+import { Decimal, format } from '../lib/decimal';
 
 // Defaults transcribed from sheet 2a (Idle Game Models GDC Talk).
 // Tier 0 is the currency generator; higher tiers produce the tier below.

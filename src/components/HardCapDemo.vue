@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { format } from 'open-loop-engine/primitives';
+import { format } from '../lib/decimal';
 
 // One-curve hard-cap demo: gain accrues at rate × pct up to cap hours,
 // then flat. The lesson is the discontinuous slope at the cap.

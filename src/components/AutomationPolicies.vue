@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { format } from 'open-loop-engine/primitives';
+import { format } from '../lib/decimal';
 
 // Three autobuy policies running on the same three-tier toy economy.
 // Each tier i produces currency at rate owned[i] * rate[i]. There is no

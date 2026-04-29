@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { format } from 'open-loop-engine/primitives';
+import { format } from '../lib/decimal';
 
 // Four canonical softcap shapes plotted on a shared input axis. Operates on
 // JS Number directly — the lesson is the curve shape, not big-number arithmetic.
@@ -177,61 +177,154 @@ function xTickPos(n: number): number {
     <div class="scs-controls">
       <label>
         <span class="demo-label">x range = 0..{{ xMax.toFixed(0) }}</span>
-        <input type="range" v-model.number="xMax" min="100" max="100000" step="100" />
+        <input
+          v-model.number="xMax"
+          type="range"
+          min="100"
+          max="100000"
+          step="100"
+        >
       </label>
       <label>
         <span class="demo-label">threshold = {{ threshold.toFixed(0) }}</span>
-        <input type="range" v-model.number="threshold" :min="10" :max="xMax" step="1" />
+        <input
+          v-model.number="threshold"
+          type="range"
+          :min="10"
+          :max="xMax"
+          step="1"
+        >
       </label>
       <label>
         <span class="demo-label">root order n = {{ rootN.toFixed(1) }}</span>
-        <input type="range" v-model.number="rootN" min="1.5" max="6" step="0.1" />
+        <input
+          v-model.number="rootN"
+          type="range"
+          min="1.5"
+          max="6"
+          step="0.1"
+        >
       </label>
       <label>
         <span class="demo-label">power p = {{ powerP.toFixed(2) }}</span>
-        <input type="range" v-model.number="powerP" min="0.1" max="0.95" step="0.01" />
+        <input
+          v-model.number="powerP"
+          type="range"
+          min="0.1"
+          max="0.95"
+          step="0.01"
+        >
       </label>
       <label>
         <span class="demo-label">log strength k = {{ logK.toFixed(0) }}</span>
-        <input type="range" v-model.number="logK" min="1" max="500" step="1" />
+        <input
+          v-model.number="logK"
+          type="range"
+          min="1"
+          max="500"
+          step="1"
+        >
       </label>
       <label>
         <span class="demo-label">piecewise post-slope = {{ piecewiseSlope2.toFixed(2) }}</span>
-        <input type="range" v-model.number="piecewiseSlope2" min="0" max="1" step="0.01" />
+        <input
+          v-model.number="piecewiseSlope2"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+        >
       </label>
       <label class="scs-toggle">
-        <input type="checkbox" v-model="logScale" />
+        <input
+          v-model="logScale"
+          type="checkbox"
+        >
         log y-scale
       </label>
     </div>
 
     <div class="scs-legend">
-      <label v-for="c in curves" :key="c.key" class="scs-legend-item">
-        <input type="checkbox" :checked="c.visible" @change="
-          c.key === 'linear' ? (showLinear = !showLinear) :
-          c.key === 'root' ? (showRoot = !showRoot) :
-          c.key === 'power' ? (showPower = !showPower) :
-          c.key === 'log' ? (showLog = !showLog) :
-          (showPiecewise = !showPiecewise)
-        " />
-        <span class="scs-swatch" :style="{ background: c.color }" />
+      <label
+        v-for="c in curves"
+        :key="c.key"
+        class="scs-legend-item"
+      >
+        <input
+          type="checkbox"
+          :checked="c.visible"
+          @change="
+            c.key === 'linear' ? (showLinear = !showLinear) :
+            c.key === 'root' ? (showRoot = !showRoot) :
+            c.key === 'power' ? (showPower = !showPower) :
+            c.key === 'log' ? (showLog = !showLog) :
+            (showPiecewise = !showPiecewise)
+          "
+        >
+        <span
+          class="scs-swatch"
+          :style="{ background: c.color }"
+        />
         <span>{{ c.label }}</span>
       </label>
     </div>
 
-    <svg :viewBox="`0 0 ${W} ${H}`" class="scs-chart" role="img" aria-label="Softcap shape comparison">
-      <line :x1="PAD.l" :y1="PAD.t" :x2="PAD.l" :y2="PAD.t + PH" class="scs-axis" />
-      <line :x1="PAD.l" :y1="PAD.t + PH" :x2="W - PAD.r" :y2="PAD.t + PH" class="scs-axis" />
+    <svg
+      :viewBox="`0 0 ${W} ${H}`"
+      class="scs-chart"
+      role="img"
+      aria-label="Softcap shape comparison"
+    >
+      <line
+        :x1="PAD.l"
+        :y1="PAD.t"
+        :x2="PAD.l"
+        :y2="PAD.t + PH"
+        class="scs-axis"
+      />
+      <line
+        :x1="PAD.l"
+        :y1="PAD.t + PH"
+        :x2="W - PAD.r"
+        :y2="PAD.t + PH"
+        class="scs-axis"
+      />
       <g>
-        <g v-for="t in yScale.ticks" :key="t.label">
-          <line :x1="PAD.l" :y1="t.y" :x2="W - PAD.r" :y2="t.y" class="scs-grid" />
-          <text :x="PAD.l - 8" :y="t.y + 3" text-anchor="end" class="scs-tick">{{ t.label }}</text>
+        <g
+          v-for="t in yScale.ticks"
+          :key="t.label"
+        >
+          <line
+            :x1="PAD.l"
+            :y1="t.y"
+            :x2="W - PAD.r"
+            :y2="t.y"
+            class="scs-grid"
+          />
+          <text
+            :x="PAD.l - 8"
+            :y="t.y + 3"
+            text-anchor="end"
+            class="scs-tick"
+          >{{ t.label }}</text>
         </g>
       </g>
       <g>
-        <text v-for="nx in X_TICKS" :key="nx" :x="xTickPos(nx)" :y="H - PAD.b + 16" text-anchor="middle" class="scs-tick">{{ nx }}</text>
+        <text
+          v-for="nx in X_TICKS"
+          :key="nx"
+          :x="xTickPos(nx)"
+          :y="H - PAD.b + 16"
+          text-anchor="middle"
+          class="scs-tick"
+        >{{ nx }}</text>
       </g>
-      <text :x="PAD.l + PW / 2" :y="H - 4" text-anchor="middle" class="scs-tick">x (input value)</text>
+      <text
+        :x="PAD.l + PW / 2"
+        :y="H - 4"
+        text-anchor="middle"
+        class="scs-tick"
+      >x (input value)</text>
 
       <line
         :x1="thresholdX"
@@ -240,7 +333,11 @@ function xTickPos(n: number): number {
         :y2="PAD.t + PH"
         class="scs-threshold"
       />
-      <text :x="thresholdX + 4" :y="PAD.t + 12" class="scs-threshold-label">threshold</text>
+      <text
+        :x="thresholdX + 4"
+        :y="PAD.t + 12"
+        class="scs-threshold-label"
+      >threshold</text>
 
       <path
         v-for="c in curves"

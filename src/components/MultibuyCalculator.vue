@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { Decimal, format } from 'open-loop-engine/primitives';
-import { Formula, calculateCost } from 'open-loop-engine/core';
+import { Decimal, format } from '../lib/decimal';
+import { exponentialCostSum, exponentialMaxAffordable } from '../lib/formula';
 
 const baseCost = ref(20);
 const rateGrowth = ref(1.05);
@@ -11,10 +11,6 @@ const currentCash = computed(() => Math.pow(10, cashExp.value));
 
 const N_TO_BUY = [1, 2, 3, 5, 10, 25, 100];
 
-const formula = computed(() =>
-  Formula.exponential(currentlyOwned.value, baseCost.value, rateGrowth.value),
-);
-
 interface Row {
   n: number;
   cost: Decimal;
@@ -22,27 +18,26 @@ interface Row {
 }
 
 const rows = computed<Row[]>(() => {
-  const f = formula.value;
   const cash = new Decimal(currentCash.value);
   return N_TO_BUY.map((n) => {
-    const cost = new Decimal(calculateCost(f, n, true, n));
+    const cost = exponentialCostSum(currentlyOwned.value, n, baseCost.value, rateGrowth.value);
     return { n, cost, affordable: cost.lte(cash) };
   });
 });
 
-const maxAffordable = computed(() => {
-  const f = formula.value;
-  const integralAtCurrent = new Decimal(f.evaluateIntegral());
-  const target = integralAtCurrent.add(currentCash.value);
-  const xMax = new Decimal(f.invertIntegral(target));
-  const n = xMax.sub(currentlyOwned.value).floor().toNumber();
-  return Number.isFinite(n) && n > 0 ? n : 0;
-});
+const maxAffordable = computed(() =>
+  exponentialMaxAffordable(
+    currentlyOwned.value,
+    currentCash.value,
+    baseCost.value,
+    rateGrowth.value,
+  ),
+);
 
 const maxAffordableCost = computed(() => {
   const n = maxAffordable.value;
   if (n === 0) return new Decimal(0);
-  return new Decimal(calculateCost(formula.value, n, true, Math.min(n, 200)));
+  return exponentialCostSum(currentlyOwned.value, n, baseCost.value, rateGrowth.value);
 });
 </script>
 
@@ -51,43 +46,19 @@ const maxAffordableCost = computed(() => {
     <div class="mbc-controls">
       <label>
         <span class="demo-label">base cost = {{ baseCost.toFixed(0) }}</span>
-        <input
-          v-model.number="baseCost"
-          type="range"
-          min="5"
-          max="100"
-          step="1"
-        >
+        <input v-model.number="baseCost" type="range" min="5" max="100" step="1" />
       </label>
       <label>
         <span class="demo-label">rate growth = {{ rateGrowth.toFixed(3) }}</span>
-        <input
-          v-model.number="rateGrowth"
-          type="range"
-          min="1.01"
-          max="1.20"
-          step="0.001"
-        >
+        <input v-model.number="rateGrowth" type="range" min="1.01" max="1.20" step="0.001" />
       </label>
       <label>
         <span class="demo-label">currently owned = {{ currentlyOwned }}</span>
-        <input
-          v-model.number="currentlyOwned"
-          type="range"
-          min="0"
-          max="500"
-          step="1"
-        >
+        <input v-model.number="currentlyOwned" type="range" min="0" max="500" step="1" />
       </label>
       <label>
         <span class="demo-label">current cash = {{ format(currentCash) }}</span>
-        <input
-          v-model.number="cashExp"
-          type="range"
-          min="0"
-          max="9"
-          step="0.05"
-        >
+        <input v-model.number="cashExp" type="range" min="0" max="9" step="0.05" />
       </label>
     </div>
 
@@ -99,11 +70,7 @@ const maxAffordableCost = computed(() => {
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="r in rows"
-          :key="r.n"
-          :class="{ 'mbc-row-ok': r.affordable }"
-        >
+        <tr v-for="r in rows" :key="r.n" :class="{ 'mbc-row-ok': r.affordable }">
           <td>{{ r.n }}</td>
           <td>{{ format(r.cost) }}</td>
         </tr>

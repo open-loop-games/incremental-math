@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { Decimal, format } from 'open-loop-engine/primitives';
+import { Decimal, format } from '../lib/decimal';
 
 const props = withDefaults(
   defineProps<{

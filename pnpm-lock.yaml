@@ -26,9 +26,6 @@ importers:
       eternal_notations:
         specifier: ^1.1.1
         version: 1.1.1
-      open-loop-engine:
-        specifier: link:../open-loop-engine
-        version: link:../open-loop-engine
       vue:
         specifier: ^3.5.30
         version: 3.5.33(typescript@5.9.3)

@@ -10,7 +10,7 @@ Source HTML snapshots of the originals are archived under `docs/source/` (gitign
 
 ## Stack
 
-Astro 5 · TypeScript · Vue 3 (demo islands) · open-loop-engine · KaTeX (math rendering)
+Astro 5 · TypeScript · Vue 3 (demo islands) · break_eternity.js · eternal_notations · KaTeX
 
 Prose lives in `.mdx` pages; interactive demos are Vue components hydrated lazily via `client:visible`.
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { Decimal, format } from 'open-loop-engine/primitives';
+import { Decimal, format } from '../lib/decimal';
 
 // Defaults transcribed from sheet 3a (Idle Game Models — GDC Talk).
 const SHEET = {
@@ -244,49 +244,24 @@ const X_TICKS = computed(() => {
     <div class="pl-controls">
       <label>
         <span class="demo-label">cost mult = {{ costMult.toFixed(3) }}</span>
-        <input
-          v-model.number="costMult"
-          type="range"
-          min="1.03"
-          max="1.10"
-          step="0.001"
-        >
+        <input v-model.number="costMult" type="range" min="1.03" max="1.10" step="0.001" />
       </label>
       <label>
         <span class="demo-label">prestige exponent = {{ prestigeExp.toFixed(2) }}</span>
-        <input
-          v-model.number="prestigeExp"
-          type="range"
-          min="0.33"
-          max="0.7"
-          step="0.01"
-        >
+        <input v-model.number="prestigeExp" type="range" min="0.33" max="0.7" step="0.01" />
       </label>
       <label>
-        <span class="demo-label">prestige when gaining ≥ {{ (prestigeRatio * 100).toFixed(0) }}% more</span>
-        <input
-          v-model.number="prestigeRatio"
-          type="range"
-          min="0.1"
-          max="2"
-          step="0.05"
+        <span class="demo-label"
+          >prestige when gaining ≥ {{ (prestigeRatio * 100).toFixed(0) }}% more</span
         >
+        <input v-model.number="prestigeRatio" type="range" min="0.1" max="2" step="0.05" />
       </label>
       <label>
         <span class="demo-label">first-prestige threshold = {{ firstPrestige }}</span>
-        <input
-          v-model.number="firstPrestige"
-          type="range"
-          min="5"
-          max="200"
-          step="5"
-        >
+        <input v-model.number="firstPrestige" type="range" min="5" max="200" step="5" />
       </label>
       <label class="pl-toggle">
-        <input
-          v-model="showLog"
-          type="checkbox"
-        >
+        <input v-model="showLog" type="checkbox" />
         log y axis
       </label>
     </div>
@@ -297,39 +272,13 @@ const X_TICKS = computed(() => {
       role="img"
       aria-label="Generator count over time with prestige resets visible as drops"
     >
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t"
-        :x2="PAD.l"
-        :y2="PAD.t + PH"
-        class="pl-axis"
-      />
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t + PH"
-        :x2="PAD.l + PW"
-        :y2="PAD.t + PH"
-        class="pl-axis"
-      />
+      <line :x1="PAD.l" :y1="PAD.t" :x2="PAD.l" :y2="PAD.t + PH" class="pl-axis" />
+      <line :x1="PAD.l" :y1="PAD.t + PH" :x2="PAD.l + PW" :y2="PAD.t + PH" class="pl-axis" />
 
       <g>
-        <g
-          v-for="t in yScale.ticks"
-          :key="`y-${t.label}`"
-        >
-          <line
-            :x1="PAD.l"
-            :y1="t.y"
-            :x2="PAD.l + PW"
-            :y2="t.y"
-            class="pl-grid"
-          />
-          <text
-            :x="PAD.l - 8"
-            :y="t.y + 3"
-            text-anchor="end"
-            class="pl-tick"
-          >{{ t.label }}</text>
+        <g v-for="t in yScale.ticks" :key="`y-${t.label}`">
+          <line :x1="PAD.l" :y1="t.y" :x2="PAD.l + PW" :y2="t.y" class="pl-grid" />
+          <text :x="PAD.l - 8" :y="t.y + 3" text-anchor="end" class="pl-tick">{{ t.label }}</text>
         </g>
       </g>
 
@@ -345,12 +294,7 @@ const X_TICKS = computed(() => {
           {{ Math.round(t) }}
         </text>
       </g>
-      <text
-        :x="PAD.l + PW / 2"
-        :y="H - 6"
-        text-anchor="middle"
-        class="pl-axis-label"
-      >
+      <text :x="PAD.l + PW / 2" :y="H - 6" text-anchor="middle" class="pl-axis-label">
         time (minutes)
       </text>
       <text
@@ -375,10 +319,7 @@ const X_TICKS = computed(() => {
         />
       </g>
 
-      <path
-        :d="fullPath"
-        class="pl-line"
-      />
+      <path :d="fullPath" class="pl-line" />
 
       <line
         :x1="xToPx(cursorSample.timeMin)"
@@ -396,13 +337,7 @@ const X_TICKS = computed(() => {
     </svg>
 
     <div class="pl-scrub">
-      <input
-        v-model.number="cursor"
-        type="range"
-        min="0"
-        :max="N_TICKS"
-        step="1"
-      >
+      <input v-model.number="cursor" type="range" min="0" :max="N_TICKS" step="1" />
       <span class="pl-clock">t = {{ cursorSample.timeMin.toFixed(1) }} min</span>
     </div>
 
@@ -430,8 +365,10 @@ const X_TICKS = computed(() => {
     </div>
 
     <div class="pl-summary">
-      <span>{{ resetCount }} prestige reset{{ resetCount === 1 ? '' : 's' }} over
-        {{ T_MAX_MIN.toFixed(0) }} simulated minutes</span>
+      <span
+        >{{ resetCount }} prestige reset{{ resetCount === 1 ? '' : 's' }} over
+        {{ T_MAX_MIN.toFixed(0) }} simulated minutes</span
+      >
       <span>final: {{ finalCount }} gens, {{ format(finalPrestige) }} prestige</span>
     </div>
   </div>

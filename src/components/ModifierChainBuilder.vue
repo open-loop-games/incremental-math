@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { Decimal, format } from 'open-loop-engine/primitives';
+import { Decimal, format } from '../lib/decimal';
 
 // Anchor demo for the modifier-chains page. Six modifiers in a fixed order,
 // each toggleable; the live breakdown shows the running value at each enabled
@@ -156,23 +156,36 @@ const opSymbol = (s: Step): string => (s.type === 'add' ? '+' : s.type === 'mul'
     <div class="demo-controls">
       <label>
         <span class="demo-label">base = {{ base }}</span>
-        <input type="range" v-model.number="base" :min="1" :max="100" />
+        <input
+          v-model.number="base"
+          type="range"
+          :min="1"
+          :max="100"
+        >
       </label>
     </div>
 
     <table class="chain-table">
       <thead>
         <tr>
-          <th></th>
+          <th />
           <th>op</th>
           <th>label</th>
           <th>value</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="s in steps" :key="s.id" :class="{ 'chain-row-off': !s.enabled }">
+        <tr
+          v-for="s in steps"
+          :key="s.id"
+          :class="{ 'chain-row-off': !s.enabled }"
+        >
           <td class="chain-toggle">
-            <input type="checkbox" v-model="s.enabled" :id="`chain-${s.id}`" />
+            <input
+              :id="`chain-${s.id}`"
+              v-model="s.enabled"
+              type="checkbox"
+            >
           </td>
           <td class="chain-op">
             <label :for="`chain-${s.id}`">
@@ -186,25 +199,25 @@ const opSymbol = (s: Step): string => (s.type === 'add' ? '+' : s.type === 'mul'
             <template v-if="s.id === 'per-upgrade'">
               <span class="chain-formula">5 × </span>
               <input
-                type="range"
                 v-model.number="upgrades"
+                type="range"
                 :min="0"
                 :max="20"
                 class="chain-inline-range"
                 :disabled="!s.enabled"
-              />
+              >
               <span class="chain-formula"> = {{ 5 * upgrades }}</span>
             </template>
             <template v-else-if="s.id === 'softcap'">
               <input
-                type="range"
                 v-model.number="softcapExp"
+                type="range"
                 :min="0.5"
                 :max="1"
                 :step="0.01"
                 class="chain-inline-range"
                 :disabled="!s.enabled"
-              />
+              >
               <span class="chain-formula"> = {{ softcapExp.toFixed(2) }}</span>
             </template>
             <template v-else>
@@ -227,15 +240,24 @@ const opSymbol = (s: Step): string => (s.type === 'add' ? '+' : s.type === 'mul'
           </tr>
         </thead>
         <tbody>
-          <tr v-for="r in trace" :key="r.index">
+          <tr
+            v-for="r in trace"
+            :key="r.index"
+          >
             <td>{{ r.index }}</td>
             <td>{{ r.label }}</td>
-            <td class="trace-op">{{ r.op }}</td>
-            <td class="trace-after">{{ r.after }}</td>
+            <td class="trace-op">
+              {{ r.op }}
+            </td>
+            <td class="trace-after">
+              {{ r.after }}
+            </td>
           </tr>
         </tbody>
       </table>
-      <p class="chain-final">final = {{ finalValue }}</p>
+      <p class="chain-final">
+        final = {{ finalValue }}
+      </p>
     </div>
 
     <div class="chain-section">
