@@ -3,6 +3,7 @@ import '../styles/base.css';
 import 'katex/dist/katex.min.css';
 import Sidebar from '../components/Sidebar.astro';
 import { sections } from '../data/pages';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <html lang="en">
@@ -45,7 +46,7 @@ import { sections } from '../data/pages';
               <ul class="section-list">
                 {s.pages.map((p) => (
                   <li>
-                    <a href={p.href} class="section-link">
+                    <a href={base + p.href} class="section-link">
                       <span class="section-link-title">{p.title}</span>
                       {p.description && (
                         <span class="section-link-description">{p.description}</span>

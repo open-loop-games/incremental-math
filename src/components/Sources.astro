@@ -8,6 +8,7 @@ interface Props {
 }
 const { post, sheets, cites } = Astro.props;
 const resolved = (cites ?? []).map((c) => cite(c));
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <aside class="sources">
@@ -35,7 +36,7 @@ const resolved = (cites ?? []).map((c) => cite(c));
         <ul>
           {sheets.map((s) => (
             <li>
-              <a href={`/source/sheets/${encodeURIComponent(s)}`} download={s}>
+              <a href={`${base}/source/sheets/${encodeURIComponent(s)}`} download={s}>
                 {s}
               </a>
             </li>

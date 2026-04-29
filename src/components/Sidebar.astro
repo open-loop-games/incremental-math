@@ -14,6 +14,7 @@ interface Props {
 
 const { currentPath, headings = [] } = Astro.props;
 const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <aside class="sidebar" data-sidebar>
@@ -28,7 +29,11 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
     <span class="sidebar-toggle-label">Menu</span>
   </button>
   <nav class="sidebar-content" aria-label="Site navigation">
-    <a class="sidebar-home" href="/" aria-current={currentPath === '/' ? 'page' : undefined}>
+    <a
+      class="sidebar-home"
+      href={import.meta.env.BASE_URL}
+      aria-current={currentPath === '/' ? 'page' : undefined}
+    >
       The Math of Incremental Games
     </a>
     <details class="sidebar-section" open>
@@ -41,7 +46,7 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
               {s.pages.map((p) => (
                 <li>
                   <a
-                    href={p.href}
+                    href={base + p.href}
                     class:list={['sidebar-link', { active: p.href === currentPath }]}
                     aria-current={p.href === currentPath ? 'page' : undefined}
                   >
