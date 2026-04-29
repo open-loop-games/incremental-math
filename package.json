@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "node scripts/gen-cite-meta.js",
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",

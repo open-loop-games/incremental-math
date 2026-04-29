@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // Regenerate src/data/cite-meta.json from open-loop-research submodule state.
-// Run locally whenever submodule SHAs change: node scripts/gen-cite-meta.js
+// Runs automatically as a prebuild step; exits silently if open-loop-research
+// is not present (CI uses the committed JSON instead).
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,6 +13,11 @@ const REF_ROOT = resolve(HERE, '../../open-loop-research');
 const OUT = resolve(HERE, '../src/data/cite-meta.json');
 
 const PATH_PREFIX = { paperclips: 'docs/' };
+
+if (!existsSync(resolve(REF_ROOT, '.gitmodules'))) {
+  console.log('gen-cite-meta: open-loop-research not found, using committed cite-meta.json');
+  process.exit(0);
+}
 
 const text = readFileSync(resolve(REF_ROOT, '.gitmodules'), 'utf8');
 const sections = text.split(/^\[submodule /m).slice(1);
