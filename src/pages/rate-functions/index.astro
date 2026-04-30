@@ -1,0 +1,175 @@
+---
+import '../../styles/base.css';
+import 'katex/dist/katex.min.css';
+import Sidebar from '../../components/Sidebar.astro';
+import { sections } from '../../data/pages';
+import { adjacent } from '../../data/pages';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const currentPath = '/rate-functions';
+const { prev, next } = adjacent(currentPath);
+
+const family = sections.find((s) => s.label === 'Rate Functions');
+const familyPages = (family?.pages ?? []).filter((p) => p.href !== '/rate-functions');
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rate Functions — The Math of Incremental Games</title>
+  </head>
+  <body>
+    <div class="article-grid">
+      <Sidebar currentPath={currentPath} />
+      <main class="prose">
+        <h1>Rate Functions</h1>
+
+        <p>
+          Pecorella's three posts taught one shape of progression — exponential cost, linear
+          production, periodic prestige — and made it fully concrete. The genre's last decade spent
+          itself building variations, and a working designer needs to read those variations as
+          instances of something. This section is that something: a small algebra of <em
+            >rate functions</em
+          >, the spec layer that sits underneath every curve in the rest of the site.
+        </p>
+
+        <h2>The first-passage frame</h2>
+
+        <p>
+          An idle/incremental loop is a rate <code>r</code> integrated against time until some threshold
+          <code>C</code> is reached. Restated formally, the time to a milestone is the <a
+            href="https://en.wikipedia.org/wiki/First-hitting-time_model"
+            target="_blank"
+            rel="noopener noreferrer">first-passage time</a
+          > of the cumulative:
+        </p>
+
+        <p class="formula-display">
+          <code>T(C) = inf {'{'} t : ∫₀ᵗ r(x(s)) ds ≥ C {'}'}</code>
+        </p>
+
+        <p>
+          For per-purchase pacing (Pecorella's Part I framing), the integral becomes a sum:
+          <code>T(N) = Σ Cost(i) / Production(i)</code>. Both forms are inversions of a cumulative <code
+            >R</code
+          > against a threshold <code>C</code>. Closed-form for
+          <code>T</code> requires (1) <code>R</code> integrates in named functions, and (2) the equation
+          <code>R(t) = C</code> solves for <code>t</code> elementarily. When both hold, the spec is a
+          one-line formula. When only the first holds, the natural escape is the <a
+            href="https://en.wikipedia.org/wiki/Lambert_W_function"
+            target="_blank"
+            rel="noopener noreferrer">Lambert W function</a
+          >. When neither holds, the rate function is outside the standard algebra and the spec
+          layer reaches for adjacent math.
+        </p>
+
+        <h2>Why a catalog</h2>
+
+        <p>
+          The algebra is small. Almost every rate function shipped in a 2010s incremental is one of:
+          constant, linear, polynomial, geometric/exponential, logarithmic, logistic, rational, or a
+          piecewise splice of those. Each entry has a known cumulative and a known first-passage;
+          the first-passage is what a designer reads off as "level
+          <code>N</code> at time <code>T</code>." The catalog walks the entries one family at a
+          time, and each entry pairs the formulas with an interactive triptych:
+          <code>r(x)</code> (the rate), <code>R(x)</code> (the cumulative), and
+          <code>T(C)</code> (the first-passage). Sliders move the design knobs; the three panels move
+          together.
+        </p>
+
+        <p>
+          Each entry also names its <em>corpus exemplar</em> — the game whose source code is the canonical
+          place to see that shape in production. Cookie Clicker for geometric; Universal Paperclips for
+          linear; Antimatter Dimensions, NGU Idle, Realm Grinder, Trimps for the various softcap variants.
+          The catalog is shape-pure; the game references are where the shape lives in code.
+        </p>
+
+        <h2>What this isn't</h2>
+
+        <p>
+          This is not a "modern evolution" surface in the sense of the
+          <a href={base + '/modern/big-numbers'}>Modern</a> section's pages. Those pages walk design patterns
+          — softcaps, layered prestige, modifier chains — and ask what the genre invented and why. The
+          rate-function catalog walks the math underneath those patterns and asks what shapes the design
+          space contains. The two surfaces cross-link; they don't replace each other. The Modern page
+          on softcaps is the right place to read about <em>why</em> games soft-cap. The catalog's
+          <a href={base + '/rate-functions/log-frontier'}>logarithmic</a> entry is the right place to
+          read <em>what</em> a log shape does to first-passage time.
+        </p>
+
+        <p>
+          Static curves only. Every demo on these pages is a closed-form computation against a
+          slider — no engine instance, no time-evolving simulation. The triptych shows the shape of
+          the math; the games are what run it.
+        </p>
+
+        <p>
+          The applied companion to the catalog is the
+          <a href={base + '/design-playbook'}>Design Playbook</a> section. The catalog tells you what
+          shapes are available; the playbook tells you which shape answers a given design question, and
+          what the math prescribes once you've reached for it. Reach for the playbook when you have a
+          question; reach for the catalog when you want to see the algebra.
+        </p>
+
+        <h2>Catalog</h2>
+
+        <ul class="catalog-list">
+          {
+            familyPages.map((p) => (
+              <li>
+                <a href={base + p.href} class="section-link">
+                  <span class="section-link-title">{p.title}</span>
+                  {p.description && <span class="section-link-description">{p.description}</span>}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        {
+          (prev || next) && (
+            <nav class="part-nav">
+              {prev ? (
+                <a href={base + prev.href} class="part-nav-prev">
+                  <span class="part-nav-direction">← previous</span>
+                  <span class="part-nav-title">{prev.title}</span>
+                </a>
+              ) : (
+                <span />
+              )}
+              {next ? (
+                <a href={base + next.href} class="part-nav-next">
+                  <span class="part-nav-direction">next →</span>
+                  <span class="part-nav-title">{next.title}</span>
+                </a>
+              ) : (
+                <span />
+              )}
+            </nav>
+          )
+        }
+      </main>
+    </div>
+
+    <style>
+      .formula-display {
+        font-family: var(--font-mono);
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        padding: var(--gap);
+        text-align: center;
+        font-size: 0.95em;
+      }
+      .catalog-list {
+        list-style: none;
+        padding: 0;
+        margin: var(--gap) 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap-sm);
+      }
+    </style>
+  </body>
+</html>

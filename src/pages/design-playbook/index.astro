@@ -1,0 +1,205 @@
+---
+import '../../styles/base.css';
+import 'katex/dist/katex.min.css';
+import Sidebar from '../../components/Sidebar.astro';
+import { sections, adjacent } from '../../data/pages';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const currentPath = '/design-playbook';
+const { prev, next } = adjacent(currentPath);
+
+const family = sections.find((s) => s.label === 'Design Playbook');
+const familyPages = (family?.pages ?? []).filter((p) => p.href !== '/design-playbook');
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design Playbook — The Math of Incremental Games</title>
+  </head>
+  <body>
+    <div class="article-grid">
+      <Sidebar currentPath={currentPath} />
+      <main class="prose">
+        <h1>Design Playbook</h1>
+
+        <p>
+          The other three sections of this site describe what exists. Pecorella's three parts walk
+          the genre's foundational seesaw. The Modern section walks the patterns shipped after
+          Pecorella stopped writing. The
+          <a href={base + '/rate-functions'}>Rate Functions</a> catalog walks the math underneath both.
+          This section is different in posture: it doesn't describe, it
+          <em>diagnoses</em>. The questions a working designer asks — "why does this mechanic become
+          obsolete?", "where should I soft cap?", "how long should a prestige cycle be?" — turn out
+          to be math problems most of the time, and the rest of this section is the conversion:
+          question, math, prescription, and where the math runs out.
+        </p>
+
+        <h2>Math is a design tool</h2>
+
+        <p>
+          The strongest thing this site claims is that closed-form math, applied at the spec layer,
+          gives a designer better answers to common questions than tuning by feel does. Not because
+          feel is wrong — taste is what decides whether a design is fun, and no formula computes
+          that — but because feel without math has no idea which constants are independent, where
+          the regimes split, or what the curve is asymptotically doing. A designer who reads the
+          doubling time off a geometric cost ladder and a designer who tunes the cost multiplier
+          until "it feels about right" are picking the same number; one of them knows what they
+          picked and one doesn't.
+        </p>
+
+        <p>
+          The catalog is the reference. The Modern section is the field guide. This section is the
+          working manual: how to think with the catalog when a question lands on the desk.
+        </p>
+
+        <h2>The diagnostic frame</h2>
+
+        <p>
+          Every page in this section follows the same shape, applied to a small bundle of related
+          questions:
+        </p>
+
+        <ol>
+          <li>
+            <strong>The question, in the words a designer would use.</strong> Not jargon, not framework-speak
+            — the actual question, paraphrased from the working literature of design conversations.
+          </li>
+          <li>
+            <strong>The math problem the question secretly is.</strong> Most questions in this section
+            have a clean translation: "make this mechanic stay relevant" is a composition-rule choice;
+            "where does the early game end" is a regime-boundary calculation; "what soft cap shape" is
+            a curvature-of-cumulative choice.
+          </li>
+          <li>
+            <strong>The catalog entry that answers it.</strong> A pointer back into Rate Functions where
+            the algebra lives, with the relevant excerpt restated in design vocabulary.
+          </li>
+          <li>
+            <strong>The prescription.</strong> What the math says to do. Not a recipe — recipes feel like
+            rules and rules collapse into cargo cult — but the specific lever the math identifies and
+            the consequences of moving it.
+          </li>
+          <li>
+            <strong>Where the math runs out.</strong> Every prescription has a boundary past which it
+            stops being load-bearing, and the playbook is honest about where that is. A regime where the
+            algebra doesn't close, a parameter the algebra is silent on, a question that's actually about
+            feel and was never really a math question.
+          </li>
+        </ol>
+
+        <h2>What math doesn't decide</h2>
+
+        <p>
+          The playbook is prescriptive about the shape of progression and silent about everything
+          else. Math doesn't decide:
+        </p>
+
+        <ul>
+          <li>
+            <strong>What the game is about.</strong> Cookies, paperclips, antimatter, kingdoms, kittens,
+            factories — the fiction the curve runs against. The same geometric cost ladder can be a baker's
+            oven or a galactic empire; the math is the same and the choice between them isn't a math choice.
+          </li>
+          <li>
+            <strong>Where the fun is.</strong> Some games are fun for the rhythm of clicks; some for the
+            optimization puzzle; some for the satisfaction of automation; some for the sandbox feel of
+            late-game numbers. Math can shape a curve into any of those rhythms, but it can't tell you
+            which to aim at.
+          </li>
+          <li>
+            <strong>How harsh is too harsh.</strong> A doubling time of five purchases feels different
+            than a doubling time of fifteen, and "different" isn't "better" or "worse" without knowing
+            what audience the game is for. Math quantifies the difference; judgment picks which side of
+            it you want.
+          </li>
+          <li>
+            <strong>Whether to soft cap at all.</strong> The catalog tells you what soft caps do and what
+            shapes are available. It doesn't tell you whether your game wants the post-threshold slowdown
+            — that's a pacing call about the rhythm you're aiming at, and the math is downstream of it.
+          </li>
+          <li>
+            <strong>When to stop.</strong> Every closed form in the catalog runs to infinity. Real games
+            end — at the player's session, at the end of content, at the natural stopping point of the
+            loop. The math is silent about end-of-game; that's a content-shaped question, not a curve-shaped
+            one.
+          </li>
+        </ul>
+
+        <p>
+          The playbook is most useful for the questions math actually answers and least useful
+          (often actively misleading) for the questions math is silent on. Each page tries to be
+          precise about which is which.
+        </p>
+
+        <h2>How to read this section</h2>
+
+        <p>
+          The pages aren't dependent on each other. Each one bundles a few questions that share a
+          common bit of math, and each question on a page is a self-contained unit. Skim the
+          headings, find the question that's asking you something, read that section. Cross-link out
+          into the catalog when you want to see the algebra fully written down; cross-link out into
+          the Modern section when you want to see how the genre handles the same question in shipped
+          code.
+        </p>
+
+        <p>
+          The natural reading order is the order the pages are listed below — pacing first because
+          it's the most universal question, composition next because it's where most "blending"
+          intuitions live, then bending the curve, then the modifier and prestige stacks, and
+          finally the multi-resource extension. But the ordering is reading-order, not
+          dependency-order; any page is the right entry if it's the one whose question you're
+          asking.
+        </p>
+
+        <ul class="catalog-list">
+          {
+            familyPages.map((p) => (
+              <li>
+                <a href={base + p.href} class="section-link">
+                  <span class="section-link-title">{p.title}</span>
+                  {p.description && <span class="section-link-description">{p.description}</span>}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        {
+          (prev || next) && (
+            <nav class="part-nav">
+              {prev ? (
+                <a href={base + prev.href} class="part-nav-prev">
+                  <span class="part-nav-direction">← previous</span>
+                  <span class="part-nav-title">{prev.title}</span>
+                </a>
+              ) : (
+                <span />
+              )}
+              {next ? (
+                <a href={base + next.href} class="part-nav-next">
+                  <span class="part-nav-direction">next →</span>
+                  <span class="part-nav-title">{next.title}</span>
+                </a>
+              ) : (
+                <span />
+              )}
+            </nav>
+          )
+        }
+      </main>
+    </div>
+
+    <style>
+      .catalog-list {
+        list-style: none;
+        padding: 0;
+        margin: var(--gap) 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap-sm);
+      }
+    </style>
+  </body>
+</html>

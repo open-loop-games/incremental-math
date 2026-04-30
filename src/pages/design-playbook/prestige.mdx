@@ -1,0 +1,180 @@
+---
+layout: ../../layouts/Article.astro
+title: Prestige cycles — cadence and conversion
+---
+
+# Prestige cycles — cadence and conversion
+
+Prestige is the genre's longest-running design pattern after the geometric cost
+ladder, and it's the surface where the catalog's
+[functional composition rule](/rate-functions/composition) lives most concretely. Each
+prestige cycle is one rate function integrated against time; the prestige conversion
+is a function applied at the layer boundary; the post-prestige run integrates against
+a new rate function modified by the prestige currency.
+
+This page bundles the questions that come up when designing a prestige system:
+formula choice, cycle length, layering, and the boundary where prestige math falls
+into [optimal stopping](https://en.wikipedia.org/wiki/Optimal_stopping) and the
+algebra stops closing.
+
+## How do I pick the prestige formula?
+
+The math: the prestige currency $H$ is a function of the primary cumulative $C$,
+$H = f(C)$. The genre's three working choices, each a different
+[catalog entry](/rate-functions/):
+
+- **Cube root**. $H \propto C^{1/3}$. Cookie Clicker's archetype. Lives at the
+  [polynomial entry](/rate-functions/power-law) with $p = -2/3$ when read as a rate.
+  Doubling cookies adds a multiplier of $\sqrt[3]{2} \approx 1.26$ to chips. The
+  prestige value scales sublinearly enough that late-game cookie counts don't
+  produce absurd chip values, but linearly enough that the player feels each
+  doubling.
+- **Square root**. $H \propto C^{1/2}$. AdVenture Capitalist, several others. Same
+  family, different exponent. Doubling cookies adds $\sqrt 2 \approx 1.41$ to
+  prestige. Felt as more aggressive than cube root — the prestige currency rises
+  faster relative to the run.
+- **Logarithm**. $H \propto \log_b C$. Several modern incrementals. Lives at the
+  [logarithmic entry](/rate-functions/log-frontier). Each doubling of $C$ adds a
+  _constant_ amount to $H$, regardless of where in the run the doubling happens.
+  Felt as the slowest-growing prestige currency; the late-game grind contributes the
+  same prestige value as the early-game grind for the same number of doublings.
+
+The design call is which _felt_ relationship the player should have with the prestige
+currency. Three readings:
+
+- **Cube root reads as "every $10 \times$ in run gives $\approx 2.15 \times$ in prestige."**
+  A 10× run produces a noticeable prestige bump, but not a runaway. The feel is
+  "longer runs are worth somewhat more."
+- **Square root reads as "every $10 \times$ in run gives $\approx 3.16 \times$ in prestige."**
+  Each order of magnitude in the run is a clear prestige multiplier. The feel is
+  "longer runs scale visibly."
+- **Log reads as "every $10 \times$ in run adds a fixed amount to prestige."**
+  The relationship is linear in log space. The feel is "the run's _length_ in
+  doublings is what counts, not the absolute number."
+
+Each is correct for a different design intent. None is mathematically privileged. The
+common pick — cube root — became the default because it produces reasonable late-game
+prestige values across a range of run lengths without specific tuning.
+
+## How long should a prestige cycle be?
+
+Two questions, again. "How long does the cycle take?" is a first-passage problem
+solvable in closed form. "How long _should_ it be?" is design.
+
+The math: cycle time is $T(C_{\text{prestige}})$ where $C_{\text{prestige}}$ is the
+threshold the player crosses to prestige. With a geometric ladder modulated by a
+prestige multiplier $\mu$, $T(C) = T_{\text{base}}(C / \mu)$ — each prestige run
+shortens proportionally as $\mu$ grows.
+
+Working answers from the corpus, by intended audience:
+
+- **Mobile / casual idle.** First prestige in 10–30 minutes; mid-game cycles 30
+  minutes to 2 hours; long-form cycles up to a session. The session-length anchor
+  is "one prestige per play session" for the median player.
+- **Active-engagement clicker.** First prestige in 1–2 hours; mid-game in 4–8 hours;
+  late-game cycles can span multiple sessions. The audience has the patience for
+  longer cycles and the rhythm tolerates them.
+- **Multi-day idle.** First prestige in a day or two; mid-game cycles in days; the
+  late-game can span weeks per cycle. The audience treats the game as a long-running
+  background presence, and cycle lengths reflect that.
+
+What the math forbids: a prestige cycle whose duration is _much_ longer than the
+session length the audience plays in. If the cycle takes 8 hours and the audience
+plays in 30-minute bursts, the player never _finishes_ a cycle in real time, which
+breaks the felt loop. The math's diagnostic is "is $T(C_{\text{prestige}})$
+comparable to or shorter than the player's session?" If yes, cycles complete
+naturally. If no, either cycles need to be shorter or the game has to bridge the
+mid-cycle state with offline/idle accumulation that lets the cycle effectively
+complete _during_ the offline window.
+
+## How do I add a new prestige tier?
+
+The math is [iterated functional composition](/rate-functions/composition): each tier
+applies a function to the cumulative of the tier below. Tier 1 prestige converts
+primary cumulative to currency-1; tier 2 prestige converts currency-1 cumulative
+(over multiple tier-1 runs) to currency-2; and so on. As long as each layer's
+conversion is monotone elementary, the whole stack stays in the catalog.
+
+The design call is when to _add_ a new tier. The diagnosis the catalog runs:
+
+- **The current top tier's currency has stopped meaningfully gating progression.**
+  When players accumulate the top-tier currency faster than they can spend it, or
+  when the top-tier upgrades have all been bought, the loop has lost its capstone.
+  A new tier _converts_ that excess currency into a new currency that gates a new
+  set of upgrades.
+- **The current top tier's runs have collapsed in duration.** A prestige currency
+  that's grown enough makes per-run time vanishingly short — the prestige loop
+  stops being a meaningful unit of gameplay. A new tier that _resets_ the prestige
+  currency restores the per-run feel at a new scale.
+- **The composition rule of the current tiers has saturated.** When stacking more
+  modifiers within the current tier produces vanishing returns relative to the
+  player's effort, a new tier with a new composition (typically a new
+  state-multiplied modifier) breaks the saturation.
+
+What the math doesn't say is the _narrative_ of the new tier. Each tier in modern
+games (transcendence, eternity, reality, infinity) carries a fiction the player
+reads as content. The catalog is silent about that — what it gates is the
+mathematical _shape_ of the new layer, not the story it tells.
+
+## Why do some prestige conversions feel earned and others grindy?
+
+The math diagnosis: a conversion that's _too steep_ (very small $H$ for large $C$)
+makes the run feel under-rewarded — the player did all the work and got a small
+prestige currency reward. A conversion that's _too shallow_ (large $H$ for small $C$)
+makes runs feel trivial — the player can prestige off a tiny accumulation and get a
+big jump.
+
+The cube-root default sits at a working middle: each $10\times$ in run produces
+$\approx 2.15\times$ in prestige, which feels proportional but not runaway. Square
+root is steeper-feeling, log is gentler-feeling.
+
+But the _felt_ fairness has more drivers than just the conversion shape. Three
+patterns the corpus uses to make conversions feel earned:
+
+- **The prestige currency does something the player wants.** Prestige multipliers
+  that feel valuable (visible production multipliers, unlocks, new upgrades) make
+  the conversion feel earned regardless of the formula. Conversions that produce
+  currency the player has nothing to do with feel grindy regardless of the formula.
+- **The conversion is pegged to a _visible_ milestone.** Prestige at a named
+  threshold (e.g., a specific cookie count, a specific dimension reached) feels
+  earned because the player can see the threshold approaching. Prestige at an
+  arbitrary "you've decided to prestige" point feels arbitrary.
+- **The post-prestige run is _visibly_ faster.** The player sees the new run starting
+  with a better multiplier, and the early game's pacing visibly reflects the
+  prestige they earned. If the post-prestige multiplier doesn't actually shorten
+  the new run by an amount the player can read, the prestige doesn't feel like it
+  _did_ anything.
+
+Each of these is downstream of the math but not derivable from it. The math
+diagnoses the _shape_ of the conversion (how much $H$ per unit $C$); the legibility,
+the visible milestone, the visible post-prestige speedup are UI and pacing
+decisions. The math points at "this conversion produces $\sqrt[3]{C / 10^{12}}$ chips
+per run"; the design has to make the player _feel_ that the chips were earned.
+
+## Where the math stops
+
+The catalog closes for the per-run math in any prestige system whose layers are
+elementary. It stops at two specific places:
+
+- **Optimal stopping.** When should the player prestige? Closed-form per-run, but
+  the _cycle-length decision_ is an optimal-stopping problem and lives in the
+  [bifurcation rows](/rate-functions/composition#what-doesnt-compose-cleanly). If
+  the game lets the player choose when to prestige _and_ the player's strategy
+  affects the long-run growth rate of prestige currency, the optimal stopping time
+  is a Bellman equation. Most games avoid this entirely by not putting the
+  decision in the player's hands — autobuyer-driven prestige with a fixed trigger,
+  or unlock-gated prestige, both flatten the optimal-stopping problem into a
+  deterministic schedule that closes again.
+- **The narrative.** Math has no opinion about whether the prestige tier is named
+  "Heavenly Chips" or "Eternity Points" or "Soul Anchors," and no opinion about
+  what fiction the cycle carries. The same math powers Cookie Clicker's
+  ascendance, Antimatter Dimensions' eternities, and Synergism's challenge runs;
+  the difference is fiction, not curve.
+
+Prestige is the playbook's most tractable surface in some ways and least tractable
+in others. The _shape_ of the conversion is decided by a single exponent that the
+catalog covers exhaustively. The _cadence_ of the cycle is decided by first-passage
+math that closes per run. But the _decision_ of when to prestige, when to add a
+tier, and what fiction to wrap the cycle in are all design calls the math is silent
+about — and the experience of prestige working _or_ falling flat is downstream of
+those calls more than it's downstream of the formula choice.

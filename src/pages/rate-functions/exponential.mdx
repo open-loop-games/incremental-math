@@ -1,0 +1,169 @@
+---
+layout: ../../layouts/Article.astro
+title: Exponential family
+---
+
+import GeometricRateDemo from '../../components/rate-functions/GeometricRateDemo.vue';
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
+
+# Exponential family
+
+The exponential family is the genre's pacing primitive. Where the
+[power-law family](./power-law) covers "rate is some power of state," the exponential
+family covers "rate compounds." Each unit of $x$ multiplies the rate by a fixed factor;
+the cumulative grows at the same rate; the first-passage in $C$ is logarithmic. Two notations,
+discrete and continuous, point at the same family.
+
+## Geometric (discrete)
+
+$$a_n = a \cdot m^n, \quad S_n = a \cdot \frac{m^{n+1} - 1}{m - 1}, \quad N(C) = \log_m\!\left(\frac{C(m-1)}{a} + 1\right) - 1$$
+
+The per-purchase cost ladder. $a$ is the cost of the zeroth purchase; $m$ is the
+multiplicative ratio between consecutive purchases. The
+[partial sum](https://en.wikipedia.org/wiki/Geometric_series) $S_n$ is a closed form known
+since [Archimedes](https://en.wikipedia.org/wiki/Archimedes); what makes the geometric
+shape the genre's load-bearing primitive is that the inverse — "how many can I afford with
+budget $C$?" — is also elementary.
+
+The lead corpus exemplar is Cookie Clicker, which uses $m = 1.15$ across every building:
+
+<Cite repo="cookie-clicker" path="main.js" line="7972" />
+
+```js
+Game.priceIncrease = 1.15;
+```
+
+<Cite repo="cookie-clicker" path="main.js" line="8090-8094" />
+
+```js
+this.getPrice = function (n) {
+  var price = this.basePrice * Math.pow(Game.priceIncrease, Math.max(0, this.amount - this.free));
+  price = Game.modifyBuildingPrice(this, price);
+  return Math.ceil(price);
+};
+```
+
+That ratio — $1.15$ — became the genre default, copied without renegotiation across a
+decade of clones and originals. The reason it's load-bearing is the doubling time:
+$\log_2(1.15)^{-1} \approx 4.96$, so each five purchases double the cost. A run that climbs
+through fifty purchases of a building has gone through ten doublings, $1024\times$ over the
+base cost. A run that climbs through a hundred has gone through twenty, $\approx 10^6\times$.
+The same formula holds at every scale; the _rate_ of difficulty escalation is constant.
+
+Antimatter Dimensions ships the engineered version of the same family — a parameterized
+cost-scaling class with both a max-quantity-affordable and a price-at-quantity, both
+closed-form because the underlying shape is geometric:
+
+<Cite repo="AntimatterDimensionsSourceCode" path="src/core/math.js" line="320-352" />
+
+```js
+window.ExponentialCostScaling = class ExponentialCostScaling {
+  // baseCost B, baseIncrease C, costScale S, purchasesBeforeScaling n.
+  // Pre-scaling: B, B·C, B·C², ..., B·C^n.
+  // Post-scaling: B·C^(n+1), B·C^(n+2)·S, B·C^(n+3)·S^3, ...
+};
+```
+
+The doc-comment's price ladder is two regimes glued together: a pure geometric
+$B \cdot C^k$ before the scaling threshold, then a faster shape past it. That's a
+[piecewise composition](./composition) of two geometrics, not a separate family — same
+math, two different bases. AD's late-game cost climbs this way to give the player two
+distinct "speed" regimes.
+
+<GeometricRateDemo client:visible />
+
+The doubling-time readout updates as you slide $m$. At $m = 1.15$ the doubling time is
+about $5$, the genre default. At $m = 1.05$ — what Realm Grinder shifts to post-Ascension —
+doubling takes ~14 purchases, a markedly slower regime. At $m = 1.30$ the regime is harsh:
+each three purchases double the cost. Designers who pick a multiplier are picking the
+slope of the late-game wall.
+
+## Continuous (exponential)
+
+$$r(x) = a \cdot e^{b x}, \quad R(x) = \frac{a}{b}\!\left(e^{b x} - 1\right), \quad T(C) = \frac{1}{b} \ln\!\left(1 + \frac{b C}{a}\right)$$
+
+The same family in continuous-time notation. The relationship $m = e^b$ — equivalently
+$b = \ln m$ — is what makes the two readings interchangeable. A geometric ladder with
+ratio $m = 1.15$ is a continuous exponential with $b = \ln(1.15) \approx 0.1398$;
+[doubling time](https://en.wikipedia.org/wiki/Doubling_time) in $x$ is $(\ln 2)/b$, the
+same number as $\log_2(1/m)^{-1}$ rounded to the same place.
+
+Why both notations exist:
+
+- **Discrete** maps directly to "cost of the $n$-th purchase," which is the player-facing
+  quantity in any clicker built around buying buildings. The sum $S_n$ tells you the total
+  spent; the inverse $N(C)$ tells you how many you can afford with budget $C$. No calculus
+  needed; the formulas are arithmetic.
+- **Continuous** maps directly to "production rate at time $t$," which is the relevant
+  reading when production itself is exponential — feedback loops, prestige multipliers,
+  compound growth. The cumulative is the integral; the first-passage is the inverse. Calculus
+  works.
+
+Most pages in this catalog and the rest of the site move freely between the two notations
+because the underlying family is one. The demo above is a continuous evaluation under the
+hood; the per-purchase reading lines up exactly with $m = e^b$.
+
+## What the exponential family is for
+
+The genre uses exponential cost paired with linear (or polynomial) production — Pecorella's
+Part I seesaw — because the _ratio_ of cost to production grows exponentially while the
+production itself only grows polynomially. That ratio is the per-purchase wait time, and
+its growth is what makes early progress feel fast and late progress feel slow without any
+explicit pacing rule. The math is doing the pacing.
+
+Where this breaks down is exactly where modern incrementals went looking for new
+primitives. An unmodified geometric ladder with $m = 1.15$ produces decade-spanning
+late-game runs that the genre's late-2010s production substrate (`break_infinity`,
+`break_eternity`) had to be engineered to handle — past $1e308$ the naïve `Math.pow` form
+overflows, and the exponential family's natural endpoint is somewhere past that. Big-number
+arithmetic (covered on the [big numbers page](/modern/big-numbers)) is what made the
+exponential family practical past 2018; before then, the late-game regime hit a wall not
+because the math broke but because the floats did.
+
+The other direction the genre went is _softening_ the exponential past a threshold —
+[piecewise](./composition) compositions of geometric with a slower geometric, geometric
+with a polynomial, geometric with a logarithmic shape. Each is a way to reach the
+post-doubling regime without committing to the exponential's full late-game blowup. The
+[softcaps page](/modern/softcaps) catalogs the design patterns; the math underneath is
+piecewise composition of this entry's family with the others.
+
+## Asymptotic concentration
+
+A clean fact about the geometric cumulative that's worth stating explicitly:
+
+$$\frac{\sum_{n=N-K+1}^{N} a_n}{\sum_{n=1}^{N} a_n} = \frac{m^N - m^{N-K}}{m^N - 1} \;\xrightarrow{N \to \infty}\; 1 - m^{-K}$$
+
+The last $K$ levels of any geometric cumulative carry approximately $1 - m^{-K}$ of the total,
+independent of $N$ once $N$ is large. For $m = 1.15$ and $K = 10$, that's $\approx 0.753$ —
+the last 10 levels carry 75% of the integral. For $K = 5$, $\approx 0.503$ — the last 5
+carry half.
+
+This is the math behind the genre's "the last few levels are everything" feeling. It's not
+a perception artifact; it's the underlying rate-function shape. Every soft cap, every
+pacing tweak, every "milestone bonus that activates at level 25" is operating against this
+concentration: the question is whether the late-game work is meaningful or whether it
+collapses into a single 75%-of-total wait.
+
+<Sources
+  cites={[
+    {
+      repo: 'cookie-clicker',
+      path: 'main.js',
+      line: '7972',
+      note: 'Game.priceIncrease = 1.15: the genre-default geometric ratio, set as a single named constant.',
+    },
+    {
+      repo: 'cookie-clicker',
+      path: 'main.js',
+      line: '8090-8094',
+      note: 'getPrice: per-building cost = basePrice × 1.15^(amount − free), the canonical geometric ladder.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/math.js',
+      line: '320-352',
+      note: 'ExponentialCostScaling: parameterized geometric-with-piecewise-acceleration cost class. Carries baseCost, baseIncrease, costScale, threshold parameters.',
+    },
+  ]}
+/>

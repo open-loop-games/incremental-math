@@ -1,0 +1,122 @@
+---
+layout: ../../layouts/Article.astro
+title: Bounded growth (logistic)
+---
+
+import LogisticDemo from '../../components/rate-functions/LogisticDemo.vue';
+
+# Bounded growth
+
+A single entry — the [logistic](https://en.wikipedia.org/wiki/Logistic_function) — but
+it's the only [sigmoid](https://en.wikipedia.org/wiki/Sigmoid_function) in the catalog
+whose first-passage is fully elementary, and that uniqueness earns it a page. The shape is
+exponential growth limited by an explicit ceiling; the math is one of the older closed forms
+in the catalog (due to [Verhulst](https://en.wikipedia.org/wiki/Pierre_Fran%C3%A7ois_Verhulst)
+in 1838 for population modeling); and the design intent — "growth that asymptotes to a
+real limit, with a visible mid-curve inflection" — is one of the cleanest single-shape
+specifications a designer can write.
+
+## The math
+
+The rate is defined on the _state_, not on time: the rate of change depends on how close
+the state is to a carrying capacity $K$.
+
+$$\frac{dx}{dt} = r \cdot x \cdot \left(1 - \frac{x}{K}\right)$$
+
+Two factors. The first, $r \cdot x$, is exponential growth — the rate is proportional to the
+current state, so the system would double on a constant schedule if left alone. The second,
+$(1 - x/K)$, is a brake that turns on as $x$ approaches $K$ — the rate falls toward zero
+as the state saturates. Their product is a parabola in $x$, peaked at $x = K/2$ with
+maximum $r \cdot K / 4$.
+
+The closed-form trajectory and first-passage:
+
+$$x(t) = \frac{K}{1 + \left(\frac{K - x_0}{x_0}\right) e^{-rt}}, \quad T(C) = \frac{1}{r} \ln\!\left(\frac{K - x_0}{x_0} \cdot \frac{C}{K - C}\right) \text{ for } 0 < C < K$$
+
+The trajectory is the [logistic curve](https://en.wikipedia.org/wiki/Logistic_function)
+proper — sigmoid in $t$, with the inflection point at $x = K/2$. The first-passage is the
+[logit](https://en.wikipedia.org/wiki/Logit) of $C/K$ adjusted by $\ln((K-x_0)/x_0)$;
+elementary, well-defined for any reachable threshold $C \in (0, K)$, divergent as $C \to K$.
+
+The carrying capacity is approached but never reached. This is the entry's distinguishing
+feature versus the [rational entry's $p > 1$ case](./power-law#rational--hyperbolic-rate),
+which also has a finite ceiling: the rational form's ceiling is reached _in the limit of
+infinite $x$_; the logistic's ceiling is reached _in the limit of infinite $t$_. The
+ceiling lives in different units in the two shapes.
+
+<LogisticDemo client:visible />
+
+## What this shape is for
+
+The logistic is the natural specification for any progression value that has a
+_meaningful_ maximum — efficiency at saturation, a [population](https://en.wikipedia.org/wiki/Population_dynamics)
+constrained by resources, a fraction that should approach but not exceed 100%. In all
+three cases the design intent is "growth that knows where it's going," and the logistic
+trajectory carries that intent to completion: early, growth is essentially exponential;
+mid-curve, the inflection marks the regime change from acceleration to deceleration;
+late, the curve flattens visibly toward the ceiling without a hard discontinuity.
+
+The mid-curve inflection is the design feature most often singled out. A linear cumulative
+of an exponential rate (the [exponential family](./exponential)) feels uniformly fast; a
+sublinear cumulative of a polynomial rate (the [power-law family](./power-law) past
+$p < 0$) feels uniformly slow. The logistic feels like _both in sequence_ — the trajectory
+shows acceleration through the inflection, then deceleration past it. Players experience a
+visible break in the curve's character even though the underlying rate function is one
+smooth analytic shape.
+
+## Why pure logistic is rare in the corpus
+
+Most "logistic-feeling" curves in shipped incrementals are not actually logistic. They're
+hyperbolic — the [rational entry's](./power-law#rational--hyperbolic-rate)
+$1 - b/(b + x)$ shape — because that shape:
+
+- Operates on the _cumulative_ directly rather than on a differential equation.
+- Doesn't require a closed-form ODE solution.
+- Has the same "approaches a ceiling" qualitative behavior at first glance.
+
+The qualitative behavior past the inflection is genuinely different — the hyperbolic shape
+slows monotonically from the start, with no inflection point — but in the regimes most
+games operate in, the player can't distinguish them from feel alone, and the hyperbolic
+form is cheaper to compute on `Decimal` quantities. So the genre's "soft cap with a
+ceiling" is overwhelmingly hyperbolic, while the design _intent_ is often closer to
+logistic.
+
+The places pure logistic does show up:
+
+- **Theory-grinder games** that expose the math itself as the puzzle. Exponential Idle's
+  late theories are explicit calculus exercises; the logistic shape becomes a teaching
+  surface rather than a pacing tool. The shape is not hidden — it's the headline.
+- **Population-style mechanics** where the state is literally a population (kingdoms,
+  ecosystems, civilizations) and the carrying-capacity framing is part of the fiction. The
+  Kittens Game's kitten cap behaves logistically in its design intent; the shipped formula
+  uses a piecewise rule but the underlying model the designers built it around is
+  carrying-capacity-shaped.
+- **Reachability gates** where a stat must approach but not exceed a hard limit (luck
+  caps, multiplicative ceilings). When the cap is _narrative_ — "a statistic that
+  represents a fraction" — the logistic is the right intent.
+
+For most other "soft cap" use cases, the [hyperbolic entry on the power-law page](./power-law#rational--hyperbolic-rate)
+is what shipped games actually compute. The logistic earns its catalog page on
+[mathematical](https://en.wikipedia.org/wiki/Mathematics) grounds, not on prevalence: it
+remains the cleanest sigmoid the catalog can offer, and its first-passage being elementary
+is what the algebra cares about.
+
+## What logistic doesn't compose with cleanly
+
+Two logistics with shared resource — the
+[Lotka-Volterra two-species predator-prey system](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations)
+and its variants — close in special cases (linear couplings, conserved quantities) but in
+general are nonlinear coupled ODEs that don't admit a single closed-form trajectory. That's
+the boundary between this entry and the bifurcation rows: a single logistic is in the
+algebra; coupled logistics generally aren't. Game designs that want "two competing
+populations with carrying capacity" are reaching for math that doesn't close, which is why
+those mechanics tend to be either simulated discretely or simplified to one of the
+linearized special cases.
+
+A logistic with a _time-varying_ carrying capacity ($K = K(t)$ rather than constant) does
+admit closed forms in some special cases (linear $K$, exponential $K$) but not in general.
+A logistic feeding into another logistic via a multiplier is closed-form when the
+multiplier is constant on the integration scale and not when it isn't. The catalog's claim
+about composition closure (covered on the [composition page](./composition)) holds for the
+logistic the same way it holds for the others: clean compositions stay closed; coupled
+compositions migrate into [bifurcations](https://en.wikipedia.org/wiki/Bifurcation_theory).

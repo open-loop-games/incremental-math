@@ -1,0 +1,172 @@
+---
+layout: ../../layouts/Article.astro
+title: Composition rules
+---
+
+import PiecewiseDemo from '../../components/rate-functions/PiecewiseDemo.vue';
+import ModifierProductDemo from '../../components/rate-functions/ModifierProductDemo.vue';
+
+# Composition rules
+
+The first four pages of this catalog walked single-shape rate functions: power-law,
+exponential, logistic, log. Real systems compose. The question this page answers: which
+compositions of catalog entries stay closed-form, and which fall off the algebra?
+
+The answer breaks into four kinds of composition. The first two — piecewise splice and
+[modifier-product](https://en.wikipedia.org/wiki/Multiplication) — get their own demos
+because the genre's headline patterns sit on top of them. The other two —
+[sum](https://en.wikipedia.org/wiki/Sum) and
+[functional composition](https://en.wikipedia.org/wiki/Function_composition) — get
+formulas and notes; the spec layer's behavior under each is well-defined enough that a
+demo would only restate the math.
+
+## Piecewise splice
+
+Different rate function on different intervals, glued continuously at breakpoints.
+
+$$r(x) = r_i(x) \;\text{ on } [x_i, x_{i+1}), \quad R(x) = R(x_i) + \int_{x_i}^x r_i(s)\,ds$$
+
+Closure is automatic per regime — each $r_i$ is one of the catalog's entries and integrates
+on its own. Inversion needs regime detection: $T(C)$ is itself a piecewise function of $C$,
+with breakpoints at $C_i = R(x_i)$. As long as the regime-boundary cumulatives can be
+precomputed, the global first-passage is a regime lookup followed by an
+intra-regime inversion.
+
+The genre's lead piecewise pattern is "two geometrics glued at a threshold": a normal-paced
+ratio before some level, a slower ratio past it. Realm Grinder's pre/post-Ascension cost
+shift is the canonical example — $c_0 \cdot 1.15^n$ for $n \le t$, $c_0 \cdot 1.15^t \cdot
+1.03^{n-t}$ for $n > t$. Antimatter Dimensions' `ExponentialCostScaling` (cited on the
+[exponential page](./exponential)) ships the same pattern as a parameterized class.
+
+<PiecewiseDemo client:visible />
+
+What the rate panel makes visible (on log y-axis): the kink at $x = t$ is a slope change in
+[log-linear coordinates](https://en.wikipedia.org/wiki/Log%E2%80%93linear_plot) — both
+regimes are straight lines, just at different angles. On linear y-axis the kink would be
+swamped by the exponential blowup; on log it's the visual headline. The first-passage
+panel shows the same kink in $T(C)$, at the cumulative threshold $R(t)$ rather than the
+input threshold $t$ — the regime change happens at a _budget_ level, not at a _level_
+level, which is what the player feels.
+
+## Modifier-product (state-independent multipliers)
+
+A multiplier applied to a rate, where the multiplier doesn't itself depend on the rate's
+state.
+
+$$r(x) = r_{\text{base}}(x) \cdot \prod_i \mu_i, \quad R(x) = \left(\prod_i \mu_i\right) \cdot R_{\text{base}}(x)$$
+
+The cumulative is just the base cumulative scaled by the modifier product. The
+first-passage rescales inversely:
+
+$$T(C) = T_{\text{base}}\!\left(\frac{C}{\prod_i \mu_i}\right)$$
+
+The key invariant: **modifiers on rates are linear in the cumulative**. The shape doesn't
+change; the timescale does. This is why a many-multiplier system stays tractable — every
+modifier is a coordinate change on the rate, not a transformation of its shape. The
+[modifier chains page](/modern/modifier-chains) walks the design pattern; the
+[playbook's composition page](/design-playbook/composition) walks the design *consequence*
+of this rule (mechanics that compose multiplicatively don't go obsolete the way additive
+mechanics do); the math underneath both is exactly this composition.
+
+The constraint is "state-independent." A modifier that depends on the _same state_ the rate
+depends on — say, a multiplier that grows as $x$ grows — is no longer a modifier-product;
+it's a different rate function. That case lives in [bifurcations §1](#what-doesnt-compose-cleanly)
+below.
+
+<ModifierProductDemo client:visible />
+
+What the demo makes visible: the rate and cumulative panels show two parallel curves on
+log y-scale, separated by exactly $\ln \mu$ on the log axis. The first-passage panel shows
+the modifier as a horizontal rescaling — same shape, time axis stretched by $\mu$. Triple
+the modifier, divide the time-to-threshold by three.
+
+## Sum
+
+$$r(x) = r_1(x) + r_2(x), \quad R(x) = R_1(x) + R_2(x)$$
+
+Closure under sum is automatic. Each cumulative integrates on its own; the combined
+cumulative is the sum. Inversion is what's interesting: $R_1(x) + R_2(x) = C$ may not
+have an elementary solution even when each $R_i$ does, because solving a sum of named
+functions is its own nontrivial algebra.
+
+The cleanest case is when one term [dominates](https://en.wikipedia.org/wiki/Asymptotic_analysis)
+in the regime of interest. The catalog's asymptotic ordering at infinity is
+
+$$\text{constant} \ll \log \ll \text{polynomial} \ll \text{exponential}$$
+
+and at the origin the order reverses. So a rate with a polynomial term plus a constant
+term is essentially the polynomial in the late game and essentially the constant in the
+early game — the cumulative inverts approximately closed-form by picking the dominant term
+per regime and stitching at the crossover.
+
+What this gives the spec layer: even when the _exact_ first-passage isn't elementary, the
+_regime-wise_ first-passage is. Designers pick which shape dominates in each regime;
+the sum just decides where the regimes are.
+
+## Functional composition
+
+$$r(x) = r_1(g(x))$$
+
+Closure is preserved when $g$ is monotone and elementary, and $R_1(g(x)) \cdot g'(x)$
+integrates elementarily by the chain rule. The most useful instance: $g(x) = \ln x$
+substitutes log-shape into polynomial-shape, and several otherwise-non-elementary integrals
+collapse under that substitution. The reverse — substituting polynomial into log — usually
+makes things worse; not every substitution closes.
+
+In a design context, functional composition shows up most often as **prestige math**: the
+prestige currency $H$ is a function of the primary cumulative $C$, the per-prestige rate
+runs against a function of $H$, and the post-prestige run is the cumulative integrated
+against the modified rate. The whole stack is closed-form if each layer is one of the
+catalog's entries and each layer's $g$ is monotone elementary. When it isn't, the
+prestige math falls into [bifurcations](https://en.wikipedia.org/wiki/Bifurcation_theory)
+— the underlying cycle is an [optimal-stopping problem](https://en.wikipedia.org/wiki/Optimal_stopping)
+that doesn't close, even when each individual run does.
+
+## What doesn't compose cleanly
+
+The catalog's main hand-wave: not every product of catalog entries closes. Three
+common-but-not-closed cases:
+
+- **State-coupled multipliers.** When a "modifier" actually depends on the same state the
+  rate depends on — for example, a multiplier that grows as the player's
+  [logarithm](https://en.wikipedia.org/wiki/Logarithm) of their current state — the rate
+  becomes $r(x) \cdot f(x)$ for non-trivial $f$. The product of two state-dependent
+  catalog entries generally doesn't close (a polynomial times an exponential integrates
+  to an [incomplete gamma function](https://en.wikipedia.org/wiki/Incomplete_gamma_function),
+  not anything elementary). The spec layer here shifts to [bounds](https://en.wikipedia.org/wiki/Asymptotic_analysis)
+  — closed-form upper and lower envelopes around the actual integrand — rather than the
+  exact integral.
+- **Coupled multi-resource systems.** When two resources mutually feed each other's
+  rates — predator-prey, [Lotka-Volterra](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations),
+  multi-species [logistic](./bounded-growth) — closure requires special structure (linear
+  systems, conserved quantities, triangular dependency). General nonlinear coupling is
+  outside the algebra. Most modern incrementals avoid genuinely coupled multi-resource
+  systems for exactly this reason; the games that ship them tend to simplify the coupling
+  to a triangular dependency that does close.
+- **Adversarial strategy spaces.** When a "rate" depends on what an opponent does
+  ([Tug](https://en.wikipedia.org/wiki/Tug_of_war)-style, PvP idle, faction warfare),
+  the per-fixed-strategy rate closes but the equilibrium between strategies doesn't.
+  [Game theory](https://en.wikipedia.org/wiki/Game_theory) is the right adjacent math.
+
+The catalog stops where the algebra stops. Past that, the spec layer keeps describing
+shape — just in a different vocabulary (asymptotic envelopes,
+[best-response dynamics](https://en.wikipedia.org/wiki/Best_response),
+[matrix exponentials](https://en.wikipedia.org/wiki/Matrix_exponential)) — and the
+runtime keeps simulating. Closed-form spec is the destination wherever it can be
+reached; where it can't, the math just changes shape.
+
+## Composition recap
+
+| Composition                    | Closes when                                    | Spec form                             |
+| ------------------------------ | ---------------------------------------------- | ------------------------------------- |
+| Piecewise splice               | Each regime closes                             | $T(C)$ piecewise on $C$               |
+| Modifier-product (state-indep) | Always                                         | $T_{\text{base}}(C / \prod \mu_i)$    |
+| Sum                            | Cumulative always; inversion regime-wise       | $R_1 + R_2$, dominant-term per regime |
+| Functional composition         | $g$ monotone elementary, chain rule integrates | $T = g^{-1}(T_{\text{base}})$         |
+| Triangular multi-resource      | Each scalar closes in dependency order         | Solve in sequence                     |
+| State-coupled multiplier       | Special structure only                         | Bounds, not integrals                 |
+| Nonlinear coupled ODEs         | Special structure only                         | Conserved quantities, normal forms    |
+| Adversarial strategy space     | Per-fixed-strategy closes                      | Best-response, equilibrium math       |
+
+The first four lines are the catalog's algebra. The last four are where the algebra ends
+and the named adjacent math takes over.

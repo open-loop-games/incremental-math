@@ -1,0 +1,184 @@
+---
+layout: ../../layouts/Article.astro
+title: Bending the curve — soft caps and regime breaks
+---
+
+# Bending the curve — soft caps and regime breaks
+
+Soft caps are how the genre patches the runaway tendency of unbounded geometric
+growth. They're also where the most common design mistake lives: the wrong shape, the
+wrong threshold, or the wrong stack of caps will trade a runaway problem for a wall
+problem. Math diagnoses both.
+
+This page bundles the questions where the [softcap design pattern](/modern/softcaps)
+meets the [power-law](/rate-functions/power-law) and [log-frontier](/rate-functions/log-frontier)
+catalog entries. The Modern section's softcaps page walks the patterns the genre uses;
+this page walks the design call that picks among them.
+
+## When should I soft cap?
+
+The math diagnosis: when an unbounded rate function is producing a cumulative that
+_nothing downstream consumes meaningfully_. If the cumulative stops corresponding to
+a meaningful progression value past some threshold — because the player can't spend
+it, or because spending it has [diminishing returns](/rate-functions/power-law) the
+designer didn't intend — the rate function has outgrown its purpose, and a soft cap
+is the answer.
+
+The negative diagnosis is just as important: if the rate's runaway _is_ the meaningful
+progression — Cookie Clicker's late-game cookie counts running into 1e308 territory is
+the _point_ of the late game, not a bug — soft capping is the wrong move. The math
+doesn't say "all unbounded progression must be capped." It says "if the cumulative isn't
+delivering value past a threshold, cap it there."
+
+A clean test the design call can run: does the player notice when one
+unit of the runaway value becomes available? If yes (still feels like progress), the
+rate function is doing its job; don't cap. If no (the marginal unit lands silently
+because the formatter rounds it to invisibility, or because the next milestone is
+priced past where the player can read), the rate has outgrown its UI, and capping it
+either changes the shape or changes the formatter — but something must change.
+
+## Which shape — root, log, hyperbolic, piecewise?
+
+Each shape lives in the catalog at a specific entry. Picking among them is picking
+which property matters most for the cap's role.
+
+**Root / fractional power**. $g(x, t) = t \cdot (x/t)^p$ for $0 < p < 1$. Lives at the
+[polynomial entry](/rate-functions/power-law) with fractional exponent. The post-cap
+growth is sublinear but unbounded, with a smooth slope change at the threshold. Pick
+this when the cap's role is "slow down growth, don't ceiling it." The exponent $p$
+controls aggressiveness — $p = 0.5$ is the genre-default sqrt softcap, $p = 0.3$ is
+harsh, $p = 0.7$ is gentle.
+
+**Log**. $g(x, t) = t + k \cdot \log_{10}(x - t + 1)$. Lives near the
+[logarithmic entry](/rate-functions/log-frontier). The post-cap growth is _very_
+sublinear — every $10\times$ in input adds a fixed $k$ to output. Pick this when the
+cap's role is "compress many orders of magnitude into a small number." NGU Idle's
+many stacked log caps are this shape because the game's underlying values span 50+
+orders of magnitude and need to land on a stat the player can read.
+
+**Hyperbolic / asymptotic**. $g(x) = L \cdot x / (x + k)$. Lives at the
+[rational entry $p > 1$](/rate-functions/power-law) when read as a cumulative. The
+post-cap growth approaches a _finite ceiling_ $L$ that's never reached. Pick this when
+the cap's role is "this stat represents a fraction or efficiency that should saturate
+near 100%." Civ Clicker's cleric efficiency is this — "approach but never exceed 1.0"
+is the design intent the shape encodes.
+
+**Piecewise / regime split**. Different rate or growth on each side of a threshold,
+glued continuously. Lives at the [piecewise composition](/rate-functions/composition)
+rule. Pick this when the cap's role is "change the regime visibly so the player feels
+the transition." Realm Grinder's pre/post-Ascension cost shift is two geometrics
+spliced; the player crosses a named threshold and the game's pacing visibly changes.
+
+The picks are not interchangeable. Root and power are smooth and continuous-derivative
+at the threshold; log is smooth but the slope change is sharper; piecewise has a
+visible kink; hyperbolic has a hard ceiling. The
+[softcaps comparison demo](/modern/softcaps) plots them on a shared axis if you want
+the visual.
+
+## How many caps should stack?
+
+The math: cascading soft caps with successively harsher exponents at successively
+higher thresholds is a piecewise composition where each regime applies a more aggressive
+shape than the last. Closure is automatic per regime; inversion still works as long as
+each cap closes individually.
+
+The design-side question is "how many threshold crossings do I want a session to
+contain?" Each crossing is a felt event for the player — a moment where the curve's
+character visibly changes. Too few and the late game feels uniform; too many and the
+player loses track of which cap is currently binding.
+
+Working answers from the corpus:
+
+- **One cap, one threshold.** Most early softcap implementations. Late-game has one
+  obvious "wall" the player aims at and breaks through. Simple, legible, but the
+  late-late-game often runs out of structure.
+- **Two-tier.** Early cap for "first slowdown," late cap for "the real wall." Realm
+  Grinder's pre-/mid-/post-Ascension split is effectively this when read as cost
+  caps. Common when the game has one major prestige layer.
+- **Many caps, named individually.** Prestige Tree, Synergism, NGU Idle. Each cap is
+  addressable by name; upgrades target specific caps; challenges swap cap shapes.
+  The pattern works because the game's _content_ loops around the caps — knowing
+  which cap is binding is a real piece of late-game knowledge. Three or more caps
+  starts to require this kind of UI scaffolding.
+
+The catalog says nothing about which of these is right for a given game; it just says
+each is a piecewise composition that closes. The design call is content-shaped: how
+much does your late game lean on the caps as named features versus as background
+shape?
+
+## Hard cap versus soft cap
+
+Mathematically: a hard cap has a discontinuous derivative at the cap (slope drops
+from positive to zero); a soft cap keeps a positive marginal return everywhere. The
+catalog's vocabulary makes this concrete — both are functions, both are integrable,
+but the hard cap's first-passage time goes from finite-and-keeps-growing to
+infinite-past-the-cap, and the soft cap's keeps growing finitely.
+
+Design-side, the discontinuity is the load-bearing question. A hard cap _ends_ the
+relevant progression — past the cap, the value stops responding to player action. The
+genre's working consensus, with exceptions, is that hard caps on _progression_ values
+end the relevant gameplay loop and should be avoided; hard caps on _resource
+containers_ (slot count, queue depth, simultaneous-effect count) are fine because the
+player can read them as content shape rather than as a wall.
+
+When hard caps work for progression: when the _cap is the milestone_. Early Trimps
+helium is exactly zero before zone 19; the hard cutoff is content, not a wall. The
+player doesn't experience it as "I'm capped"; they experience it as "I can't earn
+helium yet." The design distinction is whether the player is _trying_ to cross the
+cap when they hit it. If yes (cap as wall), the discontinuity is felt as the wall it
+is. If no (cap as gate), the discontinuity is invisible — the player isn't pushing
+against it.
+
+When soft caps work better than hard caps: any case where the player is actively
+pushing against the cap as a milestone. The soft cap's positive-marginal-return
+preserves the rhythm of "click, see number rise" that idle games are built around;
+the hard cap's zero-marginal-return breaks the rhythm. Modern incrementals overwhelmingly
+ship soft for this reason.
+
+## How do I make a soft cap feel fair?
+
+Three patterns the corpus uses, each one math-diagnosable:
+
+- **Make it visible.** Players understand a cap they can see. A status indicator
+  showing the cap is binding, a tooltip showing pre-cap and post-cap values, a
+  named cap in the UI — all pull the cap from "invisible nerf the player feels but
+  can't name" to "visible mechanic the player can plan against." The math doesn't
+  care; the legibility is everything.
+- **Make it removable, eventually.** A cap that the player can never break is felt as
+  a permanent constraint; one they can break (with a milestone, an upgrade, a
+  prestige) becomes a target. Most modern games offer "reduces softcap by X%"
+  upgrades for exactly this reason. The math is just a parameter slide on the cap's
+  threshold or strength; the felt experience is "the wall is moveable."
+- **Make sure there's something to do past it.** A soft cap regulates the _rate_ of
+  progression past the threshold; it doesn't provide _content_ past the threshold.
+  If the post-cap regime has nothing to do but watch a number tick up at a sublinear
+  rate, the cap turns into the wall it was meant to avoid. Modern incrementals usually
+  pair caps with side-systems that activate past the threshold — a milestone hunt, a
+  new prestige tier, a separate mechanic. The cap is the regulator; the engagement is
+  a separate design surface and the math is silent about it.
+
+The fairness call is downstream of all three. A soft cap that's invisible, immovable,
+and gates an empty post-cap regime will feel unfair regardless of which catalog shape
+it uses. A soft cap that's named, breakable, and gates real content will feel fair
+even if the underlying shape is harsh.
+
+## Where the math stops
+
+The catalog tells you what each soft cap shape does to the curve. It doesn't tell you:
+
+- **Whether to cap at all.** As above — "is the post-cap regime serving the design?"
+  is a content question, not a curve question.
+- **Where to put the threshold.** The math diagnoses that the cap _needs_ a
+  threshold; it's silent about whether the threshold should be at $10^6$ or $10^{50}$.
+  That's a session-shape call about how many doublings of pre-cap progression you want
+  the player to experience.
+- **What the post-cap UI should say.** A capped value behaves differently from an
+  uncapped one and the player needs to read the difference. Display layers, named
+  cap indicators, telegraphed upcoming caps — all of that is UI work and the math is
+  silent about it.
+
+The catalog is at its best when the question is "what shape" or "how many" or "when
+does this start being broken." It's at its worst when the question is "will this be
+fun" or "where exactly should the breakpoint be" — those are observation problems, and
+the only reliable answer is to play the curve at the threshold's neighborhood and see
+how it feels.

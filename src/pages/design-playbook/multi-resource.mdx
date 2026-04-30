@@ -1,0 +1,213 @@
+---
+layout: ../../layouts/Article.astro
+title: Multi-resource — lattices and the triangular escape
+---
+
+# Multi-resource — lattices and the triangular escape
+
+Modern incrementals rarely run a single currency. Production, prestige, side
+mechanics, milestone rewards, and event currencies stack into resource lattices that
+the player navigates simultaneously. The catalog's
+[multi-resource extension](/rate-functions/composition) tells you when those lattices
+stay in closed form and when they don't, and the answer is almost always "they're
+triangular."
+
+This page bundles the questions that come up when designing multi-currency systems:
+when to keep currencies separate vs unify them, when conversion ratios stay tractable,
+and what to do when resources start feeding back into each other in cycles the math
+can't close.
+
+## When should currencies be separate vs unified?
+
+The math diagnosis: separate currencies are tractable when each currency's rate
+function depends on a _different_ state. The system [decouples](/rate-functions/composition)
+and each currency is its own first-passage problem in isolation. When two currencies'
+rates depend on the same state, the system _couples_, and closure depends on the
+shape of the coupling.
+
+The design call:
+
+- **Separate, decoupled.** The cleanest case. Two currencies with no shared state.
+  Each one accumulates against its own clock, has its own milestones, and is
+  manipulated by its own upgrades. Math-wise this is two independent first-passage
+  problems running side by side. The risk is the [obsolete-mechanic](./composition)
+  problem: if one currency's rate outgrows the other's, the slower one becomes
+  irrelevant unless it converts back into the faster.
+- **Separate but [triangular](/rate-functions/composition).** The most common case in
+  shipped games. Currency A produces currency B; currency B is a modifier on
+  currency A's rate or feeds upgrades that improve currency A's mechanics. The
+  dependency runs one way, so the system is solvable in dependency order: solve A
+  with its current modifiers, derive B from A's accumulation, apply B's effect on
+  the next iteration of A. Math-wise this stays in the algebra as long as each
+  layer is elementary.
+- **Unified into one currency.** When the design question is "do these two values
+  represent the same kind of thing?" and the answer is yes, unifying is cleanest.
+  Cookie Clicker has cookies and Heavenly Chips, but only because they represent
+  _different_ things (current-run accumulation vs cross-run prestige). If both
+  represented "produced cookies," they'd be one number.
+
+What the math forbids: bidirectional coupling between rates that doesn't decouple
+into a triangular system. If currency A's rate depends on B and B's rate depends on
+A in a way that doesn't reduce to one-direction dependency, the system is a coupled
+ODE and lives in the [bifurcation rows](/rate-functions/composition#what-doesnt-compose-cleanly).
+Most modern games avoid this for exactly the reason the math suggests: the system
+becomes hard to balance, hard to predict, and hard to ship without spreadsheet
+calibration the math layer can't help with.
+
+## When does a conversion ratio stay closed-form?
+
+The math: a conversion $H = f(C)$ that maps cumulative $C$ to a derived value $H$ stays
+closed-form when $f$ is in the catalog. The
+[catalog's composition rules](/rate-functions/composition#functional-composition) cover
+the conditions: $f$ must be monotone elementary and its inverse must be elementary.
+Cube root, square root, log, polynomial — all good. Sums of elementary functions —
+good for the cumulative, but the inverse may need numerical methods. Lambert-W
+inverses — closed-form formally, but lose interpretive transparency.
+
+The design-side reading: pick a conversion that the catalog has named, and the
+math will behave. Pick a conversion that's a sum or product of named conversions, and
+the math will mostly behave but the inverse may need a calibration table. Pick a
+conversion that's _outside_ the catalog, and the math probably won't close, and
+shipping the conversion will involve solver code the algebra can't help with.
+
+The corpus's working defaults — cube root, square root, log of cumulative — are all
+catalog entries. Games that ship more exotic conversions usually carry the
+calibration cost (named tables, hard-coded breakpoints, or numerical solvers in the
+upgrade-affordability calculation).
+
+## How do I design a triangular dependency that stays tractable?
+
+The catalog's [triangular systems rule](/rate-functions/composition) says: order the
+resources $R_1, \dots, R_k$ such that $R_i$'s rate depends only on $R_1, \dots, R_i$.
+The system is solvable in sequence — solve $R_1$ first, substitute its solution into
+$R_2$'s equation, solve, substitute into $R_3$'s, and so on. Closure of the whole
+system reduces to closure of each scalar.
+
+Design-side, this is the recipe most modern games follow:
+
+- **Primary currency at the bottom.** Cookies, antimatter, paperclips. Its rate
+  depends on counts of buildings and various multipliers. No back-feed from higher
+  tiers in the _current_ run.
+- **Building counts at the next level.** Each building's count grows as a function
+  of the primary currency (you spend it to buy them). The dependency is one-way:
+  buildings consume primary currency, don't produce it directly except through
+  their per-tick output.
+- **Prestige currency above that.** Heavenly Chips, Eternity Points. Its rate
+  depends on the primary currency's cumulative across runs, and feeds back into the
+  primary currency's rate via prestige multipliers. Within a single run, the
+  dependency is one-way; _across_ runs, it loops, but the loop is at the cycle
+  boundary, not in the rate function.
+- **Layered prestige currencies above that.** Each layer is a function of the
+  layer below's cumulative. Same triangular pattern, iterated.
+
+The pattern stays tractable because the dependency is layered. Each scalar in the
+sequence solves on its own; the system as a whole is the iterated chain. What
+_breaks_ triangularity is any rate function that depends on a layer _above_ it
+within a single run — a building whose output depends on the prestige currency the
+player will earn at the end of the run, for example, would create a circular
+reference that doesn't close.
+
+The genre's working solution: keep the across-run feedback at the cycle boundary
+(prestige conversion at end of run), not in the per-tick rate function. Each run is
+triangular; the feedback happens between runs. This is exactly the
+[functional composition](/rate-functions/composition) structure, applied to the
+multi-resource case.
+
+## What happens when resources have circular dependencies?
+
+The honest answer: the math gets harder fast.
+
+Two resources whose rates mutually depend on each other — the canonical example is
+[Lotka-Volterra](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations)
+predator-prey, but the genre versions are simpler: "currency A's production depends
+on B, and B's production depends on A" — produce coupled ODEs that close only in
+special cases. The catalog covers the special cases:
+
+- **Linear coupling**. $dR/dt = AR + b$ for constant matrix $A$. Closes via the
+  [matrix exponential](https://en.wikipedia.org/wiki/Matrix_exponential). Solvable
+  for any $A$, but the formulas are dense; useful when the system is genuinely
+  linear.
+- **Conserved quantities**. Some coupled systems admit a conserved quantity
+  $H(R) = \text{const}$. The trajectory is constrained to a level set of $H$,
+  which reduces the dimension by one. Lotka-Volterra has this.
+- **Decoupling via substitution**. If a clever change of variables converts the
+  coupled system to a triangular one, the math closes again. Worth trying when the
+  coupling looks like a candidate for substitution.
+
+When none of these apply, the system is in the bifurcation rows and the spec layer
+shifts to _qualitative_ descriptions: stable equilibria, basins of attraction,
+periodic orbits. Quantitative timing requires numerical integration, but the spec
+layer can still describe shape.
+
+The design call: most circular dependencies in shipped incrementals are accidents.
+A designer who didn't realize the coupling was circular ships a system that's
+hard to balance, hard to predict, and hard to ship. The fix is almost always to
+break the cycle: make the dependency triangular by introducing a delay (B uses
+_last tick's_ A rather than current A), an aggregation (B depends on A's
+_cumulative_, not A's _rate_), or a separation (one of the resources is moved to a
+different layer that only feeds at cycle boundaries).
+
+When the circular dependency is intentional — predator-prey ecosystem, supply-and-demand
+economic loop — the design is committing to the bifurcation. The math the spec layer
+runs in is no longer the catalog; it's the named adjacent math (linear ODE theory,
+phase plane analysis, conserved quantities). That's a real investment to ship; the
+games that do this successfully usually treat the coupled system as the _headline_
+mechanic rather than as a side surface.
+
+## How do I balance multiple resources?
+
+Triangularity is half the answer; the other half is making the _dependencies_ between
+layers feel meaningful to the player. Three patterns the corpus uses:
+
+- **Each layer modifies the layer below.** Prestige currency multiplies primary
+  currency rate; secondary currency unlocks upgrades that multiply primary; layered
+  prestige does the same recursively. Players experience the layers as connected
+  because each one _visibly_ affects the layer below.
+- **Each layer gates content the layer below can't reach.** Some upgrades cost
+  primary currency _and_ secondary currency; some require a milestone in both. The
+  triangular dependency is reflected in the upgrade tree's structure.
+- **Each layer's progression is felt in the layer below's pacing.** A run with
+  more prestige currency is visibly faster. A new prestige tier visibly compresses
+  the time-to-milestone of the lower layer. The math is doing this; the design has
+  to _show_ it.
+
+Failure modes — multi-resource systems that feel "tacked on" rather than integrated —
+usually have one of two diagnoses:
+
+- **The currencies don't compose mathematically.** Two currencies that each have
+  their own first-passage problem with no cross-feeding are running parallel
+  games. Math says: triangulate them.
+- **The currencies compose, but the player can't see it.** The math is right, but
+  the UI doesn't show how the prestige multiplier shortened the next run, or how
+  the secondary currency unlocked the upgrade in the primary tree. Math says:
+  this is correct, fix the UI.
+
+The diagnoses are different fixes. The math layer can run the first one fast (look
+at the dependency graph; ship a triangular structure). The second one is UI work
+that the math is silent about.
+
+## Where the math stops
+
+The catalog tells you when a multi-resource system stays in the algebra (decoupled,
+triangular, or linear-coupled with constant coefficients), and what named adjacent
+math takes over when it doesn't. It doesn't tell you:
+
+- **Which resources to ship.** Whether your game has cookies and Heavenly Chips,
+  or just cookies, or cookies and Heavenly Chips and a side currency for events,
+  is a content decision. The math runs once you've decided which currencies exist.
+- **What conversion rates to pick.** "$H = C^{1/3}$" is a catalog entry; "$H = C^{1/4}$"
+  is also a catalog entry. The math is silent about which exponent fits your game's
+  pacing intent. That's a session-shape and prestige-feel call, downstream of the
+  math.
+- **How to surface multi-resource state in the UI.** The mathematical fact of
+  triangular dependency doesn't dictate how to show it. Modifier-chain UIs,
+  resource-bar layouts, multi-currency HUDs, prestige tree visualizations — all are
+  design choices the math is silent about.
+
+Multi-resource systems are where the catalog's vocabulary is most directly useful
+for _diagnosing_ problems with a design that's already partially built. "Why does
+this currency feel useless?" almost always answers to "it's running its own
+first-passage problem, decoupled from the loop the player cares about." "Why is
+this system unstable?" almost always answers to "circular dependency you didn't
+intend, which dropped the system out of triangular structure." The math runs
+diagnoses fast; the fixes are the design work.

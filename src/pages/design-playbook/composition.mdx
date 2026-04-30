@@ -1,0 +1,191 @@
+---
+layout: ../../layouts/Article.astro
+title: Composition — when mechanics blend
+---
+
+import ObsoleteVsBlendedDemo from '../../components/design-playbook/ObsoleteVsBlendedDemo.vue';
+
+# Composition — when mechanics blend
+
+This page is for designers who've felt the difference between Antimatter Dimensions and a
+mechanic-of-the-week clicker — the difference between mechanics that keep mattering as
+the game goes and mechanics that become "set-and-forget" the moment the autobuyer
+unlocks. Five questions in that area, each one with a math diagnosis you can apply
+without spreadsheet calibration.
+
+The whole page rests on one architectural fact about
+[composition rules](/rate-functions/composition): mechanics that contribute _additively_
+to a rate eventually fall behind anything growing faster — the asymptotic-dominance
+ordering on the catalog page is doing this, and nothing in the algebra prevents it.
+Mechanics that contribute _multiplicatively_ to a shared rate can't fall behind the same
+way; multiplicative composition is independent of magnitude. The choice between these
+two architectures is the entire question.
+
+## Why does this mechanic become obsolete once automated?
+
+The honest version: it isn't the automation. The automation just makes the obsolescence
+_visible_. The math was always headed there.
+
+When a mechanic is its own [first-passage problem](/rate-functions/) — its own currency,
+its own milestone, its own rate function feeding back into nothing the rest of the game
+cares about — it lives in isolation from the main loop's rate function. The total
+production of the game decomposes as a sum: $r_{\text{total}}(t) = r_1(t) + r_2(t) + \dots$.
+Once the player has automated $r_1$, its growth rate is fixed at whatever the autobuyer
+produces. Meanwhile, the post-automation upgrade tree pushes some other rate $r_3$ into
+exponential growth, and the catalog's [asymptotic ordering](/rate-functions/composition)
+takes over. After enough time, the share $r_1 / r_{\text{total}}$ collapses to ~0%. The
+mechanic isn't _broken_; it's _dominated_. From the player's perspective, the
+indistinguishability of "broken" and "dominated" is what makes the experience feel like a
+chore to pretend matters.
+
+The fix isn't more upgrades, more milestones, more decoration. The fix is to change
+the composition: stop having the mechanic add to the rate, start having the mechanic
+_multiply_ something.
+
+## Why do AD's galaxies feel like they keep mattering?
+
+Same math, opposite direction. AD's galaxies are not an additive contribution to
+production — they're a state variable that _modifies_ production. The composition rule
+underneath is the [modifier-product](/rate-functions/composition):
+$r(x) = r_{\text{base}}(x) \cdot \mu_{\text{galaxies}}$. The galaxy count is a single
+shared state that many mechanics feed. Tickspeed boosts feed it. Replicanti unlocks feed
+it. Eternity upgrades feed it. Time studies feed it. Every one of those mechanics is
+adding to the _same_ state variable, which is then multiplying production downstream.
+
+The architectural difference: galaxies aren't a separate first-passage problem with their
+own milestone the player is racing toward. They're a _modifier_ on the main loop's rate
+function. Once a mechanic feeds the galaxy count, that mechanic's contribution
+permanently boosts everything downstream — not as an additive term that gets dominated
+by something faster, but as a multiplicative factor that scales the entire downstream
+rate. Multiplicative contributions don't get dominated. They compose.
+
+<ObsoleteVsBlendedDemo client:visible />
+
+The visual claim the demo makes: identical growth rates, identical mechanics, two
+architectures. On the left, contributions are summed; the fastest mechanic's share grows
+toward ~100% and the others collapse. On the right, contributions are multiplied (shown
+as log-share so the stacked-area visual lines up); each mechanic's share is _exactly_
+$g_i / \sum g_j$, fixed forever, independent of how long the run goes. The mechanics
+keep mattering because the math is structurally different — there's no asymptotic
+ordering on multiplicative factors, only on additive ones.
+
+The galaxy count itself is the sum of contributions from many sources, and that sum
+_does_ have an asymptotic ordering — the fastest-growing source dominates the galaxy
+count over time. But the galaxy count is then _multiplied_ into production, and the
+multiplication is what blends. A designer worrying about galaxy-source obsolescence
+would be one level too low: the relevant unit is the multiplier, not its component
+sources, and the multiplier blends into everything that uses galaxies.
+
+## What are my options for boosting a mechanic?
+
+Four canonical levers, each one a different composition rule from the catalog. They're
+not interchangeable; each does something specific to the rate function and the
+first-passage time.
+
+**Multiplier on the rate.** $r(x) \to \mu \cdot r(x)$. The
+[modifier-product](/rate-functions/composition) rule. Rescales the timescale: doubles
+the rate, halves the time-to-threshold, identical curve shape on log-y. Every "+50% to X"
+upgrade is this. The math is clean: $T_{\text{new}}(C) = T_{\text{old}}(C / \mu)$. Players
+feel this as "everything's faster now."
+
+**Lower the threshold.** $C \to C / k$. The cost the player has to reach is rescaled
+down. Identical math to the multiplier case from the time perspective —
+$T(C / k) = T_{\text{multiplier}}(C)$ — but the framing is different: the _cost line_
+moves down rather than the _production line_ moving up. Players feel this as "the next
+thing is cheaper now," and the difference matters for which side of the seesaw the
+upgrade reads as belonging to.
+
+**Multiply the state amount.** The state variable itself gets rescaled: $x \to k \cdot x$.
+On log-axis charts this is a horizontal shift; on linear axes it's a stretch. For
+geometric rate ladders, multiplying the state by $k$ means starting $\log_m k$ levels
+ahead. Players feel this as "I jumped forward in the curve" — qualitatively different
+from speeding it up, because the _position_ on the curve changed.
+
+**New source.** The state is fed by an additional [sum](/rate-functions/composition)
+term. The mechanic that produces the state now has another contributor. Crucially: this
+is additive only at the _state_ level; the state is then multiplied into rates downstream,
+so the new source's contribution still blends multiplicatively into the loop. The trick
+of AD's galaxies is exactly this two-level structure: many sources sum into the shared
+state, the shared state multiplies the rate.
+
+The four are interchangeable in their effect on first-passage time _for a single milestone_
+— each one shortens it — but they're not interchangeable in how they read to the player or
+how they compose with each other. Multipliers stack with multipliers; thresholds stack
+with thresholds; new sources stack with each other and with everything else. Designing
+upgrades means picking which lever each upgrade pulls, and the picks compound into the
+texture of the late game.
+
+## How does prestige fit into the loop?
+
+[Functional composition](/rate-functions/composition): the prestige currency $H$ is a
+function of the primary cumulative $C$ (often $H \propto C^{1/3}$ or $H \propto \log C$),
+and the post-prestige run is the cumulative integrated against a rate function that's
+_been modified by_ $H$. Two layers, glued by a function — primary loop closes for one
+run, prestige is the conversion at the layer boundary, post-prestige loop runs against a
+rate that includes $H$ as a modifier.
+
+The shape this gives the math: as long as each layer is in the catalog and the
+prestige conversion is monotone elementary, the whole stack has a closed-form first-passage.
+This is what makes modern incrementals tractable — the _layer_ is the unit of math, not
+the run, and runs nested arbitrarily deep stay in the algebra as long as the gluing
+functions stay simple.
+
+Where prestige stops being closed-form is when the _cycle length_ itself becomes a
+decision variable. The question "when should the player prestige?" is an
+[optimal-stopping problem](https://en.wikipedia.org/wiki/Optimal_stopping), which lives
+in the [bifurcation rows](/rate-functions/composition#what-doesnt-compose-cleanly) of
+the catalog. Per-run math closes; cycle-length math doesn't. The right adjacent math
+there is dynamic programming or a Bellman-equation solver, not the catalog. Most modern
+games avoid this by _not_ leaving the cycle length up to the player — autobuyer-driven
+prestige with a fixed trigger, or guided by milestone unlocks, both convert the
+optimal-stopping problem into a deterministic schedule that closes again.
+
+## How do I add a new layer without making the old one feel pointless?
+
+The previous four questions all bear on this one. The diagnosis is a single test: does
+the new layer's value flow _back into_ the old layer's primitives? If yes, the old
+layer's primitives now have a new reason to exist — they feed something new — and the
+old layer keeps mattering. If no, the old layer is sitting in additive composition with
+the new layer, and the asymptotic-dominance ordering has already decided which one is
+load-bearing in the long run.
+
+Three concrete versions of "yes":
+
+- **The new layer's currency is a multiplier on the old layer's rate.** Cookie Clicker's
+  Heavenly Chips multiply CPS; you keep upgrading buildings post-prestige because the
+  Chips multiplier and the building output are _multiplicatively_ composed.
+- **The new layer's currency unlocks new sources for the old layer's state.** A new
+  prestige tier opens additional ways to produce the primary currency. The old loops
+  matter because the new sources flow through them.
+- **The new layer's currency lets you crank a knob on the old layer.** A challenge
+  mode rebalances the old loop's parameters. The old loop is what's being challenged;
+  the player's knowledge of it is now a real asset.
+
+The version of "no" is the one that produces the obsolete-mechanic feeling: a new layer
+whose currency does its own thing, has its own upgrades, and never composes with the old
+layer's rate function. This is what the [layered prestige](/modern/layered-prestige) page
+calls "loosely-coupled tiers," and it's the loosest of the bad design patterns the
+catalog can diagnose: tiers that share a screen but not a rate function are tiers
+running their own first-passage problems in the same UI.
+
+## Where the math stops
+
+Two boundaries the catalog can't see across:
+
+- **It doesn't tell you which lever a specific upgrade should pull.** The four canonical
+  boosts are all valid; the math says nothing about whether a particular upgrade should
+  be a multiplier or a threshold drop or a new source. That's a feel call, and feel
+  calls are what designers are paid for. The math just maps the space the call is being
+  made in.
+- **It doesn't tell you whether to add the new layer at all.** The math diagnoses
+  obsolescence; it doesn't prescribe novelty. If a mechanic is going to go obsolete and
+  there's no clean way to compose it back into the main loop, _removing_ the mechanic
+  is also a valid response, and the math has nothing to say about which is the right
+  call. Some games deliberately retire mechanics to make room for new ones; some
+  deliberately keep all mechanics composing forever. Both are real design philosophies.
+
+What the catalog _does_ tell you, reliably, is whether your existing composition will
+hold up — whether the addition you're contemplating sits in additive position relative
+to existing rates (will go obsolete), in multiplicative position (will blend), or in
+some other composition the catalog has named. That diagnosis runs faster than tuning
+runs do, and it surfaces problems before the playtests would.

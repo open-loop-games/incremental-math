@@ -1,0 +1,141 @@
+---
+layout: ../../layouts/Article.astro
+title: Log and the Lambert-W frontier
+---
+
+import LogRateDemo from '../../components/rate-functions/LogRateDemo.vue';
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
+
+# Log and the Lambert-W frontier
+
+This page covers the boundary of elementary closed-form. The
+[logarithmic](https://en.wikipedia.org/wiki/Logarithm) rate has a clean cumulative but its
+first-passage requires a non-elementary function — the
+[Lambert W function](https://en.wikipedia.org/wiki/Lambert_W_function), defined by
+$W(x) \cdot e^{W(x)} = x$. W is closed-form in the formal sense; it has known
+[asymptotics](https://en.wikipedia.org/wiki/Asymptotic_analysis), it evaluates fast, it
+composes with the rest of the algebra. But it isn't part of the elementary toolkit most
+designers carry, and its appearance in a first-passage formula is the sign that the
+underlying spec is sitting on a quiet boundary the catalog should flag.
+
+## Logarithmic rate
+
+$$r(x) = a \cdot \ln(b \cdot x), \quad R(x) = a\,(x \ln(b x) - x + 1/b)$$
+
+The cumulative is what's known as the [$x \ln x$
+form](https://en.wikipedia.org/wiki/Stirling%27s_approximation) — the same shape that
+appears in [entropy](<https://en.wikipedia.org/wiki/Entropy_(information_theory)>),
+[combinatorics](https://en.wikipedia.org/wiki/Stirling%27s_approximation), and the
+factorial's asymptotic expansion. The constant of integration is anchored so $R(1/b) = 0$
+(the rate is zero at $x = 1/b$, so the cumulative below that is empty).
+
+The first-passage isn't elementary. Inverting $R(t) = C$ produces an equation of the form
+$u \cdot \ln u = K$, which is the prototype Lambert-W equation. The closed form is
+
+$$T(C) = \frac{1}{b} \cdot e \cdot e^{W_0\!\left(\frac{bC/a - 1}{e}\right)}$$
+
+— a substitution into the principal branch $W_0$. The demo evaluates this via
+[Halley's method](https://en.wikipedia.org/wiki/Halley%27s_method), which converges in
+four or five iterations from a coarse seed.
+
+<LogRateDemo client:visible />
+
+## Where logarithmic rate appears in the corpus
+
+Pure logarithmic rate — $r(x) = a \ln(b \cdot x)$ as the production rate of a primary
+quantity — is rare. What's common is logarithmic _cumulative_ applied as a soft cap on a
+quantity that's already accumulated. The two readings often produce the same shape on the
+output side, but the role in the system is different: rate-shaped log lives in the
+production chain, cumulative-shaped log is a transformation applied at the boundary.
+
+The cleanest cumulative-shaped log in the corpus is Trimps' fluffy pet level, which is
+log-base-4 of an underlying XP cumulative:
+
+<Cite repo="Trimps" path="main.js" line="15100-15112" />
+
+```js
+var scruffXP = game.global.fluffyExp2 / 1000;
+var scruffLvl = Math.log(scruffXP) / Math.log(4);
+// ...
+var fluffXP = game.global.fluffyExp / (1000 * Math.pow(5, fluffyPrestigeCount));
+var fluffLvl = Math.log(fluffXP) / Math.log(4);
+```
+
+Each quadrupling of XP adds one level — a fixed $\log_4$ compression of the cumulative.
+Reading this as a rate-function entry: the _rate of level gain per XP_ is
+$1/(\text{XP} \cdot \ln 4)$, which is the [polynomial rate](./power-law) with $p = -1$ —
+the boundary case of the polynomial entry where the integral becomes $\ln$. So Trimps'
+log-pet-level is sitting on the same boundary this page covers, just from the other side:
+"polynomial rate at $p = -1$" and "log on the cumulative" are two views of the same shape.
+
+## The Lambert W function
+
+W is the inverse of $x \cdot e^x$. Like the
+[exponential](https://en.wikipedia.org/wiki/Exponential_function), [logarithm](https://en.wikipedia.org/wiki/Logarithm),
+and [trig](https://en.wikipedia.org/wiki/Trigonometric_functions) families, it's a named
+function with well-defined real and complex branches; on the real positive axis the
+principal branch $W_0$ is real-valued and monotone. The asymptotic for large $x$ is
+
+$$W_0(x) \sim \ln x - \ln \ln x + \frac{\ln \ln x}{\ln x}$$
+
+— a logarithm of a logarithm, slow-growing past the regime of interest. For practical
+evaluation, [Newton](https://en.wikipedia.org/wiki/Newton%27s_method) or
+Halley iteration converges to machine precision in a handful of steps.
+
+W appears whenever a closed form mixes exponential and linear in the same equation:
+
+- $a \cdot e^{bx} + cx = d$ — solving for $x$ produces a $W$ of a combination of
+  $a, b, c, d$.
+- $x \cdot \ln x = c$ — the inverse of the logarithmic-cumulative entry above.
+- $x^a \cdot e^{bx} = c$ — closes via $W$ when $a = 1$.
+
+The function was studied by [Lambert](https://en.wikipedia.org/wiki/Johann_Heinrich_Lambert)
+(1758) and [Euler](https://en.wikipedia.org/wiki/Leonhard_Euler) (1779), but its
+[formalization](https://en.wikipedia.org/wiki/Lambert_W_function#History) as a named
+function with stable name and notation traces to a 1996 paper by Corless, Gonnet, Hare,
+Jeffrey, and Knuth. For the catalog's purposes it's the natural endpoint of "elementary
+closed-form": a result expressible in $W$ is closed-form in the formal sense, but reading
+the formula like a designer reads a doubling time requires an extra translation step.
+
+## Practical implications
+
+A few things follow from W being the boundary rather than a wall:
+
+- **A spec resolving to $W$ is still a closed-form spec.** The algebra is intact; the
+  formula is exact; numerical evaluation is fast. It's just that the formula doesn't yield
+  to the eye the way $T = (\ln 2)/b$ does.
+- **W appearing in derivation is a flag.** When two compatible-but-not-identical shapes
+  mix in the same equation — log and linear, polynomial and exponential — W is what shows
+  up. The design knob is the mixing ratio of the two shapes, and the spec layer can
+  describe that knob even if the resulting first-passage isn't a one-line expression.
+- **W loses interpretive transparency.** Designers can read $T = (1/b) \cdot \ln(1 + bC/a)$
+  and grasp "doubling time scales with $b$." They can't read $T = (e/b) \cdot e^{W(\dots)}$
+  the same way. The catalog's pragmatic recommendation: when W appears, calibrate the
+  knobs against an oracle (a small evaluator, a calibration table) rather than against
+  the closed form directly.
+
+## Spec writeups beyond W
+
+Past W there's a family of named functions that handle further boundaries —
+[incomplete gamma](https://en.wikipedia.org/wiki/Incomplete_gamma_function),
+[exponential integral](https://en.wikipedia.org/wiki/Exponential_integral), [polylogarithm](https://en.wikipedia.org/wiki/Polylogarithm) —
+each of which arises when the integrand mixes more shapes than W's product of $x$ and
+$e^x$ can capture. The catalog stops at W because it's where the genre's actual specs
+stop. Past W, the rate-function is in a regime that ships in a research artifact, not in
+an idle game.
+
+That said: an absence on the catalog's curve doesn't mean "impossible to write." A
+designer who _wants_ the shape of a polylogarithm can write it down; the spec is still
+math. The catalog just stops promising one-line readability past W.
+
+<Sources
+  cites={[
+    {
+      repo: 'Trimps',
+      path: 'main.js',
+      line: '15100-15112',
+      note: 'Fluffy / Scruffy pet level: log₄(XP / 1000), with prestige-count further XP scaling. Logarithm on cumulative — equivalent to polynomial rate at p = −1, the W boundary.',
+    },
+  ]}
+/>

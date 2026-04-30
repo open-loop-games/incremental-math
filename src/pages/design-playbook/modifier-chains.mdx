@@ -1,0 +1,169 @@
+---
+layout: ../../layouts/Article.astro
+title: Modifier chains — stacking that stays legible
+---
+
+# Modifier chains — stacking that stays legible
+
+The headline rate-function in any modern incremental is the output of a long sequence
+of additions, multiplications, and an occasional exponent. The math underneath is the
+[modifier-product rule](/rate-functions/composition) — modifiers on rates are linear in
+the cumulative when they're state-independent — but the design call is which kind of
+modifier each upgrade is, and how many can stack before the chain becomes illegible.
+
+This page bundles the questions that come up when designing a modifier system:
+additive vs multiplicative as the load-bearing distinction, when state-dependence
+breaks the algebra, and what the chain's shape does to player legibility.
+
+## When should a modifier be additive vs multiplicative?
+
+The math first. With a base rate $r_0$:
+
+- **Additive modifier**. $r = r_0 + \mu_a$. Increases the rate by a fixed amount. The
+  cumulative is shifted by $\mu_a \cdot t$; the first-passage is shortened by an
+  amount proportional to $\mu_a / r_0$. The contribution is a _constant share_ of the
+  rate at the moment of application — but as $r_0$ grows past $\mu_a$, the additive
+  modifier becomes a vanishing share.
+- **Multiplicative modifier**. $r = r_0 \cdot \mu_m$. Scales the rate by a constant
+  factor. The cumulative is scaled by $\mu_m$; the first-passage threshold rescales
+  inversely. The contribution is a _fixed factor_ — independent of how big $r_0$ is.
+
+This is the same math as the [composition page](./composition)'s "obsolete vs blended"
+distinction, but applied at the modifier level rather than the mechanic level.
+Additive modifiers go obsolete when the base rate outgrows them; multiplicative
+modifiers don't.
+
+The design call:
+
+- **Use additive when the modifier's contribution is meaningful at the scale of the
+  _current_ rate.** A "+5 per second" upgrade is meaningful when the base is 10/sec
+  and useless when it's 10⁶/sec. That's fine if the upgrade is _meant to be_
+  early-game-only — it served its role and retired. It's a problem if the upgrade
+  was meant to stay relevant.
+- **Use multiplicative when the contribution should keep mattering.** A "×2 to
+  production" upgrade keeps mattering forever, regardless of how big production
+  gets. Every doubling of production keeps the multiplier's contribution in
+  proportion.
+- **Use additive _into_ a multiplicative state when you want the additive to
+  blend.** This is the AD pattern: many sources contribute additively to the galaxy
+  count; the galaxy count is the multiplier on production. Each individual source's
+  contribution to the galaxies is additive, and the galaxies are multiplicative on
+  the rest of the game. The additivity at the source level is what makes
+  multi-source flexibility work; the multiplicativity at the consumption level is
+  what keeps the sources from going obsolete.
+
+The genre default in modifier-chain UIs — visible add-then-multiply pipelines — encodes
+exactly this discipline: the additive layer is where mechanics sum into shared state,
+the multiplicative layer is where that state acts on production. Putting the
+add-and-multiply order _backwards_ (multipliers that just add to other multipliers)
+is the failure mode that produces "this whole upgrade tree feels useless past tier 3"
+— if the modifiers are stacking additively where they should compose multiplicatively,
+the late game is back to the [obsolete-mechanic problem](./composition).
+
+## When does state-dependence break the algebra?
+
+The catalog's [modifier-product rule](/rate-functions/composition) closes when
+the modifier $\mu$ is _state-independent_ — doesn't depend on the same state $x$ the
+rate does. State-dependent modifiers are formally a different rate function:
+$r(x) \cdot f(x)$ for some $f$, which doesn't simplify and generally doesn't have an
+elementary cumulative.
+
+In design terms: a modifier that grows as the player's _current production_ grows
+(rather than, say, as the player's current galaxy count grows) is state-dependent
+on the rate it's modifying. The math's diagnosis is that this composition usually
+falls outside the algebra. The design-side consequences:
+
+- **First-passage no longer closes.** The math can't tell the player when they'll
+  hit the next milestone in closed form; the calculation has to be done numerically.
+  Practically this means the game can't ship a max-affordable-buy calculator that
+  works in the late game; calibration tables or solvers replace closed-form lookups.
+- **Modifier behaviors get weird at scale.** A multiplier that compounds with the
+  thing it's multiplying tends toward [super-exponential](https://en.wikipedia.org/wiki/Tetration)
+  growth. Past a certain scale, the player's production grows faster than any
+  finite-precision big-number library can represent. Games that ship this kind of
+  modifier accidentally are usually playing a game of cat-and-mouse with overflow.
+- **Designer intent gets cloudy.** The whole point of a multiplier on a rate is to
+  _rescale_ the rate's curve. State-dependent multipliers don't rescale; they
+  _transform_. The shape of the late-game curve becomes whatever the modifier's
+  state-dependence produces, often something the designer didn't specifically intend.
+
+When state-dependence is the right call: when the _transformation_ is the design
+goal. Power-modifiers on rates ("triple the exponent of your production formula")
+are explicitly state-dependent; they're producing a [polynomial transform](/rate-functions/power-law)
+of the rate, and the late-game shape that emerges is the shape the designer chose.
+The math just has to be acknowledged: the spec layer has shifted to a different
+catalog entry, and the calibration has to follow.
+
+## How long can a chain get before it's illegible?
+
+The catalog says nothing about this — modifier-product composition closes for
+arbitrarily long chains. Legibility is a UI question, but it has a math shadow: the
+chain's _steps_ need to be inspectable for the player to read them. Chains that aren't
+inspectable lose their educational value; players can't reason about which upgrade
+matters most because they can't see what each upgrade does.
+
+Working answers from the corpus:
+
+- **Up to ~5 steps with no UI scaffolding.** A pipeline like "base × (1 + boost) ×
+  prestige × tickspeed × milestone" can be presented as a single formula and players
+  read it. Cookie Clicker's per-building output sits in this regime.
+- **5–20 steps with a typed pipeline UI.** Profectus / Prestige Tree-style
+  modifier-chain displays — each step named, each contribution visible, each step's
+  effect on the running total shown. Players can hover and see the chain. The
+  [modifier chains modern page](/modern/modifier-chains) walks the design pattern.
+- **Past 20 steps, organized by category.** Synergism-scale stacks group modifiers
+  by category (additive multipliers, multiplicative multipliers, exponent
+  multipliers, achievement bonuses, prestige bonuses…) and present them as
+  collapsible sections. The chain is still inspectable, but only at a higher level
+  of organization.
+
+The break-points aren't sharp; they're observations from the corpus. What's
+mathematically real is that each step is a coordinate change on the rate, and a
+designer who builds a 50-step chain has to decide what _unit_ of inspection to ship.
+Step-by-step inspection at 50 steps is unreadable; collapsed inspection by category
+is readable but loses per-upgrade visibility. The trade-off is the design call.
+
+## When does a modifier become a soft cap?
+
+A specific case worth flagging: a modifier that's nominally state-independent can
+_effectively_ soft cap a rate when its value grows slower than the rate it's modifying.
+If $\mu_m$ is a multiplier that grows as $x^{0.5}$ while the rate grows as $x^2$, the
+_effective_ rate the player sees is $x^{2.5}$ — which is fine — but the _contribution_
+of the multiplier shrinks as a fraction of total. From the player's perspective, the
+multiplier eventually stops mattering. From the math's perspective, the multiplier is
+still doing its job; it's just that the relative shape it bestows is asymptotically
+small.
+
+This is the same diagnosis as the obsolete-mechanic case at the modifier level. The
+fix is the same: change the composition. A multiplier whose growth rate is too slow
+relative to what it's multiplying needs to either grow faster (different rate function)
+or compose differently (modify a different state, possibly a downstream prestige
+state instead of the immediate production state).
+
+The genre's working response is to chain modifiers carefully: each modifier in the
+chain should be growing fast enough to keep its contribution from collapsing. When a
+modifier feels useless, it usually isn't broken — it's growing too slowly for the
+scale it's being applied at. The math diagnosis runs faster than playtesting does.
+
+## Where the math stops
+
+The catalog's modifier-product rule closes for any state-independent multiplier and
+diagnoses where state-dependent ones go. It doesn't decide:
+
+- **Which upgrades should be additive vs multiplicative.** Both are valid; the
+  choice is design, downstream of pacing and progression-shape decisions the math
+  has already established.
+- **How to _present_ the chain.** Inspectable chain UIs are a design pattern, not a
+  mathematical requirement. Some games hide the chain entirely and present only the
+  final rate; the math doesn't care, the player experience does.
+- **How "impactful" a modifier feels.** A modifier's _math contribution_ (its
+  multiplicative factor) and its _felt impact_ (the visible jump in production
+  numbers) are not the same thing. A 1.5× multiplier that takes the player from
+  10/sec to 15/sec feels enormous; the same 1.5× taking them from 1e50 to 1.5e50
+  feels invisible. The math is the same; the felt impact is downstream of how the
+  numbers are formatted and what comparisons the player has on screen. UI work, not
+  curve work.
+
+Modifier chains are where math and UI design meet most directly in the genre. The
+math says what the chain _is_; the UI says what the chain _looks like_. Both have to
+be designed; only one of them has closed-form answers.

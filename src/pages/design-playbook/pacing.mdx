@@ -1,0 +1,149 @@
+---
+layout: ../../layouts/Article.astro
+title: Pacing — targeting milestones
+---
+
+# Pacing — targeting milestones
+
+The most universal designer question: how fast should the game move? Pacing is what
+turns a clean rate function into a felt experience, and it has more closed-form math
+behind it than almost any other design surface. The doubling time on a geometric ladder
+is one number, $(\ln 2)/\ln m$, and that one number sets nearly everything about the
+feel of the late game.
+
+This page bundles the questions where doubling time, first-passage targeting, and
+asymptotic concentration combine into prescriptive answers. Most of the math lives on
+the [exponential family](/rate-functions/exponential) catalog page; what's here is the
+design-side reading.
+
+## How do I pick a doubling time?
+
+The math: a geometric cost ladder $\text{cost}(n) = a \cdot m^n$ has a doubling time of
+$d = (\ln 2)/\ln m$ purchases. Pick $m$ and you've picked $d$ — the two numbers are
+the same number in different units. Cookie Clicker's $m = 1.15$ gives $d \approx 4.96$;
+roughly each five purchases double the cost. Realm Grinder's pre-Ascension $m = 1.15$ is
+the same. AdVenture Capitalist's per-building ratios cluster around the same value.
+"$1.15$ ≈ doubles every five" became the genre default because it produces a felt
+cadence: a few minutes between visible cost jumps in the early game, a session-length
+worth of work between them in the late game, and the player notices the ratio without
+having to read formulas.
+
+The design-side question is "how many doublings do I want a session of my game to
+include?" Pick that number — call it $K$. A typical session involves the player
+purchasing some target count $N$ of a building. The doubling count is $N/d$. So
+$d = N/K$, and $m = 2^{1/d} = 2^{K/N}$.
+
+Concrete: if a session has the player buy 30 of a building and you want them to feel
+~6 doublings of cost in that session, $d = 5$ and $m \approx 2^{1/5} \approx 1.149$ —
+which is exactly why $1.15$ feels right for sessions of that shape. The genre default
+isn't arbitrary; it's the answer to a specific session-length question. A different
+session shape gives a different answer.
+
+The catalog's [exponential family page](/rate-functions/exponential) has the
+[live calculator](/rate-functions/exponential) — slide $m$, watch doubling time and
+production curves update together.
+
+## How long should the early game be?
+
+This is two questions stacked. "What's the duration of the early game?" is a
+first-passage problem: time to threshold $C_{\text{early-end}}$. "Where do I put
+$C_{\text{early-end}}$?" is the design call the math is silent on. Pacing math
+answers the first; pacing math doesn't answer the second.
+
+The first part: with rate $r$ and cumulative $R(t)$, the time to threshold $C$ is
+$T(C) = R^{-1}(C)$, which the catalog gives in closed form for every entry. For a
+geometric ladder, $T$ is logarithmic in $C$ — the time to a milestone $K$ levels in is
+proportional to $K$, not to $m^K$. The early game's _duration_ in real time scales
+linearly with how many levels you call "early."
+
+The second part is taste. The genre's working answer for clickers is that the early
+game ends when the first major upgrade unlocks ("first prestige" or "first major
+multiplier"), and that upgrade typically arrives 5–15 minutes in. A doubling-time
+calculation backs into the right $m$ given that target. For session-paced games the
+early game is shorter; for slow-burn idle the early game can be hours.
+
+What the math forbids: a geometric ladder can't have a _short_ early game and a _short_
+late game both. The doubling structure is uniform — pick $m$ and you've picked the
+ratio of late-game pacing to early-game pacing. Games that want the early game to feel
+fast and the late game to feel deep need either a [piecewise composition](/rate-functions/composition)
+of two geometrics (different $m$ before and after a threshold) or a different rate
+function entirely. The Pecorella-style single-$m$ ladder is uniformly paced by
+construction.
+
+## How do I prevent the late game from being a wall?
+
+Re-read [the asymptotic concentration lemma](/rate-functions/exponential): for a
+geometric cumulative, the last $K$ levels carry approximately $1 - m^{-K}$ of the total
+integral. For $m = 1.15$ and $K = 10$, that's 75%. The math is doing this, regardless
+of what the rest of the game does — the _feeling_ that the last few levels of any
+building are the whole grind is mathematically true.
+
+The design-side problem is what to _do_ about it. Three working answers:
+
+- **Soft cap the cost growth.** Replace the geometric ladder with a piecewise
+  composition: $m = 1.15$ early, $m = 1.05$ past threshold $t$. The post-threshold
+  doubling time is now $\approx 14$ purchases instead of $\approx 5$, and the
+  late-game "wall" gets a slope change rather than a slope continuation. The
+  [bending the curve](./bending) page covers the design choices.
+- **Add a multiplicative modifier that grows with progress.** A multiplier on the
+  rate doesn't change the _shape_ of the cost cumulative but it _rescales the
+  threshold_ — players reach the same level for less effective cost. Each prestige
+  layer in modern games does this; it's why prestige feels load-bearing.
+- **Cap the level entirely with a milestone gate.** A hard cap turns the runaway into
+  a reachable endpoint. Players know when they're done. This changes the game's shape
+  fundamentally — it's no longer a pacing decision, it's an end-of-content decision.
+  Most idle games avoid this for a reason; some lean into it.
+
+What the math says is that some response is _required_ if you want the late game to
+feel like progress and not like a wall. A pure $m = 1.15$ ladder with no modulation will
+end at "you waited 75% of total time for the last 10 levels of one building." Whether
+that's a wall or a feature depends on what the game wants those 10 levels to _be_; if
+the answer is "the climactic moment of the run," it's a feature, and if it's "another
+20-minute grind," it's a wall.
+
+## When is m = 1.15 wrong?
+
+The genre default is right for sessions involving roughly 30 purchases of a building
+across a 5–15 minute play window. It's wrong (or at least, suboptimal) for any session
+shape outside that range:
+
+- **Long-form idle (multi-hour sessions).** If a session spans 100+ levels of a
+  building, $m = 1.15$ produces a runaway that hits float-overflow in the late game.
+  Either drop $m$ (1.05–1.10 is more common for idle-heavy games) or
+  [piecewise it](/rate-functions/composition) past a threshold.
+- **Short bursts (sub-5-minute sessions).** Players don't see enough doublings to feel
+  the cadence; the mechanic feels static. Crank $m$ — 1.25–1.35 — so a short session
+  contains 2–3 doublings.
+- **Games where buildings aren't the main loop.** If the headline progression is
+  prestige currency or an idle multiplier rather than building purchases, the
+  doubling time of the _displayed currency_ is what matters. The cost ladder of a
+  side-system can be picked independently to fit _its_ role in the loop.
+- **Games that ship a heavy tickspeed system.** If tickspeed is itself a major
+  multiplier on the rate, then the _effective_ doubling time the player feels is
+  shortened by the tickspeed compounding. AD ships $m \approx 10$ for some
+  dimensions because the tickspeed multiplier pushes effective rates orders of
+  magnitude faster than the per-purchase ratio suggests.
+
+The pattern: $1.15$ is the answer to one specific question about session shape. If your
+game has a different session shape, it has a different $m$, and reading the genre
+default as a universal best practice is taking someone else's answer to your problem.
+
+## Where the math stops
+
+Pacing math diagnoses _cadence_ — how fast the curve climbs and how long milestones
+take. Pacing math doesn't decide:
+
+- **Whether the cadence is fun.** Some audiences love five-minute doublings; some
+  want hour-long ones. The math quantifies the cadence; the audience decides whether
+  the cadence is right for them.
+- **What the player does between purchases.** The first-passage time is a duration in
+  real time; what _fills_ that duration — clicks, automation, mini-games, narrative —
+  is content shape, not curve shape. Pacing math is silent.
+- **How to telegraph the next milestone.** Players need to _see_ the next milestone
+  approaching for the cadence to feel like progress. The HUD design, the progression
+  bars, the unlock animations are all about making the math _legible_. Math is
+  silent on legibility.
+
+Pacing math is the strongest tool the playbook has — almost every pacing question
+has a closed-form answer — but it doesn't substitute for playtesting. The math gets
+you to a defensible starting point, and playtesting tells you if that point is fun.

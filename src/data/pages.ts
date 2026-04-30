@@ -119,6 +119,98 @@ export const sections: PageSection[] = [
       },
     ],
   },
+  {
+    label: 'Rate Functions',
+    blurb:
+      'Progression as integration. Each idle/incremental subsystem has a rate function; the time to a milestone is the first-passage time of its cumulative. The catalog walks the small algebra of integrable building blocks one family at a time.',
+    pages: [
+      {
+        href: '/rate-functions',
+        title: 'Overview',
+        description:
+          'The first-passage frame: T(C) = inf{t : ∫r ds ≥ C}. What closes, what doesn’t, and why this is the shape of the work.',
+      },
+      {
+        href: '/rate-functions/power-law',
+        title: 'Power-law shapes',
+        description:
+          'Constant, linear, polynomial, rational/hyperbolic. The xᵖ family — including bounded-ceiling soft caps when p > 1.',
+      },
+      {
+        href: '/rate-functions/exponential',
+        title: 'Exponential family',
+        description:
+          'Geometric (discrete) and exponential (continuous) — same family, two notations. Cookie Clicker’s 1.15ⁿ lives here.',
+      },
+      {
+        href: '/rate-functions/bounded-growth',
+        title: 'Bounded growth',
+        description:
+          'Logistic. The only sigmoid in the catalog whose first-passage is fully elementary.',
+      },
+      {
+        href: '/rate-functions/log-frontier',
+        title: 'Log and the Lambert-W frontier',
+        description:
+          'Logarithmic rate, x ln x first-passage, Lambert W as the boundary of elementary closed-form.',
+      },
+      {
+        href: '/rate-functions/composition',
+        title: 'Composition rules',
+        description:
+          'Piecewise splice, modifier-product, and the sum/product/composition rules that determine when systems-of-shapes still close.',
+      },
+    ],
+  },
+  {
+    label: 'Design Playbook',
+    blurb:
+      'Math as a design tool. Each page bundles a few real designer questions and walks the rate-function math that diagnoses them. The catalog is the reference; this is how to think with it.',
+    pages: [
+      {
+        href: '/design-playbook',
+        title: 'Overview',
+        description:
+          'The math-as-tool thesis. What the playbook diagnoses, what it prescribes, where designer judgment takes over.',
+      },
+      {
+        href: '/design-playbook/pacing',
+        title: 'Pacing — targeting milestones',
+        description:
+          'Doubling time as the design knob, first-passage targeting, last-K-levels concentration, when 1.15 is wrong.',
+      },
+      {
+        href: '/design-playbook/composition',
+        title: 'Composition — when mechanics blend',
+        description:
+          'Why some mechanics keep mattering and others go obsolete. The four canonical boosts. Prestige as composition.',
+      },
+      {
+        href: '/design-playbook/bending',
+        title: 'Bending the curve — soft caps and regime breaks',
+        description:
+          'When to soft cap (math diagnosis), which shape, how many to stack, hard vs soft as a derivative-discontinuity choice.',
+      },
+      {
+        href: '/design-playbook/modifier-chains',
+        title: 'Modifier chains — stacking that stays legible',
+        description:
+          'Additive vs multiplicative as the load-bearing distinction. State-independent vs state-dependent. Legibility-vs-power.',
+      },
+      {
+        href: '/design-playbook/prestige',
+        title: 'Prestige cycles — cadence and conversion',
+        description:
+          'Prestige formula choice, cycle length as optimal-stopping, layered prestige as iterated functional composition.',
+      },
+      {
+        href: '/design-playbook/multi-resource',
+        title: 'Multi-resource — lattices and the triangular escape',
+        description:
+          'Currency conversion ratios, when separate currencies blend vs sit beside each other, the triangular structure most shipped games are.',
+      },
+    ],
+  },
 ];
 
 export const partChain: PagePointer[] = sections.flatMap((s) => s.pages);
