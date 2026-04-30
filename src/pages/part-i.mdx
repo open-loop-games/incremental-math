@@ -30,6 +30,12 @@ $$\text{cost}_\text{next} = \text{cost}_\text{base} \times (\text{rate}_\text{gr
 
 $$\text{production}_\text{total} = (\text{production}_\text{base} \times \text{owned}) \times \text{multipliers}$$
 
+Both curves sit in the [rate-function catalog](/rate-functions): cost is the
+[exponential family](/rate-functions/exponential)'s geometric ladder; production is the
+[power-law family](/rate-functions/power-law)'s linear rate. The catalog walks each shape
+in isolation — what its cumulative looks like, how its first-passage time scales — which
+is the math Pecorella derives by hand below from the seesaw of the two together.
+
 <aside class="aside">
   <span class="aside-label">Modern API note</span>
   The cost formula here is `Formula.exponential(level, costBase, rateGrowth)` in `open-loop-engine`'s Profectus/TMT-lineage `Formula` DSL — same expression, but the resulting object also carries a closed-form inverse (`.invert(value)` answers "what level costs *X*?") and integral (`.evaluateIntegral(N)` answers "what does buying *N* in bulk cost?"). Pecorella derived both of those by hand later in Part I as bonus content; the engine bakes them in.

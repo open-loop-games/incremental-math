@@ -23,6 +23,13 @@ matured from "a function with a lot of `if`s in it" into a typed pipeline
 with first-class introspection. This page is about how that happened, what
 the abstraction buys, and what it doesn't fix.
 
+The math underneath, when each step is state-independent, is exactly the
+[modifier-product rule](/rate-functions/composition) — modifiers are
+coordinate changes on rate, not transformations of shape, and the
+many-multiplier system stays tractable for that reason. Where modifiers
+become state-dependent, the rule breaks; that's where this page's design
+patterns and the catalog's "what doesn't compose cleanly" notes meet.
+
 ## The hand-rolled chain
 
 The earliest shipped form is a single function that walks through every
