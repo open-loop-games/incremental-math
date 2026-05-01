@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { format } from '../lib/decimal';
 import RatePlot from './RatePlot.vue';
 import type { Annotation } from './RatePlot.vue';
+import { seriesColor } from '../lib/series-colors';
 
 // One-curve hard-cap demo: gain accrues at rate × pct up to cap hours,
 // then flat. The lesson is the discontinuous slope at the cap.
@@ -12,8 +13,8 @@ const ratePerHour = ref(1000);
 const offlineCap = ref(8);
 const offlinePct = ref(50);
 
-const SOFT = '#d97a7a';
-const LINEAR = '#9aa0a6';
+const SOFT = seriesColor('teal');
+const LINEAR = seriesColor('gray');
 
 function capped(t: number): number {
   return ratePerHour.value * (offlinePct.value / 100) * Math.min(t, offlineCap.value);

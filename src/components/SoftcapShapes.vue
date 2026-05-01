@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import RatePlot from './RatePlot.vue';
 import type { Annotation } from './RatePlot.vue';
+import { seriesColor } from '../lib/series-colors';
 
 // Four canonical softcap shapes plotted on a shared input axis. Operates on
 // JS Number directly — the lesson is the curve shape, not big-number arithmetic.
@@ -32,14 +33,14 @@ const curves = computed<Curve[]>(() => [
   {
     key: 'linear',
     label: 'linear (no cap)',
-    color: '#9aa0a6',
+    color: seriesColor('gray'),
     visible: showLinear.value,
     fn: (x) => x,
   },
   {
     key: 'root',
     label: `root  ·  threshold + (x − threshold)^(1/${rootN.value.toFixed(1)})`,
-    color: '#4f9de0',
+    color: seriesColor('amber'),
     visible: showRoot.value,
     fn: (x) => {
       if (x <= threshold.value) return x;
@@ -49,7 +50,7 @@ const curves = computed<Curve[]>(() => [
   {
     key: 'power',
     label: `power  ·  threshold · (x / threshold)^${powerP.value.toFixed(2)}`,
-    color: '#6ec07a',
+    color: seriesColor('sage'),
     visible: showPower.value,
     fn: (x) => {
       if (x <= threshold.value) return x;
@@ -59,7 +60,7 @@ const curves = computed<Curve[]>(() => [
   {
     key: 'log',
     label: `log  ·  threshold + ${logK.value.toFixed(0)} · log₁₀(x − threshold + 1)`,
-    color: '#d97a7a',
+    color: seriesColor('teal'),
     visible: showLog.value,
     fn: (x) => {
       if (x <= threshold.value) return x;
@@ -69,7 +70,7 @@ const curves = computed<Curve[]>(() => [
   {
     key: 'piecewise',
     label: `piecewise  ·  slope drops to ${piecewiseSlope2.value.toFixed(2)} at threshold`,
-    color: '#c08acb',
+    color: seriesColor('mauve'),
     visible: showPiecewise.value,
     fn: (x) => {
       if (x <= threshold.value) return x;
@@ -102,88 +103,38 @@ function toggle(key: string): void {
     <div class="scs-controls">
       <label>
         <span class="demo-label">x range = 0..{{ xMax.toFixed(0) }}</span>
-        <input
-          v-model.number="xMax"
-          type="range"
-          min="100"
-          max="100000"
-          step="100"
-        >
+        <input v-model.number="xMax" type="range" min="100" max="100000" step="100" />
       </label>
       <label>
         <span class="demo-label">threshold = {{ threshold.toFixed(0) }}</span>
-        <input
-          v-model.number="threshold"
-          type="range"
-          :min="10"
-          :max="xMax"
-          step="1"
-        >
+        <input v-model.number="threshold" type="range" :min="10" :max="xMax" step="1" />
       </label>
       <label>
         <span class="demo-label">root order n = {{ rootN.toFixed(1) }}</span>
-        <input
-          v-model.number="rootN"
-          type="range"
-          min="1.5"
-          max="6"
-          step="0.1"
-        >
+        <input v-model.number="rootN" type="range" min="1.5" max="6" step="0.1" />
       </label>
       <label>
         <span class="demo-label">power p = {{ powerP.toFixed(2) }}</span>
-        <input
-          v-model.number="powerP"
-          type="range"
-          min="0.1"
-          max="0.95"
-          step="0.01"
-        >
+        <input v-model.number="powerP" type="range" min="0.1" max="0.95" step="0.01" />
       </label>
       <label>
         <span class="demo-label">log strength k = {{ logK.toFixed(0) }}</span>
-        <input
-          v-model.number="logK"
-          type="range"
-          min="1"
-          max="500"
-          step="1"
-        >
+        <input v-model.number="logK" type="range" min="1" max="500" step="1" />
       </label>
       <label>
         <span class="demo-label">piecewise post-slope = {{ piecewiseSlope2.toFixed(2) }}</span>
-        <input
-          v-model.number="piecewiseSlope2"
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-        >
+        <input v-model.number="piecewiseSlope2" type="range" min="0" max="1" step="0.01" />
       </label>
       <label class="scs-toggle">
-        <input
-          v-model="logScale"
-          type="checkbox"
-        >
+        <input v-model="logScale" type="checkbox" />
         log y-scale
       </label>
     </div>
 
     <div class="scs-legend">
-      <label
-        v-for="c in curves"
-        :key="c.key"
-        class="scs-legend-item"
-      >
-        <input
-          type="checkbox"
-          :checked="c.visible"
-          @change="toggle(c.key)"
-        >
-        <span
-          class="scs-swatch"
-          :style="{ background: c.color }"
-        />
+      <label v-for="c in curves" :key="c.key" class="scs-legend-item">
+        <input type="checkbox" :checked="c.visible" @change="toggle(c.key)" />
+        <span class="scs-swatch" :style="{ background: c.color }" />
         <span>{{ c.label }}</span>
       </label>
     </div>

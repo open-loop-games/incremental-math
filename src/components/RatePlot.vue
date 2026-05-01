@@ -3,6 +3,7 @@ import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import uPlot from 'uplot';
 import type { Options, AlignedData } from 'uplot';
 import 'uplot/dist/uPlot.min.css';
+import { SERIES_ORDER, seriesColor } from '../lib/series-colors';
 
 interface Series {
   fn: (x: number) => number;
@@ -101,7 +102,7 @@ function drawAnnotations(u: uPlot): void {
   const list = annotationsRef.value;
   if (!list || list.length === 0) return;
   const ctx = u.ctx;
-  const muted = cssVar('--color-text-muted', '#8892a4');
+  const muted = cssVar('--color-text-muted', '#a89784');
   const { left, top, width, height } = u.bbox;
   ctx.save();
   // Clip to plot area so bands/lines don't bleed into axis gutters.
@@ -181,9 +182,9 @@ function drawAnnotations(u: uPlot): void {
 }
 
 function buildOptions(width: number): Options {
-  const stroke = props.stroke || cssVar('--color-primary', '#4a9eff');
-  const grid = cssVar('--color-border', '#2a3a5c');
-  const text = cssVar('--color-text-muted', '#8892a4');
+  const stroke = props.stroke || cssVar('--color-primary', '#d4a574');
+  const grid = cssVar('--color-border', '#4a423c');
+  const text = cssVar('--color-text-muted', '#a89784');
   const base: Options = {
     width,
     height: props.height,
@@ -226,7 +227,7 @@ function buildOptions(width: number): Options {
       {},
       ...activeSeries().map((s, i) => ({
         label: s.label ?? (i === 0 ? props.label : `y${i + 1}`),
-        stroke: s.stroke ?? (i === 0 ? stroke : cssVar(`--series-${i}`, stroke)),
+        stroke: s.stroke ?? (i === 0 ? stroke : seriesColor(SERIES_ORDER[i % SERIES_ORDER.length])),
         width: s.width ?? 1.75,
         dash: s.dash,
         points: { show: false },
@@ -304,10 +305,7 @@ watch(
 </script>
 
 <template>
-  <div
-    ref="containerRef"
-    class="rate-plot"
-  />
+  <div ref="containerRef" class="rate-plot" />
 </template>
 
 <style scoped>

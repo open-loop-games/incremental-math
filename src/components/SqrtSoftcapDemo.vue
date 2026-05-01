@@ -2,13 +2,14 @@
 import { ref, computed } from 'vue';
 import RatePlot from './RatePlot.vue';
 import type { Annotation } from './RatePlot.vue';
+import { seriesColor } from '../lib/series-colors';
 
 const xMax = ref(1000);
 const threshold = ref(100);
 const rootN = ref(2);
 
-const SOFT = '#4f9de0';
-const LINEAR = '#9aa0a6';
+const SOFT = seriesColor('amber');
+const LINEAR = seriesColor('gray');
 
 function softcap(x: number): number {
   if (x <= threshold.value) return x;
@@ -32,33 +33,15 @@ const annotations = computed<Annotation[]>(() => [
     <div class="sqd-controls">
       <label>
         <span class="demo-label">x range = 0..{{ xMax.toFixed(0) }}</span>
-        <input
-          v-model.number="xMax"
-          type="range"
-          min="100"
-          max="100000"
-          step="100"
-        >
+        <input v-model.number="xMax" type="range" min="100" max="100000" step="100" />
       </label>
       <label>
         <span class="demo-label">threshold = {{ threshold.toFixed(0) }}</span>
-        <input
-          v-model.number="threshold"
-          type="range"
-          :min="10"
-          :max="xMax"
-          step="1"
-        >
+        <input v-model.number="threshold" type="range" :min="10" :max="xMax" step="1" />
       </label>
       <label>
         <span class="demo-label">root order n = {{ rootN.toFixed(1) }}</span>
-        <input
-          v-model.number="rootN"
-          type="range"
-          min="1.5"
-          max="6"
-          step="0.1"
-        >
+        <input v-model.number="rootN" type="range" min="1.5" max="6" step="0.1" />
       </label>
     </div>
     <p class="sqd-formula">
@@ -114,9 +97,9 @@ const annotations = computed<Annotation[]>(() => [
   vertical-align: middle;
 }
 .sqd-soft-swatch {
-  background: #4f9de0;
+  background: var(--series-amber);
 }
 .sqd-linear-swatch {
-  background: #9aa0a6;
+  background: var(--series-gray);
 }
 </style>

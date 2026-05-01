@@ -13,9 +13,9 @@ exponential, logistic, log. Real systems compose. The question this page answers
 compositions of catalog entries stay closed-form, and which fall off the algebra?
 
 The answer breaks into four kinds of composition. The first two — piecewise splice and
-[modifier-product](https://en.wikipedia.org/wiki/Multiplication) — get their own demos
+modifier-product — get their own demos
 because the genre's headline patterns sit on top of them. The other two —
-[sum](https://en.wikipedia.org/wiki/Sum) and
+sum and
 [functional composition](https://en.wikipedia.org/wiki/Function_composition) — get
 formulas and notes; the spec layer's behavior under each is well-defined enough that a
 demo would only restate the math.
@@ -133,7 +133,7 @@ common-but-not-closed cases:
   becomes $r(x) \cdot f(x)$ for non-trivial $f$. The product of two state-dependent
   catalog entries generally doesn't close (a polynomial times an exponential integrates
   to an [incomplete gamma function](https://en.wikipedia.org/wiki/Incomplete_gamma_function),
-  not anything elementary). The spec layer here shifts to [bounds](https://en.wikipedia.org/wiki/Asymptotic_analysis)
+  not anything elementary). The spec layer here shifts to bounds
   — closed-form upper and lower envelopes around the actual integrand — rather than the
   exact integral.
 - **Coupled multi-resource systems.** When two resources mutually feed each other's
@@ -144,7 +144,7 @@ common-but-not-closed cases:
   systems for exactly this reason; the games that ship them tend to simplify the coupling
   to a triangular dependency that does close.
 - **Adversarial strategy spaces.** When a "rate" depends on what an opponent does
-  ([Tug](https://en.wikipedia.org/wiki/Tug_of_war)-style, PvP idle, faction warfare),
+  (tug-of-war-style, PvP idle, faction warfare),
   the per-fixed-strategy rate closes but the equilibrium between strategies doesn't.
   [Game theory](https://en.wikipedia.org/wiki/Game_theory) is the right adjacent math.
 

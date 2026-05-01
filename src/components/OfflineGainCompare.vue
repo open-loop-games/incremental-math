@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { format } from '../lib/decimal';
+import { seriesColor } from '../lib/series-colors';
 
 // Offline-gain-vs-time-away curves for the four families described in the
 // page. Operates on JS Number — the lesson is curve shape, not big-number
 // arithmetic. Hours on x; effective production "received" on y.
 
 const hoursMax = ref(72);
-const ratePerHour = ref(1000);     // baseline online production rate
-const offlineCap = ref(3);         // hours where full-rate (or simulated) gain applies
-const offlinePct = ref(50);        // "% of active rate" applied while away
-const trickleFrac = ref(0.1);      // fraction of rate that keeps trickling past the cap
-const tickRateGrowth = ref(0.04);  // tick-sim: per-hour rate growth from auto-purchases
+const ratePerHour = ref(1000); // baseline online production rate
+const offlineCap = ref(3); // hours where full-rate (or simulated) gain applies
+const offlinePct = ref(50); // "% of active rate" applied while away
+const trickleFrac = ref(0.1); // fraction of rate that keeps trickling past the cap
+const tickRateGrowth = ref(0.04); // tick-sim: per-hour rate growth from auto-purchases
 
 const showLinear = ref(true);
 const showHardCap = ref(true);
@@ -45,21 +46,21 @@ const curves = computed<Curve[]>(() => [
   {
     key: 'linear',
     label: 'uncapped extrapolation  ·  rate × t',
-    color: '#9aa0a6',
+    color: seriesColor('gray'),
     visible: showLinear.value,
     fn: (t) => ratePerHour.value * t,
   },
   {
     key: 'hardcap',
     label: `hard cap at ${offlineCap.value.toFixed(1)} h, ${offlinePct.value.toFixed(0)} % rate`,
-    color: '#d97a7a',
+    color: seriesColor('teal'),
     visible: showHardCap.value,
     fn: (t) => ratePerHour.value * (offlinePct.value / 100) * Math.min(t, offlineCap.value),
   },
   {
     key: 'trickle',
     label: `cap + ${(trickleFrac.value * 100).toFixed(0)} % trickle past cap (Cookie shape)`,
-    color: '#c08acb',
+    color: seriesColor('mauve'),
     visible: showTrickle.value,
     fn: (t) => {
       const inside = Math.min(t, offlineCap.value);
@@ -70,14 +71,14 @@ const curves = computed<Curve[]>(() => [
   {
     key: 'ticksim',
     label: `tick simulation  ·  rate compounds at ${(tickRateGrowth.value * 100).toFixed(1)} %/h until cap`,
-    color: '#6ec07a',
+    color: seriesColor('sage'),
     visible: showTickSim.value,
     fn: tickSimGain,
   },
   {
     key: 'banked',
     label: 'banking  ·  active payout = 0; t banked, spent later as 2× speed',
-    color: '#4f9de0',
+    color: seriesColor('amber'),
     visible: showBanked.value,
     fn: () => 0,
   },
@@ -152,7 +153,9 @@ const pathByKey = computed(() => {
   return m;
 });
 
-const capX = computed(() => PAD.l + (Math.min(offlineCap.value, hoursMax.value) / hoursMax.value) * PW);
+const capX = computed(
+  () => PAD.l + (Math.min(offlineCap.value, hoursMax.value) / hoursMax.value) * PW,
+);
 
 const X_TICKS = computed(() => {
   const xm = hoursMax.value;
@@ -185,88 +188,44 @@ function setVisible(key: string, value: boolean) {
     <div class="ogc-controls">
       <label>
         <span class="demo-label">x range = 0..{{ hoursMax.toFixed(0) }} h away</span>
-        <input
-          v-model.number="hoursMax"
-          type="range"
-          min="3"
-          max="168"
-          step="1"
-        >
+        <input v-model.number="hoursMax" type="range" min="3" max="168" step="1" />
       </label>
       <label>
         <span class="demo-label">online rate = {{ format(ratePerHour) }} / h</span>
-        <input
-          v-model.number="ratePerHour"
-          type="range"
-          min="100"
-          max="100000"
-          step="100"
-        >
+        <input v-model.number="ratePerHour" type="range" min="100" max="100000" step="100" />
       </label>
       <label>
         <span class="demo-label">offline cap = {{ offlineCap.toFixed(1) }} h</span>
-        <input
-          v-model.number="offlineCap"
-          type="range"
-          min="0.5"
-          max="72"
-          step="0.5"
-        >
+        <input v-model.number="offlineCap" type="range" min="0.5" max="72" step="0.5" />
       </label>
       <label>
         <span class="demo-label">offline rate = {{ offlinePct.toFixed(0) }} % of online</span>
-        <input
-          v-model.number="offlinePct"
-          type="range"
-          min="5"
-          max="100"
-          step="1"
-        >
+        <input v-model.number="offlinePct" type="range" min="5" max="100" step="1" />
       </label>
       <label>
         <span class="demo-label">trickle past cap = {{ (trickleFrac * 100).toFixed(0) }} %</span>
-        <input
-          v-model.number="trickleFrac"
-          type="range"
-          min="0"
-          max="0.5"
-          step="0.01"
-        >
+        <input v-model.number="trickleFrac" type="range" min="0" max="0.5" step="0.01" />
       </label>
       <label>
-        <span class="demo-label">tick-sim rate growth = {{ (tickRateGrowth * 100).toFixed(1) }} %/h</span>
-        <input
-          v-model.number="tickRateGrowth"
-          type="range"
-          min="0"
-          max="0.5"
-          step="0.005"
+        <span class="demo-label"
+          >tick-sim rate growth = {{ (tickRateGrowth * 100).toFixed(1) }} %/h</span
         >
+        <input v-model.number="tickRateGrowth" type="range" min="0" max="0.5" step="0.005" />
       </label>
       <label class="ogc-toggle">
-        <input
-          v-model="logScale"
-          type="checkbox"
-        >
+        <input v-model="logScale" type="checkbox" />
         log y-scale
       </label>
     </div>
 
     <div class="ogc-legend">
-      <label
-        v-for="c in curves"
-        :key="c.key"
-        class="ogc-legend-item"
-      >
+      <label v-for="c in curves" :key="c.key" class="ogc-legend-item">
         <input
           type="checkbox"
           :checked="c.visible"
           @change="setVisible(c.key, ($event.target as HTMLInputElement).checked)"
-        >
-        <span
-          class="ogc-swatch"
-          :style="{ background: c.color }"
         />
+        <span class="ogc-swatch" :style="{ background: c.color }" />
         <span>{{ c.label }}</span>
       </label>
     </div>
@@ -277,38 +236,12 @@ function setVisible(key: string, value: boolean) {
       role="img"
       aria-label="Offline gain comparison"
     >
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t"
-        :x2="PAD.l"
-        :y2="PAD.t + PH"
-        class="ogc-axis"
-      />
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t + PH"
-        :x2="W - PAD.r"
-        :y2="PAD.t + PH"
-        class="ogc-axis"
-      />
+      <line :x1="PAD.l" :y1="PAD.t" :x2="PAD.l" :y2="PAD.t + PH" class="ogc-axis" />
+      <line :x1="PAD.l" :y1="PAD.t + PH" :x2="W - PAD.r" :y2="PAD.t + PH" class="ogc-axis" />
       <g>
-        <g
-          v-for="t in yScale.ticks"
-          :key="t.label"
-        >
-          <line
-            :x1="PAD.l"
-            :y1="t.y"
-            :x2="W - PAD.r"
-            :y2="t.y"
-            class="ogc-grid"
-          />
-          <text
-            :x="PAD.l - 8"
-            :y="t.y + 3"
-            text-anchor="end"
-            class="ogc-tick"
-          >{{ t.label }}</text>
+        <g v-for="t in yScale.ticks" :key="t.label">
+          <line :x1="PAD.l" :y1="t.y" :x2="W - PAD.r" :y2="t.y" class="ogc-grid" />
+          <text :x="PAD.l - 8" :y="t.y + 3" text-anchor="end" class="ogc-tick">{{ t.label }}</text>
         </g>
       </g>
       <g>
@@ -319,21 +252,20 @@ function setVisible(key: string, value: boolean) {
           :y="H - PAD.b + 16"
           text-anchor="middle"
           class="ogc-tick"
-        >{{ nx }}</text>
+        >
+          {{ nx }}
+        </text>
       </g>
-      <text
-        :x="PAD.l + PW / 2"
-        :y="H - 6"
-        text-anchor="middle"
-        class="ogc-tick"
-      >hours away</text>
+      <text :x="PAD.l + PW / 2" :y="H - 6" text-anchor="middle" class="ogc-tick">hours away</text>
       <text
         :x="14"
         :y="PAD.t + PH / 2"
         text-anchor="middle"
         class="ogc-tick"
         :transform="`rotate(-90 14 ${PAD.t + PH / 2})`"
-      >production received on return</text>
+      >
+        production received on return
+      </text>
 
       <line
         v-if="offlineCap < hoursMax"
@@ -343,12 +275,9 @@ function setVisible(key: string, value: boolean) {
         :y2="PAD.t + PH"
         class="ogc-cap"
       />
-      <text
-        v-if="offlineCap < hoursMax"
-        :x="capX + 4"
-        :y="PAD.t + 12"
-        class="ogc-cap-label"
-      >cap</text>
+      <text v-if="offlineCap < hoursMax" :x="capX + 4" :y="PAD.t + 12" class="ogc-cap-label">
+        cap
+      </text>
 
       <path
         v-for="c in curves"
@@ -370,11 +299,10 @@ function setVisible(key: string, value: boolean) {
     </svg>
 
     <p class="ogc-note">
-      Banking sits flat on this chart by design — the active payout on return is
-      zero. The {{ bankedReadout.toFixed(0) }} h you spent away becomes a
-      spendable balance you burn at, say, 2× speed during the next active
-      session. The other curves answer "what hit my balance"; banking answers
-      "how much faster does the next hour of <em>active</em> play go."
+      Banking sits flat on this chart by design — the active payout on return is zero. The
+      {{ bankedReadout.toFixed(0) }} h you spent away becomes a spendable balance you burn at, say,
+      2× speed during the next active session. The other curves answer "what hit my balance";
+      banking answers "how much faster does the next hour of <em>active</em> play go."
     </p>
   </div>
 </template>
@@ -447,7 +375,7 @@ function setVisible(key: string, value: boolean) {
   vector-effect: non-scaling-stroke;
 }
 .ogc-banked {
-  stroke: #4f9de0;
+  stroke: var(--series-amber);
   stroke-dasharray: 6 4;
   opacity: 0.7;
 }

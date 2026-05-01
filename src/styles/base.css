@@ -1,12 +1,25 @@
 :root {
-  --color-bg: #1a1a2e;
-  --color-surface: #16213e;
-  --color-surface-hover: #1c2b4a;
-  --color-border: #2a3a5c;
-  --color-text: #e0e0e0;
-  --color-text-muted: #8892a4;
-  --color-primary: #4a9eff;
-  --color-primary-hover: #3a8eef;
+  --color-bg: #2a2522;
+  --color-surface: #36302c;
+  --color-surface-hover: #423931;
+  --color-border: #4a423c;
+  --color-text: #e8dfd3;
+  --color-text-muted: #a89784;
+  --color-primary: #d4a574;
+  --color-primary-hover: #c89860;
+
+  /* Categorical series palette — 6 hues spaced around the wheel for maximum
+   * visual differentiation, all at similar lightness/saturation so they sit
+   * harmoniously on the warm dark bg. JS-side mirror in src/lib/series-colors.ts. */
+  --series-amber: #d4a574;
+  --series-sage: #a8c39a;
+  --series-teal: #7ec0b6;
+  --series-slate: #7fa3c8;
+  --series-mauve: #c293b8;
+  --series-gray: #a89784;
+
+  color-scheme: dark;
+  accent-color: var(--color-primary);
 
   --radius: 6px;
   --radius-sm: 4px;

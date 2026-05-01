@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { seriesPalette, seriesColor } from '../lib/series-colors';
 
 // Iterated power-root model: layer-k currency at game time t is t^(alpha^k).
 // Plotted on log-log axes, each layer is a straight line whose slope is alpha^k.
@@ -100,14 +101,7 @@ const cursorVals = computed(() => {
   }));
 });
 
-const COLORS = [
-  '#5b9be0',
-  '#e07b5b',
-  '#7ac96a',
-  '#b07ac9',
-  '#c2935a',
-  '#d8a44a',
-];
+const COLORS = [...seriesPalette(5), seriesColor('gray')];
 
 function fmtExp(e: number): string {
   if (e < 0.005) return '~1';
@@ -148,7 +142,9 @@ function fmtAlphaK(a: number): string {
             class="lpc-preset"
             :class="{ 'lpc-preset-active': alphaIdx === i }"
             @click="alphaIdx = i"
-          >{{ p.label }}</button>
+          >
+            {{ p.label }}
+          </button>
         </div>
       </label>
       <label>
@@ -211,7 +207,9 @@ function fmtAlphaK(a: number): string {
             :y="yToPx(t) + 3"
             text-anchor="end"
             class="lpc-tick"
-          >10^{{ t }}</text>
+          >
+            10^{{ t }}
+          </text>
         </g>
       </g>
 
@@ -232,7 +230,9 @@ function fmtAlphaK(a: number): string {
             :y="PAD.t + PH + 16"
             text-anchor="middle"
             class="lpc-tick"
-          >10^{{ t }}</text>
+          >
+            10^{{ t }}
+          </text>
         </g>
       </g>
 
@@ -241,14 +241,18 @@ function fmtAlphaK(a: number): string {
         :y="H - 6"
         text-anchor="middle"
         class="lpc-axis-label"
-      >total game time</text>
+      >
+        total game time
+      </text>
       <text
         :x="14"
         :y="PAD.t + PH / 2"
         text-anchor="middle"
         class="lpc-axis-label"
         :transform="`rotate(-90 14 ${PAD.t + PH / 2})`"
-      >currency at this layer</text>
+      >
+        currency at this layer
+      </text>
 
       <g>
         <path
@@ -310,10 +314,9 @@ function fmtAlphaK(a: number): string {
 
     <p class="lpc-readout">
       Each layer's slope on log-log axes is α<sup>k</sup>. With α =
-      {{ fmtAlphaK(alpha) }}, layer 1 has slope {{ fmtAlphaK(alpha) }} and
-      layer {{ layerCount }} has slope {{ fmtAlphaK(Math.pow(alpha, layerCount)) }} —
-      the higher you climb, the more total game time it takes to push the line up
-      by a single decade.
+      {{ fmtAlphaK(alpha) }}, layer 1 has slope {{ fmtAlphaK(alpha) }} and layer
+      {{ layerCount }} has slope {{ fmtAlphaK(Math.pow(alpha, layerCount)) }} — the higher you
+      climb, the more total game time it takes to push the line up by a single decade.
     </p>
   </div>
 </template>

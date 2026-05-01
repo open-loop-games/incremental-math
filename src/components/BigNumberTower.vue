@@ -203,7 +203,7 @@ const dyings = computed(() => {
 }
 
 .tower-cell-dead {
-  color: #d97a7a;
+  color: var(--series-mauve);
 }
 
 .tower-layer {

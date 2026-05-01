@@ -128,8 +128,8 @@ function fillAll() {
   border-color: var(--color-text-muted);
 }
 .cbm-slot--on {
-  background: rgba(110, 192, 122, 0.12);
-  border-color: #6ec07a;
+  background: rgba(168, 195, 154, 0.12);
+  border-color: var(--series-sage);
 }
 .cbm-name {
   font-weight: 600;
@@ -182,7 +182,7 @@ function fillAll() {
 .cbm-reward {
   display: inline-block;
   padding: 1px 6px;
-  background: rgba(110, 192, 122, 0.15);
+  background: rgba(168, 195, 154, 0.15);
   border-radius: 2px;
   font-size: 0.85em;
 }

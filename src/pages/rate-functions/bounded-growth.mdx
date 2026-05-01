@@ -33,8 +33,7 @@ The closed-form trajectory and first-passage:
 
 $$x(t) = \frac{K}{1 + \left(\frac{K - x_0}{x_0}\right) e^{-rt}}, \quad T(C) = \frac{1}{r} \ln\!\left(\frac{K - x_0}{x_0} \cdot \frac{C}{K - C}\right) \text{ for } 0 < C < K$$
 
-The trajectory is the [logistic curve](https://en.wikipedia.org/wiki/Logistic_function)
-proper — sigmoid in $t$, with the inflection point at $x = K/2$. The first-passage is the
+The trajectory is the logistic curve proper — sigmoid in $t$, with the inflection point at $x = K/2$. The first-passage is the
 [logit](https://en.wikipedia.org/wiki/Logit) of $C/K$ adjusted by $\ln((K-x_0)/x_0)$;
 elementary, well-defined for any reachable threshold $C \in (0, K)$, divergent as $C \to K$.
 
@@ -97,7 +96,7 @@ The places pure logistic does show up:
 
 For most other "soft cap" use cases, the [hyperbolic entry on the power-law page](./power-law#rational--hyperbolic-rate)
 is what shipped games actually compute. The logistic earns its catalog page on
-[mathematical](https://en.wikipedia.org/wiki/Mathematics) grounds, not on prevalence: it
+mathematical grounds, not on prevalence: it
 remains the cleanest sigmoid the catalog can offer, and its first-passage being elementary
 is what the algebra cares about.
 

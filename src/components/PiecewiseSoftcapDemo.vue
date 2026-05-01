@@ -2,14 +2,15 @@
 import { ref, computed } from 'vue';
 import RatePlot from './RatePlot.vue';
 import type { Annotation } from './RatePlot.vue';
+import { seriesColor } from '../lib/series-colors';
 
 const xMax = ref(1000);
 const threshold = ref(300);
 const slope1 = ref(1);
 const slope2 = ref(0.15);
 
-const SOFT = '#c08acb';
-const LINEAR = '#9aa0a6';
+const SOFT = seriesColor('mauve');
+const LINEAR = seriesColor('gray');
 
 function softcap(x: number): number {
   if (x <= threshold.value) return slope1.value * x;
@@ -46,50 +47,28 @@ const annotations = computed<Annotation[]>(() => [
     <div class="psd-controls">
       <label>
         <span class="demo-label">x range = 0..{{ xMax.toFixed(0) }}</span>
-        <input
-          v-model.number="xMax"
-          type="range"
-          min="100"
-          max="100000"
-          step="100"
-        >
+        <input v-model.number="xMax" type="range" min="100" max="100000" step="100" />
       </label>
       <label>
         <span class="demo-label">threshold = {{ threshold.toFixed(0) }}</span>
-        <input
-          v-model.number="threshold"
-          type="range"
-          :min="10"
-          :max="xMax"
-          step="1"
-        >
+        <input v-model.number="threshold" type="range" :min="10" :max="xMax" step="1" />
       </label>
       <label>
         <span class="demo-label">pre-slope m₁ = {{ slope1.toFixed(2) }}</span>
-        <input
-          v-model.number="slope1"
-          type="range"
-          min="0.1"
-          max="2"
-          step="0.05"
-        >
+        <input v-model.number="slope1" type="range" min="0.1" max="2" step="0.05" />
       </label>
       <label>
         <span class="demo-label">post-slope m₂ = {{ slope2.toFixed(2) }}</span>
-        <input
-          v-model.number="slope2"
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-        >
+        <input v-model.number="slope2" type="range" min="0" max="1" step="0.01" />
       </label>
     </div>
     <p class="psd-formula">
       <code>y = m₁·x</code> for <code>x ≤ threshold</code>, else
       <code>m₁·threshold + m₂·(x − threshold)</code>
-      <span class="psd-aside">continuous at the joint, slope drops from {{ slope1.toFixed(2) }} to
-        {{ slope2.toFixed(2) }}</span>
+      <span class="psd-aside"
+        >continuous at the joint, slope drops from {{ slope1.toFixed(2) }} to
+        {{ slope2.toFixed(2) }}</span
+      >
     </p>
     <RatePlot
       :series="series"
@@ -140,9 +119,9 @@ const annotations = computed<Annotation[]>(() => [
   vertical-align: middle;
 }
 .psd-soft-swatch {
-  background: #c08acb;
+  background: var(--series-mauve);
 }
 .psd-linear-swatch {
-  background: #9aa0a6;
+  background: var(--series-gray);
 }
 </style>

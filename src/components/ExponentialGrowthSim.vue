@@ -289,7 +289,7 @@ function xTickPos(n: number): number {
   border-radius: 2px;
 }
 .egs-swatch-cost {
-  background: #e07b6c;
+  background: var(--series-teal);
 }
 .egs-swatch-prod {
   background: var(--color-primary);
@@ -320,7 +320,7 @@ function xTickPos(n: number): number {
   vector-effect: non-scaling-stroke;
 }
 .egs-line-cost {
-  stroke: #e07b6c;
+  stroke: var(--series-teal);
 }
 .egs-line-prod {
   stroke: var(--color-primary);

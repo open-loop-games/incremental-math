@@ -327,7 +327,7 @@ function renderCount(n: number): string {
 }
 
 .dst-newborn {
-  color: #e07b6c;
+  color: var(--series-teal);
   margin-left: 6px;
   font-size: 0.92em;
 }

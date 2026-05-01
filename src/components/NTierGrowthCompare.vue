@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import RatePlot from './RatePlot.vue';
+import { seriesColor, SERIES_ORDER } from '../lib/series-colors';
 
 const tMax = ref(40);
 const expGrowth = ref(1.07);
@@ -12,15 +13,11 @@ const DEPTHS = [1, 2, 3, 4, 5] as const;
 type Depth = (typeof DEPTHS)[number];
 const visibleDepths = ref<Record<Depth, boolean>>({ 1: true, 2: true, 3: true, 4: true, 5: true });
 
-const COLORS: Record<Depth, string> = {
-  1: '#7fa8c9',
-  2: '#9fc89f',
-  3: '#d4b16a',
-  4: '#cf8f6e',
-  5: '#b58cc2',
-};
+const COLORS: Record<Depth, string> = Object.fromEntries(
+  DEPTHS.map((d, i) => [d, seriesColor(SERIES_ORDER[i])]),
+) as Record<Depth, string>;
 const FACTORIALS: Record<Depth, number> = { 1: 1, 2: 2, 3: 6, 4: 24, 5: 120 };
-const EXP_COLOR = '#e07b6c';
+const EXP_COLOR = seriesColor('gray');
 
 function polyFn(d: Depth): (t: number) => number {
   const fact = FACTORIALS[d];

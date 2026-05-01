@@ -2,13 +2,14 @@
 import { ref, computed } from 'vue';
 import RatePlot from './RatePlot.vue';
 import type { Annotation } from './RatePlot.vue';
+import { seriesColor } from '../lib/series-colors';
 
 const xMax = ref(10000);
 const threshold = ref(1000);
 const logK = ref(40);
 
-const SOFT = '#d97a7a';
-const LINEAR = '#9aa0a6';
+const SOFT = seriesColor('teal');
+const LINEAR = seriesColor('gray');
 
 function softcap(x: number): number {
   if (x <= threshold.value) return x;
@@ -114,9 +115,9 @@ const annotations = computed<Annotation[]>(() => [
   vertical-align: middle;
 }
 .lsd-soft-swatch {
-  background: #d97a7a;
+  background: var(--series-teal);
 }
 .lsd-linear-swatch {
-  background: #9aa0a6;
+  background: var(--series-gray);
 }
 </style>

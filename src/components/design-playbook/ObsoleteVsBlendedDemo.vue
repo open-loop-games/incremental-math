@@ -3,6 +3,15 @@ import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue';
 import uPlot from 'uplot';
 import type { Options, AlignedData } from 'uplot';
 import 'uplot/dist/uPlot.min.css';
+import { seriesColor } from '../../lib/series-colors';
+
+// rgba mirror for fill bands. uPlot stacked bands take a separate fill color.
+function withAlpha(hex: string, a: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
+}
 
 // Three mechanics, each with growth rate g_i. Strength at time t is exp(g_i · t).
 //
@@ -19,12 +28,20 @@ const tMax = ref(60);
 
 const N = 200;
 
-const COLOR_A = '#4a9eff';
-const COLOR_B = '#6ec07a';
-const COLOR_C = '#d97a7a';
-const FILL_A = 'rgba(74, 158, 255, 0.55)';
-const FILL_B = 'rgba(110, 192, 122, 0.55)';
-const FILL_C = 'rgba(217, 122, 122, 0.55)';
+function cssVar(name: string, fallback: string): string {
+  if (typeof window === 'undefined') return fallback;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return v || fallback;
+}
+
+const COLOR_A = seriesColor('amber');
+const COLOR_B = seriesColor('sage');
+const COLOR_C = seriesColor('teal');
+const FILL_A = withAlpha(COLOR_A, 0.55);
+const FILL_B = withAlpha(COLOR_B, 0.55);
+const FILL_C = withAlpha(COLOR_C, 0.55);
+const AXIS_STROKE = cssVar('--color-text-muted', '#a89784');
+const AXIS_GRID = cssVar('--color-border', '#4a423c');
 
 function buildDisjoint(): AlignedData {
   const xs = new Float64Array(N);
@@ -80,18 +97,18 @@ function buildOpts(width: number, title: string): Options {
     },
     axes: [
       {
-        stroke: '#8892a4',
-        grid: { stroke: '#2a3a5c', width: 0.5, dash: [2, 3] },
-        ticks: { stroke: '#2a3a5c', width: 0.5 },
+        stroke: AXIS_STROKE,
+        grid: { stroke: AXIS_GRID, width: 0.5, dash: [2, 3] },
+        ticks: { stroke: AXIS_GRID, width: 0.5 },
         label: 't',
         labelSize: 24,
         font: '11px ui-monospace, monospace',
         labelFont: '11px ui-monospace, monospace',
       },
       {
-        stroke: '#8892a4',
-        grid: { stroke: '#2a3a5c', width: 0.5, dash: [2, 3] },
-        ticks: { stroke: '#2a3a5c', width: 0.5 },
+        stroke: AXIS_STROKE,
+        grid: { stroke: AXIS_GRID, width: 0.5, dash: [2, 3] },
+        ticks: { stroke: AXIS_GRID, width: 0.5 },
         label: 'share',
         labelSize: 28,
         size: 56,
@@ -195,56 +212,32 @@ const blendedSharesText = computed(() => {
   <div class="demo">
     <div class="demo-controls">
       <label>
-        <span class="demo-label"><span class="dot dot-a" /> mechanic A growth = {{ g1.toFixed(3) }}</span>
-        <input
-          v-model.number="g1"
-          type="range"
-          min="0.01"
-          max="0.3"
-          step="0.005"
+        <span class="demo-label"
+          ><span class="dot dot-a" /> mechanic A growth = {{ g1.toFixed(3) }}</span
         >
+        <input v-model.number="g1" type="range" min="0.01" max="0.3" step="0.005" />
       </label>
       <label>
-        <span class="demo-label"><span class="dot dot-b" /> mechanic B growth = {{ g2.toFixed(3) }}</span>
-        <input
-          v-model.number="g2"
-          type="range"
-          min="0.01"
-          max="0.3"
-          step="0.005"
+        <span class="demo-label"
+          ><span class="dot dot-b" /> mechanic B growth = {{ g2.toFixed(3) }}</span
         >
+        <input v-model.number="g2" type="range" min="0.01" max="0.3" step="0.005" />
       </label>
       <label>
-        <span class="demo-label"><span class="dot dot-c" /> mechanic C growth = {{ g3.toFixed(3) }}</span>
-        <input
-          v-model.number="g3"
-          type="range"
-          min="0.01"
-          max="0.3"
-          step="0.005"
+        <span class="demo-label"
+          ><span class="dot dot-c" /> mechanic C growth = {{ g3.toFixed(3) }}</span
         >
+        <input v-model.number="g3" type="range" min="0.01" max="0.3" step="0.005" />
       </label>
       <label>
         <span class="demo-label">time horizon = {{ tMax.toFixed(0) }}</span>
-        <input
-          v-model.number="tMax"
-          type="range"
-          min="20"
-          max="200"
-          step="5"
-        >
+        <input v-model.number="tMax" type="range" min="20" max="200" step="5" />
       </label>
     </div>
 
     <div class="charts">
-      <div
-        ref="disjointRef"
-        class="chart"
-      />
-      <div
-        ref="blendedRef"
-        class="chart"
-      />
+      <div ref="disjointRef" class="chart" />
+      <div ref="blendedRef" class="chart" />
     </div>
 
     <p class="demo-note">
@@ -286,13 +279,13 @@ const blendedSharesText = computed(() => {
   vertical-align: middle;
 }
 .dot-a {
-  background: #4a9eff;
+  background: var(--series-amber);
 }
 .dot-b {
-  background: #6ec07a;
+  background: var(--series-sage);
 }
 .dot-c {
-  background: #d97a7a;
+  background: var(--series-clay);
 }
 .demo-note {
   margin-top: var(--gap);

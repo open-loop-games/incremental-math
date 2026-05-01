@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { seriesColor } from '../lib/series-colors';
 
 interface Curve {
   id: string;
@@ -166,11 +167,11 @@ const sliceVals = computed(() => {
 });
 
 const COLORS: Record<string, string> = {
-  rg: '#e07b5b',
-  ac: '#5b9be0',
-  cc: '#c2935a',
-  ei: '#7ac96a',
-  ch: '#b07ac9',
+  rg: seriesColor('teal'),
+  ac: seriesColor('amber'),
+  cc: seriesColor('slate'),
+  ei: seriesColor('sage'),
+  ch: seriesColor('mauve'),
 };
 
 function fmtY(y: number): string {
@@ -186,43 +187,19 @@ function fmtY(y: number): string {
     <div class="pp-controls">
       <label>
         <span class="demo-label">previous run = 10^{{ prevRunExp.toFixed(1) }}</span>
-        <input
-          v-model.number="prevRunExp"
-          type="range"
-          min="9"
-          max="21"
-          step="0.5"
-        >
+        <input v-model.number="prevRunExp" type="range" min="9" max="21" step="0.5" />
       </label>
       <label>
         <span class="demo-label">prev run / lifetime = {{ lifetimeFraction.toFixed(2) }}</span>
-        <input
-          v-model.number="lifetimeFraction"
-          type="range"
-          min="0.4"
-          max="0.95"
-          step="0.01"
-        >
+        <input v-model.number="lifetimeFraction" type="range" min="0.4" max="0.95" step="0.01" />
       </label>
       <label>
         <span class="demo-label">x range up to {{ xMax }}×</span>
-        <input
-          v-model.number="xMax"
-          type="range"
-          min="2"
-          max="16"
-          step="1"
-        >
+        <input v-model.number="xMax" type="range" min="2" max="16" step="1" />
       </label>
       <label>
         <span class="demo-label">slice at x = {{ highlightX.toFixed(2) }}×</span>
-        <input
-          v-model.number="highlightX"
-          type="range"
-          min="0.25"
-          :max="xMax"
-          step="0.05"
-        >
+        <input v-model.number="highlightX" type="range" min="0.25" :max="xMax" step="0.05" />
       </label>
     </div>
 
@@ -232,53 +209,16 @@ function fmtY(y: number): string {
       role="img"
       aria-label="Prestige currency gain vs run-ratio for five games"
     >
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t"
-        :x2="PAD.l"
-        :y2="PAD.t + PH"
-        class="pp-axis"
-      />
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t + PH"
-        :x2="PAD.l + PW"
-        :y2="PAD.t + PH"
-        class="pp-axis"
-      />
+      <line :x1="PAD.l" :y1="PAD.t" :x2="PAD.l" :y2="PAD.t + PH" class="pp-axis" />
+      <line :x1="PAD.l" :y1="PAD.t + PH" :x2="PAD.l + PW" :y2="PAD.t + PH" class="pp-axis" />
 
       <g>
-        <g
-          v-for="t in Y_TICKS"
-          :key="`y-${t}`"
-        >
-          <line
-            :x1="PAD.l"
-            :y1="yToPx(t)"
-            :x2="PAD.l + PW"
-            :y2="yToPx(t)"
-            class="pp-grid"
-          />
-          <text
-            :x="PAD.l - 8"
-            :y="yToPx(t) + 3"
-            text-anchor="end"
-            class="pp-tick"
-          >{{ t }}</text>
+        <g v-for="t in Y_TICKS" :key="`y-${t}`">
+          <line :x1="PAD.l" :y1="yToPx(t)" :x2="PAD.l + PW" :y2="yToPx(t)" class="pp-grid" />
+          <text :x="PAD.l - 8" :y="yToPx(t) + 3" text-anchor="end" class="pp-tick">{{ t }}</text>
         </g>
-        <line
-          :x1="PAD.l"
-          :y1="yToPx(1)"
-          :x2="PAD.l + PW"
-          :y2="yToPx(1)"
-          class="pp-axis-special"
-        />
-        <text
-          :x="PAD.l - 8"
-          :y="yToPx(1) + 3"
-          text-anchor="end"
-          class="pp-tick pp-tick-special"
-        >
+        <line :x1="PAD.l" :y1="yToPx(1)" :x2="PAD.l + PW" :y2="yToPx(1)" class="pp-axis-special" />
+        <text :x="PAD.l - 8" :y="yToPx(1) + 3" text-anchor="end" class="pp-tick pp-tick-special">
           1.0
         </text>
       </g>
@@ -295,12 +235,7 @@ function fmtY(y: number): string {
           {{ t }}×
         </text>
       </g>
-      <text
-        :x="PAD.l + PW / 2"
-        :y="H - 6"
-        text-anchor="middle"
-        class="pp-axis-label"
-      >
+      <text :x="PAD.l + PW / 2" :y="H - 6" text-anchor="middle" class="pp-axis-label">
         this run / previous run
       </text>
       <text
@@ -349,24 +284,9 @@ function fmtY(y: number): string {
           :key="`l-${s.id}`"
           :transform="`translate(${PAD.l + PW + 12} ${PAD.t + 8 + i * 22})`"
         >
-          <line
-            x1="0"
-            x2="14"
-            y1="-4"
-            y2="-4"
-            :stroke="COLORS[s.id]"
-            stroke-width="2.5"
-          />
-          <text
-            x="20"
-            y="0"
-            class="pp-legend-name"
-          >{{ s.label }}</text>
-          <text
-            x="20"
-            y="12"
-            class="pp-legend-y"
-          >y = {{ fmtY(s.y) }}</text>
+          <line x1="0" x2="14" y1="-4" y2="-4" :stroke="COLORS[s.id]" stroke-width="2.5" />
+          <text x="20" y="0" class="pp-legend-name">{{ s.label }}</text>
+          <text x="20" y="12" class="pp-legend-y">y = {{ fmtY(s.y) }}</text>
         </g>
       </g>
     </svg>

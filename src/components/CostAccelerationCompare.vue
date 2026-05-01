@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import RatePlot from './RatePlot.vue';
 import type { Annotation } from './RatePlot.vue';
+import { seriesColor } from '../lib/series-colors';
 
 // AD-style scaling-past-threshold cost. Math is faithful to
 // AntimatterDimensionsSourceCode/src/core/math.js:380-385 — it runs entirely in
@@ -26,7 +27,7 @@ const cursorN = ref(60);
 
 const N_MAX = 120;
 const FLAT_COLOR = 'var(--color-primary)';
-const ACCEL_COLOR = '#e07b6c';
+const ACCEL_COLOR = seriesColor('teal');
 
 function logFlat(n: number): number {
   return n * Math.log10(mult.value) + Math.log10(baseCost.value);
@@ -84,7 +85,7 @@ const annotations = computed<Annotation[]>(() => {
       type: 'point',
       x: cursorSample.value.n,
       y: clip(cursorSample.value.logFlat),
-      fill: getCssVar('--color-primary', '#4a9eff'),
+      fill: getCssVar('--color-primary', '#d4a574'),
     },
   ];
   if (showAccel.value) {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { format } from '../lib/decimal';
+import { seriesColor } from '../lib/series-colors';
 
 // Three autobuy policies running on the same three-tier toy economy.
 // Each tier i produces currency at rate owned[i] * rate[i]. There is no
@@ -119,19 +120,19 @@ const POLICIES = [
   {
     key: 'affordable' as const,
     label: 'buy-when-affordable',
-    color: '#9aa0a6',
+    color: seriesColor('gray'),
     visibleRef: showAffordable,
   },
   {
     key: 'buymax' as const,
     label: 'buy-max-each-tick',
-    color: '#d97a7a',
+    color: seriesColor('teal'),
     visibleRef: showBuyMax,
   },
   {
     key: 'threshold' as const,
     label: 'threshold-based',
-    color: '#6ec07a',
+    color: seriesColor('sage'),
     visibleRef: showThreshold,
   },
 ];
