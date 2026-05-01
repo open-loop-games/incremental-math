@@ -10,7 +10,7 @@ import Sources from '../../components/Sources.astro';
 # Exponential family
 
 The exponential family is the genre's pacing primitive. Where the
-[power-law family](./power-law) covers "rate is some power of state," the exponential
+[power-law family](/rate-functions/power-law) covers "rate is some power of state," the exponential
 family covers "rate compounds." Each unit of $x$ multiplies the rate by a fixed factor;
 the cumulative grows at the same rate; the first-passage in $C$ is logarithmic. Two notations,
 discrete and continuous, point at the same family.
@@ -23,7 +23,7 @@ The per-purchase cost ladder. $a$ is the cost of the zeroth purchase; $m$ is the
 multiplicative ratio between consecutive purchases. The
 [partial sum](https://en.wikipedia.org/wiki/Geometric_series) $S_n$ is a closed form known
 since [Archimedes](https://en.wikipedia.org/wiki/Archimedes); what makes the geometric
-shape the genre's load-bearing primitive is that the inverse — "how many can I afford with
+shape the genre's default cost primitive is that the inverse — "how many can I afford with
 budget $C$?" — is also elementary.
 
 The lead corpus exemplar is Cookie Clicker, which uses $m = 1.15$ across every building:
@@ -45,7 +45,7 @@ this.getPrice = function (n) {
 ```
 
 That ratio — $1.15$ — became the genre default, copied without renegotiation across a
-decade of clones and originals. The reason it's load-bearing is the doubling time:
+decade of clones and originals. The reason the choice stuck is the doubling time:
 $\log_2(1.15)^{-1} \approx 4.96$, so each five purchases double the cost. A run that climbs
 through fifty purchases of a building has gone through ten doublings, $1024\times$ over the
 base cost. A run that climbs through a hundred has gone through twenty, $\approx 10^6\times$.
@@ -67,7 +67,7 @@ window.ExponentialCostScaling = class ExponentialCostScaling {
 
 The doc-comment's price ladder is two regimes glued together: a pure geometric
 $B \cdot C^k$ before the scaling threshold, then a faster shape past it. That's a
-[piecewise composition](./composition) of two geometrics, not a separate family — same
+[piecewise composition](/rate-functions/composition) of two geometrics, not a separate family — same
 math, two different bases. AD's late-game cost climbs this way to give the player two
 distinct "speed" regimes.
 
@@ -122,7 +122,7 @@ exponential family practical past 2018; before then, the late-game regime hit a 
 because the math broke but because the floats did.
 
 The other direction the genre went is _softening_ the exponential past a threshold —
-[piecewise](./composition) compositions of geometric with a slower geometric, geometric
+[piecewise](/rate-functions/composition) compositions of geometric with a slower geometric, geometric
 with a polynomial, geometric with a logarithmic shape. Each is a way to reach the
 post-doubling regime without committing to the exponential's full late-game blowup. The
 [softcaps page](/modern/softcaps) catalogs the design patterns; the math underneath is

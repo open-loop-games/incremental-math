@@ -12,7 +12,7 @@ the cumulative when they're state-independent — but the design call is which k
 modifier each upgrade is, and how many can stack before the chain becomes illegible.
 
 This page bundles the questions that come up when designing a modifier system:
-additive vs multiplicative as the load-bearing distinction, when state-dependence
+additive vs multiplicative as the primary distinction, when state-dependence
 breaks the algebra, and what the chain's shape does to player legibility.
 
 ## When should a modifier be additive vs multiplicative?
@@ -28,7 +28,7 @@ The math first. With a base rate $r_0$:
   factor. The cumulative is scaled by $\mu_m$; the first-passage threshold rescales
   inversely. The contribution is a _fixed factor_ — independent of how big $r_0$ is.
 
-This is the same math as the [composition page](./composition)'s "obsolete vs blended"
+This is the same math as the [composition page](/design-playbook/composition)'s "obsolete vs blended"
 distinction, but applied at the modifier level rather than the mechanic level.
 Additive modifiers go obsolete when the base rate outgrows them; multiplicative
 modifiers don't.
@@ -58,7 +58,7 @@ the multiplicative layer is where that state acts on production. Putting the
 add-and-multiply order _backwards_ (multipliers that just add to other multipliers)
 is the failure mode that produces "this whole upgrade tree feels useless past tier 3"
 — if the modifiers are stacking additively where they should compose multiplicatively,
-the late game is back to the [obsolete-mechanic problem](./composition).
+the late game is back to the [obsolete-mechanic problem](/design-playbook/composition).
 
 ## When does state-dependence break the algebra?
 

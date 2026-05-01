@@ -38,7 +38,7 @@ The trajectory is the logistic curve proper — sigmoid in $t$, with the inflect
 elementary, well-defined for any reachable threshold $C \in (0, K)$, divergent as $C \to K$.
 
 The carrying capacity is approached but never reached. This is the entry's distinguishing
-feature versus the [rational entry's $p > 1$ case](./power-law#rational--hyperbolic-rate),
+feature versus the [rational entry's $p > 1$ case](/rate-functions/power-law#rational--hyperbolic-rate),
 which also has a finite ceiling: the rational form's ceiling is reached _in the limit of
 infinite $x$_; the logistic's ceiling is reached _in the limit of infinite $t$_. The
 ceiling lives in different units in the two shapes.
@@ -56,8 +56,8 @@ mid-curve, the inflection marks the regime change from acceleration to decelerat
 late, the curve flattens visibly toward the ceiling without a hard discontinuity.
 
 The mid-curve inflection is the design feature most often singled out. A linear cumulative
-of an exponential rate (the [exponential family](./exponential)) feels uniformly fast; a
-sublinear cumulative of a polynomial rate (the [power-law family](./power-law) past
+of an exponential rate (the [exponential family](/rate-functions/exponential)) feels uniformly fast; a
+sublinear cumulative of a polynomial rate (the [power-law family](/rate-functions/power-law) past
 $p < 0$) feels uniformly slow. The logistic feels like _both in sequence_ — the trajectory
 shows acceleration through the inflection, then deceleration past it. Players experience a
 visible break in the curve's character even though the underlying rate function is one
@@ -66,7 +66,7 @@ smooth analytic shape.
 ## Why pure logistic is rare in the corpus
 
 Most "logistic-feeling" curves in shipped incrementals are not actually logistic. They're
-hyperbolic — the [rational entry's](./power-law#rational--hyperbolic-rate)
+hyperbolic — the [rational entry's](/rate-functions/power-law#rational--hyperbolic-rate)
 $1 - b/(b + x)$ shape — because that shape:
 
 - Operates on the _cumulative_ directly rather than on a differential equation.
@@ -94,7 +94,7 @@ The places pure logistic does show up:
   caps, multiplicative ceilings). When the cap is _narrative_ — "a statistic that
   represents a fraction" — the logistic is the right intent.
 
-For most other "soft cap" use cases, the [hyperbolic entry on the power-law page](./power-law#rational--hyperbolic-rate)
+For most other "soft cap" use cases, the [hyperbolic entry on the power-law page](/rate-functions/power-law#rational--hyperbolic-rate)
 is what shipped games actually compute. The logistic earns its catalog page on
 mathematical grounds, not on prevalence: it
 remains the cleanest sigmoid the catalog can offer, and its first-passage being elementary
@@ -116,6 +116,6 @@ A logistic with a _time-varying_ carrying capacity ($K = K(t)$ rather than const
 admit closed forms in some special cases (linear $K$, exponential $K$) but not in general.
 A logistic feeding into another logistic via a multiplier is closed-form when the
 multiplier is constant on the integration scale and not when it isn't. The catalog's claim
-about composition closure (covered on the [composition page](./composition)) holds for the
+about composition closure (covered on the [composition page](/rate-functions/composition)) holds for the
 logistic the same way it holds for the others: clean compositions stay closed; coupled
 compositions migrate into [bifurcations](https://en.wikipedia.org/wiki/Bifurcation_theory).

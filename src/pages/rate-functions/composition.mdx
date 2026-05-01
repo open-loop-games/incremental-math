@@ -36,7 +36,7 @@ The genre's lead piecewise pattern is "two geometrics glued at a threshold": a n
 ratio before some level, a slower ratio past it. Realm Grinder's pre/post-Ascension cost
 shift is the canonical example — $c_0 \cdot 1.15^n$ for $n \le t$, $c_0 \cdot 1.15^t \cdot
 1.03^{n-t}$ for $n > t$. Antimatter Dimensions' `ExponentialCostScaling` (cited on the
-[exponential page](./exponential)) ships the same pattern as a parameterized class.
+[exponential page](/rate-functions/exponential)) ships the same pattern as a parameterized class.
 
 <PiecewiseDemo client:visible />
 
@@ -138,7 +138,7 @@ common-but-not-closed cases:
   exact integral.
 - **Coupled multi-resource systems.** When two resources mutually feed each other's
   rates — predator-prey, [Lotka-Volterra](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations),
-  multi-species [logistic](./bounded-growth) — closure requires special structure (linear
+  multi-species [logistic](/rate-functions/bounded-growth) — closure requires special structure (linear
   systems, conserved quantities, triangular dependency). General nonlinear coupling is
   outside the algebra. Most modern incrementals avoid genuinely coupled multi-resource
   systems for exactly this reason; the games that ship them tend to simplify the coupling

@@ -64,7 +64,7 @@ var fluffLvl = Math.log(fluffXP) / Math.log(4);
 
 Each quadrupling of XP adds one level — a fixed $\log_4$ compression of the cumulative.
 Reading this as a rate-function entry: the _rate of level gain per XP_ is
-$1/(\text{XP} \cdot \ln 4)$, which is the [polynomial rate](./power-law) with $p = -1$ —
+$1/(\text{XP} \cdot \ln 4)$, which is the [polynomial rate](/rate-functions/power-law) with $p = -1$ —
 the boundary case of the polynomial entry where the integral becomes $\ln$. So Trimps'
 log-pet-level is sitting on the same boundary this page covers, just from the other side:
 "polynomial rate at $p = -1$" and "log on the cumulative" are two views of the same shape.
