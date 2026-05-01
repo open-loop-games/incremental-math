@@ -47,8 +47,8 @@ production curves update together.
 
 This is two questions stacked. "What's the duration of the early game?" is a
 first-passage problem: time to threshold $C_{\text{early-end}}$. "Where do I put
-$C_{\text{early-end}}$?" is the design call the math is silent on. Pacing math
-answers the first; pacing math doesn't answer the second.
+$C_{\text{early-end}}$?" is the design call the formula cannot choose. Pacing math
+answers the first; the threshold is a tuning decision.
 
 The first part: with rate $r$ and cumulative $R(t)$, the time to threshold $C$ is
 $T(C) = R^{-1}(C)$, which the catalog gives in closed form for every entry. For a
@@ -84,11 +84,11 @@ The design-side problem is what to _do_ about it. Three working answers:
   composition: $m = 1.15$ early, $m = 1.05$ past threshold $t$. The post-threshold
   doubling time is now $\approx 14$ purchases instead of $\approx 5$, and the
   late-game "wall" gets a slope change rather than a slope continuation. The
-  [bending the curve](./bending) page covers the design choices.
+  [bending the curve](/design-playbook/bending) page covers the design choices.
 - **Add a multiplicative modifier that grows with progress.** A multiplier on the
   rate doesn't change the _shape_ of the cost cumulative but it _rescales the
   threshold_ — players reach the same level for less effective cost. Each prestige
-  layer in modern games does this; it's why prestige feels load-bearing.
+  layer in modern games does this; it's why prestige is the genre's main pacing lever.
 - **Cap the level entirely with a milestone gate.** A hard cap turns the runaway into
   a reachable endpoint. Players know when they're done. This changes the game's shape
   fundamentally — it's no longer a pacing decision, it's an end-of-content decision.
@@ -138,11 +138,11 @@ take. Pacing math doesn't decide:
   the cadence is right for them.
 - **What the player does between purchases.** The first-passage time is a duration in
   real time; what _fills_ that duration — clicks, automation, mini-games, narrative —
-  is content shape, not curve shape. Pacing math is silent.
+  is content shape, not curve shape. Pacing math does not choose it.
 - **How to telegraph the next milestone.** Players need to _see_ the next milestone
   approaching for the cadence to feel like progress. The HUD design, the progression
-  bars, the unlock animations are all about making the math _legible_. Math is
-  silent on legibility.
+  bars, the unlock animations are all about making the math _legible_. Legibility is
+  a UI problem.
 
 Pacing math is the strongest tool the playbook has — almost every pacing question
 has a closed-form answer — but it doesn't substitute for playtesting. The math gets

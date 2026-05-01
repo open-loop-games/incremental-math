@@ -102,8 +102,8 @@ ahead. Players feel this as "I jumped forward in the curve" — qualitatively di
 from speeding it up, because the _position_ on the curve changed.
 
 **New source.** The state is fed by an additional [sum](/rate-functions/composition#sum)
-term. The mechanic that produces the state now has another contributor. Crucially: this
-is additive only at the _state_ level; the state is then multiplied into rates downstream,
+term. The mechanic that produces the state now has another contributor. This addition
+is at the _state_ level only; the state is then multiplied into rates downstream,
 so the new source's contribution still blends multiplicatively into the loop. The trick
 of AD's galaxies is exactly this two-level structure: many sources sum into the shared
 state, the shared state multiplies the rate.
@@ -146,8 +146,8 @@ The previous four questions all bear on this one. The diagnosis is a single test
 the new layer's value flow _back into_ the old layer's primitives? If yes, the old
 layer's primitives now have a new reason to exist — they feed something new — and the
 old layer keeps mattering. If no, the old layer is sitting in additive composition with
-the new layer, and the asymptotic-dominance ordering has already decided which one is
-load-bearing in the long run.
+the new layer, and the asymptotic-dominance ordering has already decided which one
+dominates in the long run.
 
 Three concrete versions of "yes":
 

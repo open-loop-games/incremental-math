@@ -53,7 +53,7 @@ return DC.E1.pow(logCost);
 
 `DC.E1` is the constant `10`, so `DC.E1.pow(logCost)` is the only place the result becomes a Decimal. Everything before — the addition, the multiplication, the quadratic term that gives AD its "infinity wall" cost shape (covered next page) — is plain double arithmetic on the *log*. The big-number library's job in AD is to be a presentation layer for math that never needed it.
 
-This is load-bearing. Without it, every cost calculation would do tens of Decimal operations per call; with it, AD's cost code runs at native speed and pays the Decimal cost only when displaying or comparing against the player's wallet.
+That structure matters. Without it, every cost calculation would do tens of Decimal operations per call; with it, AD's cost code runs at native speed and pays the Decimal cost only when displaying or comparing against the player's wallet.
 
 ## break_eternity.js (2020)
 

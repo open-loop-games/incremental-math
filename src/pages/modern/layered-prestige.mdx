@@ -36,7 +36,7 @@ This is the structural definition: **a prestige currency is at layer $k$ if it s
 
 ## The cascade rule, declared
 
-The reset cascade is the load-bearing implementation detail of every layered prestige system. It's the rule that says "when layer 2 resets, layer 1's stash goes too, but layer 2's stash doesn't." Skipping it produces save files where layer-1 currency drifts higher and higher across layer-2 resets and the layered structure silently collapses into one fat single-tier loop.
+The reset cascade is the central implementation detail of every layered prestige system. It's the rule that says "when layer 2 resets, layer 1's stash goes too, but layer 2's stash doesn't." Skipping it produces save files where layer-1 currency drifts higher and higher across layer-2 resets and the layered structure silently collapses into one fat single-tier loop.
 
 Prestige Tree's contribution is to make the cascade *declarative*. A layer is one `addLayer` call: an id, a row, a base resource, a formula type, an exponent, a list of branches:
 
