@@ -8,7 +8,7 @@ title: Multi-resource — lattices and the triangular escape
 Modern incrementals rarely run a single currency. Production, prestige, side
 mechanics, milestone rewards, and event currencies stack into resource lattices that
 the player navigates simultaneously. The catalog's
-[multi-resource extension](/rate-functions/composition) tells you when those lattices
+[multi-resource extension](/rate-functions/composition#composition-recap) tells you when those lattices
 stay in closed form and when they don't, and the answer is almost always "they're
 triangular."
 
@@ -20,7 +20,7 @@ can't close.
 ## When should currencies be separate vs unified?
 
 The math diagnosis: separate currencies are tractable when each currency's rate
-function depends on a _different_ state. The system [decouples](/rate-functions/composition)
+function depends on a _different_ state. The system [decouples](/rate-functions/composition#composition-recap)
 and each currency is its own first-passage problem in isolation. When two currencies'
 rates depend on the same state, the system _couples_, and closure depends on the
 shape of the coupling.
@@ -33,7 +33,7 @@ The design call:
   problems running side by side. The risk is the [obsolete-mechanic](./composition)
   problem: if one currency's rate outgrows the other's, the slower one becomes
   irrelevant unless it converts back into the faster.
-- **Separate but [triangular](/rate-functions/composition).** The most common case in
+- **Separate but [triangular](/rate-functions/composition#composition-recap).** The most common case in
   shipped games. Currency A produces currency B; currency B is a modifier on
   currency A's rate or feeds upgrades that improve currency A's mechanics. The
   dependency runs one way, so the system is solvable in dependency order: solve A
@@ -77,7 +77,7 @@ upgrade-affordability calculation).
 
 ## How do I design a triangular dependency that stays tractable?
 
-The catalog's [triangular systems rule](/rate-functions/composition) says: order the
+The catalog's [triangular systems rule](/rate-functions/composition#composition-recap) says: order the
 resources $R_1, \dots, R_k$ such that $R_i$'s rate depends only on $R_1, \dots, R_i$.
 The system is solvable in sequence — solve $R_1$ first, substitute its solution into
 $R_2$'s equation, solve, substitute into $R_3$'s, and so on. Closure of the whole
@@ -110,7 +110,7 @@ reference that doesn't close.
 The genre's working solution: keep the across-run feedback at the cycle boundary
 (prestige conversion at end of run), not in the per-tick rate function. Each run is
 triangular; the feedback happens between runs. This is exactly the
-[functional composition](/rate-functions/composition) structure, applied to the
+[functional composition](/rate-functions/composition#functional-composition) structure, applied to the
 multi-resource case.
 
 ## What happens when resources have circular dependencies?

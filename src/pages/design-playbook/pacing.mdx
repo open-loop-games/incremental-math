@@ -40,7 +40,7 @@ isn't arbitrary; it's the answer to a specific session-length question. A differ
 session shape gives a different answer.
 
 The catalog's [exponential family page](/rate-functions/exponential) has the
-[live calculator](/rate-functions/exponential) — slide $m$, watch doubling time and
+[live calculator](/rate-functions/exponential#geometric-discrete) — slide $m$, watch doubling time and
 production curves update together.
 
 ## How long should the early game be?
@@ -65,14 +65,14 @@ early game is shorter; for slow-burn idle the early game can be hours.
 What the math forbids: a geometric ladder can't have a _short_ early game and a _short_
 late game both. The doubling structure is uniform — pick $m$ and you've picked the
 ratio of late-game pacing to early-game pacing. Games that want the early game to feel
-fast and the late game to feel deep need either a [piecewise composition](/rate-functions/composition)
+fast and the late game to feel deep need either a [piecewise composition](/rate-functions/composition#piecewise-splice)
 of two geometrics (different $m$ before and after a threshold) or a different rate
 function entirely. The Pecorella-style single-$m$ ladder is uniformly paced by
 construction.
 
 ## How do I prevent the late game from being a wall?
 
-Re-read [the asymptotic concentration lemma](/rate-functions/exponential): for a
+Re-read [the asymptotic concentration lemma](/rate-functions/exponential#asymptotic-concentration): for a
 geometric cumulative, the last $K$ levels carry approximately $1 - m^{-K}$ of the total
 integral. For $m = 1.15$ and $K = 10$, that's 75%. The math is doing this, regardless
 of what the rest of the game does — the _feeling_ that the last few levels of any
@@ -110,7 +110,7 @@ shape outside that range:
 - **Long-form idle (multi-hour sessions).** If a session spans 100+ levels of a
   building, $m = 1.15$ produces a runaway that hits float-overflow in the late game.
   Either drop $m$ (1.05–1.10 is more common for idle-heavy games) or
-  [piecewise it](/rate-functions/composition) past a threshold.
+  [piecewise it](/rate-functions/composition#piecewise-splice) past a threshold.
 - **Short bursts (sub-5-minute sessions).** Players don't see enough doublings to feel
   the cadence; the mechanic feels static. Crank $m$ — 1.25–1.35 — so a short session
   contains 2–3 doublings.

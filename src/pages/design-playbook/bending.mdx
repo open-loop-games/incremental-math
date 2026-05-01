@@ -20,7 +20,7 @@ this page walks the design call that picks among them.
 The math diagnosis: when an unbounded rate function is producing a cumulative that
 _nothing downstream consumes meaningfully_. If the cumulative stops corresponding to
 a meaningful progression value past some threshold — because the player can't spend
-it, or because spending it has [diminishing returns](/rate-functions/power-law) the
+it, or because spending it has [diminishing returns](/rate-functions/power-law#polynomial-rate) the
 designer didn't intend — the rate function has outgrown its purpose, and a soft cap
 is the answer.
 
@@ -43,28 +43,28 @@ Each shape lives in the catalog at a specific entry. Picking among them is picki
 which property matters most for the cap's role.
 
 **Root / fractional power**. $g(x, t) = t \cdot (x/t)^p$ for $0 < p < 1$. Lives at the
-[polynomial entry](/rate-functions/power-law) with fractional exponent. The post-cap
+[polynomial entry](/rate-functions/power-law#polynomial-rate) with fractional exponent. The post-cap
 growth is sublinear but unbounded, with a smooth slope change at the threshold. Pick
 this when the cap's role is "slow down growth, don't ceiling it." The exponent $p$
 controls aggressiveness — $p = 0.5$ is the genre-default sqrt softcap, $p = 0.3$ is
 harsh, $p = 0.7$ is gentle.
 
 **Log**. $g(x, t) = t + k \cdot \log_{10}(x - t + 1)$. Lives near the
-[logarithmic entry](/rate-functions/log-frontier). The post-cap growth is _very_
+[logarithmic entry](/rate-functions/log-frontier#logarithmic-rate). The post-cap growth is _very_
 sublinear — every $10\times$ in input adds a fixed $k$ to output. Pick this when the
 cap's role is "compress many orders of magnitude into a small number." NGU Idle's
 many stacked log caps are this shape because the game's underlying values span 50+
 orders of magnitude and need to land on a stat the player can read.
 
 **Hyperbolic / asymptotic**. $g(x) = L \cdot x / (x + k)$. Lives at the
-[rational entry $p > 1$](/rate-functions/power-law) when read as a cumulative. The
+[rational entry $p > 1$](/rate-functions/power-law#rational--hyperbolic-rate) when read as a cumulative. The
 post-cap growth approaches a _finite ceiling_ $L$ that's never reached. Pick this when
 the cap's role is "this stat represents a fraction or efficiency that should saturate
 near 100%." Civ Clicker's cleric efficiency is this — "approach but never exceed 1.0"
 is the design intent the shape encodes.
 
 **Piecewise / regime split**. Different rate or growth on each side of a threshold,
-glued continuously. Lives at the [piecewise composition](/rate-functions/composition)
+glued continuously. Lives at the [piecewise composition](/rate-functions/composition#piecewise-splice)
 rule. Pick this when the cap's role is "change the regime visibly so the player feels
 the transition." Realm Grinder's pre/post-Ascension cost shift is two geometrics
 spliced; the player crosses a named threshold and the game's pacing visibly changes.
@@ -72,7 +72,7 @@ spliced; the player crosses a named threshold and the game's pacing visibly chan
 The picks are not interchangeable. Root and power are smooth and continuous-derivative
 at the threshold; log is smooth but the slope change is sharper; piecewise has a
 visible kink; hyperbolic has a hard ceiling. The
-[softcaps comparison demo](/modern/softcaps) plots them on a shared axis if you want
+[softcaps comparison demo](/modern/softcaps#comparing-the-shapes) plots them on a shared axis if you want
 the visual.
 
 ## How many caps should stack?

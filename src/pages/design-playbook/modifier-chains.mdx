@@ -7,7 +7,7 @@ title: Modifier chains — stacking that stays legible
 
 The headline rate-function in any modern incremental is the output of a long sequence
 of additions, multiplications, and an occasional exponent. The math underneath is the
-[modifier-product rule](/rate-functions/composition) — modifiers on rates are linear in
+[modifier-product rule](/rate-functions/composition#modifier-product-state-independent-multipliers) — modifiers on rates are linear in
 the cumulative when they're state-independent — but the design call is which kind of
 modifier each upgrade is, and how many can stack before the chain becomes illegible.
 
@@ -62,7 +62,7 @@ the late game is back to the [obsolete-mechanic problem](./composition).
 
 ## When does state-dependence break the algebra?
 
-The catalog's [modifier-product rule](/rate-functions/composition) closes when
+The catalog's [modifier-product rule](/rate-functions/composition#modifier-product-state-independent-multipliers) closes when
 the modifier $\mu$ is _state-independent_ — doesn't depend on the same state $x$ the
 rate does. State-dependent modifiers are formally a different rate function:
 $r(x) \cdot f(x)$ for some $f$, which doesn't simplify and generally doesn't have an
@@ -89,7 +89,7 @@ falls outside the algebra. The design-side consequences:
 
 When state-dependence is the right call: when the _transformation_ is the design
 goal. Power-modifiers on rates ("triple the exponent of your production formula")
-are explicitly state-dependent; they're producing a [polynomial transform](/rate-functions/power-law)
+are explicitly state-dependent; they're producing a [polynomial transform](/rate-functions/power-law#polynomial-rate)
 of the rate, and the late-game shape that emerges is the shape the designer chose.
 The math just has to be acknowledged: the spec layer has shifted to a different
 catalog entry, and the calibration has to follow.

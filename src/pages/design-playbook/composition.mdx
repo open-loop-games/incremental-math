@@ -32,7 +32,7 @@ cares about — it lives in isolation from the main loop's rate function. The to
 production of the game decomposes as a sum: $r_{\text{total}}(t) = r_1(t) + r_2(t) + \dots$.
 Once the player has automated $r_1$, its growth rate is fixed at whatever the autobuyer
 produces. Meanwhile, the post-automation upgrade tree pushes some other rate $r_3$ into
-exponential growth, and the catalog's [asymptotic ordering](/rate-functions/composition)
+exponential growth, and the catalog's [asymptotic ordering](/rate-functions/composition#sum)
 takes over. After enough time, the share $r_1 / r_{\text{total}}$ collapses to ~0%. The
 mechanic isn't _broken_; it's _dominated_. From the player's perspective, the
 indistinguishability of "broken" and "dominated" is what makes the experience feel like a
@@ -46,7 +46,7 @@ _multiply_ something.
 
 Same math, opposite direction. AD's galaxies are not an additive contribution to
 production — they're a state variable that _modifies_ production. The composition rule
-underneath is the [modifier-product](/rate-functions/composition):
+underneath is the [modifier-product](/rate-functions/composition#modifier-product-state-independent-multipliers):
 $r(x) = r_{\text{base}}(x) \cdot \mu_{\text{galaxies}}$. The galaxy count is a single
 shared state that many mechanics feed. Tickspeed boosts feed it. Replicanti unlocks feed
 it. Eternity upgrades feed it. Time studies feed it. Every one of those mechanics is
@@ -83,7 +83,7 @@ not interchangeable; each does something specific to the rate function and the
 first-passage time.
 
 **Multiplier on the rate.** $r(x) \to \mu \cdot r(x)$. The
-[modifier-product](/rate-functions/composition) rule. Rescales the timescale: doubles
+[modifier-product](/rate-functions/composition#modifier-product-state-independent-multipliers) rule. Rescales the timescale: doubles
 the rate, halves the time-to-threshold, identical curve shape on log-y. Every "+50% to X"
 upgrade is this. The math is clean: $T_{\text{new}}(C) = T_{\text{old}}(C / \mu)$. Players
 feel this as "everything's faster now."
@@ -101,7 +101,7 @@ geometric rate ladders, multiplying the state by $k$ means starting $\log_m k$ l
 ahead. Players feel this as "I jumped forward in the curve" — qualitatively different
 from speeding it up, because the _position_ on the curve changed.
 
-**New source.** The state is fed by an additional [sum](/rate-functions/composition)
+**New source.** The state is fed by an additional [sum](/rate-functions/composition#sum)
 term. The mechanic that produces the state now has another contributor. Crucially: this
 is additive only at the _state_ level; the state is then multiplied into rates downstream,
 so the new source's contribution still blends multiplicatively into the loop. The trick
@@ -117,7 +117,7 @@ texture of the late game.
 
 ## How does prestige fit into the loop?
 
-[Functional composition](/rate-functions/composition): the prestige currency $H$ is a
+[Functional composition](/rate-functions/composition#functional-composition): the prestige currency $H$ is a
 function of the primary cumulative $C$ (often $H \propto C^{1/3}$ or $H \propto \log C$),
 and the post-prestige run is the cumulative integrated against a rate function that's
 _been modified by_ $H$. Two layers, glued by a function — primary loop closes for one
