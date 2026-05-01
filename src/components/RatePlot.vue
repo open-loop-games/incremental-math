@@ -12,6 +12,13 @@ interface Series {
   width?: number;
 }
 
+export type Annotation =
+  | { type: 'vline'; x: number; stroke?: string; dash?: number[]; label?: string; width?: number }
+  | { type: 'hline'; y: number; stroke?: string; dash?: number[]; label?: string; width?: number }
+  | { type: 'vband'; x0: number; x1: number; fill?: string }
+  | { type: 'hband'; y0: number; y1: number; fill?: string }
+  | { type: 'point'; x: number; y: number; fill?: string; stroke?: string; radius?: number };
+
 interface Props {
   fn?: (x: number) => number;
   /** Multi-series alternative to `fn`. When set, takes precedence. */
@@ -28,6 +35,12 @@ interface Props {
    *  closure rather than a `computed` that returns a fresh function. */
   deps?: readonly unknown[];
   optsOverrides?: Partial<Options>;
+  /** Overlay annotations drawn after the series — vlines, hlines, bands, points. */
+  annotations?: readonly Annotation[];
+  /** Custom y-axis tick label formatter. Use for unit-bearing or transformed axes. */
+  yTickFormat?: (v: number) => string;
+  /** Lock the y-scale to a fixed range (e.g. when raw data spikes off-screen). */
+  yRange?: [number, number];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -42,11 +55,16 @@ const props = withDefaults(defineProps<Props>(), {
   yLabel: '',
   deps: () => [],
   optsOverrides: () => ({}),
+  annotations: () => [],
+  yTickFormat: undefined,
+  yRange: undefined,
 });
 
 const containerRef = ref<HTMLDivElement | null>(null);
 let plot: uPlot | null = null;
 let ro: ResizeObserver | null = null;
+// Captured by the draw hook so prop updates can repaint without rebuilding the plot.
+const annotationsRef = ref<readonly Annotation[]>(props.annotations);
 
 function cssVar(name: string, fallback: string): string {
   if (typeof window === 'undefined') return fallback;
@@ -79,6 +97,89 @@ function buildData(): AlignedData {
   return [xs, ...cols] as unknown as AlignedData;
 }
 
+function drawAnnotations(u: uPlot): void {
+  const list = annotationsRef.value;
+  if (!list || list.length === 0) return;
+  const ctx = u.ctx;
+  const muted = cssVar('--color-text-muted', '#8892a4');
+  const { left, top, width, height } = u.bbox;
+  ctx.save();
+  // Clip to plot area so bands/lines don't bleed into axis gutters.
+  ctx.beginPath();
+  ctx.rect(left, top, width, height);
+  ctx.clip();
+  for (const a of list) {
+    if (a.type === 'vline') {
+      const px = u.valToPos(a.x, 'x', true);
+      if (!Number.isFinite(px)) continue;
+      ctx.beginPath();
+      ctx.strokeStyle = a.stroke ?? muted;
+      ctx.lineWidth = a.width ?? 0.75;
+      const dash = a.dash ?? [4, 3];
+      ctx.setLineDash(dash);
+      ctx.globalAlpha = 0.7;
+      ctx.moveTo(px + 0.5, top);
+      ctx.lineTo(px + 0.5, top + height);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+      if (a.label) {
+        ctx.fillStyle = a.stroke ?? muted;
+        ctx.font = '10px ui-monospace, monospace';
+        ctx.textBaseline = 'top';
+        ctx.fillText(a.label, px + 4, top + 2);
+      }
+    } else if (a.type === 'hline') {
+      const py = u.valToPos(a.y, 'y', true);
+      if (!Number.isFinite(py)) continue;
+      ctx.beginPath();
+      ctx.strokeStyle = a.stroke ?? muted;
+      ctx.lineWidth = a.width ?? 0.75;
+      ctx.setLineDash(a.dash ?? [4, 3]);
+      ctx.globalAlpha = 0.7;
+      ctx.moveTo(left, py + 0.5);
+      ctx.lineTo(left + width, py + 0.5);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+      if (a.label) {
+        ctx.fillStyle = a.stroke ?? muted;
+        ctx.font = '10px ui-monospace, monospace';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(a.label, left + 4, py - 2);
+      }
+    } else if (a.type === 'vband') {
+      const px0 = u.valToPos(a.x0, 'x', true);
+      const px1 = u.valToPos(a.x1, 'x', true);
+      ctx.fillStyle = a.fill ?? muted;
+      ctx.globalAlpha = 0.12;
+      ctx.fillRect(Math.min(px0, px1), top, Math.abs(px1 - px0), height);
+      ctx.globalAlpha = 1;
+    } else if (a.type === 'hband') {
+      const py0 = u.valToPos(a.y0, 'y', true);
+      const py1 = u.valToPos(a.y1, 'y', true);
+      ctx.fillStyle = a.fill ?? muted;
+      ctx.globalAlpha = 0.12;
+      ctx.fillRect(left, Math.min(py0, py1), width, Math.abs(py1 - py0));
+      ctx.globalAlpha = 1;
+    } else if (a.type === 'point') {
+      const px = u.valToPos(a.x, 'x', true);
+      const py = u.valToPos(a.y, 'y', true);
+      if (!Number.isFinite(px) || !Number.isFinite(py)) continue;
+      ctx.beginPath();
+      ctx.arc(px, py, a.radius ?? 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = a.fill ?? muted;
+      ctx.fill();
+      if (a.stroke) {
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = a.stroke;
+        ctx.stroke();
+      }
+    }
+  }
+  ctx.restore();
+}
+
 function buildOptions(width: number): Options {
   const stroke = props.stroke || cssVar('--color-primary', '#4a9eff');
   const grid = cssVar('--color-border', '#2a3a5c');
@@ -90,7 +191,10 @@ function buildOptions(width: number): Options {
     legend: { show: false },
     scales: {
       x: { time: false },
-      y: props.yScale === 'log' ? { distr: 3 } : {},
+      y: {
+        ...(props.yScale === 'log' ? { distr: 3 } : {}),
+        ...(props.yRange ? { range: () => props.yRange! } : {}),
+      },
     },
     axes: [
       {
@@ -113,6 +217,9 @@ function buildOptions(width: number): Options {
         size: 56,
         font: '11px ui-monospace, monospace',
         labelFont: '11px ui-monospace, monospace',
+        ...(props.yTickFormat
+          ? { values: (_self, splits) => splits.map((v) => props.yTickFormat!(v)) }
+          : {}),
       },
     ],
     series: [
@@ -125,6 +232,9 @@ function buildOptions(width: number): Options {
         points: { show: false },
       })),
     ],
+    hooks: {
+      draw: [drawAnnotations],
+    },
     ...props.optsOverrides,
   };
   return base;
@@ -169,8 +279,27 @@ watch(
 );
 
 watch(
-  () => [props.yScale, props.label, props.stroke, props.xLabel, props.yLabel, props.series?.length],
+  () => [
+    props.yScale,
+    props.label,
+    props.stroke,
+    props.xLabel,
+    props.yLabel,
+    props.series?.length,
+    props.yTickFormat,
+    props.yRange?.[0],
+    props.yRange?.[1],
+  ],
   () => rebuild(),
+);
+
+watch(
+  () => props.annotations,
+  (next) => {
+    annotationsRef.value = next;
+    // redraw(false, true): keep cached series paths, repaint overlays.
+    plot?.redraw(false, true);
+  },
 );
 </script>
 
