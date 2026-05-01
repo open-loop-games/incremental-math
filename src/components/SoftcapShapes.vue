@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { format } from '../lib/decimal';
+import RatePlot from './RatePlot.vue';
+import type { Annotation } from './RatePlot.vue';
 
 // Four canonical softcap shapes plotted on a shared input axis. Operates on
 // JS Number directly — the lesson is the curve shape, not big-number arithmetic.
 
 const xMax = ref(1000);
 const threshold = ref(100);
-const rootN = ref(2);          // root softcap exponent (1/n)
-const powerP = ref(0.7);       // power softcap exponent (< 1)
-const logK = ref(40);          // log softcap post-threshold strength
+const rootN = ref(2); // root softcap exponent (1/n)
+const powerP = ref(0.7); // power softcap exponent (< 1)
+const logK = ref(40); // log softcap post-threshold strength
 const piecewiseSlope2 = ref(0.1); // piecewise post-threshold slope ratio
 
 const showLinear = ref(true);
@@ -18,8 +19,6 @@ const showPower = ref(true);
 const showLog = ref(true);
 const showPiecewise = ref(true);
 const logScale = ref(false);
-
-const N_SAMPLES = 256;
 
 interface Curve {
   key: string;
@@ -79,96 +78,22 @@ const curves = computed<Curve[]>(() => [
   },
 ]);
 
-const W = 720;
-const H = 360;
-const PAD = { l: 64, r: 16, t: 14, b: 36 };
-const PW = W - PAD.l - PAD.r;
-const PH = H - PAD.t - PAD.b;
+const visibleSeries = computed(() =>
+  curves.value.filter((c) => c.visible).map((c) => ({ fn: c.fn, label: c.label, stroke: c.color })),
+);
 
-interface Tick {
-  label: string;
-  y: number;
-}
-interface YScale {
-  toY: (v: number) => number;
-  ticks: Tick[];
-}
+const domain = computed<[number, number]>(() => [0, xMax.value]);
 
-const yScale = computed<YScale>(() => {
-  const visible = curves.value.filter((c) => c.visible);
-  let min = Infinity;
-  let max = -Infinity;
-  for (let i = 0; i < N_SAMPLES; i++) {
-    const x = (i / (N_SAMPLES - 1)) * xMax.value;
-    for (const c of visible) {
-      const v = c.fn(x);
-      if (!Number.isFinite(v)) continue;
-      if (v < min) min = v;
-      if (v > max) max = v;
-    }
-  }
-  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) {
-    return { toY: () => PAD.t + PH / 2, ticks: [] };
-  }
-  if (logScale.value) {
-    if (min <= 0) min = Math.max(1e-3, max / 1e6);
-    const lmin = Math.log10(min);
-    const lmax = Math.log10(max);
-    const span = lmax - lmin;
-    const toY = (v: number): number => {
-      const safe = v > 0 && Number.isFinite(v) ? v : min;
-      return PAD.t + (1 - (Math.log10(safe) - lmin) / span) * PH;
-    };
-    const ticks: Tick[] = [];
-    const lo = Math.ceil(lmin);
-    const hi = Math.floor(lmax);
-    const step = Math.max(1, Math.ceil((hi - lo + 1) / 8));
-    for (let p = lo; p <= hi; p += step) {
-      ticks.push({ label: `10^${p}`, y: PAD.t + (1 - (p - lmin) / span) * PH });
-    }
-    return { toY, ticks };
-  }
-  // 0-anchored linear so the threshold line is meaningful
-  const yMin = 0;
-  const yMax = max * 1.05;
-  const span = yMax - yMin;
-  const toY = (v: number): number => PAD.t + (1 - (v - yMin) / span) * PH;
-  const ticks: Tick[] = [
-    { label: format(yMax), y: PAD.t },
-    { label: format(yMin + span * 0.5), y: PAD.t + PH * 0.5 },
-    { label: '0', y: PAD.t + PH },
-  ];
-  return { toY, ticks };
-});
+const annotations = computed<Annotation[]>(() => [
+  { type: 'vline', x: threshold.value, label: 'threshold' },
+]);
 
-function pathFor(c: Curve): string {
-  const xStep = PW / (N_SAMPLES - 1);
-  const parts: string[] = [];
-  for (let i = 0; i < N_SAMPLES; i++) {
-    const x = (i / (N_SAMPLES - 1)) * xMax.value;
-    const y = c.fn(x);
-    if (!Number.isFinite(y)) continue;
-    const px = PAD.l + i * xStep;
-    const py = yScale.value.toY(y);
-    parts.push((parts.length === 0 ? 'M' : 'L') + px.toFixed(1) + ' ' + py.toFixed(1));
-  }
-  return parts.join(' ');
-}
-
-const pathByKey = computed(() => {
-  const m: Record<string, string> = {};
-  for (const c of curves.value) m[c.key] = pathFor(c);
-  return m;
-});
-
-const thresholdX = computed(() => PAD.l + (threshold.value / xMax.value) * PW);
-
-const X_TICKS = computed(() => {
-  const xm = xMax.value;
-  return [0, xm * 0.25, xm * 0.5, xm * 0.75, xm].map((v) => Math.round(v));
-});
-function xTickPos(n: number): number {
-  return PAD.l + (n / xMax.value) * PW;
+function toggle(key: string): void {
+  if (key === 'linear') showLinear.value = !showLinear.value;
+  else if (key === 'root') showRoot.value = !showRoot.value;
+  else if (key === 'power') showPower.value = !showPower.value;
+  else if (key === 'log') showLog.value = !showLog.value;
+  else if (key === 'piecewise') showPiecewise.value = !showPiecewise.value;
 }
 </script>
 
@@ -253,13 +178,7 @@ function xTickPos(n: number): number {
         <input
           type="checkbox"
           :checked="c.visible"
-          @change="
-            c.key === 'linear' ? (showLinear = !showLinear) :
-            c.key === 'root' ? (showRoot = !showRoot) :
-            c.key === 'power' ? (showPower = !showPower) :
-            c.key === 'log' ? (showLog = !showLog) :
-            (showPiecewise = !showPiecewise)
-          "
+          @change="toggle(c.key)"
         >
         <span
           class="scs-swatch"
@@ -269,85 +188,16 @@ function xTickPos(n: number): number {
       </label>
     </div>
 
-    <svg
-      :viewBox="`0 0 ${W} ${H}`"
-      class="scs-chart"
-      role="img"
-      aria-label="Softcap shape comparison"
-    >
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t"
-        :x2="PAD.l"
-        :y2="PAD.t + PH"
-        class="scs-axis"
-      />
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t + PH"
-        :x2="W - PAD.r"
-        :y2="PAD.t + PH"
-        class="scs-axis"
-      />
-      <g>
-        <g
-          v-for="t in yScale.ticks"
-          :key="t.label"
-        >
-          <line
-            :x1="PAD.l"
-            :y1="t.y"
-            :x2="W - PAD.r"
-            :y2="t.y"
-            class="scs-grid"
-          />
-          <text
-            :x="PAD.l - 8"
-            :y="t.y + 3"
-            text-anchor="end"
-            class="scs-tick"
-          >{{ t.label }}</text>
-        </g>
-      </g>
-      <g>
-        <text
-          v-for="nx in X_TICKS"
-          :key="nx"
-          :x="xTickPos(nx)"
-          :y="H - PAD.b + 16"
-          text-anchor="middle"
-          class="scs-tick"
-        >{{ nx }}</text>
-      </g>
-      <text
-        :x="PAD.l + PW / 2"
-        :y="H - 4"
-        text-anchor="middle"
-        class="scs-tick"
-      >x (input value)</text>
-
-      <line
-        :x1="thresholdX"
-        :x2="thresholdX"
-        :y1="PAD.t"
-        :y2="PAD.t + PH"
-        class="scs-threshold"
-      />
-      <text
-        :x="thresholdX + 4"
-        :y="PAD.t + 12"
-        class="scs-threshold-label"
-      >threshold</text>
-
-      <path
-        v-for="c in curves"
-        v-show="c.visible"
-        :key="c.key"
-        :d="pathByKey[c.key]"
-        class="scs-line"
-        :style="{ stroke: c.color }"
-      />
-    </svg>
+    <RatePlot
+      :series="visibleSeries"
+      :domain="domain"
+      :height="360"
+      :y-scale="logScale ? 'log' : 'linear'"
+      :annotations="annotations"
+      :deps="[threshold, rootN, powerP, logK, piecewiseSlope2]"
+      x-label="x (input value)"
+      y-label="y"
+    />
   </div>
 </template>
 
@@ -392,41 +242,5 @@ function xTickPos(n: number): number {
   width: 16px;
   height: 3px;
   border-radius: 2px;
-}
-.scs-chart {
-  width: 100%;
-  height: auto;
-  display: block;
-  font-family: var(--font-mono);
-}
-.scs-axis {
-  stroke: var(--color-border);
-  stroke-width: 1;
-}
-.scs-grid {
-  stroke: var(--color-border);
-  stroke-width: 0.5;
-  stroke-dasharray: 2 3;
-  opacity: 0.6;
-}
-.scs-tick {
-  fill: var(--color-text-muted);
-  font-size: 11px;
-}
-.scs-line {
-  fill: none;
-  stroke-width: 1.75;
-  vector-effect: non-scaling-stroke;
-}
-.scs-threshold {
-  stroke: var(--color-text-muted);
-  stroke-width: 0.75;
-  stroke-dasharray: 4 3;
-  opacity: 0.6;
-}
-.scs-threshold-label {
-  fill: var(--color-text-muted);
-  font-size: 10px;
-  letter-spacing: 0.04em;
 }
 </style>
