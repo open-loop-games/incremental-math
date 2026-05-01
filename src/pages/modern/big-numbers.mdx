@@ -105,13 +105,13 @@ Default scientific (`1e10000000`) loses the tower structure entirely — three l
 - **Rate-of-change** (Exponential Idle, Synergism's growth display): `+5e6/s` framing for currencies that move predictably. Hides absolute magnitude in favor of velocity.
 - **Hybrid** (NGU, Idle Loops Reworked): switch presentation based on the magnitude — letter-pair until $10^{3000}$, then double-scientific until $10^{1e10}$, then tetrational. The switch points are *design* parameters, not arithmetic ones.
 
-`eternal_notations` (vendored into `open-loop-engine`) ships a dozen of these as configurable presentations and is the lineage to inherit if you're starting a new project. The point isn't to pick the "right" notation — the point is that presentation is an explicit decision a 2026 designer makes, not a side effect of a number's `toString()`. Display is downstream of representation; the moment representation lifted, presentation became a real design problem.
+`eternal_notations` ships a dozen of these as configurable presentations and is the lineage to inherit if you're starting a new project. The point isn't to pick the "right" notation — the point is that presentation is an explicit decision a 2026 designer makes, not a side effect of a number's `toString()`. Display is downstream of representation; the moment representation lifted, presentation became a real design problem.
 
 ## Saves, serialization, and equality
 
 Three implementation gotchas that bite every project once and never again:
 
-**Saves don't roundtrip via `JSON.stringify`.** A `Decimal` instance is an object with `sign`, `mag`, and `layer` fields plus a prototype carrying `.plus`, `.times`, etc. `JSON.stringify(decimal)` serializes the fields fine, but `JSON.parse(savedString)` returns a plain object with no methods. The fix is convention: serialize via `.toString()` (which produces a parseable string like `"e1e10"`), and rehydrate via `new Decimal(savedString)`. open-loop-engine's save layer does this automatically; raw consumers of break_eternity have to remember.
+**Saves don't roundtrip via `JSON.stringify`.** A `Decimal` instance is an object with `sign`, `mag`, and `layer` fields plus a prototype carrying `.plus`, `.times`, etc. `JSON.stringify(decimal)` serializes the fields fine, but `JSON.parse(savedString)` returns a plain object with no methods. The fix is convention: serialize via `.toString()` (which produces a parseable string like `"e1e10"`), and rehydrate via `new Decimal(savedString)`. Most game-shaped save layers handle this automatically; raw consumers of break_eternity have to remember.
 
 **`==` and `===` are nonsense.** Two `Decimal` instances with the same value are different objects. `a.eq(b)` is the right answer. Sets and Maps keyed on Decimals will behave unexpectedly — keys are by reference, not by value. Use the string form as the key if you need set semantics on Decimal values.
 
@@ -127,11 +127,9 @@ Three implementation gotchas that bite every project once and never again:
 
 **"How big is that?" intuition.** The bigger numbers go, the less the player can tell `1e500` from `1e1000` — both are "really big." Designers either embrace this (the late-game register where exact value is irrelevant) or actively counter it through pacing — see the active/idle-hybrid page for how Melvor and NGU handle the felt-magnitude problem.
 
-## What this site uses
+## Adoption split
 
-`open-loop-engine` re-exports `Decimal` from `break_eternity.js` and `format` from a vendored fork of `eternal_notations`. Every Pecorella demo on this site already routes through them — you've been reading break_eternity output since `<ExponentialGrowthSim>` in Part I. The choice was inherited from the genre rather than designed. This page makes it explicit: when an incremental game's source code, in 2026, says `import Decimal from 'break_eternity.js'`, it's continuing a chain that started with Patashu's commit log in 2018 and hasn't yet had a reason to break.
-
-A note on adoption: established games tend not to migrate. AD still depends on `break_infinity.js@^2.0.0`. So does Synergism. Their design didn't push past break_infinity's ceiling, so the cost of a switch — risk to saved-game arithmetic, reaudit of every formula — never paid its way. Newer projects (Prestige Tree, Distance Incremental, Incremental Mass Rewritten, this engine's consumers) start on break_eternity because layered prestige assumes it. The split is real and looks likely to persist.
+Established games tend not to migrate. AD still depends on `break_infinity.js@^2.0.0`. So does Synergism. Their design didn't push past break_infinity's ceiling, so the cost of a switch — risk to saved-game arithmetic, reaudit of every formula — never paid its way. Newer projects (Prestige Tree, Distance Incremental, Incremental Mass Rewritten) start on break_eternity because layered prestige assumes it. The split is real and looks likely to persist.
 
 <Sources
   cites={[

@@ -58,17 +58,6 @@ The demo below runs that simulation. Drag depth down to 1 and the curve is strai
 
 <DerivativeCascadeSim client:visible />
 
-<aside class="aside">
-  <span class="aside-label">Modern API note</span>
-  The engine has resources and modifier chains, but a derivative cascade like this is a fixed-step
-  coupled difference equation — there is no closed-form `Formula` for it the way there is for
-  exponential cost. The pragmatic shape in `open-loop-engine` is one resource per tier with a
-  `createTickEffect` per pair: tier-(i+1)'s count, scaled by its generation rate, applied to tier-i
-  each tick. That maps 1:1 onto the recurrence above. Currency is just Tier 0 times base income,
-  applied as a multiplicative modifier on the income chain. No new primitive needed — the cascade is
-  composition over the existing kit.
-</aside>
-
 ## Cascade vs. exponential
 
 The interesting payoff: a derivative cascade _almost_ looks exponential, but it's bounded by its degree. Each added tier extends the polynomial degree by one, so each tier's growth catches a slower exponential for a while, then loses to it eventually. The whole point of an exponential is that it eventually catches every polynomial — no matter the depth — but for finite-runtime games, the cascade can stand in for exponential growth perfectly well.

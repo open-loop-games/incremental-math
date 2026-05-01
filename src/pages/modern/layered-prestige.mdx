@@ -198,11 +198,11 @@ The visible spread — from Synergism's eight-axis corruption configuration to P
 
 **No reverse gear.** A single-tier prestige system can be tuned by adjusting the prestige formula. A layered prestige system can be tuned, but the layers are nested: changing layer 2's formula reshapes layer 3's input, which reshapes layer 3's output. Designers learn to draft new content as *new layers* rather than as adjustments to existing layers. AD's expansions — Reality, Imaginary, Pelle — are all *upward*. Once a layer ships, its math is frozen, because every layer above it has been tuned against the version that shipped.
 
-## What this site uses
+## Prestige Tree's `addLayer`
 
-`open-loop-engine` ships layered prestige as a configuration shape, not a fixed mechanic. Layer registration mirrors Prestige Tree's `addLayer`: a tier number, a base resource, a formula, and a list of branches. A reset declaration takes a target — the highest layer this reset wipes — plus per-currency exemption flags. The cascade walks rows the way Prestige Tree does. The vocabulary maps onto the research: tier structure, reset scope, persistence type, formula family, timing mode — five orthogonal dimensions, each declarable per layer.
+Jacorb's Prestige Tree was the genre's first pass at making layered prestige a configuration declaration rather than a hand-rolled cascade. `addLayer` registers a tier with its id, row, base resource, prestige type, and gain formula; the row-walking reset (`doReset` calling `rowReset` for every row from the resetting layer down to 0) handles persistence and exemption automatically. The vocabulary maps onto the research: tier structure, reset scope, persistence type, formula family, timing mode — five orthogonal dimensions, each declarable per layer.
 
-The reason to declare it as a configuration rather than implement it as a feature is exactly the entanglement above. A game that stacks five layers without engine support will end up with five hand-rolled cascade routines, five hand-rolled save-shape extensions, and five hand-rolled milestone-exemption checks. The cost compounds layer-by-layer. The engine eats the bookkeeping so the per-game work is just the formula and the cadence — the parts that actually matter to the design. Prestige Tree proved this trade was worth making in 2020; the engine inherits the lesson.
+The reason this shape pays off, rather than ad-hoc per-layer code, is the entanglement above. A game stacking five layers without shared substrate ends up with five hand-rolled cascade routines, five hand-rolled save-shape extensions, and five hand-rolled milestone-exemption checks. The cost compounds layer-by-layer. Prestige Tree proved this trade was worth making in 2020.
 
 <Sources
   cites={[

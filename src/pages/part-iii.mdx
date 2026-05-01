@@ -90,23 +90,6 @@ Milestone bumps stack: $\times 2$ at 25 owned, $\times 2$ at 50 (cumulative $\ti
 
 The bumpiness is the design surface. A long flat stretch followed by a cascade of fast purchases is a pattern Pecorella explicitly calls out from his own runs: a milestone hits at 500 generators owned, the $\times 16$ multiplier at that crossing kicks production back over cost, and the next 200 generators happen in seconds. Real players in that situation typically _delay_ prestige to ride the boost — a behaviour the auto-reset model can't capture, which is why this sim is "rough feel for the dynamics," not a balance ground truth.
 
-<aside class="aside">
-  <span class="aside-label">Modern API note</span>
-  The sim above is plain `Decimal` math because the loop is a deterministic precompute — sliders in,
-  sample array out — and engine resources don't earn their bookkeeping for that. In a real game you
-  would build it differently: `createResource` for currency, generators, lifetime, and prestige
-  currency; `createReset({ thingsToReset: [currency, generators], onReset })` declares which
-  resources clear at the prestige boundary and leaves lifetime + prestige currency persistent by
-  default, with the `onReset` hook the natural place to bank pending into prestige currency. Cost
-  side, `Formula.exponential(count, startCost, 1.05)` plus `formula.invertIntegral(...)` is Part I's
-  closed-form max-affordable doing the same job each tick. Milestones would land as a
-  `createMultiplicativeModifier` whose multiplier looks up the running product over crossed
-  thresholds, with the prestige multiplier a second modifier on the same chain — both visible to the
-  engine's modifier-source attribution panel rather than buried in the production expression. The
-  sim demo collapses all of that into one closed-form tick because no human is playing it; the
-  engine surface exists to make the same math composable when humans are.
-</aside>
-
 ## Designing the rhythm
 
 Pecorella's closing point on the loop: you almost never want a player whose runs all feel the same. The strongest prestige progressions interleave fast and slow stretches, and most of that variation comes from the same milestone-multiplier tooling Part I introduced — milestone _x_ at count 200 turns a slow grind into a spike, and the spacing of milestones across a run sets the run's emotional cadence.

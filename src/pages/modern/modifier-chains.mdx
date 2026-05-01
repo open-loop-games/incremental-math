@@ -393,24 +393,20 @@ The Profectus engine ships a `createModifierSection` helper that takes a
 sequential modifier and renders the JSX breakdown. This is the same
 function the dev panel and the in-game tooltip use; the duplication that
 plagued Cookie Clicker's UI is not architectural here — there's only one
-place the chain lives. The engine in this site exports
-`createModifierChain` with a similar shape, plus a chain registry so
-balance tools can enumerate every chain across the game.
+place the chain lives.
 
 ## What this site uses
 
 The Pecorella demos on this site don't use modifier chains internally —
 they're focused on a single formula each, and a chain abstraction would
 hide what the demo is teaching. The page above renders a chain in raw
-`Decimal` math because the lesson is *the chain*, not the engine API.
+`Decimal` math because the lesson is *the chain*, not the framework
+API.
 
-A real game built on `open-loop-engine` would use
-`createSequentialModifier` directly for any production rate that has more
-than two contributions, and `createModifierChain` (the registry-backed
-version) for chains that other modules push into from outside. The
-attribution facility — `chain.bind({ ... })` — makes balance-sim
-introspection a property of using the engine, not a thing each game
-re-implements.
+A real game built on a Profectus-lineage stack would use
+`createSequentialModifier` directly for any production rate with more
+than two contributions, with the chain itself as the single source of
+truth that powers both the tick math and the dev-panel breakdown.
 
 ## What it didn't fix
 
