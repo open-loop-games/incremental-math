@@ -60,6 +60,8 @@ explicit: actions go into an ordered list, the list runs deterministically,
 the list ends when its summed durations exceed the loop budget. The player
 is editing a program whose runtime budget is the loop length.
 
+<Cite repo="Nucaranlaeg.github.io" path="incremental/CavernousII/src/script/main.ts" line="429-439" />
+
 The math is the same in all three. What changes is the player-facing
 metaphor — minutes, mana, queued actions — and how the yield curves look.
 Concavity arrives by different routes: skill levels saturate, action
@@ -116,7 +118,11 @@ tickspeed and the rate of effective-time accumulation jumps.
 
 Progress Knight 2's Time Warping is a less-mechanically-coupled instance
 of the same pattern: a slider that multiplies game speed, unlocked through
-the skill tree, peaking at four-figure multipliers. The core operation is
+the skill tree, peaking at four-figure multipliers.
+
+<Cite repo="progress_knight_2" path="js/main.js" line="567-572" />
+
+The core operation is
 identical — `effectiveDelta = realDelta · speedMultiplier` — and so is the
 balancing problem. If `s` is bought from production and production scales
 exponentially in `t_eff`, then `s` scales exponentially in `t_eff`, and
@@ -151,8 +157,11 @@ $$
 where `d_i^base` is reduced by training (each repetition of the action
 makes future repetitions slightly cheaper), `m_i^special` is action-specific
 modifiers (a relevant equipped item, a prerequisite skill), and `m_i^realm`
-is global modifiers (the buff levels, the speed multiplier). Omsi's
-Chronomancy does this very directly:
+is global modifiers (the buff levels, the speed multiplier).
+
+<Cite repo="Nucaranlaeg.github.io" path="incremental/CavernousII/src/script/actions.ts" line="98-106" />
+
+Omsi's Chronomancy does this very directly:
 
 <Cite repo="idle-loops-omsi" path="loops/driver.js" line="13-29" />
 
@@ -188,9 +197,12 @@ over orderings, not just over inclusion.
 The genre's response to this complexity has been "let the player solve it."
 Time-loop games typically expose enough of the dependency graph — through
 tooltips, action lists with sortable durations, before/after readouts — that
-the player can iterate by hand. A few games (notably Lloyd's idle-loops
-fork) ship a planner that does the search. The math is real; the engineering
-choice is whether to surface it.
+the player can iterate by hand. A few games (notably dmchurch's idle-loops
+fork) ship a planner that does the search.
+
+<Cite repo="idle-loops-dmchurch" path="predictor.js" line="344-373" />
+
+The math is real; the engineering choice is whether to surface it.
 
 ## Time as pressure inside an active queue
 
@@ -287,6 +299,30 @@ compatible with the standard offline model.
       path: 'src/core/tickspeed.js',
       line: '22-67',
       note: 'getTickSpeedMultiplier — twelve effect sources collapse into a single Decimal multiplier on game time.',
+    },
+    {
+      repo: 'Nucaranlaeg.github.io',
+      path: 'incremental/CavernousII/src/script/main.ts',
+      line: '429-439',
+      note: 'runActions(timeAvailable) — the loop runner consumes mana as time, capped by mana.current * 1000 milliseconds. The queue executes until that budget is exhausted.',
+    },
+    {
+      repo: 'Nucaranlaeg.github.io',
+      path: 'incremental/CavernousII/src/script/actions.ts',
+      line: '98-106',
+      note: 'getDuration — base duration multiplied by specialDuration(location, clone) and a realm multiplier (Long Realm × 3, Compounding Realm scales with loop count). The d_i = d^base · m^special · m^realm formula in code.',
+    },
+    {
+      repo: 'progress_knight_2',
+      path: 'js/main.js',
+      line: '567-572',
+      note: 'gameSpeed = baseGameSpeed * timeWarpingSpeed — Time Warping enters as a multiplicative scaler on the global tick rate.',
+    },
+    {
+      repo: 'idle-loops-dmchurch',
+      path: 'predictor.js',
+      line: '344-373',
+      note: 'Koviko.Predictor — the planner class that simulates a queue forward through stat gain, skill gain, resource accumulation, and per-action progression to estimate loop outcomes ahead of execution. Originally from GustavJakobsson/IdleLoops-Predictor and integrated into the dmchurch fork.',
     },
   ]}
 />

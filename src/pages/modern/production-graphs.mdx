@@ -359,7 +359,11 @@ The other adjacent boundary: graphs where throughput is bounded by
 *capacities* rather than rates — supply chains where edges saturate, mazes
 where path length and min-cut bound an enemy's exposure to towers, server
 networks where RAM allocation is the gating constraint. Industry Idle is
-the canonical example. The matrix framing on this page treats edges as
+the canonical example.
+
+<Cite repo="industry-idle" path="assets/Script/CoreGame/Logic/Production.ts" line="122-167" />
+
+The matrix framing on this page treats edges as
 unbounded conductances; once the bound is topology, the spec layer hands
 off to the
 [network-topological row](/rate-functions/bifurcations#network-topological)
@@ -438,6 +442,12 @@ player cannot hold in their head.
       path: 'src/Statistics.ts',
       line: '392-426',
       note: 'allWowCubeStats: 14-entry stat-line array enumerating the contributors to the cube-multiplier column of the production matrix.',
+    },
+    {
+      repo: 'industry-idle',
+      path: 'assets/Script/CoreGame/Logic/Production.ts',
+      line: '122-167',
+      note: 'Warehouse capacity functions — getWarehouseTotalCapacity caps storage at base × 10, and getWarehouseTargetRealCapacity gates routing on resources actually present. Capacity-bounded throughput rather than rate-bounded.',
     },
   ]}
 />

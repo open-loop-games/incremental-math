@@ -176,6 +176,8 @@ Shark Incremental walks the limit stepwise across its six layers, each one a dee
 | 5     | $\log^n(x)$, $n$ large  | iterated log |
 | 6     | $\mathrm{slog}(x)$      | super-log    |
 
+<Cite repo="shark-incremental" path="js/modules/currency.js" line="69-198" />
+
 The progression isn't decoration. Each step compresses orders of magnitude that the layer below couldn't keep readable. Layer 2 turns a $10^{50}$ Layer-1 currency into $50$; Layer 3 turns that $50$ into $\log 50 \approx 1.7$. Without the deepening compression, the displayed numbers at the upper layers would saturate the [bignum substrate](/modern/big-numbers) under any reasonable run length. The structural reading: a layered prestige game whose top-layer currency is meant to grow without bound and stay legible *will* drift toward log-shape conversions, and a deep enough stack of log-shapes is tetration in the limit. The substrate has to support tetration not because the designer chose it but because the depth pressure of the layer stack produces it.
 
 ## Depth case: Synergism
@@ -312,6 +314,12 @@ The reason this shape pays off, rather than ad-hoc per-layer code, is the entang
       path: 'src/core/reality.js',
       line: '586-680',
       note: 'finishProcessReality — the hand-rolled layer-3 reset cascade, including every PelleUpgrade exemption flag.',
+    },
+    {
+      repo: 'shark-incremental',
+      path: 'js/modules/currency.js',
+      line: '69-198',
+      note: 'Stepwise compression across layers in the gain functions: prestige uses expPow(x, 0.5) (square root, line 86-90), core uses x.log10().div(10) (log, line 133), humanoid uses log10().log(base).pow(exp) (log-log, line 188). The slog endgame compression appears in the fish overflow at line 49.',
     },
   ]}
 />
