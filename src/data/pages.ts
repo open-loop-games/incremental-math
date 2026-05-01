@@ -160,6 +160,12 @@ export const sections: PageSection[] = [
         description:
           'Piecewise splice, modifier-product, and the sum/product/composition rules that determine when systems-of-shapes still close.',
       },
+      {
+        href: '/rate-functions/bifurcations',
+        title: 'Bifurcations — where the algebra ends',
+        description:
+          'Seven rows where the rate-function algebra stops and named adjacent math takes over: coupled-state, strategy-space, stochastic, discrete-event, network-topological, optimal stopping, combinatorial selection.',
+      },
     ],
   },
   {

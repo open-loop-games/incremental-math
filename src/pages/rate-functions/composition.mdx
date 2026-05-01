@@ -70,8 +70,9 @@ mechanics do); the math underneath both is exactly this composition.
 
 The constraint is "state-independent." A modifier that depends on the _same state_ the rate
 depends on — say, a multiplier that grows as $x$ grows — is no longer a modifier-product;
-it's a different rate function. That case lives in [bifurcations §1](#what-doesnt-compose-cleanly)
-below.
+it's a different rate function. That case is the
+[coupled-state row](/rate-functions/bifurcations#coupled-state-deterministic) on
+the bifurcations page.
 
 <ModifierProductDemo client:visible />
 
@@ -118,42 +119,21 @@ prestige currency $H$ is a function of the primary cumulative $C$, the per-prest
 runs against a function of $H$, and the post-prestige run is the cumulative integrated
 against the modified rate. The whole stack is closed-form if each layer is one of the
 catalog's entries and each layer's $g$ is monotone elementary. When it isn't, the
-prestige math falls into [bifurcations](https://en.wikipedia.org/wiki/Bifurcation_theory)
-— the underlying cycle is an [optimal-stopping problem](https://en.wikipedia.org/wiki/Optimal_stopping)
-that doesn't close, even when each individual run does.
+prestige math falls into the
+[optimal-stopping row](/rate-functions/bifurcations#optimal-stopping) of the
+bifurcations page — the underlying cycle is an
+[optimal-stopping problem](https://en.wikipedia.org/wiki/Optimal_stopping) that
+doesn't close, even when each individual run does.
 
 ## What doesn't compose cleanly
 
-The catalog's main hand-wave: not every product of catalog entries closes. Three
-common-but-not-closed cases:
-
-- **State-coupled multipliers.** When a "modifier" actually depends on the same state the
-  rate depends on — for example, a multiplier that grows as the player's
-  [logarithm](https://en.wikipedia.org/wiki/Logarithm) of their current state — the rate
-  becomes $r(x) \cdot f(x)$ for non-trivial $f$. The product of two state-dependent
-  catalog entries generally doesn't close (a polynomial times an exponential integrates
-  to an [incomplete gamma function](https://en.wikipedia.org/wiki/Incomplete_gamma_function),
-  not anything elementary). The spec layer here shifts to bounds
-  — closed-form upper and lower envelopes around the actual integrand — rather than the
-  exact integral.
-- **Coupled multi-resource systems.** When two resources mutually feed each other's
-  rates — predator-prey, [Lotka-Volterra](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations),
-  multi-species [logistic](/rate-functions/bounded-growth) — closure requires special structure (linear
-  systems, conserved quantities, triangular dependency). General nonlinear coupling is
-  outside the algebra. Most modern incrementals avoid genuinely coupled multi-resource
-  systems for exactly this reason; the games that ship them tend to simplify the coupling
-  to a triangular dependency that does close.
-- **Adversarial strategy spaces.** When a "rate" depends on what an opponent does
-  (tug-of-war-style, PvP idle, faction warfare),
-  the per-fixed-strategy rate closes but the equilibrium between strategies doesn't.
-  [Game theory](https://en.wikipedia.org/wiki/Game_theory) is the right adjacent math.
-
-The catalog stops where the algebra stops. Past that, the spec layer keeps describing
-shape — just in a different vocabulary (asymptotic envelopes,
-[best-response dynamics](https://en.wikipedia.org/wiki/Best_response),
-[matrix exponentials](https://en.wikipedia.org/wiki/Matrix_exponential)) — and the
-runtime keeps simulating. Closed-form spec is the destination wherever it can be
-reached; where it can't, the math just changes shape.
+The catalog's main hand-wave: not every product of catalog entries closes. The
+named adjacent math takes over in seven rows — coupled-state deterministic,
+strategy-space integration, stochastic load-bearing, discrete-event coupled,
+network-topological, optimal stopping, combinatorial selection — each with its
+own spec vocabulary. The full census, with corpus exemplars and the named
+mathematics each row hands off to, lives on the
+[bifurcations page](/rate-functions/bifurcations).
 
 ## Composition recap
 
@@ -164,9 +144,13 @@ reached; where it can't, the math just changes shape.
 | Sum                            | Cumulative always; inversion regime-wise       | $R_1 + R_2$, dominant-term per regime |
 | Functional composition         | $g$ monotone elementary, chain rule integrates | $T = g^{-1}(T_{\text{base}})$         |
 | Triangular multi-resource      | Each scalar closes in dependency order         | Solve in sequence                     |
-| State-coupled multiplier       | Special structure only                         | Bounds, not integrals                 |
-| Nonlinear coupled ODEs         | Special structure only                         | Conserved quantities, normal forms    |
-| Adversarial strategy space     | Per-fixed-strategy closes                      | Best-response, equilibrium math       |
 
-The first four lines are the catalog's algebra. The last four are where the algebra ends
-and the named adjacent math takes over.
+These five lines are the catalog's composition algebra. Where a system's shape
+sits outside them, the spec layer hands off to the
+[bifurcations page](/rate-functions/bifurcations) and a different vocabulary —
+asymptotic envelopes,
+[best-response dynamics](https://en.wikipedia.org/wiki/Best_response),
+[matrix exponentials](https://en.wikipedia.org/wiki/Matrix_exponential),
+phase-type distributions, min-cut throughput, threshold policies. Closed-form
+spec is the destination wherever it can be reached; where it can't, the math
+just changes shape.

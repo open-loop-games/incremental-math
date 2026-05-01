@@ -355,6 +355,17 @@ $\dot N = A^\top N + s$ on continuous populations. Loop-action-graph
 dynamics are a discrete scheduling problem. Same diagram, different
 equation.
 
+The other adjacent boundary: graphs where throughput is bounded by
+*capacities* rather than rates — supply chains where edges saturate, mazes
+where path length and min-cut bound an enemy's exposure to towers, server
+networks where RAM allocation is the gating constraint. Industry Idle is
+the canonical example. The matrix framing on this page treats edges as
+unbounded conductances; once the bound is topology, the spec layer hands
+off to the
+[network-topological row](/rate-functions/bifurcations#network-topological)
+of the bifurcations page, where the spec is the graph and capacities and
+the throughput is the min-cut value.
+
 ## The demo
 
 <ProductionGraphSim client:visible />

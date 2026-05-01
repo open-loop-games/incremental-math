@@ -1,0 +1,263 @@
+---
+layout: ../../layouts/Article.astro
+title: 'Bifurcations: where the algebra ends'
+---
+
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
+
+# Bifurcations: where the algebra ends
+
+The first six pages of this catalog walked shapes that close: power-law,
+exponential, logistic, log, and the four composition rules that keep them closed
+under sums, products, splices, and functional composition. This page walks the
+complement — the rate-function shapes that don't close, and what the spec layer
+reaches for instead. The catalog stops where the algebra stops; past that, the
+math doesn't disappear, it changes language.
+
+The first-passage frame survives every bifurcation. Each row below is still
+"time to reach a milestone" in some generalized sense — mean hitting time,
+equilibrium, threshold policy, optimum over a discrete option space. What
+changes is the algebra of "rate" and the meaning of "cumulative." Each row
+also has a body of named mathematics that gives a different shape of spec —
+not "give up and simulate."
+
+## The seven buckets
+
+| Bucket                       | Rate-function shape that fails to close                                    | Named adjacent math                          |
+| ---------------------------- | -------------------------------------------------------------------------- | -------------------------------------------- |
+| Coupled-state deterministic  | Multi-resource mutual feedback, not linear and not triangular              | Phase plane, Lyapunov, bifurcation theory    |
+| Strategy-space integration   | Adversarial multi-agent: equilibrium between strategies                    | Nash, replicator dynamics, best-response     |
+| Stochastic load-bearing      | Distribution shape carries design intent, not just the mean                | Markov chains, phase-type, first-passage     |
+| Discrete-event coupled       | Combinatorial trigger ordering across multiple subsystems                  | Combinatorial game theory, MDPs              |
+| Network-topological          | Throughput bounded by graph topology, not rates                            | Max-flow min-cut, LP duality, network flows  |
+| Optimal stopping             | When to reset is itself the decision                                       | Bellman equation, Snell envelope, free-boundary |
+| Combinatorial selection      | Configuration choice from a discrete option space                          | Combinatorial optimization, search           |
+
+## Coupled-state deterministic
+
+When two or more resources mutually feed each other's rates and the coupling is
+neither linear nor triangular — predator–prey, multi-species
+[Lotka-Volterra](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations),
+multi-faction warfare — the rate-function algebra runs out. A closed-form
+trajectory often still exists implicitly through a
+[conserved quantity](https://en.wikipedia.org/wiki/Conservation_law), but the
+time-parametrization $t(R)$ — when the orbit reaches a given point — does not.
+
+The spec layer in this regime drops down to qualitative invariants:
+[matrix exponentials](https://en.wikipedia.org/wiki/Matrix_exponential) for the
+linear case, [phase portraits](https://en.wikipedia.org/wiki/Phase_portrait) and
+[Lyapunov functions](https://en.wikipedia.org/wiki/Lyapunov_function) for stable
+equilibria, [bifurcation theory](https://en.wikipedia.org/wiki/Bifurcation_theory)
+for parameter-driven shape changes. Most idle/incremental games avoid genuinely
+coupled multi-resource systems for exactly this reason — the games that ship
+them either restrict to linear dynamics or simplify the coupling to a
+triangular dependency that closes per the
+[composition rules](/rate-functions/composition#what-doesnt-compose-cleanly).
+
+## Strategy-space integration
+
+When a "rate" depends on what an opponent does — tug-of-war faction warfare,
+PvP-idle drafting from a shared pool — the per-fixed-strategy ROI closes per
+the algebra, but the equilibrium between strategies is a fixed point of the
+[best-response operator](https://en.wikipedia.org/wiki/Best_response):
+$\sigma^* = BR(\sigma^*)$. Fixed points of operators are not in general
+closed-form, even when the operator is. Outside small special cases (zero-sum,
+potential, supermodular games), Nash computation is
+[PPAD-complete](https://en.wikipedia.org/wiki/PPAD_(complexity)).
+
+The spec layer shifts to the *game form* — strategy spaces, payoff functions,
+information structure — and a claim about which equilibrium concept applies:
+[Nash equilibrium](https://en.wikipedia.org/wiki/Nash_equilibrium) when unique,
+[replicator dynamics](https://en.wikipedia.org/wiki/Replicator_equation) from a
+uniform start when not. The bucket is rare in the genre because most idle games
+are cooperative or single-player; it activates with adversarial multi-agent
+strategy spaces over shared resource draws.
+
+## Stochastic load-bearing
+
+When a production mechanic's *distribution shape* — not just its mean — carries
+the design intent. Mean first-passage and stationary distribution close for
+finite [Markov chains](https://en.wikipedia.org/wiki/Markov_chain) (the linear
+system $Q \cdot m = -1$); the full distribution of first-passage times rarely
+does, even for a random walk hitting a barrier (the hitting-time distribution
+involves [Bessel functions](https://en.wikipedia.org/wiki/Bessel_function)).
+
+The spec is the distribution family — three named ones cover most of the
+genre's territory:
+[geometric](https://en.wikipedia.org/wiki/Geometric_distribution) for trials
+until first success (gacha pity timers' natural model);
+[exponential / gamma](https://en.wikipedia.org/wiki/Gamma_distribution) for
+continuous-time waits in Poisson-like systems;
+[phase-type](https://en.wikipedia.org/wiki/Phase-type_distribution) for
+finite-state continuous-time Markov-chain hitting times, flexible enough to
+cover most game-mechanic randomness with closed-form mean, variance, and
+Laplace transform. The dimensionless feel-knob is the
+[coefficient of variation](https://en.wikipedia.org/wiki/Coefficient_of_variation)
+$\sigma/\mu$.
+
+Universal Paperclips ships the wire market as sinusoidal drift around a base
+with random per-tick updates — the distribution shape (periodic bounded drift,
+not stationary) is the design knob, not a calibration of the mean:
+
+<Cite repo="paperclips" path="main.js" line="32-35" />
+
+## Discrete-event coupled
+
+When the state space is combinatorial in the count of units, cards, or
+resources, and multiple subsystems interact through event ordering — auto-battler
+combat with on-attack / on-hurt / on-faint / on-kill triggers chained across
+both sides, deck-builders with stacking status effects. The rule-set closes as
+a state graph; a closed form for the value function across the whole space is
+rare, and the trajectory of an actual play is rarer still because of branch
+contingencies.
+
+The spec layer reaches for the game structure rather than a closed-form value:
+[combinatorial game theory](https://en.wikipedia.org/wiki/Combinatorial_game_theory)
+with [Sprague-Grundy values](https://en.wikipedia.org/wiki/Sprague%E2%80%93Grundy_theorem)
+for impartial games, [Markov decision processes](https://en.wikipedia.org/wiki/Markov_decision_process)
+with value iteration for small state spaces, value bounds where exact values
+elude. A common spec-form for combat specifically is "expected damage per round
+given the army composition," computed by discrete-event simulation but
+expressible as a vector-matrix product over a finite event lattice.
+
+The bucket is structurally rare in the genre — most "discrete-event" runtimes
+in idle/incremental games are integrating closed specs (per-tower DPS,
+per-weapon DPS, per-faction creep rate) rather than combinatorially branching
+in their *outcome*.
+
+## Network-topological
+
+When throughput is bounded by graph topology, not by per-rate formulas — supply
+chains, routing through a maze, RAM allocation across a server network. The
+linear case closes:
+[max-flow equals min-cut](https://en.wikipedia.org/wiki/Max-flow_min-cut_theorem)
+by [linear programming duality](https://en.wikipedia.org/wiki/Duality_(optimization)),
+and [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
+for shortest paths runs in polynomial time. The two failure modes are nonlinear
+costs (capacity or cost depending on flow — congestion games, Wardrop equilibria
+push the problem into NLP) and combinatorial constraints (integer-valued flows
+in NP-hard problems admit only approximations and bounds).
+
+The spec layer is the graph and capacities (or capacity functions) plus the
+optimality criterion. The first-passage analog reads as "time to deliver $C$
+units from source to sink given throughput bound $\text{cap}_{\min}$" — for a
+saturated network, throughput is the min-cut value, and design knobs are the
+graph topology and per-edge capacities. Industry Idle is the corpus's clearest
+exemplar — buildings as nodes, input/output sets as edges, an explicit graph
+walk for reachability:
+
+<Cite
+  repo="industry-idle"
+  path="assets/Script/CoreGame/Buildings/BuildingDefinitions.ts"
+  line="69-145"
+/>
+
+## Optimal stopping
+
+When *when to reset* is itself the decision; the value function is the supremum
+over [stopping times](https://en.wikipedia.org/wiki/Stopping_time):
+
+$$V(x) = \sup_\tau \mathbb{E}\!\left[ e^{-\rho \tau} \cdot g(X_\tau) \mid X_0 = x \right]$$
+
+Threshold policies close in special cases —
+[geometric Brownian motion](https://en.wikipedia.org/wiki/Geometric_Brownian_motion)
+with discounted exponential payoffs, finite-horizon discounted MDPs with
+special structure,
+[Gittins indices](https://en.wikipedia.org/wiki/Gittins_index) for multi-armed
+bandits with discounting. The general case is a
+[free-boundary problem](https://en.wikipedia.org/wiki/Free_boundary_problem) on
+the [Bellman equation](https://en.wikipedia.org/wiki/Bellman_equation), with
+the optimal stopping time given by the
+[Snell envelope](https://en.wikipedia.org/wiki/Snell_envelope) — a smooth-pasting
+condition at the threshold separating "continue" from "stop."
+
+The threshold-policy spec reads as: "prestige when post-reset growth rate ×
+multiplier exceeds pre-reset rate by factor $X$," with $X$ computable from the
+rate function and discount. Antimatter Dimensions ships a concrete instance —
+the Big Crunch autobuyer's `xHighest` ratio mode triggers when the current
+run's IP exceeds $X$ times the previous run's best:
+
+<Cite
+  repo="AntimatterDimensionsSourceCode"
+  path="src/core/autobuyers/big-crunch-autobuyer.js"
+  line="115-120"
+/>
+
+The threshold formula is concrete; whether it is provably optimal under the IP
+geometric-compression growth curve is unproven. That gap is what the bucket
+covers.
+
+## Combinatorial selection
+
+When the player chooses a subset, sequence, or arrangement from a discrete
+option space — Time Studies on a 91-node DAG, action queues over a prereq-gated
+action set, spatial inventory arrangements, faction-and-perk loadouts. Per
+fixed selection the system closes (modifier chains collapse to constant
+multipliers; action durations sum); across selections the optimization is a
+[combinatorial optimization](https://en.wikipedia.org/wiki/Combinatorial_optimization)
+or constraint-satisfaction problem on the option space.
+
+This bucket sits adjacent to Optimal stopping — both are about strategic
+decisions — but the boundary is whether the decision is a *stopping time* or a
+*configuration*. Prestige timing is stopping; choosing which Time Studies to
+buy or which actions to queue is configuration. The named adjacent math is
+search and pruning ([branch-and-bound](https://en.wikipedia.org/wiki/Branch_and_bound),
+[A\*](https://en.wikipedia.org/wiki/A*_search_algorithm), constraint
+propagation) rather than the variational machinery of stopping.
+
+Idle Loops is the corpus's clearest exemplar of configuration-as-rate-function.
+The player authors a plan over a prereq-gated action set; a cursor walks the
+plan repeatedly; per fixed plan total mana spend is a sum, but the *plan
+itself* is the design space:
+
+<Cite repo="idle-loops-omsi" path="loops/actions.js" line="137-196" />
+
+## What stays mathematical
+
+Each bucket above gives a *named alternative math* with its own catalog of
+theorems and methods. The spec layer doesn't dissolve at the bifurcation; it
+changes language. A spec that reads "best-response equilibrium with replicator
+dynamics," or "phase-type distribution with mean $\mu$ and CV $\sigma/\mu$," or
+"min-cut throughput on a graph with capacities $c_{ij}$" is still precise,
+still durable, still the right thing to write down before tuning.
+
+The failure mode this page exists to prevent isn't "the math runs out" — it's
+"sim takes over." Throwing a [Monte Carlo](https://en.wikipedia.org/wiki/Monte_Carlo_method)
+at a stochastic subsystem is calibration, not spec; the spec is the
+distribution family. Throwing brute-force tree search at an adversarial
+subsystem is calibration; the spec is the equilibrium concept. The distinction
+matters for the same reason it matters in the closed-form regime: the spec
+compresses the design space and tells you which knobs are independent.
+
+The catalog stops where the algebra stops, and the seven rows above are the
+boundary the design space turns at.
+
+<Sources
+  cites={[
+    {
+      repo: 'paperclips',
+      path: 'main.js',
+      line: '32-35',
+      note: 'Universal Paperclips wire market — sinusoidal drift on base price with per-tick stochastic updates. Stochastic load-bearing: distribution shape, not just mean.',
+    },
+    {
+      repo: 'industry-idle',
+      path: 'assets/Script/CoreGame/Buildings/BuildingDefinitions.ts',
+      line: '69-145',
+      note: 'Industry Idle building input/output sets — supply graph as adjacency data; reachability is a graph walk. Network-topological: min-cut bounds throughput.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/autobuyers/big-crunch-autobuyer.js',
+      line: '115-120',
+      note: 'Antimatter Dimensions Big Crunch autobuyer xHighest mode — concrete threshold heuristic for prestige timing. Optimal stopping: optimality under IP curve unproven.',
+    },
+    {
+      repo: 'idle-loops-omsi',
+      path: 'loops/actions.js',
+      line: '137-196',
+      note: 'Idle Loops action queue — prereq-gated action set the player composes plans over. Combinatorial selection: per-plan mana spend closes, plan-space optimization does not.',
+    },
+  ]}
+/>
