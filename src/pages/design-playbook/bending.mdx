@@ -106,6 +106,36 @@ each is a piecewise composition that closes. The design call is content-shaped: 
 much does your late game lean on the caps as named features versus as background
 shape?
 
+## Can the curve un-bend?
+
+The piecewise composition rule is symmetric — nothing in the math forbids the
+post-threshold regime from being _gentler_ than the pre-threshold regime. The genre
+default is that softcaps make later progress harder, but that's a convention, not a rule.
+
+Fundamental ships the cleanest non-monotonic curve in the corpus. Six stages, each
+with its own per-purchase cost multiplier:
+
+| Stage | Multiplier      | Feel                |
+| ----- | --------------- | ------------------- |
+| 1     | $1.40$          | moderate            |
+| 2     | $\approx 2$     | moderate-aggressive |
+| 3     | $10.0$          | harsh — peak wall   |
+| 4     | $\approx 1.7$   | moderate-high       |
+| 5     | $1.11$          | gentle — valley     |
+| 6     | $1.40$          | moderate            |
+
+Stage 3 is the climactic difficulty wall: per-purchase cost growth jumps to $10\times$,
+which under the [doubling-time formula](/design-playbook/pacing#how-do-i-pick-a-doubling-time)
+means the beat time at level $n$ is $10^{n-1}$ times the beat time at level 1. Stage 5
+is the inverse — at $1.11$, per-purchase pacing visibly relaxes below the game's $1.40$
+default. The valley reads as a breather _because_ the peak existed. Three conditions
+seem to make non-monotonic work: a peak with strong prestige compression so the wall
+isn't experienced as a dead end, a valley that's meaningfully gentler than its
+neighbours (a 5% change in multiplier isn't felt), and a legible stage structure so
+the player knows the curve changed shape. The math says nothing about which side of a
+threshold is steeper; the convention exists because gentle-after-harsh is rare enough
+that most designers don't think to author it.
+
 ## Hard cap versus soft cap
 
 Mathematically: a hard cap has a discontinuous derivative at the cap (slope drops

@@ -3,6 +3,8 @@ layout: ../../layouts/Article.astro
 title: Prestige cycles — cadence and conversion
 ---
 
+import CompressionContinuum from '../../components/CompressionContinuum.vue';
+
 # Prestige cycles — cadence and conversion
 
 Prestige is the genre's longest-running design pattern after the geometric cost
@@ -20,41 +22,35 @@ algebra stops closing.
 ## How do I pick the prestige formula?
 
 The math: the prestige currency $H$ is a function of the primary cumulative $C$,
-$H = f(C)$. The genre's three working choices, each a different
-[catalog entry](/rate-functions/):
+$H = f(C/T)$, where $T$ is the prestige threshold. The polynomial family
 
-- **Cube root**. $H \propto C^{1/3}$. Cookie Clicker's archetype. Lives at the
-  [polynomial entry](/rate-functions/power-law#polynomial-rate) with $p = -2/3$ when read as a rate.
-  Doubling cookies adds a multiplier of $\sqrt[3]{2} \approx 1.26$ to chips. The
-  prestige value scales sublinearly enough that late-game cookie counts don't
-  produce absurd chip values, but linearly enough that the player feels each
-  doubling.
-- **Square root**. $H \propto C^{1/2}$. AdVenture Capitalist, several others. Same
-  family, different exponent. Doubling cookies adds $\sqrt 2 \approx 1.41$ to
-  prestige. Felt as more aggressive than cube root — the prestige currency rises
-  faster relative to the run.
-- **Logarithm**. $H \propto \log_b C$. Several modern incrementals. Lives at the
-  [logarithmic entry](/rate-functions/log-frontier#logarithmic-rate). Each doubling of $C$ adds a
-  _constant_ amount to $H$, regardless of where in the run the doubling happens.
-  Felt as the slowest-growing prestige currency; the late-game grind contributes the
-  same prestige value as the early-game grind for the same number of doublings.
+$$f(C/T) = (C/T)^e$$
 
-The design call is which _felt_ relationship the player should have with the prestige
-currency. Three readings:
+covers most of the corpus. The exponent $e$ is the design knob — pick a value in
+$(0, 1]$ and you've picked the conversion's whole shape. Below $e = 1$ the conversion
+is sublinear (compressed); the genre's named defaults sit at $e = 1/3$ (cube root,
+Cookie Clicker) and $e = 1/2$ (square root, AdVenture Capitalist). The log family,
+$H \propto \log_b C$, sits at the polynomial family's limit — a separate rate-function
+entry ([log frontier](/rate-functions/log-frontier#logarithmic-rate)) but the same design intent
+taken further: compress orders of magnitude into a constant per decade.
 
-- **Cube root reads as "every $10 \times$ in run gives $\approx 2.15 \times$ in prestige."**
-  A 10× run produces a noticeable prestige bump, but not a runaway. The feel is
-  "longer runs are worth somewhat more."
-- **Square root reads as "every $10 \times$ in run gives $\approx 3.16 \times$ in prestige."**
-  Each order of magnitude in the run is a clear prestige multiplier. The feel is
-  "longer runs scale visibly."
-- **Log reads as "every $10 \times$ in run adds a fixed amount to prestige."**
-  The relationship is linear in log space. The feel is "the run's _length_ in
-  doublings is what counts, not the absolute number."
+<CompressionContinuum client:visible />
 
-Each is correct for a different design intent. None is mathematically privileged. The
-common pick — cube root — became the default because it produces reasonable late-game
-prestige values across a range of run lengths without specific tuning.
+The felt readings are positions on the slider. Cube root at $e \approx 1/3$ reads as
+"every $10\times$ in run gives $\approx 2.15\times$ in prestige" — a noticeable but
+proportional reward. Square root at $e = 1/2$ reads as "every $10\times$ in run gives
+$\approx 3.16\times$ in prestige" — clearer per-decade scaling. Log reads as "every
+$10\times$ in run adds a _fixed_ amount" regardless of where in the run the doubling
+happened, the strongest member of the standard family.
+
+It's a single dial, not three discrete choices. Cube root and square root are named
+picks because they're round-number exponents, not because the math privileges them.
+A designer wanting compression between cube root's "noticeable but not runaway" and
+square root's "runs scale visibly" can pick $e = 0.4$ and read the result off the
+curve. The common pick — cube root — became the default because it produces reasonable
+late-game prestige values across a range of run lengths without specific tuning, and
+because it's a memorable named exponent. Neither is mathematical privilege; both are
+conventions the genre inherited.
 
 ## How long should a prestige cycle be?
 

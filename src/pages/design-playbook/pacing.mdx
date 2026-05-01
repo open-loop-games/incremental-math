@@ -3,6 +3,9 @@ layout: ../../layouts/Article.astro
 title: Pacing — targeting milestones
 ---
 
+import BeatTimeWizard from '../../components/BeatTimeWizard.vue';
+import FlowChannels from '../../components/FlowChannels.vue';
+
 # Pacing — targeting milestones
 
 The most universal designer question: how fast should the game move? Pacing is what
@@ -42,6 +45,62 @@ session shape gives a different answer.
 The catalog's [exponential family page](/rate-functions/exponential) has the
 [live calculator](/rate-functions/exponential#geometric-discrete) — slide $m$, watch doubling time and
 production curves update together.
+
+## Targeting a beat time directly
+
+The doubling-time question — "$K$ doublings across $N$ purchases" — assumes the
+designer already thinks in doublings. A different framing: "I want a $60$-second
+beat at level $10$, with the first purchase taking $10$ seconds." Both produce the
+same $m$ in the end; the math just runs in the other direction.
+
+The closed form is the inverse of the geometric ladder. With base beat time $T_1$,
+target beat time $T_n$, and target level $n$:
+
+$$T_n = T_1 \cdot m^{n-1} \implies m = \left(\frac{T_n}{T_1}\right)^{1/(n-1)}$$
+
+<BeatTimeWizard client:visible />
+
+This is the same number as the doubling-time formula gives. The advantage of the
+inverted form is that it accepts inputs designers already know how to specify — "I
+want my level-10 purchases to take a minute" is a more intuitive starting point than
+"I want six doublings across thirty levels." The result is the same multiplier,
+named differently. Use whichever framing matches the way the design conversation
+actually goes.
+
+## What beat time should I target?
+
+The wizard above takes a target beat time as an input but doesn't say where the
+target should come from. The corpus has a working answer: target beat times that
+fall in [Csikszentmihalyi's flow channel](https://en.wikipedia.org/wiki/Flow_(psychology)).
+The named bands map to incremental beat times as follows:
+
+- **Arousal** (under $30$s): scanning for the next action; little strategic depth.
+- **Flow** ($30$s – $2$ min): time to plan and feel; the engaged zone.
+- **Flow upper** ($2$ – $5$ min): still engaged, beginning to stretch.
+- **Boredom** ($5$ – $15$ min): looking for prestige or a new mechanic.
+- **Frustration** ($15$ min – $1$ hr): the wait stops feeling like progress.
+- **Breakdown** (over $1$ hr): pure idle territory.
+
+The closed form for the multiplier range that keeps a given level in a given channel
+is the inverse of the geometric ladder. With base beat $T_1$ and target level $n$,
+to keep $T(n) \in [T_{\min}, T_{\max}]$:
+
+$$\left(\frac{T_{\min}}{T_1}\right)^{1/(n-1)} \le m \le \left(\frac{T_{\max}}{T_1}\right)^{1/(n-1)}$$
+
+For $T_1 = 10$s and $n = 10$, the Flow band $[30, 120]$ resolves to
+$m \in [1.13, 1.32]$. The genre default $1.15$ lands comfortably inside that range —
+Cookie Clicker, Antimatter Dimensions, and Realm Grinder all sit there because
+their designers, deliberately or otherwise, picked an $m$ that puts level-10 beats
+in Flow.
+
+<FlowChannels client:visible />
+
+The bands aren't binding constraints. Plenty of games target Arousal (mobile-idle
+multipliers around $1.07$) or push into Boredom on purpose (deep-prestige walls
+designed to force a reset). What the channel mapping does is _name_ what a given $m$
+is doing to the beat curve, and which level the curve crosses each channel boundary.
+"We're in Flow at level 10 but Boredom by level 20" is a more useful design
+conversation than "the curve gets steep around there."
 
 ## How long should the early game be?
 

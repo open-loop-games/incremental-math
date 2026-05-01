@@ -119,6 +119,30 @@ The Time layer's `exponent: 1.85` is supra-linear — gain it faster than you sp
 
 Hand-rolled games make the same choice without the declarative scaffolding. Antimatter Dimensions stacks three power-law conversions with deliberately mismatched constants. Infinity Points: $\text{IP} = 10^{\log_{10}(\text{maxAM})/308 - 0.75}$ — a power law of antimatter with exponent $\approx 1/308$, where the divisor 308 echoes the JavaScript Number ceiling of $\sim 10^{308}$ on purpose. <Cite repo="AntimatterDimensionsSourceCode" path="src/game.js" line="89-103" /> Eternity Points: $\text{EP} = 5^{\log_{10}(\text{maxIP})/308 - 0.7}$ — same divisor, but base 5 instead of 10, so the compression is roughly seven times steeper than IP's. <Cite repo="AntimatterDimensionsSourceCode" path="src/game.js" line="138-140" /> Reality Machines: $\text{RM} = 1000^{\log_{10}(\text{maxEP})/4000 - 1}$ — base 1000, divisor 4000, plus a discontinuous softcap below the 8000-decade threshold. <Cite repo="AntimatterDimensionsSourceCode" path="src/core/machines.js" line="19-29" /> None of the formulas is a copy of the one below it; each is a different design problem — different breakeven, different prestige cadence, different optimal-reset math. The Prestige Tree way says the same thing more compactly: three layers, three `(type, exponent, gainMult, gainExp)` quadruples.
 
+## Closed form, by API requirement
+
+The `addLayer` config doesn't stop at cascade rules and gain shapes. Most per-layer upgrades ship paired `effect()` and `formula()` methods — one evaluates the upgrade for the runtime, the other returns the literal closed-form expression for the in-game tooltip:
+
+<Cite repo="Prestige-Tree" path="js/layers.js" line="105-127" />
+
+```js
+// Self-Synergy upgrade
+effect() {
+    let eff = player.points.plus(1).log10().pow(0.75).plus(1);
+    // ...optional exponent bumps from other upgrades
+    return eff;
+},
+effectDisplay() { return format(this.effect()) + "x" },
+formula() {
+    // ...same exponent bumps, accumulated as a Decimal
+    return "(log(x+1)^0.75+1)" + (exp.gt(1) ? "^" + format(exp) : "")
+}
+```
+
+The author who writes `effect()` is required by the API shape to be able to write `formula()`. The two stay in sync because the player reads the tooltip and expects the engine to compute the function it advertises. Where the math doesn't reduce — pseudo-upgrades whose unlocks are gated on cross-layer combinatorial state, conditionals that aren't a single-variable function of one input — the `formula()` slot is omitted. The omission is itself diagnostic: it marks the points where the layer's logic moves into a different vocabulary than the rate-function algebra (graph reachability, combinatorial planning, optimal stopping).
+
+This is the same discipline AD's hand-rolled formulas express implicitly. `gainedInfinityPoints`, `gainedEternityPoints`, and `MachineHandler.uncappedRM` are literal closed-form expressions — every layer's gain rule is one. The TMT generalization makes the discipline explicit at the API surface: the engine won't let a layer ship without a formula, and the formula it runs is the same one the player reads. The math isn't reverse-engineered from runtime behavior — it's the input the engine evaluates and the displayed expression the player optimizes against.
+
 ## Layer thinning
 
 The visible consequence on the time axis is that each layer takes much longer to climb than the one below it. With a power-law formula, the slope on log-log axes is the exponent — and stacked layers multiply exponents.
@@ -130,6 +154,29 @@ The square-root preset reproduces Pecorella's classic: layer 1 is $\sqrt{t}$, sl
 The AD-style preset (α = 1/308) is a different story. The first layer is so flat that after $10^{20}$ in-run currency you've gained roughly $10^{20/308} \approx 10^{0.065}$ of layer-1 currency — a hair more than 1. The second layer flattens that *again*. Real games soften this with multiplicative bonuses, milestone multipliers, and per-layer prestige-multiplier upgrades that act on the layer's gain rate without changing its shape — they shift the curve up, but they don't change the slope. The slope is the design-locked compression. The bonuses are the dial the designer turns to make ascent times feel right.
 
 The shape this enables is what the post-2016 genre actually wanted from prestige: a pacing tool where each layer takes *more total real-world time* than the one below, regardless of player skill. With single-tier prestige you can't make a player spend longer at the wall — they get better, the wall doesn't move. With layered prestige, the wall is built into the formula. The number of times you can fit "$\log_{10}$ followed by divide-by-308" into a layer cap *is* how many layers the game has.
+
+## Why deep stacks reach tetration
+
+Power-law cascades have a hard limit. Even in the punishingly compressed AD-style $\alpha = 1/308$ shape, stacking five layers leaves a slope of $1/308^5$ — a number with no useful meaning at any tractable game scale. Past three or four layers of polynomial conversion, the slope flattens enough that the design problem becomes "how does the upper layer's currency move at all," not "how do we pace it."
+
+Log-shape conversions are what comes next, and they have a different limiting behavior. Stack one log on another and you get $\log(\log(x))$: every $10^{10}\times$ in input adds $1$ to the output. Stack three and the input has to grow like $10^{10^{10}}$ to move the output by $1$ — the input scales tetrationally in the depth of the stack. In the limit:
+
+$$\lim_{n \to \infty} \log^n(x) = \mathrm{slog}(x)$$
+
+where $\mathrm{slog}$ is the [super-logarithm](https://en.wikipedia.org/wiki/Super-logarithm), the inverse of [tetration](https://en.wikipedia.org/wiki/Tetration). Deep prestige cascades that lean on log conversions don't approach a flat slope the way power-law stacks do; they approach tetration's compression rate.
+
+Shark Incremental walks the limit stepwise across its six layers, each one a deeper compression than the last:
+
+| Layer | Conversion              | Family       |
+| ----- | ----------------------- | ------------ |
+| 1     | $x^{1/2}$               | square root  |
+| 2     | $\log_{10}(x)$          | log          |
+| 3     | $\log(\log(x))$         | double log   |
+| 4     | discrete milestone      | (no formula) |
+| 5     | $\log^n(x)$, $n$ large  | iterated log |
+| 6     | $\mathrm{slog}(x)$      | super-log    |
+
+The progression isn't decoration. Each step compresses orders of magnitude that the layer below couldn't keep readable. Layer 2 turns a $10^{50}$ Layer-1 currency into $50$; Layer 3 turns that $50$ into $\log 50 \approx 1.7$. Without the deepening compression, the displayed numbers at the upper layers would saturate the [bignum substrate](/modern/big-numbers) under any reasonable run length. The structural reading: a layered prestige game whose top-layer currency is meant to grow without bound and stay legible *will* drift toward log-shape conversions, and a deep enough stack of log-shapes is tetration in the limit. The substrate has to support tetration not because the designer chose it but because the depth pressure of the layer stack produces it.
 
 ## Depth case: Synergism
 
@@ -217,6 +264,12 @@ The reason this shape pays off, rather than ad-hoc per-layer code, is the entang
       path: 'js/game.js',
       line: '184-236',
       note: 'doReset — the row-walking cascade. rowReset is called for every row from the resetting layer down to 0.',
+    },
+    {
+      repo: 'Prestige-Tree',
+      path: 'js/layers.js',
+      line: '105-127',
+      note: 'Self-Synergy upgrade — paired effect() and formula() methods. The API requires authors to ship the closed-form expression alongside the evaluator.',
     },
     {
       repo: 'The-Modding-Tree',
