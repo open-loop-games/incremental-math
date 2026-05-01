@@ -3,6 +3,9 @@ layout: ../../layouts/Article.astro
 title: Multi-resource — lattices and the triangular escape
 ---
 
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
+
 # Multi-resource — lattices and the triangular escape
 
 Modern incrementals rarely run a single currency. Production, prestige, side
@@ -106,6 +109,26 @@ _breaks_ triangularity is any rate function that depends on a layer _above_ it
 within a single run — a building whose output depends on the prestige currency the
 player will earn at the end of the run, for example, would create a circular
 reference that doesn't close.
+
+AD's eternity-point gain function makes the layered chain visible in one expression:
+
+<Cite repo="AntimatterDimensionsSourceCode" path="src/game.js" line="138-154" />
+
+```js
+export function gainedEternityPoints() {
+  let ep = DC.D5.pow(player.records.thisEternity.maxIP.plus(
+    gainedInfinityPoints()).log10() / (308 - PelleRifts.recursion.effectValue.toNumber()) - 0.7
+  ).times(totalEPMult());
+  // ... reality-tier challenge guards ...
+  return ep.floor();
+}
+```
+
+`gainedEternityPoints` reads `gainedInfinityPoints()` (which itself reads antimatter
+records) and `totalEPMult()` (which reads time-studies and reality-tier upgrades).
+The reverse direction — IP gain reading EP — doesn't exist within a run; EP is only a
+modifier on the _next_ run's IP curve via `totalIPMult`. The triangle is one-way:
+antimatter → IP → EP, with each higher tier reading the cumulative below it.
 
 The genre's working solution: keep the across-run feedback at the cycle boundary
 (prestige conversion at end of run), not in the per-tick rate function. Each run is
@@ -212,3 +235,14 @@ first-passage problem, decoupled from the loop the player cares about." "Why is
 this system unstable?" almost always answers to "circular dependency you didn't
 intend, which dropped the system out of triangular structure." The math runs
 diagnoses fast; the fixes are the design work.
+
+<Sources
+  cites={[
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/game.js',
+      line: '138-154',
+      note: 'gainedEternityPoints — EP gain reads IP cumulative directly via gainedInfinityPoints(); the antimatter→IP→EP triangle is one expression.',
+    },
+  ]}
+/>

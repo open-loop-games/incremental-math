@@ -4,6 +4,8 @@ title: Bending the curve — soft caps and regime breaks
 ---
 
 import FundamentalStagesDemo from '../../components/design-playbook/FundamentalStagesDemo.vue';
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
 
 # Bending the curve — soft caps and regime breaks
 
@@ -62,14 +64,54 @@ orders of magnitude and need to land on a stat the player can read.
 [rational entry $p > 1$](/rate-functions/power-law#rational--hyperbolic-rate) when read as a cumulative. The
 post-cap growth approaches a _finite ceiling_ $L$ that's never reached. Pick this when
 the cap's role is "this stat represents a fraction or efficiency that should saturate
-near 100%." Civ Clicker's cleric efficiency is this — "approach but never exceed 1.0"
-is the design intent the shape encodes.
+near 100%." Civ Clicker's cleric piety formula puts the Pyramid bonus through this
+shape — "approach but never exceed 1.0" is the design intent the algebra encodes,
+and the whole softcap is one inline subexpression:
+
+<Cite repo="civ-clicker" path="scripts/civclicker.js" line="2396-2407" />
+
+```js
+function doClerics() {
+  var pietyEarned = (
+    civData.cleric.owned
+    * (civData.cleric.efficiency + (civData.cleric.efficiency * (civData.writing.owned)))
+    * (1 + ((civData.secrets.owned)
+    * (1 - 100 / (civData.graveyard.owned + 100))))
+    * curCiv.morale.efficiency
+    * getWonderBonus(civData.piety)
+  );
+  // ...
+}
+```
+
+The hyperbolic factor is `1 - 100 / (graveyard + 100)`, the canonical
+$1 - b/(b + x)$ shape with $b = 100$. At zero graveyards the bonus is zero;
+at 100 graveyards it's $0.5$; at infinity it's $1.0$. The other factors in the
+chain are state-independent multipliers — the page's
+[modifier-product rule](/rate-functions/composition#modifier-product-state-independent-multipliers) — so the saturation lives entirely
+in this one parenthesized expression.
 
 **Piecewise / regime split**. Different rate or growth on each side of a threshold,
 glued continuously. Lives at the [piecewise composition](/rate-functions/composition#piecewise-splice)
 rule. Pick this when the cap's role is "change the regime visibly so the player feels
 the transition." Realm Grinder's pre/post-Ascension cost shift is two geometrics
 spliced; the player crosses a named threshold and the game's pacing visibly changes.
+Antimatter Dimensions ships the same shape as a parameterized class:
+
+<Cite repo="AntimatterDimensionsSourceCode" path="src/core/math.js" line="320-352" />
+
+```js
+window.ExponentialCostScaling = class ExponentialCostScaling {
+  // baseCost B, baseIncrease C, costScale S, purchasesBeforeScaling n.
+  // Pre-scaling: B, B·C, B·C², ..., B·C^n.
+  // Post-scaling: B·C^(n+1), B·C^(n+2)·S, B·C^(n+3)·S^3, ...
+};
+```
+
+Pre-threshold is a pure geometric ladder $B \cdot C^k$; post-threshold the per-step
+ratio shifts to $C \cdot S^{2k}$, a faster-growing geometric. The class
+parameterizes the threshold as `purchasesBeforeScaling`, so a single object captures
+both regimes plus the gluing point.
 
 The picks are not interchangeable. Root and power are smooth and continuous-derivative
 at the threshold; log is smooth but the slope change is sharper; piecewise has a
@@ -216,3 +258,20 @@ does this start being broken." It's at its worst when the question is "will this
 fun" or "where exactly should the breakpoint be" — those are observation problems, and
 the only reliable answer is to play the curve at the threshold's neighborhood and see
 how it feels.
+
+<Sources
+  cites={[
+    {
+      repo: 'civ-clicker',
+      path: 'scripts/civclicker.js',
+      line: '2396-2407',
+      note: 'doClerics — Pyramid bonus uses 1 − 100 / (graveyard + 100), the canonical L·x/(x+k) hyperbolic softcap inline.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/math.js',
+      line: '320-352',
+      note: 'ExponentialCostScaling: parameterized two-regime piecewise — geometric pre-threshold, accelerated geometric post-threshold.',
+    },
+  ]}
+/>

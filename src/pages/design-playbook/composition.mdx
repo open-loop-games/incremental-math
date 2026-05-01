@@ -4,6 +4,8 @@ title: Composition — when mechanics blend
 ---
 
 import ObsoleteVsBlendedDemo from '../../components/design-playbook/ObsoleteVsBlendedDemo.vue';
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
 
 # Composition — when mechanics blend
 
@@ -51,6 +53,41 @@ $r(x) = r_{\text{base}}(x) \cdot \mu_{\text{galaxies}}$. The galaxy count is a s
 shared state that many mechanics feed. Tickspeed boosts feed it. Replicanti unlocks feed
 it. Eternity upgrades feed it. Time studies feed it. Every one of those mechanics is
 adding to the _same_ state variable, which is then multiplying production downstream.
+
+The "many sources sum into one count" half is one function in the source — five
+contributors, one return value:
+
+<Cite repo="AntimatterDimensionsSourceCode" path="src/core/tickspeed.js" line="3-20" />
+
+```js
+export function effectiveBaseGalaxies() {
+  let replicantiGalaxies = Replicanti.galaxies.bought;
+  replicantiGalaxies *= (1 + Effects.sum(TimeStudy(132), TimeStudy(133)));
+  replicantiGalaxies += Replicanti.galaxies.extra;
+  // ...
+  let freeGalaxies = player.dilation.totalTachyonGalaxies;
+  freeGalaxies *= 1 + Math.max(0, Replicanti.amount.log10() / 1e6) * AlchemyResource.alternation.effectValue;
+  return Math.max(player.galaxies + GalaxyGenerator.galaxies + replicantiGalaxies + freeGalaxies, 0);
+}
+```
+
+Five additive terms in the final return — base galaxies (from antimatter resets),
+GalaxyGenerator, replicanti, and dilation tachyon galaxies — each with its own
+intermediate multipliers from time studies and alchemy. Five mechanics, one count.
+
+The "shared count multiplies production" half is one line in the antimatter dimension
+production formula:
+
+<Cite repo="AntimatterDimensionsSourceCode" path="src/core/dimensions/antimatter-dimension.js" line="588" />
+
+```js
+let production = amount.times(this.multiplier).times(Tickspeed.perSecond);
+```
+
+`Tickspeed.perSecond` is the galaxy count's downstream effect — every dimension's
+output rate runs through it. The multiplicative composition is the line; whatever fed
+the galaxy count flows through this multiplication into every dimension's production
+permanently.
 
 The architectural difference: galaxies aren't a separate first-passage problem with their
 own milestone the player is racing toward. They're a _modifier_ on the main loop's rate
@@ -189,3 +226,20 @@ hold up — whether the addition you're contemplating sits in additive position 
 to existing rates (will go obsolete), in multiplicative position (will blend), or in
 some other composition the catalog has named. That diagnosis runs faster than tuning
 runs do, and it surfaces problems before the playtests would.
+
+<Sources
+  cites={[
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/tickspeed.js',
+      line: '3-20',
+      note: 'effectiveBaseGalaxies — five additive contributors (player galaxies, GalaxyGenerator, replicanti, dilation tachyons, plus sub-multipliers) sum into one shared count.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/dimensions/antimatter-dimension.js',
+      line: '588',
+      note: 'Antimatter dimension production: amount × multiplier × Tickspeed.perSecond — the line where the galaxy-fed tickspeed multiplier reaches every dimension.',
+    },
+  ]}
+/>

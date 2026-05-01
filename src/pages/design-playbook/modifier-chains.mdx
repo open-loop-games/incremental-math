@@ -4,6 +4,8 @@ title: Modifier chains — stacking that stays legible
 ---
 
 import ModifierLayerOrderDemo from '../../components/design-playbook/ModifierLayerOrderDemo.vue';
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
 
 # Modifier chains — stacking that stays legible
 
@@ -52,7 +54,25 @@ The design call:
   contribution to the galaxies is additive, and the galaxies are multiplicative on
   the rest of the game. The additivity at the source level is what makes
   multi-source flexibility work; the multiplicativity at the consumption level is
-  what keeps the sources from going obsolete.
+  what keeps the sources from going obsolete. The shape lives in one return
+  expression — five additive contributors, summed, then handed downstream as the
+  tickspeed multiplier:
+
+  <Cite repo="AntimatterDimensionsSourceCode" path="src/core/tickspeed.js" line="3-20" />
+
+  ```js
+  export function effectiveBaseGalaxies() {
+    let replicantiGalaxies = Replicanti.galaxies.bought;
+    // ...
+    return Math.max(player.galaxies + GalaxyGenerator.galaxies + replicantiGalaxies + freeGalaxies, 0);
+  }
+  ```
+
+  The two-level structure is the whole pattern: each source is additive into the
+  galaxy count (its contribution can be designed in isolation, against the other
+  sources without coupling), and the galaxy count itself is multiplicative on
+  every dimension's production downstream (which is what keeps each source from
+  going obsolete as the run progresses).
 
 The genre default in modifier-chain UIs — visible add-then-multiply pipelines — encodes
 exactly this discipline: the additive layer is where mechanics sum into shared state,
@@ -125,7 +145,29 @@ Working answers from the corpus:
   by category (additive multipliers, multiplicative multipliers, exponent
   multipliers, achievement bonuses, prestige bonuses…) and present them as
   collapsible sections. The chain is still inspectable, but only at a higher level
-  of organization.
+  of organization. Each Synergism currency owns a typed array of named contributors
+  reduced into one number — the array _is_ the chain, and the UI renders the same
+  array directly:
+
+  <Cite repo="SynergismOfficial" path="src/Statistics.ts" line="392-476" />
+
+  ```ts
+  export const allWowCubeStats: NumberStatLine[] = [
+    { i18n: 'AscensionScore',   stat: () => Math.pow(.../3000, 1/4.1) },
+    { i18n: 'GlobalCube',       stat: () => calculateAllCubeMultiplier() },
+    { i18n: 'AchievementBonus', stat: () => +getAchievementReward('wowCubeGain') },
+    // ... fourteen named contributors total ...
+  ];
+
+  export const calculateCubeMultiplier = () =>
+    allWowCubeStats.reduce((a, b) => a * b.stat(), 1);
+  ```
+
+  The reduce is one line; the inspection surface is the array. Tesseracts,
+  Hypercubes, Platonics, Hepteracts, and Octeracts each get their own array of
+  similar depth — twelve in total — and the same shape extends to offerings,
+  obtainium, ascension speed, and quark gain. The category split lives in
+  _which array_ a contributor goes into; within each array the order is the chain.
 
 The break-points aren't sharp; they're observations from the corpus. What's
 mathematically real is that each step is a coordinate change on the rate, and a
@@ -177,3 +219,20 @@ diagnoses where state-dependent ones go. It doesn't decide:
 Modifier chains are where math and UI design meet most directly in the genre. The
 math says what the chain _is_; the UI says what the chain _looks like_. Both have to
 be designed; only one of them has closed-form answers.
+
+<Sources
+  cites={[
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/tickspeed.js',
+      line: '3-20',
+      note: 'effectiveBaseGalaxies — additive-into-multiplicative pattern: five sources sum into the shared galaxy count, which then multiplies every dimension production downstream.',
+    },
+    {
+      repo: 'SynergismOfficial',
+      path: 'src/Statistics.ts',
+      line: '392-476',
+      note: 'allWowCubeStats — categorized stack with 14 named contributors reduced by one-line product. The same shape repeats per cube tier and per side currency.',
+    },
+  ]}
+/>

@@ -4,6 +4,8 @@ title: Prestige cycles — cadence and conversion
 ---
 
 import CompressionContinuum from '../../components/CompressionContinuum.vue';
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
 
 # Prestige cycles — cadence and conversion
 
@@ -51,6 +53,45 @@ curve. The common pick — cube root — became the default because it produces 
 late-game prestige values across a range of run lengths without specific tuning, and
 because it's a memorable named exponent. Neither is mathematical privilege; both are
 conventions the genre inherited.
+
+The corpus shows both the named exponent and the divisor as separately-tuned dials.
+Cookie Clicker is the cleanest cube-root case — the threshold is $10^{12}$ and the
+exponent is hard-coded as `HCfactor=3`:
+
+<Cite repo="cookie-clicker" path="main.js" line="4185-4189" />
+
+```js
+Game.HCfactor = 3;
+Game.HowMuchPrestige = function (cookies) {
+  return Math.pow(cookies / 1000000000000, 1 / Game.HCfactor);
+};
+```
+
+Antimatter Dimensions ships the same polynomial family with a _runtime-mutable_
+exponent: $\text{IP} = 10^{\log_{10}(\text{maxAM}) / \text{div} - 0.75}$, which
+algebraically simplifies to $\text{maxAM}^{1/\text{div}} \cdot 10^{-0.75}$. The
+divisor `div` is computed from achievements and time study effects, so endgame
+upgrades reduce `div` (steepening the curve in the player's favor):
+
+<Cite repo="AntimatterDimensionsSourceCode" path="src/game.js" line="89-103" />
+
+```js
+export function gainedInfinityPoints() {
+  const div = Effects.min(308, Achievement(103), TimeStudy(111));
+  // ...
+  let ip = player.break
+    ? Decimal.pow10(player.records.thisInfinity.maxAM.log10() / div - 0.75)
+    : new Decimal(308 / div);
+  // ... eternity-challenge guards and exponent-mutating glyphs ...
+  return ip.floor();
+}
+```
+
+The starting `div = 308` produces a near-flat conversion (maxAM<sup>1/308</sup>);
+each step of progression that shrinks `div` makes the same antimatter cumulative
+yield exponentially more IP. The same dial Cookie Clicker hard-codes as `HCfactor=3`
+is here a function of player state — a design call that shifts the polynomial exponent
+from "named genre default" to "ongoing progression knob."
 
 ## How long should a prestige cycle be?
 
@@ -160,7 +201,33 @@ elementary. It stops at two specific places:
   is a Bellman equation. Most games avoid this entirely by not putting the
   decision in the player's hands — autobuyer-driven prestige with a fixed trigger,
   or unlock-gated prestige, both flatten the optimal-stopping problem into a
-  deterministic schedule that closes again.
+  deterministic schedule that closes again. AD's Big Crunch autobuyer is the
+  canonical "Bellman replaced by a switch":
+
+  <Cite repo="AntimatterDimensionsSourceCode" path="src/core/autobuyers/big-crunch-autobuyer.js" line="110-122" />
+
+  ```js
+  get willInfinity() {
+    if (!player.break || Player.isInAntimatterChallenge) return true;
+    switch (this.mode) {
+      case AUTO_CRUNCH_MODE.AMOUNT:
+        return gainedInfinityPoints().gte(this.amount);
+      case AUTO_CRUNCH_MODE.TIME:
+        return Time.thisInfinityRealTime.totalSeconds > this.time;
+      case AUTO_CRUNCH_MODE.X_HIGHEST:
+      default:
+        return gainedInfinityPoints().gte(this.highestPrevPrestige.times(this.xHighest));
+    }
+  }
+  ```
+
+  Three deterministic numeric comparisons. The optimal-stopping question — "given
+  current trajectories and uncertainty about future modifiers, when should I
+  prestige?" — is replaced by "is `gainedInfinityPoints()` past `this.amount` yet?".
+  The threshold itself (`this.amount`, `this.time`, `this.xHighest`) is a player
+  setting; the strategy is the _choice of mode and threshold_, which the player
+  picks once and the autobuyer applies repeatedly. Optimal stopping flattened to
+  a slider.
 - **The narrative.** Math has no opinion about whether the prestige tier is named
   "Heavenly Chips" or "Eternity Points" or "Soul Anchors," and no opinion about
   what fiction the cycle carries. The same math powers Cookie Clicker's
@@ -174,3 +241,26 @@ math that closes per run. But the _decision_ of when to prestige, when to add a
 tier, and what fiction to wrap the cycle in are all design calls outside the formula
 — and the experience of prestige working _or_ falling flat is downstream of
 those calls more than it's downstream of the formula choice.
+
+<Sources
+  cites={[
+    {
+      repo: 'cookie-clicker',
+      path: 'main.js',
+      line: '4185-4189',
+      note: 'Game.HowMuchPrestige — cube-root conversion (cookies / 1e12)^(1/3) with HCfactor=3 hard-coded.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/game.js',
+      line: '89-103',
+      note: 'gainedInfinityPoints — polynomial conversion maxAM^(1/div), where div is mutated by achievements and time studies.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/autobuyers/big-crunch-autobuyer.js',
+      line: '110-122',
+      note: 'willInfinity trigger — three numeric-comparison modes that replace the optimal-stopping decision with a player-set threshold.',
+    },
+  ]}
+/>

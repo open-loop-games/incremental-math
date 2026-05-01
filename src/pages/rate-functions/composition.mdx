@@ -5,6 +5,8 @@ title: Composition rules
 
 import PiecewiseDemo from '../../components/rate-functions/PiecewiseDemo.vue';
 import ModifierProductDemo from '../../components/rate-functions/ModifierProductDemo.vue';
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
 
 # Composition rules
 
@@ -35,8 +37,23 @@ intra-regime inversion.
 The genre's lead piecewise pattern is "two geometrics glued at a threshold": a normal-paced
 ratio before some level, a slower ratio past it. Realm Grinder's pre/post-Ascension cost
 shift is the canonical example — $c_0 \cdot 1.15^n$ for $n \le t$, $c_0 \cdot 1.15^t \cdot
-1.03^{n-t}$ for $n > t$. Antimatter Dimensions' `ExponentialCostScaling` (cited on the
-[exponential page](/rate-functions/exponential)) ships the same pattern as a parameterized class.
+1.03^{n-t}$ for $n > t$. Antimatter Dimensions ships the same pattern as a parameterized
+class — pre-threshold is the geometric ladder, post-threshold the per-step ratio shifts:
+
+<Cite repo="AntimatterDimensionsSourceCode" path="src/core/math.js" line="320-352" />
+
+```js
+window.ExponentialCostScaling = class ExponentialCostScaling {
+  // baseCost B, baseIncrease C, costScale S, purchasesBeforeScaling n.
+  // Pre-scaling: B, B·C, B·C², ..., B·C^n.
+  // Post-scaling: B·C^(n+1), B·C^(n+2)·S, B·C^(n+3)·S^3, ...
+};
+```
+
+The threshold is `purchasesBeforeScaling`; one parameter selects which regime applies.
+The cumulative is the prefix sum of one of two geometric series — closed-form per
+regime, with regime detection on $n$ — exactly the piecewise structure formalized in
+code.
 
 <PiecewiseDemo client:visible />
 
@@ -154,3 +171,14 @@ asymptotic envelopes,
 phase-type distributions, min-cut throughput, threshold policies. Closed-form
 spec is the destination wherever it can be reached; where it can't, the math
 just changes shape.
+
+<Sources
+  cites={[
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/math.js',
+      line: '320-352',
+      note: 'ExponentialCostScaling — piecewise composition formalized as a parameterized class with baseCost/baseIncrease/costScale/threshold.',
+    },
+  ]}
+/>
