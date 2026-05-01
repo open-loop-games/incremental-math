@@ -4,6 +4,7 @@ title: Exponential family
 ---
 
 import GeometricRateDemo from '../../components/rate-functions/GeometricRateDemo.vue';
+import TailConcentrationDemo from '../../components/rate-functions/TailConcentrationDemo.vue';
 import Cite from '../../components/Cite.astro';
 import Sources from '../../components/Sources.astro';
 
@@ -138,6 +139,15 @@ The last $K$ levels of any geometric cumulative carry approximately $1 - m^{-K}$
 independent of $N$ once $N$ is large. For $m = 1.15$ and $K = 10$, that's $\approx 0.753$ —
 the last 10 levels carry 75% of the integral. For $K = 5$, $\approx 0.503$ — the last 5
 carry half.
+
+<TailConcentrationDemo client:visible />
+
+The bar chart makes the asymptote visible. At any $m > 1.05$, the first 40 of 50 bars
+collapse into a thin strip on the left while the last few dominate the picture; sliding
+$N$ from 30 to 100 barely changes the shaded share because the cumulative is already
+saturated by its tail. The closed form $(m^N - m^{N-K})/(m^N - 1)$ converges to
+$1 - m^{-K}$ at a rate set by the doubling time — past three or four doublings of the
+range, the exact share and the asymptote are visually indistinguishable.
 
 This is the math behind the genre's "the last few levels are everything" feeling. It's not
 a perception artifact; it's the underlying rate-function shape. Every soft cap, every

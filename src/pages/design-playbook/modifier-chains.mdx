@@ -3,6 +3,8 @@ layout: ../../layouts/Article.astro
 title: Modifier chains — stacking that stays legible
 ---
 
+import ModifierLayerOrderDemo from '../../components/design-playbook/ModifierLayerOrderDemo.vue';
+
 # Modifier chains — stacking that stays legible
 
 The headline rate-function in any modern incremental is the output of a long sequence
@@ -59,6 +61,14 @@ add-and-multiply order _backwards_ (multipliers that just add to other multiplie
 is the failure mode that produces "this whole upgrade tree feels useless past tier 3"
 — if the modifiers are stacking additively where they should compose multiplicatively,
 the late game is back to the [obsolete-mechanic problem](/design-playbook/composition).
+
+<ModifierLayerOrderDemo client:visible />
+
+The two curves are the same modifier values composed two different ways. The additive
+stack flattens into a single bonus the player can read on a tooltip; the multiplicative
+stack compounds into a number that grows with each new source the same way prestige
+multipliers grow with each new layer. The architectural choice is which axis the
+upgrades stack along, and the gap widens with every additional source.
 
 ## When does state-dependence break the algebra?
 

@@ -14,7 +14,17 @@ interface Series {
 }
 
 export type Annotation =
-  | { type: 'vline'; x: number; stroke?: string; dash?: number[]; label?: string; width?: number }
+  | {
+      type: 'vline';
+      x: number;
+      stroke?: string;
+      dash?: number[];
+      label?: string;
+      width?: number;
+      /** Pixel offset from the top of the plot area for the label anchor. Use to
+       *  stagger labels when two vlines sit close on the x-axis. Default 2. */
+      labelOffset?: number;
+    }
   | { type: 'hline'; y: number; stroke?: string; dash?: number[]; label?: string; width?: number }
   | { type: 'vband'; x0: number; x1: number; fill?: string }
   | { type: 'hband'; y0: number; y1: number; fill?: string }
@@ -128,7 +138,7 @@ function drawAnnotations(u: uPlot): void {
         ctx.fillStyle = a.stroke ?? muted;
         ctx.font = '10px ui-monospace, monospace';
         ctx.textBaseline = 'top';
-        ctx.fillText(a.label, px + 4, top + 2);
+        ctx.fillText(a.label, px + 4, top + (a.labelOffset ?? 2));
       }
     } else if (a.type === 'hline') {
       const py = u.valToPos(a.y, 'y', true);
@@ -305,7 +315,10 @@ watch(
 </script>
 
 <template>
-  <div ref="containerRef" class="rate-plot" />
+  <div
+    ref="containerRef"
+    class="rate-plot"
+  />
 </template>
 
 <style scoped>

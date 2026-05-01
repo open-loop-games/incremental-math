@@ -5,6 +5,13 @@ title: 'Bifurcations: where the algebra ends'
 
 import Cite from '../../components/Cite.astro';
 import Sources from '../../components/Sources.astro';
+import CoupledStateOrbit from '../../components/rate-functions/bifurcations/CoupledStateOrbit.vue';
+import BestResponseDynamics from '../../components/rate-functions/bifurcations/BestResponseDynamics.vue';
+import DistributionShapeSampler from '../../components/rate-functions/bifurcations/DistributionShapeSampler.vue';
+import TriggerChainStepThrough from '../../components/rate-functions/bifurcations/TriggerChainStepThrough.vue';
+import MaxFlowGraph from '../../components/rate-functions/bifurcations/MaxFlowGraph.vue';
+import OptimalStoppingThreshold from '../../components/rate-functions/bifurcations/OptimalStoppingThreshold.vue';
+import CombinatorialDAG from '../../components/rate-functions/bifurcations/CombinatorialDAG.vue';
 
 # Bifurcations: where the algebra ends
 
@@ -55,6 +62,13 @@ them either restrict to linear dynamics or simplify the coupling to a
 triangular dependency that closes per the
 [composition rules](/rate-functions/composition#what-doesnt-compose-cleanly).
 
+The textbook coupled-state system is Lotka-Volterra predator–prey. Slide the
+parameters to watch closed orbits trace around the equilibrium $(\gamma/\delta,
+\alpha/\beta)$ — the catalog's first-passage time still exists (return to
+$y_0$), but no elementary algebra delivers it.
+
+<CoupledStateOrbit client:visible />
+
 ## Strategy-space integration
 
 When a "rate" depends on what an opponent does — tug-of-war faction warfare,
@@ -73,6 +87,14 @@ information structure — and a claim about which equilibrium concept applies:
 uniform start when not. The bucket is rare in the genre because most idle games
 are cooperative or single-player; it activates with adversarial multi-agent
 strategy spaces over shared resource draws.
+
+Replicator dynamics on Rock-Paper-Scissors visualizes the regime split:
+zero-sum produces closed orbits around the centroid (the
+[Nash equilibrium](https://en.wikipedia.org/wiki/Nash_equilibrium) in the
+mixed game), and even small perturbations of the diagonal payoff flip the
+centroid between attractor and repeller.
+
+<BestResponseDynamics client:visible />
 
 ## Stochastic load-bearing
 
@@ -102,6 +124,13 @@ not stationary) is the design knob, not a calibration of the mean:
 
 <Cite repo="paperclips" path="main.js" line="32-35" />
 
+The headline is that mean and median diverge as CV grows. Geometric pulls
+without pity have a long tail; pity at $K$ collapses the tail and barely
+moves the mean. Erlang-$k$ runs $\text{CV} = 1/\sqrt{k}$ — peaked-at-zero at
+$k=1$, near-Gaussian by $k=10$. Hyperexponential mixtures push CV past 1.
+
+<DistributionShapeSampler client:visible />
+
 ## Discrete-event coupled
 
 When the state space is combinatorial in the count of units, cards, or
@@ -125,6 +154,16 @@ The bucket is structurally rare in the genre — most "discrete-event" runtimes
 in idle/incremental games are integrating closed specs (per-tower DPS,
 per-weapon DPS, per-faction creep rate) rather than combinatorially branching
 in their *outcome*.
+
+A four-card ability sequence — Bash, Hone, Smite, Mark — makes the
+ordering-dependence concrete. Per fixed sequence, total damage is a sum;
+across the <code>4! = 24</code> orderings, the optimum is a search. The
+zero-damage buff cards (<code>Hone</code>, <code>Mark</code>) are worthless
+when scheduled last and load-bearing when scheduled before the right
+attack. Greedy "play strongest first" doesn't find the optimum, because
+the strongest hit depends on which buffs precede it.
+
+<TriggerChainStepThrough client:visible />
 
 ## Network-topological
 
@@ -152,6 +191,13 @@ walk for reachability:
   path="assets/Script/CoreGame/Buildings/BuildingDefinitions.ts"
   line="69-145"
 />
+
+A small five-node graph makes the theorem felt: edge thickness shows flow
+share, the saturated min-cut is highlighted, and total throughput equals
+the cut's capacity. Bumping a non-cut edge does nothing; bumping a cut edge
+moves throughput one-for-one until the cut shifts elsewhere.
+
+<MaxFlowGraph client:visible />
 
 ## Optimal stopping
 
@@ -188,6 +234,15 @@ The threshold formula is concrete; whether it is provably optimal under the IP
 geometric-compression growth curve is unproven. That gap is what the bucket
 covers.
 
+A stylised reset-cycle model with exponential within-run growth and prestige
+reward $C^\beta$ has long-run rate $\rho(u) = r e^{\beta u}/u$, peaked at the
+closed-form optimum $u^* = 1/\beta$. The curve does the teaching the algebra
+can't — shallow on the early-reset side, steep on the late-reset side, and
+the slope of each side tells the player how forgiving their threshold rule
+needs to be.
+
+<OptimalStoppingThreshold client:visible />
+
 ## Combinatorial selection
 
 When the player chooses a subset, sequence, or arrangement from a discrete
@@ -212,6 +267,16 @@ plan repeatedly; per fixed plan total mana spend is a sum, but the *plan
 itself* is the design space:
 
 <Cite repo="idle-loops-omsi" path="loops/actions.js" line="137-196" />
+
+An eight-node prereq DAG with per-node cost-and-effect makes the
+algebra-bifurcation visible: per fixed selection, cost and effect each sum
+trivially; across selections, the optimum is a search over $2^N$ subsets.
+The greedy by-ratio rule doesn't always match the exhaustive optimum —
+budget windows where the cheap-but-prereq-blocked path traps the heuristic
+are exactly the contour the named-adjacent-math (branch-and-bound, A*) has
+to track.
+
+<CombinatorialDAG client:visible />
 
 ## What stays mathematical
 

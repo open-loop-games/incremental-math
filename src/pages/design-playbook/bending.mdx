@@ -3,6 +3,8 @@ layout: ../../layouts/Article.astro
 title: Bending the curve — soft caps and regime breaks
 ---
 
+import FundamentalStagesDemo from '../../components/design-playbook/FundamentalStagesDemo.vue';
+
 # Bending the curve — soft caps and regime breaks
 
 Soft caps are how the genre patches the runaway tendency of unbounded geometric
@@ -123,6 +125,8 @@ with its own per-purchase cost multiplier:
 | 4     | $\approx 1.7$   | moderate-high       |
 | 5     | $1.11$          | gentle — valley     |
 | 6     | $1.40$          | moderate            |
+
+<FundamentalStagesDemo client:visible />
 
 Stage 3 is the climactic difficulty wall: per-purchase cost growth jumps to $10\times$,
 which under the [doubling-time formula](/design-playbook/pacing#how-do-i-pick-a-doubling-time)
