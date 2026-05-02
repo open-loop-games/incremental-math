@@ -1,8 +1,8 @@
 # CLAUDE.md
 
-`incremental-math` — Astro content site replicating and extending Pecorella's _The Math of Idle Games_ (Part I–III). Each part is a markdown page with embedded interactive demos backed by `open-loop-engine`.
+`incremental-math` — research output surface in the studio (see `/work/studio/CLAUDE.md` § Studio components). Distillation site that consumes the corpus and engine to publish content slices: Pecorella's Part I–III replication (`part-i/ii/iii.mdx`), modern post-2015 patterns (`modern/`), the design playbook (`design-playbook/`), and the rate-function lineage (`rate-functions/`). Pecorella replication is one slice, ~10% of the site.
 
-This is a content site, not a game. It consumes the engine the way a research artifact would: many small isolated engine instances per demo, harness primitives (`run-sensitivity`, `run-matrix`) for static parameter-sweep charts.
+This is a content site, not a game. It consumes the engine the way a research artifact would: many small isolated engine instances per demo, harness primitives (`run-sensitivity`, `run-matrix`) for static parameter-sweep charts. It also drives engine work — math pages name genre-converged shapes (cost acceleration, synergy multipliers, offline-progress banking) that the engine's `candidate-primitives.md` cites as research-refs for parked primitives.
 
 **Stack:** Astro 5 + TypeScript + Vue (demo islands) + open-loop-engine + break_eternity.js.
 
