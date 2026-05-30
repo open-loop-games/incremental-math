@@ -484,202 +484,202 @@
     "sha": "c44bc78babab152fed49f135089f466ed4834975",
     "host": "github"
   },
-  "ink": {
+  "adjacent/frameworks/ink": {
     "webBase": "https://github.com/inkle/ink",
     "sha": "f4102e90ddf85ca86192d5b0c416060dfdfceec6",
     "host": "github"
   },
-  "dialogic": {
+  "adjacent/frameworks/dialogic": {
     "webBase": "https://github.com/dialogic-godot/dialogic",
     "sha": "90f5c153f1429c16eb273309b5a6c288731fce8c",
     "host": "github"
   },
-  "yarn-spinner": {
+  "adjacent/frameworks/yarn-spinner": {
     "webBase": "https://github.com/YarnSpinnerTool/YarnSpinner",
     "sha": "8577e250aac50afdc5342d53f0d2f3f5d961e0ff",
     "host": "github"
   },
-  "yarn-spinner-unity-samples": {
+  "adjacent/frameworks/yarn-spinner-unity-samples": {
     "webBase": "https://github.com/YarnSpinnerTool/YarnSpinner-Unity-Samples",
     "sha": "b9207ae8ce3678cba36c1629e9a834deb7b9ae90",
     "host": "github"
   },
-  "renpy": {
+  "adjacent/frameworks/renpy": {
     "webBase": "https://github.com/renpy/renpy",
     "sha": "8259a39c44c9bdab65b2204ab8e00d91e3639981",
     "host": "github"
   },
-  "openc2e": {
+  "adjacent/character-interactions/openc2e": {
     "webBase": "https://github.com/openc2e/openc2e",
     "sha": "2f91af70e50090ed71e79e952ab4d5e831963db0",
     "host": "github"
   },
-  "exult": {
+  "adjacent/character-interactions/exult": {
     "webBase": "https://github.com/exult/exult",
     "sha": "6d31f11ffeb12969a477b1db9ea7849e9cb412e8",
     "host": "github"
   },
-  "daggerfall-unity": {
+  "adjacent/character-interactions/daggerfall-unity": {
     "webBase": "https://github.com/Interkarma/daggerfall-unity",
     "sha": "b8a3ce28950d70304884e910704dbbd548f364ab",
     "host": "github"
   },
-  "cataclysm-dda": {
+  "adjacent/character-interactions/cataclysm-dda": {
     "webBase": "https://github.com/CleverRaven/Cataclysm-DDA",
     "sha": "19a464398fc6953da09311c2104aedad8dc7e0b2",
     "host": "github"
   },
-  "tuxemon": {
+  "adjacent/character-interactions/tuxemon": {
     "webBase": "https://github.com/Tuxemon/Tuxemon",
     "sha": "4c8e496e7dd6e5d2aa5752fc32f70b12950c9989",
     "host": "github"
   },
-  "BehaviorTree.CPP": {
+  "adjacent/agent-frameworks/BehaviorTree.CPP": {
     "webBase": "https://github.com/BehaviorTree/BehaviorTree.CPP",
     "sha": "e6754eeb550f0c76b82da42e377a4d807ce51a6b",
     "host": "github"
   },
-  "fluid-htn": {
+  "adjacent/agent-frameworks/fluid-htn": {
     "webBase": "https://github.com/ptrefall/fluid-hierarchical-task-network",
     "sha": "e67af264cfdf240053f392d4e0e6c620c454eb97",
     "host": "github"
   },
-  "py_trees": {
+  "adjacent/agent-frameworks/py_trees": {
     "webBase": "https://github.com/splintered-reality/py_trees",
     "sha": "591a9f3343fbfc11e4013178034343fee16be89e",
     "host": "github"
   },
-  "recastnavigation": {
+  "adjacent/agent-frameworks/recastnavigation": {
     "webBase": "https://github.com/recastnavigation/recastnavigation",
     "sha": "9f4ce64458dfae86e1239c525ddc219c4e9e06f1",
     "host": "github"
   },
-  "Ludii": {
+  "adjacent/game-ai-research/Ludii": {
     "webBase": "https://github.com/Ludeme/Ludii",
     "sha": "8ba67089dd65129c9256031f00c5a32b4618da76",
     "host": "github"
   },
-  "open_spiel": {
+  "adjacent/game-ai-research/open_spiel": {
     "webBase": "https://github.com/google-deepmind/open_spiel",
     "sha": "feab31d385e4aac7093954f6f6656f3d8baa32c9",
     "host": "github"
   },
-  "lc0": {
+  "adjacent/game-ai-research/lc0": {
     "webBase": "https://github.com/LeelaChessZero/lc0",
     "sha": "909a40826db9e8b221d9209a487daba6ab57e3b7",
     "host": "github"
   },
-  "ualbertabot": {
+  "adjacent/bwapi-bots/ualbertabot": {
     "webBase": "https://github.com/davechurchill/ualbertabot",
     "sha": "558899d8793456f4a6ec4196efbb5235552e24db",
     "host": "github"
   },
-  "steamhammer": {
+  "adjacent/bwapi-bots/steamhammer": {
     "webBase": "https://github.com/kant2002/steamhammer",
     "sha": "bb4f53792e8541f1214a00d790249201dad503b0",
     "host": "github"
   },
-  "McRave": {
+  "adjacent/bwapi-bots/McRave": {
     "webBase": "https://github.com/Cmccrave/McRave",
     "sha": "17924791b7afbbd627f4f074ef2237f14abcd214",
     "host": "github"
   },
-  "Locutus": {
+  "adjacent/bwapi-bots/Locutus": {
     "webBase": "https://github.com/bmnielsen/Locutus",
     "sha": "4e96da0b7e31831ee97aaef153b2bef977a235e1",
     "host": "github"
   },
-  "LetaBot": {
+  "adjacent/bwapi-bots/LetaBot": {
     "webBase": "https://github.com/MartinRooijackers/LetaBot",
     "sha": "10785b42d79fb95d39816d625ff7a7d6e18356ba",
     "host": "github"
   },
-  "wesnoth": {
+  "adjacent/tbs/wesnoth": {
     "webBase": "https://github.com/wesnoth/wesnoth",
     "sha": "ccc6594315d49e95ea08491d24e7ea3b0dfe6f09",
     "host": "github"
   },
-  "freeciv": {
+  "adjacent/tbs/freeciv": {
     "webBase": "https://github.com/freeciv/freeciv",
     "sha": "b3750e8365e84630f9d584a78e232925ca24bab7",
     "host": "github"
   },
-  "Quake-III-Arena": {
+  "adjacent/fps/Quake-III-Arena": {
     "webBase": "https://github.com/id-Software/Quake-III-Arena",
     "sha": "dbe4ddb10315479fc00086f08e25d968b4b43c49",
     "host": "github"
   },
-  "sauerbraten": {
+  "adjacent/fps/sauerbraten": {
     "webBase": "https://github.com/embeddedc/sauerbraten",
     "sha": "22ddcbc873048208f05852484b5d6be2957dcbd3",
     "host": "github"
   },
-  "OpenRA": {
+  "adjacent/rts-engines/OpenRA": {
     "webBase": "https://github.com/OpenRA/OpenRA",
     "sha": "ef92a448b6f65b9f4fde37f23d8c0591a4659b64",
     "host": "github"
   },
-  "spring": {
+  "adjacent/rts-engines/spring": {
     "webBase": "https://github.com/spring/spring",
     "sha": "2925abc99980eb3b08f421a6a45a184938611c40",
     "host": "github"
   },
-  "CircuitAI": {
+  "adjacent/rts-engines/CircuitAI": {
     "webBase": "https://github.com/rlcevg/CircuitAI",
     "sha": "a79d90b36f8d78d72048e8377e9414fe50934de8",
     "host": "github"
   },
-  "Shard": {
+  "adjacent/rts-engines/Shard": {
     "webBase": "https://github.com/Tarendai/Shard",
     "sha": "4b1476365f598accfcf274acde6850baaeeb6060",
     "host": "github"
   },
-  "0ad": {
+  "adjacent/rts-engines/0ad": {
     "webBase": "https://github.com/0ad/0ad",
     "sha": "61a3b9507d974084e6badb88a0826bd89a6d5b8b",
     "host": "github"
   },
-  "angband": {
+  "adjacent/roguelikes/angband": {
     "webBase": "https://github.com/angband/angband",
     "sha": "64d78d7f6a0453863bd8d83e8fb0db1effb85384",
     "host": "github"
   },
-  "TAEB": {
+  "adjacent/roguelikes/TAEB": {
     "webBase": "https://github.com/TAEB/TAEB",
     "sha": "efbc879bd011883200c385e3f834249c752a180d",
     "host": "github"
   },
-  "angband-grommen": {
+  "adjacent/roguelikes/angband-grommen": {
     "webBase": "https://github.com/Grommen/angband",
     "sha": "27e4ce3d749e7010ea044b4d56c2bb755d60d088",
     "host": "github"
   },
-  "Voyager": {
+  "adjacent/llm-agents/Voyager": {
     "webBase": "https://github.com/MineDojo/Voyager",
     "sha": "55e45a880755d0c8c66ca7fb5fe7962ac8974f89",
     "host": "github"
   },
-  "generative_agents": {
+  "adjacent/llm-agents/generative_agents": {
     "webBase": "https://github.com/joonspk-research/generative_agents",
     "sha": "fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4",
     "host": "github"
   },
-  "openmw": {
+  "adjacent/character-interactions/openmw": {
     "webBase": "https://github.com/OpenMW/openmw",
     "sha": "19e8ce3c8d441c9696a3a0c189df1b1bc16c3a28",
     "host": "github"
   },
-  "endless-sky": {
+  "adjacent/character-interactions/endless-sky": {
     "webBase": "https://github.com/endless-sky/endless-sky",
     "sha": "9a070498526d083b269c0ee64df0494fb8e8b15a",
     "host": "github"
   },
-  "AdmiralAI": {
+  "adjacent/rts-engines/AdmiralAI": {
     "webBase": "https://github.com/Yexo/AdmiralAI",
     "sha": "897d768dc0b2928140539db1259ed36c9632cd90",
     "host": "github"
   },
-  "crawl_navigator": {
+  "adjacent/roguelikes/crawl_navigator": {
     "webBase": "https://github.com/boogabee/crawl_navigator",
     "sha": "2fbb97662d62eee983d14a590a493cb7c3812ab8",
     "host": "github"
@@ -694,5 +694,10 @@
     "sha": "d1e9177d02f7460363ebc7d28fe133228db18ed5",
     "host": "github",
     "pathPrefix": "docs/"
+  },
+  "bitburner-src": {
+    "webBase": "https://github.com/bitburner-official/bitburner-src",
+    "sha": "eb431145eebb1bda1d06e3346a1a92a5f92aacbc",
+    "host": "github"
   }
 }
