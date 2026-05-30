@@ -44,3 +44,7 @@ This is a content site, not a game. It consumes the engine the way a research ar
 - Bundle the engine — it's a `link:` peer.
 - Hydrate demos with `client:load` when `client:visible` would do.
 - Add SSR. Static output only.
+
+<!-- Private, gitignored per-repo notes (replaces auto-memory). Resolves to .claude/CLAUDE.local.md. -->
+
+@CLAUDE.local.md
