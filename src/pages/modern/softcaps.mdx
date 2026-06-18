@@ -246,7 +246,19 @@ if (type === 'expRoot') {
 }
 ```
 
-Algebraically `expRoot` is the same Root softcap, but every operation runs on the [log](https://en.wikipedia.org/wiki/Logarithm) of the value rather than on the value itself, with a final `Decimal.pow(10, ...)` to materialize the result. Same shape; different intermediate representation. The pattern is identical to AD's bulk-purchase math (covered on the [big numbers](/modern/big-numbers) page) — keep the math in log-of-the-Decimal where you can, and only construct a real Decimal at the boundary.
+There are two different things one might mean by a "log-space root softcap", and the distinction matters because they are not the same curve.
+
+The _genuine log-space rewrite_ of the ordinary Root softcap — the curve plotted above, $S^{\,1-1/M}\cdot x^{1/M}$ — just moves the identical arithmetic onto the exponents. Taking the [log](https://en.wikipedia.org/wiki/Logarithm) of both sides turns the product into a weighted sum of logs:
+
+$$y = 10^{\frac{1}{M}\log_{10}(x)\; +\; \left(1 - \frac{1}{M}\right)\log_{10}(S)}$$
+
+Same shape, different intermediate representation: every operation runs on the log of the value, with a final `Decimal.pow(10, ...)` to materialize the result. This is the bulk-purchase trick from the [big numbers](/modern/big-numbers) page — keep the math in log-of-the-Decimal, build a real Decimal only at the boundary.
+
+The Prestige Tree code above does something else. It takes the _root of the exponent_ and scales it by a _power of the threshold's exponent_ — `val.log10().root(mag).times(...)` — which materializes as
+
+$$\text{expRoot}(x, S, M) = 10^{\,\left(\log_{10} x\right)^{1/M}\;\cdot\;\left(\log_{10} S\right)^{1 - 1/M}}$$
+
+Compressing the _exponent_ rather than the base is strictly harsher than the ordinary root. That's why the genre reaches for `expRoot` when even a sublinear cap on the value isn't enough, and why a challenge that swaps a `log` cap for an `expRoot` cap at the same threshold lands as a difficulty spike rather than a re-skin.
 
 In practice, every softcap in a game whose currencies cross break_infinity territory is written in the expRoot form rather than the direct-arithmetic form, because the latter silently produces `Infinity` past a certain scale and the bug only surfaces in the late game when no developer is testing.
 
