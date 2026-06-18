@@ -117,6 +117,18 @@ export const sections: PageSection[] = [
         description:
           'Hard-mode runs that change the curve’s shape, not just its speed. Prestige loops bigger; challenges loop different.',
       },
+      {
+        href: '/modern/achievements',
+        title: 'Achievements',
+        description:
+          'Passive observers on game state. Geometric thresholds turn exponential growth into a steady drumbeat; rewards couple the count back into the loop.',
+      },
+      {
+        href: '/modern/skill-curves',
+        title: 'Skill Curves',
+        description:
+          'Advancement you accumulate by doing, not buying. An XP accumulator, a floored level curve, and the staircase it delivers.',
+      },
     ],
   },
   {

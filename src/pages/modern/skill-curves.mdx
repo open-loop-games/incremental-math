@@ -1,0 +1,105 @@
+---
+layout: ../../layouts/Article.astro
+title: Skill Curves
+---
+
+import SkillCurve from '../../components/SkillCurve.vue';
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
+
+# Skill Curves
+
+Pecorella's progression is wealth: you buy generators, generators make currency,
+currency buys more generators. A whole branch of the modern genre encodes
+advancement the other way — not as something you _purchase_ but as something you
+_accumulate by doing_. A named track gathers experience as the player acts, a
+discrete level derives from that accumulator through a curve, and the level drives
+a continuous effect on the rest of the game. The curve in the middle is the part
+that's actually math, and it's the primary balance lever of every game built this
+way.
+
+## The accumulator, the level, the output
+
+The shape is always three stages. First an **accumulator** — a per-track quantity
+that only rises, the [integral](https://en.wikipedia.org/wiki/Integral) of an XP
+rate over the time spent acting, $X(t) = \int_0^t r(\tau)\,d\tau$. Then a
+**level**, a discrete number derived from the accumulator by a monotonic curve
+$L = \text{xpToLevel}(X)$. Then an **output**: the level drives a multiplier, a
+cost divisor, a gate threshold, or a retention bonus that survives a reset.
+
+Splitting advancement this way buys two things wealth-based progression doesn't.
+The accumulator is legible — it only ever goes up, and the player can see exactly
+how close the next level is — and the curve is a single, isolated tuning surface.
+Reshape the curve and you reshape pacing, soft-capping, and compounding all at
+once, without touching the actions that feed it.
+
+## XP-to-level curves
+
+Two curve families cover most of the corpus. **Polynomial** leveling sets
+$L = \lfloor a\,X^{p} \rfloor$. The common choice $p = \tfrac{1}{2}$ is worth
+reading carefully: the _level_ is the square root of XP, which means the _XP_ to
+reach a level is quadratic in the level. Idle Loops is exactly this — the XP for
+level $L$ is $50\,L(L+1)$, and the level read back from the accumulator is its
+floored inverse:
+
+<Cite repo="idle-loops-omsi" path="loops/stats.js" line="53-55" note="getExpOfLevel(L) = L·(L+1)·50 — quadratic XP cost per level." />
+<Cite repo="idle-loops-omsi" path="loops/stats.js" line="49-51" note="getLevelFromExp floors (√(0.08·exp + 1) − 1)/2 — the square-root inverse, discretized." />
+
+**Exponential** leveling instead sets $L = \lfloor \log_b(X) \rfloor$, so each
+level costs a fixed _multiple_ more XP than the last. This is the curve for tracks
+that are meant to span many orders of magnitude with a roughly constant
+"time-to-next-level" feel under exponential XP income — the same geometric-spacing
+trick the [achievements](/modern/achievements) page uses on thresholds.
+
+## The floor makes a staircase
+
+Whatever the curve, the [floor](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions)
+is what makes it feel like leveling rather than a slider creeping upward. The
+level is an integer, so a continuous effect $\mu(L) = 1 + cL$ is delivered as a
+step function: nothing happens, nothing happens, then the bar fills and the whole
+effect jumps at once. The demo plots that delivered staircase against the smooth
+curve it discretizes — the gap between them is the "I just levelled up" moment,
+and it's why a floored level reads as a reward where a continuous multiplier reads
+as wallpaper.
+
+<SkillCurve client:visible />
+
+Notice how the level-up thresholds bunch up early and stretch out late under the
+polynomial curve: quadratic XP cost means each level is a longer haul than the
+last, the sublinear pacing tool the genre reaches for when raw exponential income
+would otherwise trivialize a track.
+
+## Checkpoints and persistence
+
+Some level-ups do more than nudge a multiplier. **Checkpoint** levels unlock
+discrete mechanics — a recipe, a zone, a new action — which act as step shifts in
+the rate function rather than smooth bonuses, and show up as sudden accelerations
+on a log-log progress plot. Super Turtle Idle gates content behind cumulative kill
+counts in exactly this way, each gate a milestone the track has to cross:
+
+<Cite repo="SuperTurtleIdle.github.io" path="logs.js" line="717-724" note="Bestiary gates at cumulative kill counts (10k, 100k) unlock per-enemy bonuses — checkpoint outputs on an accumulator." />
+
+The other design axis is _when the accumulator resets_. In-run skills zero out
+each cycle, so the curve only ever shapes a single run; cross-reset tracks persist
+through prestige, so retained levels leak power between runs and have to be priced
+into the reset economy. The "Groundhog Day" loop games run both modes at once —
+an in-run level that drives this run, feeding a permanent accumulator that
+sharpens the next one — which is why their balance is so sensitive to the curve:
+it's doing double duty.
+
+<Sources
+  cites={[
+    {
+      repo: 'idle-loops-omsi',
+      path: 'loops/stats.js',
+      line: '49-55',
+      note: 'Polynomial leveling: getExpOfLevel(L) = 50·L(L+1) (quadratic XP), getLevelFromExp = floor((√(0.08·exp + 1) − 1)/2) (floored square-root inverse).',
+    },
+    {
+      repo: 'SuperTurtleIdle.github.io',
+      path: 'logs.js',
+      line: '717-724',
+      note: 'Cumulative kill-count checkpoints unlocking per-enemy bonuses — discrete step-shift outputs derived from an accumulator.',
+    },
+  ]}
+/>
