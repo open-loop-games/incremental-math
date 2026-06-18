@@ -17,7 +17,7 @@ Prose lives in `.mdx` pages; interactive demos are Vue components hydrated lazil
 ## Commands
 
 ```bash
-pnpm install          # engine resolves via link: to ../open-loop-engine
+pnpm install
 pnpm dev              # Astro dev server
 pnpm build            # static output → dist/
 pnpm preview          # preview production build

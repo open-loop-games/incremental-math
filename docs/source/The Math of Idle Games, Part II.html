@@ -1,0 +1,3576 @@
+<!doctype html>
+<html lang="en" class="idc0_343 agusaik">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Math of Idle Games, Part II</title>
+    <link rel="stylesheet" href="The%20Math%20of%20Idle%20Games,%20Part%20II_files/screen.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" />
+    <link rel="stylesheet" href="The%20Math%20of%20Idle%20Games,%20Part%20II_files/css2.css" />
+
+    <link
+      rel="icon"
+      href="https://storage.ghost.io/c/2a/18/2a185de1-0fdf-4622-ac7d-196cef4ec14a/content/images/size/w256h256/2021/07/SP-Icon.png"
+      type="image/png"
+    />
+    <link rel="canonical" href="https://www.sirpinski.com/the-math-of-idle-games-part-ii/" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+    <meta property="og:site_name" content="Gasket Case" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="The Math of Idle Games, Part II" />
+    <meta
+      property="og:description"
+      content="Originally published October 28, 2016
+
+In Part I [https://www.sirpinski.com/the-math-of-idle-games-part-i/] of this
+three-part series, we looked at some of the standard math behind rapid-growth
+idle games, primarily at the relationships between exponential and polynomial
+growth and some methods of checking and adjusting the balance of the various"
+    />
+    <meta property="og:url" content="https://www.sirpinski.com/the-math-of-idle-games-part-ii/" />
+    <meta
+      property="og:image"
+      content="https://storage.ghost.io/c/2a/18/2a185de1-0fdf-4622-ac7d-196cef4ec14a/content/images/2021/08/derivative-growth.gif"
+    />
+    <meta property="article:published_time" content="2021-07-30T19:54:21.000Z" />
+    <meta property="article:modified_time" content="2021-08-11T17:54:20.000Z" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The Math of Idle Games, Part II" />
+    <meta
+      name="twitter:description"
+      content="Originally published October 28, 2016
+
+In Part I [https://www.sirpinski.com/the-math-of-idle-games-part-i/] of this
+three-part series, we looked at some of the standard math behind rapid-growth
+idle games, primarily at the relationships between exponential and polynomial
+growth and some methods of checking and adjusting the balance of the various"
+    />
+    <meta name="twitter:url" content="https://www.sirpinski.com/the-math-of-idle-games-part-ii/" />
+    <meta
+      name="twitter:image"
+      content="https://storage.ghost.io/c/2a/18/2a185de1-0fdf-4622-ac7d-196cef4ec14a/content/images/2021/08/derivative-growth.gif"
+    />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Anthony Pecorella" />
+    <meta name="twitter:site" content="@Ant_Pecorella" />
+    <meta property="og:image:width" content="814" />
+    <meta property="og:image:height" content="252" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Gasket Case",
+          "url": "https://www.sirpinski.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://storage.ghost.io/c/2a/18/2a185de1-0fdf-4622-ac7d-196cef4ec14a/content/images/size/w256h256/2021/07/SP-Icon.png",
+            "width": 60,
+            "height": 60
+          }
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Anthony Pecorella",
+          "image": {
+            "@type": "ImageObject",
+            "url": "https://storage.ghost.io/c/2a/18/2a185de1-0fdf-4622-ac7d-196cef4ec14a/content/images/2021/07/IMG_3675.JPG",
+            "width": 960,
+            "height": 960
+          },
+          "url": "https://www.sirpinski.com/author/anthony/",
+          "sameAs": []
+        },
+        "headline": "The Math of Idle Games, Part II",
+        "url": "https://www.sirpinski.com/the-math-of-idle-games-part-ii/",
+        "datePublished": "2021-07-30T19:54:21.000Z",
+        "dateModified": "2021-08-11T17:54:20.000Z",
+        "image": {
+          "@type": "ImageObject",
+          "url": "https://storage.ghost.io/c/2a/18/2a185de1-0fdf-4622-ac7d-196cef4ec14a/content/images/2021/08/derivative-growth.gif",
+          "width": 814,
+          "height": 252
+        },
+        "description": "Originally published October 28, 2016\n\nIn Part I [https://www.sirpinski.com/the-math-of-idle-games-part-i/] of this\nthree-part series, we looked at some of the standard math behind rapid-growth\nidle games, primarily at the relationships between exponential and polynomial\ngrowth and some methods of checking and adjusting the balance of the various\ngenerators over time.\n\nIn Part II we’re going to explore a different option for growth outside of the\nCookie Clicker model that the vast majority of id",
+        "mainEntityOfPage": "https://www.sirpinski.com/the-math-of-idle-games-part-ii/"
+      }
+    </script>
+
+    <meta name="generator" content="Ghost 6.34" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Gasket Case"
+      href="https://www.sirpinski.com/rss/"
+    />
+
+    <script
+      defer="defer"
+      src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/sodo-search.min.js"
+      data-key="41e918cf719e76515f73e08dfa"
+      data-styles="https://cdn.jsdelivr.net/ghost/sodo-search@~1.8/umd/main.css"
+      data-sodo-search="https://sir-pinski-gasket-case.ghost.io/"
+      data-locale="en"
+      crossorigin="anonymous"
+    ></script>
+
+    <link href="https://www.sirpinski.com/webmentions/receive/" rel="webmention" />
+    <script
+      defer="defer"
+      src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/cards.min.js"
+    ></script>
+    <style>
+      :root {
+        --ghost-accent-color: #3e3d2e;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="The%20Math%20of%20Idle%20Games,%20Part%20II_files/cards.min.css"
+    />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async=""
+      src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/google-analytics_analytics.js"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+
+      gtag('config', 'G-ZNEX1T8KGX');
+    </script>
+
+    <script src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/polyfill.min.js"></script>
+    <script
+      id="MathJax-script"
+      async=""
+      src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/tex-chtml.js"
+    ></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ['$', '$'],
+            ['\\(', '\\)'],
+          ],
+        },
+      };
+    </script>
+    <style>
+      .App {
+        text-align: center;
+      }
+      .App-logo {
+        height: 40vmin;
+        pointer-events: none;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .App-logo {
+          animation: App-logo-spin infinite 20s linear;
+        }
+      }
+      .App-header {
+        background-color: #282c34;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: calc(10px + 2vmin);
+        color: #fff;
+      }
+      .App-link {
+        color: #61dafb;
+      }
+      @keyframes App-logo-spin {
+        0% {
+          transform: rotate(0);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      /*$vite$:1*/
+    </style>
+    <style type="text/css">
+      .CtxtMenu_InfoClose {
+        top: 0.2em;
+        right: 0.2em;
+      }
+      .CtxtMenu_InfoContent {
+        overflow: auto;
+        text-align: left;
+        font-size: 80%;
+        padding: 0.4em 0.6em;
+        border: 1px inset;
+        margin: 1em 0px;
+        max-height: 20em;
+        max-width: 30em;
+        background-color: #eeeeee;
+        white-space: normal;
+      }
+      .CtxtMenu_Info.CtxtMenu_MousePost {
+        outline: none;
+      }
+      .CtxtMenu_Info {
+        position: fixed;
+        left: 50%;
+        width: auto;
+        text-align: center;
+        border: 3px outset;
+        padding: 1em 2em;
+        background-color: #dddddd;
+        color: black;
+        cursor: default;
+        font-family: message-box;
+        font-size: 120%;
+        font-style: normal;
+        text-indent: 0;
+        text-transform: none;
+        line-height: normal;
+        letter-spacing: normal;
+        word-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        float: none;
+        z-index: 201;
+        border-radius: 15px; /* Opera 10.5 and IE9 */
+        -webkit-border-radius: 15px; /* Safari and Chrome */
+        -moz-border-radius: 15px; /* Firefox */
+        -khtml-border-radius: 15px; /* Konqueror */
+        box-shadow: 0px 10px 20px #808080; /* Opera 10.5 and IE9 */
+        -webkit-box-shadow: 0px 10px 20px #808080; /* Safari 3 & Chrome */
+        -moz-box-shadow: 0px 10px 20px #808080; /* Forefox 3.5 */
+        -khtml-box-shadow: 0px 10px 20px #808080; /* Konqueror */
+        filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */
+      }
+    </style>
+    <style type="text/css">
+      .CtxtMenu_MenuClose {
+        position: absolute;
+        cursor: pointer;
+        display: inline-block;
+        border: 2px solid #aaa;
+        border-radius: 18px;
+        -webkit-border-radius: 18px; /* Safari and Chrome */
+        -moz-border-radius: 18px; /* Firefox */
+        -khtml-border-radius: 18px; /* Konqueror */
+        font-family: 'Courier New', Courier;
+        font-size: 24px;
+        color: #f0f0f0;
+      }
+      .CtxtMenu_MenuClose span {
+        display: block;
+        background-color: #aaa;
+        border: 1.5px solid;
+        border-radius: 18px;
+        -webkit-border-radius: 18px; /* Safari and Chrome */
+        -moz-border-radius: 18px; /* Firefox */
+        -khtml-border-radius: 18px; /* Konqueror */
+        line-height: 0;
+        padding: 8px 0 6px; /* may need to be browser-specific */
+      }
+      .CtxtMenu_MenuClose:hover {
+        color: white !important;
+        border: 2px solid #ccc !important;
+      }
+      .CtxtMenu_MenuClose:hover span {
+        background-color: #ccc !important;
+      }
+      .CtxtMenu_MenuClose:hover:focus {
+        outline: none;
+      }
+    </style>
+    <style type="text/css">
+      .CtxtMenu_Menu {
+        position: absolute;
+        background-color: white;
+        color: black;
+        width: auto;
+        padding: 5px 0px;
+        border: 1px solid #cccccc;
+        margin: 0;
+        cursor: default;
+        font: menu;
+        text-align: left;
+        text-indent: 0;
+        text-transform: none;
+        line-height: normal;
+        letter-spacing: normal;
+        word-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        float: none;
+        z-index: 201;
+        border-radius: 5px; /* Opera 10.5 and IE9 */
+        -webkit-border-radius: 5px; /* Safari and Chrome */
+        -moz-border-radius: 5px; /* Firefox */
+        -khtml-border-radius: 5px; /* Konqueror */
+        box-shadow: 0px 10px 20px #808080; /* Opera 10.5 and IE9 */
+        -webkit-box-shadow: 0px 10px 20px #808080; /* Safari 3 & Chrome */
+        -moz-box-shadow: 0px 10px 20px #808080; /* Forefox 3.5 */
+        -khtml-box-shadow: 0px 10px 20px #808080; /* Konqueror */
+      }
+      .CtxtMenu_MenuItem {
+        padding: 1px 2em;
+        background: transparent;
+      }
+      .CtxtMenu_MenuArrow {
+        position: absolute;
+        right: 0.5em;
+        padding-top: 0.25em;
+        color: #666666;
+        font-family: null;
+        font-size: 0.75em;
+      }
+      .CtxtMenu_MenuActive .CtxtMenu_MenuArrow {
+        color: white;
+      }
+      .CtxtMenu_MenuArrow.CtxtMenu_RTL {
+        left: 0.5em;
+        right: auto;
+      }
+      .CtxtMenu_MenuCheck {
+        position: absolute;
+        left: 0.7em;
+        font-family: null;
+      }
+      .CtxtMenu_MenuCheck.CtxtMenu_RTL {
+        right: 0.7em;
+        left: auto;
+      }
+      .CtxtMenu_MenuRadioCheck {
+        position: absolute;
+        left: 0.7em;
+      }
+      .CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {
+        right: 0.7em;
+        left: auto;
+      }
+      .CtxtMenu_MenuInputBox {
+        padding-left: 1em;
+        right: 0.5em;
+        color: #666666;
+        font-family: null;
+      }
+      .CtxtMenu_MenuInputBox.CtxtMenu_RTL {
+        left: 0.1em;
+      }
+      .CtxtMenu_MenuComboBox {
+        left: 0.1em;
+        padding-bottom: 0.5em;
+      }
+      .CtxtMenu_MenuSlider {
+        left: 0.1em;
+      }
+      .CtxtMenu_SliderValue {
+        position: absolute;
+        right: 0.1em;
+        padding-top: 0.25em;
+        color: #333333;
+        font-size: 0.75em;
+      }
+      .CtxtMenu_SliderBar {
+        outline: none;
+        background: #d3d3d3;
+      }
+      .CtxtMenu_MenuLabel {
+        padding: 1px 2em 3px 1.33em;
+        font-style: italic;
+      }
+      .CtxtMenu_MenuRule {
+        border-top: 1px solid #dddddd;
+        margin: 4px 3px;
+      }
+      .CtxtMenu_MenuDisabled {
+        color: GrayText;
+      }
+      .CtxtMenu_MenuActive {
+        background-color: #606872;
+        color: white;
+      }
+      .CtxtMenu_MenuDisabled:focus {
+        background-color: #e8e8e8;
+      }
+      .CtxtMenu_MenuLabel:focus {
+        background-color: #e8e8e8;
+      }
+      .CtxtMenu_ContextMenu:focus {
+        outline: none;
+      }
+      .CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {
+        outline: none;
+      }
+      .CtxtMenu_SelectionMenu {
+        position: relative;
+        float: left;
+        border-bottom: none;
+        -webkit-box-shadow: none;
+        -webkit-border-radius: 0px;
+      }
+      .CtxtMenu_SelectionItem {
+        padding-right: 1em;
+      }
+      .CtxtMenu_Selection {
+        right: 40%;
+        width: 50%;
+      }
+      .CtxtMenu_SelectionBox {
+        padding: 0em;
+        max-height: 20em;
+        max-width: none;
+        background-color: #ffffff;
+      }
+      .CtxtMenu_SelectionDivider {
+        clear: both;
+        border-top: 2px solid #000000;
+      }
+      .CtxtMenu_Menu .CtxtMenu_MenuClose {
+        top: -10px;
+        left: -10px;
+      }
+    </style>
+    <script
+      src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/color.js"
+      charset="UTF-8"
+    ></script>
+    <style id="MJX-CHTML-styles">
+      mjx-container[jax='CHTML'] {
+        line-height: 0;
+      }
+
+      mjx-container [space='1'] {
+        margin-left: 0.111em;
+      }
+
+      mjx-container [space='2'] {
+        margin-left: 0.167em;
+      }
+
+      mjx-container [space='3'] {
+        margin-left: 0.222em;
+      }
+
+      mjx-container [space='4'] {
+        margin-left: 0.278em;
+      }
+
+      mjx-container [space='5'] {
+        margin-left: 0.333em;
+      }
+
+      mjx-container [rspace='1'] {
+        margin-right: 0.111em;
+      }
+
+      mjx-container [rspace='2'] {
+        margin-right: 0.167em;
+      }
+
+      mjx-container [rspace='3'] {
+        margin-right: 0.222em;
+      }
+
+      mjx-container [rspace='4'] {
+        margin-right: 0.278em;
+      }
+
+      mjx-container [rspace='5'] {
+        margin-right: 0.333em;
+      }
+
+      mjx-container [size='s'] {
+        font-size: 70.7%;
+      }
+
+      mjx-container [size='ss'] {
+        font-size: 50%;
+      }
+
+      mjx-container [size='Tn'] {
+        font-size: 60%;
+      }
+
+      mjx-container [size='sm'] {
+        font-size: 85%;
+      }
+
+      mjx-container [size='lg'] {
+        font-size: 120%;
+      }
+
+      mjx-container [size='Lg'] {
+        font-size: 144%;
+      }
+
+      mjx-container [size='LG'] {
+        font-size: 173%;
+      }
+
+      mjx-container [size='hg'] {
+        font-size: 207%;
+      }
+
+      mjx-container [size='HG'] {
+        font-size: 249%;
+      }
+
+      mjx-container [width='full'] {
+        width: 100%;
+      }
+
+      mjx-box {
+        display: inline-block;
+      }
+
+      mjx-block {
+        display: block;
+      }
+
+      mjx-itable {
+        display: inline-table;
+      }
+
+      mjx-row {
+        display: table-row;
+      }
+
+      mjx-row > * {
+        display: table-cell;
+      }
+
+      mjx-mtext {
+        display: inline-block;
+      }
+
+      mjx-mstyle {
+        display: inline-block;
+      }
+
+      mjx-merror {
+        display: inline-block;
+        color: red;
+        background-color: yellow;
+      }
+
+      mjx-mphantom {
+        visibility: hidden;
+      }
+
+      _::-webkit-full-page-media,
+      _:future,
+      :root mjx-container {
+        will-change: opacity;
+      }
+
+      mjx-assistive-mml {
+        position: absolute !important;
+        top: 0px;
+        left: 0px;
+        clip: rect(1px, 1px, 1px, 1px);
+        padding: 1px 0px 0px 0px !important;
+        border: 0px !important;
+        display: block !important;
+        width: auto !important;
+        overflow: hidden !important;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      mjx-assistive-mml[display='block'] {
+        width: 100% !important;
+      }
+
+      mjx-math {
+        display: inline-block;
+        text-align: left;
+        line-height: 0;
+        text-indent: 0;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 100%;
+        font-size-adjust: none;
+        letter-spacing: normal;
+        border-collapse: collapse;
+        word-wrap: normal;
+        word-spacing: normal;
+        white-space: nowrap;
+        direction: ltr;
+        padding: 1px 0;
+      }
+
+      mjx-container[jax='CHTML'][display='true'] {
+        display: block;
+        text-align: center;
+        margin: 1em 0;
+      }
+
+      mjx-container[jax='CHTML'][display='true'][width='full'] {
+        display: flex;
+      }
+
+      mjx-container[jax='CHTML'][display='true'] mjx-math {
+        padding: 0;
+      }
+
+      mjx-container[jax='CHTML'][justify='left'] {
+        text-align: left;
+      }
+
+      mjx-container[jax='CHTML'][justify='right'] {
+        text-align: right;
+      }
+
+      mjx-TeXAtom {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-mi {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-c {
+        display: inline-block;
+      }
+
+      mjx-utext {
+        display: inline-block;
+        padding: 0.75em 0 0.2em 0;
+      }
+
+      mjx-mn {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-mo {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-stretchy-h {
+        display: inline-table;
+        width: 100%;
+      }
+
+      mjx-stretchy-h > * {
+        display: table-cell;
+        width: 0;
+      }
+
+      mjx-stretchy-h > * > mjx-c {
+        display: inline-block;
+        transform: scalex(1.0000001);
+      }
+
+      mjx-stretchy-h > * > mjx-c::before {
+        display: inline-block;
+        width: initial;
+      }
+
+      mjx-stretchy-h > mjx-ext {
+        /* IE */
+        overflow: hidden;
+        /* others */
+        overflow: clip visible;
+        width: 100%;
+      }
+
+      mjx-stretchy-h > mjx-ext > mjx-c::before {
+        transform: scalex(500);
+      }
+
+      mjx-stretchy-h > mjx-ext > mjx-c {
+        width: 0;
+      }
+
+      mjx-stretchy-h > mjx-beg > mjx-c {
+        margin-right: -0.1em;
+      }
+
+      mjx-stretchy-h > mjx-end > mjx-c {
+        margin-left: -0.1em;
+      }
+
+      mjx-stretchy-v {
+        display: inline-block;
+      }
+
+      mjx-stretchy-v > * {
+        display: block;
+      }
+
+      mjx-stretchy-v > mjx-beg {
+        height: 0;
+      }
+
+      mjx-stretchy-v > mjx-end > mjx-c {
+        display: block;
+      }
+
+      mjx-stretchy-v > * > mjx-c {
+        transform: scaley(1.0000001);
+        transform-origin: left center;
+        overflow: hidden;
+      }
+
+      mjx-stretchy-v > mjx-ext {
+        display: block;
+        height: 100%;
+        box-sizing: border-box;
+        border: 0px solid transparent;
+        /* IE */
+        overflow: hidden;
+        /* others */
+        overflow: visible clip;
+      }
+
+      mjx-stretchy-v > mjx-ext > mjx-c::before {
+        width: initial;
+        box-sizing: border-box;
+      }
+
+      mjx-stretchy-v > mjx-ext > mjx-c {
+        transform: scaleY(500) translateY(0.075em);
+        overflow: visible;
+      }
+
+      mjx-mark {
+        display: inline-block;
+        height: 0px;
+      }
+
+      mjx-mfrac {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-frac {
+        display: inline-block;
+        vertical-align: 0.17em;
+        padding: 0 0.22em;
+      }
+
+      mjx-frac[type='d'] {
+        vertical-align: 0.04em;
+      }
+
+      mjx-frac[delims] {
+        padding: 0 0.1em;
+      }
+
+      mjx-frac[atop] {
+        padding: 0 0.12em;
+      }
+
+      mjx-frac[atop][delims] {
+        padding: 0;
+      }
+
+      mjx-dtable {
+        display: inline-table;
+        width: 100%;
+      }
+
+      mjx-dtable > * {
+        font-size: 2000%;
+      }
+
+      mjx-dbox {
+        display: block;
+        font-size: 5%;
+      }
+
+      mjx-num {
+        display: block;
+        text-align: center;
+      }
+
+      mjx-den {
+        display: block;
+        text-align: center;
+      }
+
+      mjx-mfrac[bevelled] > mjx-num {
+        display: inline-block;
+      }
+
+      mjx-mfrac[bevelled] > mjx-den {
+        display: inline-block;
+      }
+
+      mjx-den[align='right'],
+      mjx-num[align='right'] {
+        text-align: right;
+      }
+
+      mjx-den[align='left'],
+      mjx-num[align='left'] {
+        text-align: left;
+      }
+
+      mjx-nstrut {
+        display: inline-block;
+        height: 0.054em;
+        width: 0;
+        vertical-align: -0.054em;
+      }
+
+      mjx-nstrut[type='d'] {
+        height: 0.217em;
+        vertical-align: -0.217em;
+      }
+
+      mjx-dstrut {
+        display: inline-block;
+        height: 0.505em;
+        width: 0;
+      }
+
+      mjx-dstrut[type='d'] {
+        height: 0.726em;
+      }
+
+      mjx-line {
+        display: block;
+        box-sizing: border-box;
+        min-height: 1px;
+        height: 0.06em;
+        border-top: 0.06em solid;
+        margin: 0.06em -0.1em;
+        overflow: hidden;
+      }
+
+      mjx-line[type='d'] {
+        margin: 0.18em -0.1em;
+      }
+
+      mjx-msup {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-mrow {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-munderover {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-munderover:not([limits='false']) {
+        padding-top: 0.1em;
+      }
+
+      mjx-munderover:not([limits='false']) > * {
+        display: block;
+      }
+
+      mjx-msubsup {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-script {
+        display: inline-block;
+        padding-right: 0.05em;
+        padding-left: 0.033em;
+      }
+
+      mjx-script > mjx-spacer {
+        display: block;
+      }
+
+      mjx-c::before {
+        display: block;
+        width: 0;
+      }
+
+      .MJX-TEX {
+        font-family: MJXZERO, MJXTEX;
+      }
+
+      .TEX-B {
+        font-family: MJXZERO, MJXTEX-B;
+      }
+
+      .TEX-I {
+        font-family: MJXZERO, MJXTEX-I;
+      }
+
+      .TEX-MI {
+        font-family: MJXZERO, MJXTEX-MI;
+      }
+
+      .TEX-BI {
+        font-family: MJXZERO, MJXTEX-BI;
+      }
+
+      .TEX-S1 {
+        font-family: MJXZERO, MJXTEX-S1;
+      }
+
+      .TEX-S2 {
+        font-family: MJXZERO, MJXTEX-S2;
+      }
+
+      .TEX-S3 {
+        font-family: MJXZERO, MJXTEX-S3;
+      }
+
+      .TEX-S4 {
+        font-family: MJXZERO, MJXTEX-S4;
+      }
+
+      .TEX-A {
+        font-family: MJXZERO, MJXTEX-A;
+      }
+
+      .TEX-C {
+        font-family: MJXZERO, MJXTEX-C;
+      }
+
+      .TEX-CB {
+        font-family: MJXZERO, MJXTEX-CB;
+      }
+
+      .TEX-FR {
+        font-family: MJXZERO, MJXTEX-FR;
+      }
+
+      .TEX-FRB {
+        font-family: MJXZERO, MJXTEX-FRB;
+      }
+
+      .TEX-SS {
+        font-family: MJXZERO, MJXTEX-SS;
+      }
+
+      .TEX-SSB {
+        font-family: MJXZERO, MJXTEX-SSB;
+      }
+
+      .TEX-SSI {
+        font-family: MJXZERO, MJXTEX-SSI;
+      }
+
+      .TEX-SC {
+        font-family: MJXZERO, MJXTEX-SC;
+      }
+
+      .TEX-T {
+        font-family: MJXZERO, MJXTEX-T;
+      }
+
+      .TEX-V {
+        font-family: MJXZERO, MJXTEX-V;
+      }
+
+      .TEX-VB {
+        font-family: MJXZERO, MJXTEX-VB;
+      }
+
+      mjx-stretchy-v mjx-c,
+      mjx-stretchy-h mjx-c {
+        font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A !important;
+      }
+
+      @font-face /* 0 */ {
+        font-family: MJXZERO;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff')
+          format('woff');
+      }
+
+      @font-face /* 1 */ {
+        font-family: MJXTEX;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 2 */ {
+        font-family: MJXTEX-B;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff')
+          format('woff');
+      }
+
+      @font-face /* 3 */ {
+        font-family: MJXTEX-I;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff')
+          format('woff');
+      }
+
+      @font-face /* 4 */ {
+        font-family: MJXTEX-MI;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff')
+          format('woff');
+      }
+
+      @font-face /* 5 */ {
+        font-family: MJXTEX-BI;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff')
+          format('woff');
+      }
+
+      @font-face /* 6 */ {
+        font-family: MJXTEX-S1;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 7 */ {
+        font-family: MJXTEX-S2;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 8 */ {
+        font-family: MJXTEX-S3;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 9 */ {
+        font-family: MJXTEX-S4;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 10 */ {
+        font-family: MJXTEX-A;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 11 */ {
+        font-family: MJXTEX-C;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 12 */ {
+        font-family: MJXTEX-CB;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff')
+          format('woff');
+      }
+
+      @font-face /* 13 */ {
+        font-family: MJXTEX-FR;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 14 */ {
+        font-family: MJXTEX-FRB;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff')
+          format('woff');
+      }
+
+      @font-face /* 15 */ {
+        font-family: MJXTEX-SS;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 16 */ {
+        font-family: MJXTEX-SSB;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff')
+          format('woff');
+      }
+
+      @font-face /* 17 */ {
+        font-family: MJXTEX-SSI;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff')
+          format('woff');
+      }
+
+      @font-face /* 18 */ {
+        font-family: MJXTEX-SC;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 19 */ {
+        font-family: MJXTEX-T;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 20 */ {
+        font-family: MJXTEX-V;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 21 */ {
+        font-family: MJXTEX-VB;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff')
+          format('woff');
+      }
+
+      mjx-c.mjx-c1D450.TEX-I::before {
+        padding: 0.442em 0.433em 0.011em 0;
+        content: 'c';
+      }
+
+      mjx-c.mjx-c1D462.TEX-I::before {
+        padding: 0.442em 0.572em 0.011em 0;
+        content: 'u';
+      }
+
+      mjx-c.mjx-c1D45F.TEX-I::before {
+        padding: 0.442em 0.451em 0.011em 0;
+        content: 'r';
+      }
+
+      mjx-c.mjx-c1D452.TEX-I::before {
+        padding: 0.442em 0.466em 0.011em 0;
+        content: 'e';
+      }
+
+      mjx-c.mjx-c1D45B.TEX-I::before {
+        padding: 0.442em 0.6em 0.011em 0;
+        content: 'n';
+      }
+
+      mjx-c.mjx-c1D466.TEX-I::before {
+        padding: 0.442em 0.49em 0.205em 0;
+        content: 'y';
+      }
+
+      mjx-c.mjx-c1D43A.TEX-I::before {
+        padding: 0.705em 0.786em 0.022em 0;
+        content: 'G';
+      }
+
+      mjx-c.mjx-c31::before {
+        padding: 0.666em 0.5em 0 0;
+        content: '1';
+      }
+
+      mjx-c.mjx-c32::before {
+        padding: 0.666em 0.5em 0 0;
+        content: '2';
+      }
+
+      mjx-c.mjx-c1D461.TEX-I::before {
+        padding: 0.626em 0.361em 0.011em 0;
+        content: 't';
+      }
+
+      mjx-c.mjx-c3D::before {
+        padding: 0.583em 0.778em 0.082em 0;
+        content: '=';
+      }
+
+      mjx-c.mjx-c1D465.TEX-I::before {
+        padding: 0.442em 0.572em 0.011em 0;
+        content: 'x';
+      }
+
+      mjx-c.mjx-c2C::before {
+        padding: 0.121em 0.278em 0.194em 0;
+        content: ',';
+      }
+
+      mjx-c.mjx-c33::before {
+        padding: 0.665em 0.5em 0.022em 0;
+        content: '3';
+      }
+
+      mjx-c.mjx-c36::before {
+        padding: 0.666em 0.5em 0.022em 0;
+        content: '6';
+      }
+
+      mjx-c.mjx-c34::before {
+        padding: 0.677em 0.5em 0 0;
+        content: '4';
+      }
+
+      mjx-c.mjx-c2E::before {
+        padding: 0.12em 0.278em 0 0;
+        content: '.';
+      }
+
+      mjx-c.mjx-c21::before {
+        padding: 0.716em 0.278em 0 0;
+        content: '!';
+      }
+
+      mjx-c.mjx-c2211.TEX-S1::before {
+        padding: 0.75em 1.056em 0.25em 0;
+        content: '\2211';
+      }
+
+      mjx-c.mjx-c221E::before {
+        padding: 0.442em 1em 0.011em 0;
+        content: '\221E';
+      }
+
+      mjx-c.mjx-c2B::before {
+        padding: 0.583em 0.778em 0.082em 0;
+        content: '+';
+      }
+
+      mjx-c.mjx-c2026::before {
+        padding: 0.12em 1.172em 0 0;
+        content: '\2026';
+      }
+
+      mjx-c.mjx-c35::before {
+        padding: 0.666em 0.5em 0.022em 0;
+        content: '5';
+      }
+
+      mjx-c.mjx-cD7::before {
+        padding: 0.491em 0.778em 0 0;
+        content: '\D7';
+      }
+    </style>
+  </head>
+
+  <body class="post-template">
+    <div class="site">
+      <header id="site-header" class="site-header">
+        <div class="header-inner">
+          <div class="header-brand">
+            <a class="logo" href="https://www.sirpinski.com/">
+              <span class="logo-text">Gasket Case</span>
+            </a>
+
+            <div class="burger">
+              <div class="burger-bar"></div>
+              <div class="burger-bar"></div>
+            </div>
+          </div>
+
+          <nav class="header-nav">
+            <a class="menu-item menu-item-home" href="https://www.sirpinski.com/">Home</a>
+            <a class="menu-item menu-item-about" href="https://www.sirpinski.com/about/">About</a>
+          </nav>
+
+          <div class="header-actions">
+            <div class="social">
+              <a
+                class="social-item social-item-twitter"
+                href="https://x.com/Ant_Pecorella"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Twitter"
+              >
+                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"
+                  ></path>
+                </svg>
+              </a>
+            </div>
+
+            <button class="button-text menu-item members-login" data-portal="signin">Login</button>
+          </div>
+        </div>
+      </header>
+
+      <div class="site-content">
+        <div class="content-area">
+          <main class="site-main">
+            <article class="single post">
+              <header class="single-header kg-canvas">
+                <div class="single-meta">
+                  <span class="single-meta-item single-meta-date">
+                    <time datetime="2021-07-30"> Jul 30, 2021 </time>
+                  </span>
+
+                  <span class="single-meta-item single-meta-length"> 7 min read </span>
+                </div>
+
+                <h1 class="single-title">The Math of Idle Games, Part II</h1>
+
+                <figure class="single-media kg-width-wide">
+                  <img
+                    srcset="
+                      The%20Math%20of%20Idle%20Games,%20Part%20II_files/derivative-growth.gif      400w,
+                      The%20Math%20of%20Idle%20Games,%20Part%20II_files/derivative-growth_003.gif  750w,
+                      The%20Math%20of%20Idle%20Games,%20Part%20II_files/derivative-growth_002.gif  960w,
+                      The%20Math%20of%20Idle%20Games,%20Part%20II_files/derivative-growth_004.gif 1140w
+                    "
+                    sizes="(min-width: 1023px) 920px, calc(90vw)"
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/derivative-growth_002.gif"
+                    alt="The Math of Idle Games, Part II"
+                  />
+                  <figcaption>Derivative growth, modeled in machinations.io</figcaption>
+                </figure>
+              </header>
+
+              <div class="single-content kg-canvas u-text-format">
+                <p><em>Originally published October 28, 2016</em></p>
+                <p>
+                  In
+                  <a href="https://www.sirpinski.com/the-math-of-idle-games-part-i/">Part I</a> of
+                  this three-part series, we looked at some of the standard math behind rapid-growth
+                  idle games, primarily at the relationships between exponential and polynomial
+                  growth and some methods of checking and adjusting the balance of the various
+                  generators over time.
+                </p>
+                <p>
+                  In Part II we’re going to explore a different option for growth outside of the
+                  Cookie Clicker model that the vast majority of idle games use these days. And
+                  <a href="https://www.sirpinski.com/the-math-of-idle-games-part-iii/">Part III</a>
+                  digs into prestige loops in more detail.
+                </p>
+                <p>
+                  In the "standard" model, there is a primary
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="0"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  and a bunch of generators (<mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="1"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >,
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="2"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(247, 146, 29)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c32"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#F7921D"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>2</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >, etc.) that produce that
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="3"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >. In AdVenture Capitalist these are the investments generating cash. In Clicker
+                  Heroes these are the heroes generating damage, which is then converted into gold.
+                </p>
+                <figure class="kg-card kg-image-card">
+                  <img
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/chrome_2016-10-28_14-33-49.webp"
+                    class="kg-image"
+                    alt=""
+                    loading="lazy"
+                  />
+                </figure>
+                <p>
+                  But who says that generators have to produce primary
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="4"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >? What happens if generators generate other generators, like this?
+                </p>
+                <figure class="kg-card kg-image-card">
+                  <img
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/chrome_2016-10-28_14-33-38.webp"
+                    class="kg-image"
+                    alt=""
+                    loading="lazy"
+                  />
+                </figure>
+                <p>
+                  You have a single generator producing the
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="5"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  and then a cascading chain of generators producing the previous tier. So
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="6"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  is the rate at which
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="7"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  is generated.
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="8"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(247, 146, 29)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c32"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#F7921D"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>2</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  is the rate at which
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="9"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  is generated, and so on. Anyone else getting twitchy calculus flashbacks? Good,
+                  because you should: these are derivatives!
+                  <em
+                    >(Note: if you don’t know or remember calculus, don’t worry -- you’re about to
+                    learn some!)</em
+                  >
+                </p>
+                <p>
+                  Let’s say for a second that a single generator (<mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="10"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >) produces one
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="11"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  (the y-axis, representing total
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="12"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >) each second (the x-axis, representing total time). We’ll graph cash in green
+                  (obvi!) and you’ll see the single
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="13"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  generator in blue. So over time the number of
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="14"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >s doesn’t change, and each second we gain 1
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="15"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >.
+                </p>
+                <figure class="kg-card kg-image-card">
+                  <img
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/chrome_2016-10-28_14-46-03.webp"
+                    class="kg-image"
+                    alt=""
+                    loading="lazy"
+                  />
+                </figure>
+                <p>
+                  Now let’s say we have a single
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="16"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(247, 146, 29)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c32"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#F7921D"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>2</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  that produces
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="17"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >s at 1 per second. What does our graph look like now?
+                </p>
+                <p>
+                  First we need to clarify one oddity of looking at continuous graphs for a discrete
+                  problem like this. A
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="18"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  will produce exactly 1
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="19"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  in a second. But what if that
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="20"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  is being produced that same second? It won’t generate a full
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="21"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  point but instead only half of one. You can think of it like
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="22"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  only half-existing in the second it is created, but even if it doesn’t make total
+                  sense, if you can accept that rule then everything else lines up in that beautiful
+                  way that math always does. With that out of the way, let’s look at the magic.
+                </p>
+                <p>
+                  At time
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="23"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>t</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >=0, we have a single
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="24"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(247, 146, 29)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c32"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#F7921D"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>2</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  that will never change, no
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="25"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >s, and no
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="26"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >.
+                </p>
+                <p>
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="27"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>t</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >=1, still a single
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="28"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(247, 146, 29)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c32"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#F7921D"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>2</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >, now a single
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="29"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  (produced by the
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="30"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(247, 146, 29)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c32"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#F7921D"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>2</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >), and that 0.5
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="31"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  produced by that in-progress
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="32"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >.
+                </p>
+                <p>
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="33"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>t</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >=2, we’re up to 2
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="34"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >s, one of which generates a whole
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="35"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  (the
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="36"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  created in
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="37"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>t</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >=1) and one generates a half
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="38"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >. Add that to the previous half and we have two
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="39"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  at
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="40"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>t</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >=2.
+                </p>
+                <p>Now let’s graph it!</p>
+                <figure class="kg-card kg-image-card">
+                  <img
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/chrome_2016-10-28_14-44-19.webp"
+                    class="kg-image"
+                    alt=""
+                    loading="lazy"
+                  />
+                </figure>
+                <p>
+                  That
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="41"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  graph looks suspiciously like a parabola, no? It is in fact
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="42"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi
+                      ><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo
+                      ><mjx-mfrac space="4"
+                        ><mjx-frac
+                          ><mjx-num
+                            ><mjx-nstrut></mjx-nstrut
+                            ><mjx-msup size="s"
+                              ><mjx-mi class="mjx-i"
+                                ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi
+                              ><mjx-script style="vertical-align: 0.363em"
+                                ><mjx-mn class="mjx-n" size="s"
+                                  ><mjx-c
+                                    class="mjx-c32"
+                                  ></mjx-c></mjx-mn></mjx-script></mjx-msup></mjx-num
+                          ><mjx-dbox
+                            ><mjx-dtable
+                              ><mjx-line></mjx-line
+                              ><mjx-row
+                                ><mjx-den
+                                  ><mjx-dstrut></mjx-dstrut
+                                  ><mjx-mn class="mjx-n" size="s"
+                                    ><mjx-c
+                                      class="mjx-c32"
+                                    ></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>y</mi><mo>=</mo
+                        ><mfrac
+                          ><msup><mi>x</mi><mn>2</mn></msup
+                          ><mn>2</mn></mfrac
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >. For those of you who remember your integrals, that equation will look familiar
+                  as the integral of
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="43"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi
+                      ><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo
+                      ><mjx-mi class="mjx-i" space="4"
+                        ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>y</mi><mo>=</mo><mi>x</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  (which is the equation that produces the blue angled line up there). Without going
+                  too much further down a calculus lesson, here’s the summary.
+                </p>
+                <p>
+                  A derivative is a rate of change. In this growth model, each generator represents
+                  the rate of change of the next-tier-down generator, and thus can be considered a
+                  derivative. Because these are in sequence, we can effectively keep taking
+                  integrals from a starting point to see what growth becomes as you get higher tiers
+                  of generators. The series of integrals looks like this:
+                </p>
+                <p>
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="44"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mn class="mjx-n"><mjx-c class="mjx-c31"></mjx-c></mjx-mn
+                      ><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo
+                      ><mjx-mi class="mjx-i" space="2"
+                        ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi
+                      ><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo
+                      ><mjx-mfrac space="2"
+                        ><mjx-frac
+                          ><mjx-num
+                            ><mjx-nstrut></mjx-nstrut
+                            ><mjx-msup size="s"
+                              ><mjx-mi class="mjx-i"
+                                ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi
+                              ><mjx-script style="vertical-align: 0.363em"
+                                ><mjx-mn class="mjx-n" size="s"
+                                  ><mjx-c
+                                    class="mjx-c32"
+                                  ></mjx-c></mjx-mn></mjx-script></mjx-msup></mjx-num
+                          ><mjx-dbox
+                            ><mjx-dtable
+                              ><mjx-line></mjx-line
+                              ><mjx-row
+                                ><mjx-den
+                                  ><mjx-dstrut></mjx-dstrut
+                                  ><mjx-mn class="mjx-n" size="s"
+                                    ><mjx-c
+                                      class="mjx-c32"
+                                    ></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac
+                      ><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo
+                      ><mjx-mfrac space="2"
+                        ><mjx-frac
+                          ><mjx-num
+                            ><mjx-nstrut></mjx-nstrut
+                            ><mjx-msup size="s"
+                              ><mjx-mi class="mjx-i"
+                                ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi
+                              ><mjx-script style="vertical-align: 0.363em"
+                                ><mjx-mn class="mjx-n" size="s"
+                                  ><mjx-c
+                                    class="mjx-c33"
+                                  ></mjx-c></mjx-mn></mjx-script></mjx-msup></mjx-num
+                          ><mjx-dbox
+                            ><mjx-dtable
+                              ><mjx-line></mjx-line
+                              ><mjx-row
+                                ><mjx-den
+                                  ><mjx-dstrut></mjx-dstrut
+                                  ><mjx-mn class="mjx-n" size="s"
+                                    ><mjx-c
+                                      class="mjx-c36"
+                                    ></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac
+                      ><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo
+                      ><mjx-mfrac space="2"
+                        ><mjx-frac
+                          ><mjx-num
+                            ><mjx-nstrut></mjx-nstrut
+                            ><mjx-msup size="s"
+                              ><mjx-mi class="mjx-i"
+                                ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi
+                              ><mjx-script style="vertical-align: 0.363em"
+                                ><mjx-mn class="mjx-n" size="s"
+                                  ><mjx-c
+                                    class="mjx-c34"
+                                  ></mjx-c></mjx-mn></mjx-script></mjx-msup></mjx-num
+                          ><mjx-dbox
+                            ><mjx-dtable
+                              ><mjx-line></mjx-line
+                              ><mjx-row
+                                ><mjx-den
+                                  ><mjx-dstrut></mjx-dstrut
+                                  ><mjx-mn class="mjx-n" size="s"
+                                    ><mjx-c class="mjx-c32"></mjx-c
+                                    ><mjx-c
+                                      class="mjx-c34"
+                                    ></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac
+                      ><mjx-mo class="mjx-n"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo
+                      ><mjx-mo class="mjx-n" space="2"><mjx-c class="mjx-c2E"></mjx-c></mjx-mo
+                      ><mjx-mo class="mjx-n" space="2"><mjx-c class="mjx-c2E"></mjx-c></mjx-mo
+                      ><mjx-mo class="mjx-n" space="2"><mjx-c class="mjx-c2E"></mjx-c></mjx-mo
+                      ><mjx-mo class="mjx-n" space="2"><mjx-c class="mjx-c2C"></mjx-c></mjx-mo
+                      ><mjx-mfrac space="2"
+                        ><mjx-frac
+                          ><mjx-num
+                            ><mjx-nstrut></mjx-nstrut
+                            ><mjx-msup size="s"
+                              ><mjx-mi class="mjx-i"
+                                ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi
+                              ><mjx-script style="vertical-align: 0.363em"
+                                ><mjx-mi class="mjx-i" size="s"
+                                  ><mjx-c
+                                    class="mjx-c1D45B TEX-I"
+                                  ></mjx-c></mjx-mi></mjx-script></mjx-msup></mjx-num
+                          ><mjx-dbox
+                            ><mjx-dtable
+                              ><mjx-line></mjx-line
+                              ><mjx-row
+                                ><mjx-den
+                                  ><mjx-dstrut></mjx-dstrut
+                                  ><mjx-mrow size="s"
+                                    ><mjx-mi class="mjx-i"
+                                      ><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                                    ><mjx-mo class="mjx-n"
+                                      ><mjx-c
+                                        class="mjx-c21"
+                                      ></mjx-c></mjx-mo></mjx-mrow></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mn>1</mn><mo>,</mo><mi>x</mi><mo>,</mo
+                        ><mfrac
+                          ><msup><mi>x</mi><mn>2</mn></msup
+                          ><mn>2</mn></mfrac
+                        ><mo>,</mo
+                        ><mfrac
+                          ><msup><mi>x</mi><mn>3</mn></msup
+                          ><mn>6</mn></mfrac
+                        ><mo>,</mo
+                        ><mfrac
+                          ><msup><mi>x</mi><mn>4</mn></msup
+                          ><mn>24</mn></mfrac
+                        ><mo>,</mo><mo>.</mo><mo>.</mo><mo>.</mo><mo>,</mo
+                        ><mfrac
+                          ><msup><mi>x</mi><mi>n</mi></msup
+                          ><mrow><mi>n</mi><mo>!</mo></mrow></mfrac
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                </p>
+                <p>
+                  So if we had 4 tiers of generators, starting with a single
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="45"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                      ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                      ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                      ><mjx-mn class="mjx-n"><mjx-c class="mjx-c34"></mjx-c></mjx-mn></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>G</mi><mi>e</mi><mi>n</mi><mn>4</mn></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >, the
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="46"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D462 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45F TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D466 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>c</mi><mi>u</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>c</mi
+                            ><mi>y</mi></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  would be growing at
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="47"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 155, 85)"
+                        ><mjx-mfrac
+                          ><mjx-frac
+                            ><mjx-num
+                              ><mjx-nstrut></mjx-nstrut
+                              ><mjx-msup size="s"
+                                ><mjx-mi class="mjx-i"
+                                  ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi
+                                ><mjx-script style="vertical-align: 0.363em"
+                                  ><mjx-mn class="mjx-n" size="s"
+                                    ><mjx-c
+                                      class="mjx-c34"
+                                    ></mjx-c></mjx-mn></mjx-script></mjx-msup></mjx-num
+                            ><mjx-dbox
+                              ><mjx-dtable
+                                ><mjx-line></mjx-line
+                                ><mjx-row
+                                  ><mjx-den
+                                    ><mjx-dstrut></mjx-dstrut
+                                    ><mjx-mn class="mjx-n" size="s"
+                                      ><mjx-c class="mjx-c32"></mjx-c
+                                      ><mjx-c
+                                        class="mjx-c34"
+                                      ></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#009B55"
+                          ><mfrac
+                            ><msup><mi>x</mi><mn>4</mn></msup
+                            ><mn>24</mn></mfrac
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >, and at time
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="48"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>t</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  the total number of all generators would be
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="49"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mn class="mjx-n"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mn>1</mn></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  +
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="50"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(175, 50, 53)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"
+                            ><mjx-c
+                              class="mjx-c1D461 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#AF3235"
+                          ><mrow data-mjx-texclass="ORD"><mi>t</mi></mrow></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  +
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="51"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(247, 146, 29)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mfrac
+                            ><mjx-frac
+                              ><mjx-num
+                                ><mjx-nstrut></mjx-nstrut
+                                ><mjx-msup size="s"
+                                  ><mjx-mi class="mjx-i"
+                                    ><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi
+                                  ><mjx-script style="vertical-align: 0.363em"
+                                    ><mjx-mn class="mjx-n" size="s"
+                                      ><mjx-c
+                                        class="mjx-c32"
+                                      ></mjx-c></mjx-mn></mjx-script></mjx-msup></mjx-num
+                              ><mjx-dbox
+                                ><mjx-dtable
+                                  ><mjx-line></mjx-line
+                                  ><mjx-row
+                                    ><mjx-den
+                                      ><mjx-dstrut></mjx-dstrut
+                                      ><mjx-mn class="mjx-n" size="s"
+                                        ><mjx-c
+                                          class="mjx-c32"
+                                        ></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#F7921D"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mfrac
+                              ><msup><mi>t</mi><mn>2</mn></msup
+                              ><mn>2</mn></mfrac
+                            ></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  +
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="52"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mfrac
+                            ><mjx-frac
+                              ><mjx-num
+                                ><mjx-nstrut></mjx-nstrut
+                                ><mjx-msup size="s"
+                                  ><mjx-mi class="mjx-i"
+                                    ><mjx-c class="mjx-c1D461 TEX-I"></mjx-c></mjx-mi
+                                  ><mjx-script style="vertical-align: 0.363em"
+                                    ><mjx-mn class="mjx-n" size="s"
+                                      ><mjx-c
+                                        class="mjx-c33"
+                                      ></mjx-c></mjx-mn></mjx-script></mjx-msup></mjx-num
+                              ><mjx-dbox
+                                ><mjx-dtable
+                                  ><mjx-line></mjx-line
+                                  ><mjx-row
+                                    ><mjx-den
+                                      ><mjx-dstrut></mjx-dstrut
+                                      ><mjx-mn class="mjx-n" size="s"
+                                        ><mjx-c
+                                          class="mjx-c36"
+                                        ></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mfrac
+                              ><msup><mi>t</mi><mn>3</mn></msup
+                              ><mn>6</mn></mfrac
+                            ></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >.
+                </p>
+                <p>
+                  And, just to complete our circle, we’ll take a very quick look at an example from
+                  upper-level calculus. A certain type of infinitely summed series is called a
+                  Taylor Series, and there is a specific case that’s super relevant.
+                </p>
+                <p>
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="53"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-msup
+                        ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                        ><mjx-script style="vertical-align: 0.363em"
+                          ><mjx-mi class="mjx-i" size="s"
+                            ><mjx-c
+                              class="mjx-c1D465 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-script></mjx-msup
+                      ><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo
+                      ><mjx-munderover space="4" limits="false"
+                        ><mjx-mo class="mjx-sop"><mjx-c class="mjx-c2211 TEX-S1"></mjx-c></mjx-mo
+                        ><mjx-script style="vertical-align: -0.285em; margin-left: 0px"
+                          ><mjx-texatom size="s" texclass="ORD"
+                            ><mjx-mi class="mjx-n"
+                              ><mjx-c class="mjx-c221E"></mjx-c></mjx-mi></mjx-texatom
+                          ><mjx-spacer style="margin-top: 0.284em"></mjx-spacer
+                          ><mjx-texatom size="s" texclass="ORD"
+                            ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                            ><mjx-mo class="mjx-n"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo
+                            ><mjx-mn class="mjx-n"
+                              ><mjx-c
+                                class="mjx-c31"
+                              ></mjx-c></mjx-mn></mjx-texatom></mjx-script></mjx-munderover
+                      ><mjx-mn class="mjx-n" space="2"><mjx-c class="mjx-c31"></mjx-c></mjx-mn
+                      ><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c2B"></mjx-c></mjx-mo
+                      ><mjx-mi class="mjx-i" space="3"
+                        ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi
+                      ><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c2B"></mjx-c></mjx-mo
+                      ><mjx-mfrac space="3"
+                        ><mjx-frac
+                          ><mjx-num
+                            ><mjx-nstrut></mjx-nstrut
+                            ><mjx-msup size="s"
+                              ><mjx-mi class="mjx-i"
+                                ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi
+                              ><mjx-script style="vertical-align: 0.363em"
+                                ><mjx-mn class="mjx-n" size="s"
+                                  ><mjx-c
+                                    class="mjx-c32"
+                                  ></mjx-c></mjx-mn></mjx-script></mjx-msup></mjx-num
+                          ><mjx-dbox
+                            ><mjx-dtable
+                              ><mjx-line></mjx-line
+                              ><mjx-row
+                                ><mjx-den
+                                  ><mjx-dstrut></mjx-dstrut
+                                  ><mjx-mn class="mjx-n" size="s"
+                                    ><mjx-c
+                                      class="mjx-c32"
+                                    ></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac
+                      ><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c2B"></mjx-c></mjx-mo
+                      ><mjx-mfrac space="3"
+                        ><mjx-frac
+                          ><mjx-num
+                            ><mjx-nstrut></mjx-nstrut
+                            ><mjx-msup size="s"
+                              ><mjx-mi class="mjx-i"
+                                ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi
+                              ><mjx-script style="vertical-align: 0.363em"
+                                ><mjx-mn class="mjx-n" size="s"
+                                  ><mjx-c
+                                    class="mjx-c33"
+                                  ></mjx-c></mjx-mn></mjx-script></mjx-msup></mjx-num
+                          ><mjx-dbox
+                            ><mjx-dtable
+                              ><mjx-line></mjx-line
+                              ><mjx-row
+                                ><mjx-den
+                                  ><mjx-dstrut></mjx-dstrut
+                                  ><mjx-mn class="mjx-n" size="s"
+                                    ><mjx-c
+                                      class="mjx-c36"
+                                    ></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac
+                      ><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c2B"></mjx-c></mjx-mo
+                      ><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c2026"></mjx-c></mjx-mo
+                      ><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c2B"></mjx-c></mjx-mo
+                      ><mjx-mfrac space="3"
+                        ><mjx-frac
+                          ><mjx-num
+                            ><mjx-nstrut></mjx-nstrut
+                            ><mjx-msup size="s"
+                              ><mjx-mi class="mjx-i"
+                                ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi
+                              ><mjx-script style="vertical-align: 0.363em"
+                                ><mjx-mi class="mjx-i" size="s"
+                                  ><mjx-c
+                                    class="mjx-c1D45B TEX-I"
+                                  ></mjx-c></mjx-mi></mjx-script></mjx-msup></mjx-num
+                          ><mjx-dbox
+                            ><mjx-dtable
+                              ><mjx-line></mjx-line
+                              ><mjx-row
+                                ><mjx-den
+                                  ><mjx-dstrut></mjx-dstrut
+                                  ><mjx-mrow size="s"
+                                    ><mjx-mi class="mjx-i"
+                                      ><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                                    ><mjx-mo class="mjx-n"
+                                      ><mjx-c
+                                        class="mjx-c21"
+                                      ></mjx-c></mjx-mo></mjx-mrow></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><msup><mi>e</mi><mi>x</mi></msup
+                        ><mo>=</mo
+                        ><munderover
+                          ><mo data-mjx-texclass="OP">∑</mo
+                          ><mrow data-mjx-texclass="ORD"><mi>n</mi><mo>=</mo><mn>1</mn></mrow
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi mathvariant="normal">∞</mi></mrow
+                          ></munderover
+                        ><mn>1</mn><mo>+</mo><mi>x</mi><mo>+</mo
+                        ><mfrac
+                          ><msup><mi>x</mi><mn>2</mn></msup
+                          ><mn>2</mn></mfrac
+                        ><mo>+</mo
+                        ><mfrac
+                          ><msup><mi>x</mi><mn>3</mn></msup
+                          ><mn>6</mn></mfrac
+                        ><mo>+</mo><mo>…</mo><mo>+</mo
+                        ><mfrac
+                          ><msup><mi>x</mi><mi>n</mi></msup
+                          ><mrow><mi>n</mi><mo>!</mo></mrow></mfrac
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                </p>
+                <p>
+                  In other words, as we get more and more tiers of generators (as n goes up), we
+                  approach
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="54"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-msup
+                        ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                        ><mjx-script style="vertical-align: 0.363em"
+                          ><mjx-mi class="mjx-i" size="s"
+                            ><mjx-c
+                              class="mjx-c1D465 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-script></mjx-msup></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><msup><mi>e</mi><mi>x</mi></msup></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >, which is...exponential growth!
+                </p>
+                <figure class="kg-card kg-image-card">
+                  <img
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/tumblr_mhpp3g0gYM1r5rl88o1_500.gif"
+                    class="kg-image"
+                    alt=""
+                    loading="lazy"
+                  />
+                </figure>
+                <p>
+                  Okay, so that was a lot of theoretical math -- where did that actually get us?
+                  We’ve learned that setting up a chain of generators starts to approach exponential
+                  growth, which means it will have a lot of the properties that we had used in our
+                  exponential games. Plus, since you're not going to have infinite generators,
+                  you'll still always eventually lag behind actual exponential growth, so costs (at
+                  exponential levels) will still outpace production (with derivative-based growth)
+                  as we want. I also find that it just "feels" good - as you gain more tiers you get
+                  to see the lower tiers get truly huge - it's like having multiple AdVenture
+                  Capitalist games all working together!
+                </p>
+                <p>
+                  There are a few games that already do this, perhaps most clearly is the aptly
+                  named
+                  <a href="http://gzgreg.github.io/DerivativeClicker/?ref=sirpinski.com"
+                    >Derivative Clicker</a
+                  >
+                  by <a href="https://github.com/gzgreg?ref=sirpinski.com">gzgreg</a> (forked from
+                  <a href="https://github.com/Icehawk78?ref=sirpinski.com">icehawk78</a>), seen in
+                  the animated .gif below. Note that the single Graduate Student (<mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="55"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(175, 50, 53)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c33"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#AF3235"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>3</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >) is producing one Undergrad (<mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="56"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(247, 146, 29)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c32"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#F7921D"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>2</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >) per tick, while the High Schoolers (<mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="57"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mstyle style="color: rgb(0, 162, 227)"
+                        ><mjx-texatom texclass="ORD"
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D43A TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D452 TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45B TEX-I"></mjx-c></mjx-mi
+                          ><mjx-mn class="mjx-n"
+                            ><mjx-c
+                              class="mjx-c31"
+                            ></mjx-c></mjx-mn></mjx-texatom></mjx-mstyle></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mstyle mathcolor="#00A2E3"
+                          ><mrow data-mjx-texclass="ORD"
+                            ><mi>G</mi><mi>e</mi><mi>n</mi><mn>1</mn></mrow
+                          ></mstyle
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >, which produce dollars) being generated go up quickly -- 10, then 11, then 12,
+                  etc. as the Undergrads increase. Exactly as we set up above.
+                </p>
+                <figure class="kg-card kg-image-card">
+                  <img
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/2016-10-27_14-41-14.gif"
+                    class="kg-image"
+                    alt=""
+                    loading="lazy"
+                  />
+                </figure>
+                <p>
+                  We can check out
+                  <a
+                    href="https://github.com/gzgreg/DerivativeClicker/tree/gh-pages?ref=sirpinski.com"
+                    >Derivative Clicker code</a
+                  >
+                  to learn a little more, and indeed the costs are calculated using a basic
+                  exponential function as expected. The cost of High Schoolers for example is
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="58"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mn class="mjx-n"><mjx-c class="mjx-c35"></mjx-c></mjx-mn
+                      ><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-cD7"></mjx-c></mjx-mo
+                      ><mjx-msup space="3"
+                        ><mjx-mn class="mjx-n"
+                          ><mjx-c class="mjx-c31"></mjx-c><mjx-c class="mjx-c2E"></mjx-c
+                          ><mjx-c class="mjx-c31"></mjx-c></mjx-mn
+                        ><mjx-script style="vertical-align: 0.393em"
+                          ><mjx-mi class="mjx-i" size="s"
+                            ><mjx-c
+                              class="mjx-c1D45B TEX-I"
+                            ></mjx-c></mjx-mi></mjx-script></mjx-msup></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mn>5</mn><mo>×</mo><msup><mn>1.1</mn><mi>n</mi></msup></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >. So still exponential costs, and growth is happening sub-exponentially, which is
+                  perfect!
+                </p>
+                <p>
+                  Cirrial’s <a href="http://cirri.al/sharks/?ref=sirpinski.com">Shark Game</a> (a
+                  fantastic idle game if you haven’t tried it) also makes use of generators
+                  producing other generators; for example, the Nurse Sharks create Sharks that
+                  harvest fish.
+                </p>
+                <p>
+                  One of the major balance issues to solve is how to keep purchasing of lower-level
+                  tiers relevant. As you can see in the gif above, I’m gaining lots of high
+                  schoolers every second, for free. Why would I ever buy more? The answer could be
+                  that you wouldn’t and you can design your game that way, but if you want to keep
+                  them relevant, well, gzgreg’s solution is an elegant one.
+                </p>
+                <p>
+                  Notice that each generator up there has two numbers: a total owned, and then one
+                  in parentheses, which is the number actually purchased. The cost of a generator is
+                  calculated based on the purchased number, not the owned number. But more
+                  importantly, he has created tier boosts. For example, every
+                  <strong>purchased</strong> tier 1 building (like the High Schooler) boosts the
+                  production of all tier 1 buildings by 0.05%. This means that even when I have
+                  billions of High Schoolers, there’s still value in me being able to buy more
+                  manually, which creates a great sense of having lots of possible and influential
+                  ways to spend your resources.
+                </p>
+                <p>
+                  One last point on the topic. What I laid out above is the simplest version of a
+                  derivative-based system, but as a game designer you have a lot more flexibility
+                  than that, and you should be open to exploring that space. For example, here’s the
+                  general cost and production chart for Derivative Clicker. Notice that it has two
+                  currencies and generators have dependency on the production of one another, which
+                  makes for some excellent interplay during the game.
+                </p>
+                <figure class="kg-card kg-image-card">
+                  <img
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/Pasted_image_at_2016_10_27_05_29_PM.webp"
+                    class="kg-image"
+                    alt=""
+                    loading="lazy"
+                  />
+                </figure>
+                <p>
+                  So I would encourage you to explore different types of progression within your
+                  game. The standard all-generators-contribute-to-a-primary-currency progression is
+                  great and powerful, but it can also be combined with things like this
+                  derivative-based generator concept.
+                </p>
+                <p>
+                  Make generators. Draw lines between them. See what happens! Maybe one generator
+                  can produce multiple currencies. Or multiple generators. Or maybe even
+                  <a href="http://www.kongregate.com/games/kongregate/idleplex?ref=sirpinski.com"
+                    >more idle games</a
+                  >. The world’s your oyster, have fun with it. :)
+                </p>
+                <p>
+                  <em
+                    >If you have questions, find a mistake, or have an awesome new idle game you
+                    want to share, please feel free to reach out and email me at
+                    anthony.pecorella@leveluplabs.com. I also want to give credit to the tools used
+                    in this post:
+                    <a href="https://www.mathjax.org/?ref=sirpinski.com">MathJax</a> did the awesome
+                    live-rendering of LaTeX,
+                    <a href="https://www.draw.io/?ref=sirpinski.com">Draw.io</a> is a quick and free
+                    flowchart web app, and
+                    <a href="https://www.desmos.com/?ref=sirpinski.com">Desmos</a> is a slick
+                    in-browser graphing calculator with some great educational functionality.</em
+                  >
+                </p>
+              </div>
+
+              <footer class="single-footer container small">
+                <div class="single-footer-left">
+                  <div class="navigation navigation-previous">
+                    <a
+                      class="navigation-link"
+                      href="https://www.sirpinski.com/the-math-of-idle-games-part-i/"
+                      aria-label="Previous post"
+                    >
+                      <span class="navigation-icon"
+                        ><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                          <path
+                            d="M26.667 14.667v2.667h-16L18 24.667l-1.893 1.893L5.547 16l10.56-10.56L18 7.333l-7.333 7.333h16z"
+                          ></path></svg
+                      ></span>
+                    </a>
+                  </div>
+                </div>
+
+                <div class="single-footer-middle">
+                  <div class="single-footer-top">
+                    <h3 class="single-footer-title">Published by:</h3>
+                    <div class="author-list">
+                      <div class="author-image-placeholder u-placeholder square">
+                        <a
+                          href="https://www.sirpinski.com/author/anthony/"
+                          title="Anthony Pecorella"
+                        >
+                          <img
+                            class="author-image u-object-fit"
+                            src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/IMG_3675.jpg"
+                            alt="Anthony Pecorella"
+                            loading="lazy"
+                          />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="single-footer-bottom">
+                    <div class="share">
+                      <a
+                        class="share-link share-link-facebook"
+                        href="https://www.facebook.com/sharer.php?u=https://www.sirpinski.com/the-math-of-idle-games-part-ii/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M23.9981 11.9991C23.9981 5.37216 18.626 0 11.9991 0C5.37216 0 0 5.37216 0 11.9991C0 17.9882 4.38789 22.9522 10.1242 23.8524V15.4676H7.07758V11.9991H10.1242V9.35553C10.1242 6.34826 11.9156 4.68714 14.6564 4.68714C15.9692 4.68714 17.3424 4.92149 17.3424 4.92149V7.87439H15.8294C14.3388 7.87439 13.8739 8.79933 13.8739 9.74824V11.9991H17.2018L16.6698 15.4676H13.8739V23.8524C19.6103 22.9522 23.9981 17.9882 23.9981 11.9991Z"
+                          ></path>
+                        </svg>
+                        Share
+                      </a>
+                      <a
+                        class="share-link share-link-twitter"
+                        href="https://twitter.com/intent/tweet?url=https://www.sirpinski.com/the-math-of-idle-games-part-ii/&amp;text=The%20Math%20of%20Idle%20Games%2C%20Part%20II"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"
+                          ></path>
+                        </svg>
+                        Tweet
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="single-footer-right">
+                  <div class="navigation navigation-next">
+                    <a
+                      class="navigation-link"
+                      href="https://www.sirpinski.com/the-math-of-idle-games-part-iii/"
+                      aria-label="Next post"
+                    >
+                      <span class="navigation-icon"
+                        ><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                          <path
+                            d="M5.333 14.667v2.667h16L14 24.667l1.893 1.893L26.453 16 15.893 5.44 14 7.333l7.333 7.333h-16z"
+                          ></path></svg
+                      ></span>
+                    </a>
+                  </div>
+                </div>
+              </footer>
+            </article>
+          </main>
+        </div>
+      </div>
+
+      <footer class="site-footer container">
+        <div class="footer-inner">
+          <div class="footer-left">
+            <div class="copyright">Gasket Case © 2026</div>
+          </div>
+
+          <nav class="footer-nav">
+            <a
+              class="menu-item badge"
+              href="https://ghost.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Published with Ghost</a
+            >
+          </nav>
+
+          <div class="footer-right">
+            <div class="social">
+              <a
+                class="social-item social-item-twitter"
+                href="https://x.com/Ant_Pecorella"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Twitter"
+              >
+                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"
+                  ></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
+      <!-- Root element of PhotoSwipe. Must have class pswp. -->
+      <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+        <!-- Background of PhotoSwipe.
+        It's a separate element as animating opacity is faster than rgba(). -->
+        <div class="pswp__bg"></div>
+
+        <!-- Slides wrapper with overflow:hidden. -->
+        <div class="pswp__scroll-wrap">
+          <!-- Container that holds slides.
+          PhotoSwipe keeps only 3 of them in the DOM to save memory.
+          Don't modify these 3 pswp__item elements, data is added later on. -->
+          <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+          </div>
+
+          <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+          <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+              <!--  Controls are self-explanatory. Order can be changed. -->
+              <div class="pswp__counter"></div>
+
+              <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+              <button class="pswp__button pswp__button--share" title="Share"></button>
+              <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+              <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+              <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+              <!-- element will get class pswp__preloader--active when preloader is running -->
+              <div class="pswp__preloader">
+                <div class="pswp__preloader__icn">
+                  <div class="pswp__preloader__cut">
+                    <div class="pswp__preloader__donut"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+              <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button
+              class="pswp__button pswp__button--arrow--left"
+              title="Previous (arrow left)"
+            ></button>
+            <button
+              class="pswp__button pswp__button--arrow--right"
+              title="Next (arrow right)"
+            ></button>
+
+            <div class="pswp__caption">
+              <div class="pswp__caption__center"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      if (document.body.classList.contains('with-full-cover')) {
+        document.getElementsByClassName('cover')[0].style.height = window.innerHeight + 'px';
+      }
+    </script>
+
+    <script>
+      var feed = document.querySelector('.post-feed');
+      if (feed && !feed.classList.contains('related-feed')) {
+        var wrapper = document.querySelector('.feed-layout');
+        var feedLayout = localStorage.getItem('edition_layout');
+        switch (feedLayout) {
+          case 'compact':
+            wrapper.classList.remove('expanded');
+            feed.classList.remove('expanded');
+            break;
+          default:
+            break;
+        }
+      }
+    </script>
+
+    <script src="The%20Math%20of%20Idle%20Games,%20Part%20II_files/main.min.js"></script>
+
+    <div id="sodo-search-root"></div>
+  </body>
+</html>

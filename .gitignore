@@ -4,7 +4,6 @@ dist
 *.local
 .mcp.json
 .codex
-docs/source/
 
 # Claude: commit .claude/CLAUDE.md and rules/, keep the rest private
 .claude/*

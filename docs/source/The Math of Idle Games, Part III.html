@@ -1,0 +1,2617 @@
+<!doctype html>
+<html lang="en" class="idc0_343 nbqiinw">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Math of Idle Games, Part III</title>
+    <link rel="stylesheet" href="The%20Math%20of%20Idle%20Games,%20Part%20III_files/screen.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" />
+    <link rel="stylesheet" href="The%20Math%20of%20Idle%20Games,%20Part%20III_files/css2.css" />
+
+    <link
+      rel="icon"
+      href="https://storage.ghost.io/c/2a/18/2a185de1-0fdf-4622-ac7d-196cef4ec14a/content/images/size/w256h256/2021/07/SP-Icon.png"
+      type="image/png"
+    />
+    <link rel="canonical" href="https://www.sirpinski.com/the-math-of-idle-games-part-iii/" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+    <meta property="og:site_name" content="Gasket Case" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="The Math of Idle Games, Part III" />
+    <meta
+      property="og:description"
+      content="Originally published January 12, 2017
+
+This three-part series is intended to break apart my MIGS 2016 slides
+[http://www.slideshare.net/AnthonyPecorella/the-rise-and-rise-of-idle-games-68916528] 
+into what are hopefully detailed but accessible angles on the math and mechanics
+behind idle and incremental games. The sections draw heavily from a collection
+of spreadsheet"
+    />
+    <meta property="og:url" content="https://www.sirpinski.com/the-math-of-idle-games-part-iii/" />
+    <meta
+      property="og:image"
+      content="https://storage.ghost.io/c/2a/18/2a185de1-0fdf-4622-ac7d-196cef4ec14a/content/images/2021/08/imageonline-co-textimage--1-.png"
+    />
+    <meta property="article:published_time" content="2021-07-30T19:57:42.000Z" />
+    <meta property="article:modified_time" content="2021-08-11T21:08:48.000Z" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The Math of Idle Games, Part III" />
+    <meta
+      name="twitter:description"
+      content="Originally published January 12, 2017
+
+This three-part series is intended to break apart my MIGS 2016 slides
+[http://www.slideshare.net/AnthonyPecorella/the-rise-and-rise-of-idle-games-68916528] 
+into what are hopefully detailed but accessible angles on the math and mechanics
+behind idle and incremental games. The sections draw heavily from a collection
+of spreadsheet"
+    />
+    <meta name="twitter:url" content="https://www.sirpinski.com/the-math-of-idle-games-part-iii/" />
+    <meta
+      name="twitter:image"
+      content="https://storage.ghost.io/c/2a/18/2a185de1-0fdf-4622-ac7d-196cef4ec14a/content/images/2021/08/imageonline-co-textimage--1-.png"
+    />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Anthony Pecorella" />
+    <meta name="twitter:site" content="@Ant_Pecorella" />
+    <meta property="og:image:width" content="374" />
+    <meta property="og:image:height" content="187" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Gasket Case",
+          "url": "https://www.sirpinski.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://storage.ghost.io/c/2a/18/2a185de1-0fdf-4622-ac7d-196cef4ec14a/content/images/size/w256h256/2021/07/SP-Icon.png",
+            "width": 60,
+            "height": 60
+          }
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Anthony Pecorella",
+          "image": {
+            "@type": "ImageObject",
+            "url": "https://storage.ghost.io/c/2a/18/2a185de1-0fdf-4622-ac7d-196cef4ec14a/content/images/2021/07/IMG_3675.JPG",
+            "width": 960,
+            "height": 960
+          },
+          "url": "https://www.sirpinski.com/author/anthony/",
+          "sameAs": []
+        },
+        "headline": "The Math of Idle Games, Part III",
+        "url": "https://www.sirpinski.com/the-math-of-idle-games-part-iii/",
+        "datePublished": "2021-07-30T19:57:42.000Z",
+        "dateModified": "2021-08-11T21:08:48.000Z",
+        "image": {
+          "@type": "ImageObject",
+          "url": "https://storage.ghost.io/c/2a/18/2a185de1-0fdf-4622-ac7d-196cef4ec14a/content/images/2021/08/imageonline-co-textimage--1-.png",
+          "width": 374,
+          "height": 187
+        },
+        "description": "Originally published January 12, 2017\n\nThis three-part series is intended to break apart my MIGS 2016 slides\n[http://www.slideshare.net/AnthonyPecorella/the-rise-and-rise-of-idle-games-68916528] \ninto what are hopefully detailed but accessible angles on the math and mechanics\nbehind idle and incremental games. The sections draw heavily from a collection\nof spreadsheet models\n[https://drive.google.com/drive/folders/1lKCEfXU60vv6AOfna4MS6nxayw_aFpn0?usp&#x3D;sharing] \nI built and have opened up for you",
+        "mainEntityOfPage": "https://www.sirpinski.com/the-math-of-idle-games-part-iii/"
+      }
+    </script>
+
+    <meta name="generator" content="Ghost 6.34" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Gasket Case"
+      href="https://www.sirpinski.com/rss/"
+    />
+
+    <script
+      defer="defer"
+      src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/sodo-search.min.js"
+      data-key="41e918cf719e76515f73e08dfa"
+      data-styles="https://cdn.jsdelivr.net/ghost/sodo-search@~1.8/umd/main.css"
+      data-sodo-search="https://sir-pinski-gasket-case.ghost.io/"
+      data-locale="en"
+      crossorigin="anonymous"
+    ></script>
+
+    <link href="https://www.sirpinski.com/webmentions/receive/" rel="webmention" />
+    <script
+      defer="defer"
+      src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/cards.min.js"
+    ></script>
+    <style>
+      :root {
+        --ghost-accent-color: #3e3d2e;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="The%20Math%20of%20Idle%20Games,%20Part%20III_files/cards.min.css"
+    />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async=""
+      src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/google-analytics_analytics.js"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+
+      gtag('config', 'G-ZNEX1T8KGX');
+    </script>
+
+    <script src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/polyfill.min.js"></script>
+    <script
+      id="MathJax-script"
+      async=""
+      src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/tex-chtml.js"
+    ></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ['$', '$'],
+            ['\\(', '\\)'],
+          ],
+        },
+      };
+    </script>
+    <style>
+      .App {
+        text-align: center;
+      }
+      .App-logo {
+        height: 40vmin;
+        pointer-events: none;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .App-logo {
+          animation: App-logo-spin infinite 20s linear;
+        }
+      }
+      .App-header {
+        background-color: #282c34;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: calc(10px + 2vmin);
+        color: #fff;
+      }
+      .App-link {
+        color: #61dafb;
+      }
+      @keyframes App-logo-spin {
+        0% {
+          transform: rotate(0);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      /*$vite$:1*/
+    </style>
+    <style type="text/css">
+      .CtxtMenu_InfoClose {
+        top: 0.2em;
+        right: 0.2em;
+      }
+      .CtxtMenu_InfoContent {
+        overflow: auto;
+        text-align: left;
+        font-size: 80%;
+        padding: 0.4em 0.6em;
+        border: 1px inset;
+        margin: 1em 0px;
+        max-height: 20em;
+        max-width: 30em;
+        background-color: #eeeeee;
+        white-space: normal;
+      }
+      .CtxtMenu_Info.CtxtMenu_MousePost {
+        outline: none;
+      }
+      .CtxtMenu_Info {
+        position: fixed;
+        left: 50%;
+        width: auto;
+        text-align: center;
+        border: 3px outset;
+        padding: 1em 2em;
+        background-color: #dddddd;
+        color: black;
+        cursor: default;
+        font-family: message-box;
+        font-size: 120%;
+        font-style: normal;
+        text-indent: 0;
+        text-transform: none;
+        line-height: normal;
+        letter-spacing: normal;
+        word-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        float: none;
+        z-index: 201;
+        border-radius: 15px; /* Opera 10.5 and IE9 */
+        -webkit-border-radius: 15px; /* Safari and Chrome */
+        -moz-border-radius: 15px; /* Firefox */
+        -khtml-border-radius: 15px; /* Konqueror */
+        box-shadow: 0px 10px 20px #808080; /* Opera 10.5 and IE9 */
+        -webkit-box-shadow: 0px 10px 20px #808080; /* Safari 3 & Chrome */
+        -moz-box-shadow: 0px 10px 20px #808080; /* Forefox 3.5 */
+        -khtml-box-shadow: 0px 10px 20px #808080; /* Konqueror */
+        filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */
+      }
+    </style>
+    <style type="text/css">
+      .CtxtMenu_MenuClose {
+        position: absolute;
+        cursor: pointer;
+        display: inline-block;
+        border: 2px solid #aaa;
+        border-radius: 18px;
+        -webkit-border-radius: 18px; /* Safari and Chrome */
+        -moz-border-radius: 18px; /* Firefox */
+        -khtml-border-radius: 18px; /* Konqueror */
+        font-family: 'Courier New', Courier;
+        font-size: 24px;
+        color: #f0f0f0;
+      }
+      .CtxtMenu_MenuClose span {
+        display: block;
+        background-color: #aaa;
+        border: 1.5px solid;
+        border-radius: 18px;
+        -webkit-border-radius: 18px; /* Safari and Chrome */
+        -moz-border-radius: 18px; /* Firefox */
+        -khtml-border-radius: 18px; /* Konqueror */
+        line-height: 0;
+        padding: 8px 0 6px; /* may need to be browser-specific */
+      }
+      .CtxtMenu_MenuClose:hover {
+        color: white !important;
+        border: 2px solid #ccc !important;
+      }
+      .CtxtMenu_MenuClose:hover span {
+        background-color: #ccc !important;
+      }
+      .CtxtMenu_MenuClose:hover:focus {
+        outline: none;
+      }
+    </style>
+    <style type="text/css">
+      .CtxtMenu_Menu {
+        position: absolute;
+        background-color: white;
+        color: black;
+        width: auto;
+        padding: 5px 0px;
+        border: 1px solid #cccccc;
+        margin: 0;
+        cursor: default;
+        font: menu;
+        text-align: left;
+        text-indent: 0;
+        text-transform: none;
+        line-height: normal;
+        letter-spacing: normal;
+        word-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        float: none;
+        z-index: 201;
+        border-radius: 5px; /* Opera 10.5 and IE9 */
+        -webkit-border-radius: 5px; /* Safari and Chrome */
+        -moz-border-radius: 5px; /* Firefox */
+        -khtml-border-radius: 5px; /* Konqueror */
+        box-shadow: 0px 10px 20px #808080; /* Opera 10.5 and IE9 */
+        -webkit-box-shadow: 0px 10px 20px #808080; /* Safari 3 & Chrome */
+        -moz-box-shadow: 0px 10px 20px #808080; /* Forefox 3.5 */
+        -khtml-box-shadow: 0px 10px 20px #808080; /* Konqueror */
+      }
+      .CtxtMenu_MenuItem {
+        padding: 1px 2em;
+        background: transparent;
+      }
+      .CtxtMenu_MenuArrow {
+        position: absolute;
+        right: 0.5em;
+        padding-top: 0.25em;
+        color: #666666;
+        font-family: null;
+        font-size: 0.75em;
+      }
+      .CtxtMenu_MenuActive .CtxtMenu_MenuArrow {
+        color: white;
+      }
+      .CtxtMenu_MenuArrow.CtxtMenu_RTL {
+        left: 0.5em;
+        right: auto;
+      }
+      .CtxtMenu_MenuCheck {
+        position: absolute;
+        left: 0.7em;
+        font-family: null;
+      }
+      .CtxtMenu_MenuCheck.CtxtMenu_RTL {
+        right: 0.7em;
+        left: auto;
+      }
+      .CtxtMenu_MenuRadioCheck {
+        position: absolute;
+        left: 0.7em;
+      }
+      .CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {
+        right: 0.7em;
+        left: auto;
+      }
+      .CtxtMenu_MenuInputBox {
+        padding-left: 1em;
+        right: 0.5em;
+        color: #666666;
+        font-family: null;
+      }
+      .CtxtMenu_MenuInputBox.CtxtMenu_RTL {
+        left: 0.1em;
+      }
+      .CtxtMenu_MenuComboBox {
+        left: 0.1em;
+        padding-bottom: 0.5em;
+      }
+      .CtxtMenu_MenuSlider {
+        left: 0.1em;
+      }
+      .CtxtMenu_SliderValue {
+        position: absolute;
+        right: 0.1em;
+        padding-top: 0.25em;
+        color: #333333;
+        font-size: 0.75em;
+      }
+      .CtxtMenu_SliderBar {
+        outline: none;
+        background: #d3d3d3;
+      }
+      .CtxtMenu_MenuLabel {
+        padding: 1px 2em 3px 1.33em;
+        font-style: italic;
+      }
+      .CtxtMenu_MenuRule {
+        border-top: 1px solid #dddddd;
+        margin: 4px 3px;
+      }
+      .CtxtMenu_MenuDisabled {
+        color: GrayText;
+      }
+      .CtxtMenu_MenuActive {
+        background-color: #606872;
+        color: white;
+      }
+      .CtxtMenu_MenuDisabled:focus {
+        background-color: #e8e8e8;
+      }
+      .CtxtMenu_MenuLabel:focus {
+        background-color: #e8e8e8;
+      }
+      .CtxtMenu_ContextMenu:focus {
+        outline: none;
+      }
+      .CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {
+        outline: none;
+      }
+      .CtxtMenu_SelectionMenu {
+        position: relative;
+        float: left;
+        border-bottom: none;
+        -webkit-box-shadow: none;
+        -webkit-border-radius: 0px;
+      }
+      .CtxtMenu_SelectionItem {
+        padding-right: 1em;
+      }
+      .CtxtMenu_Selection {
+        right: 40%;
+        width: 50%;
+      }
+      .CtxtMenu_SelectionBox {
+        padding: 0em;
+        max-height: 20em;
+        max-width: none;
+        background-color: #ffffff;
+      }
+      .CtxtMenu_SelectionDivider {
+        clear: both;
+        border-top: 2px solid #000000;
+      }
+      .CtxtMenu_Menu .CtxtMenu_MenuClose {
+        top: -10px;
+        left: -10px;
+      }
+    </style>
+    <style id="MJX-CHTML-styles">
+      mjx-container[jax='CHTML'] {
+        line-height: 0;
+      }
+
+      mjx-container [space='1'] {
+        margin-left: 0.111em;
+      }
+
+      mjx-container [space='2'] {
+        margin-left: 0.167em;
+      }
+
+      mjx-container [space='3'] {
+        margin-left: 0.222em;
+      }
+
+      mjx-container [space='4'] {
+        margin-left: 0.278em;
+      }
+
+      mjx-container [space='5'] {
+        margin-left: 0.333em;
+      }
+
+      mjx-container [rspace='1'] {
+        margin-right: 0.111em;
+      }
+
+      mjx-container [rspace='2'] {
+        margin-right: 0.167em;
+      }
+
+      mjx-container [rspace='3'] {
+        margin-right: 0.222em;
+      }
+
+      mjx-container [rspace='4'] {
+        margin-right: 0.278em;
+      }
+
+      mjx-container [rspace='5'] {
+        margin-right: 0.333em;
+      }
+
+      mjx-container [size='s'] {
+        font-size: 70.7%;
+      }
+
+      mjx-container [size='ss'] {
+        font-size: 50%;
+      }
+
+      mjx-container [size='Tn'] {
+        font-size: 60%;
+      }
+
+      mjx-container [size='sm'] {
+        font-size: 85%;
+      }
+
+      mjx-container [size='lg'] {
+        font-size: 120%;
+      }
+
+      mjx-container [size='Lg'] {
+        font-size: 144%;
+      }
+
+      mjx-container [size='LG'] {
+        font-size: 173%;
+      }
+
+      mjx-container [size='hg'] {
+        font-size: 207%;
+      }
+
+      mjx-container [size='HG'] {
+        font-size: 249%;
+      }
+
+      mjx-container [width='full'] {
+        width: 100%;
+      }
+
+      mjx-box {
+        display: inline-block;
+      }
+
+      mjx-block {
+        display: block;
+      }
+
+      mjx-itable {
+        display: inline-table;
+      }
+
+      mjx-row {
+        display: table-row;
+      }
+
+      mjx-row > * {
+        display: table-cell;
+      }
+
+      mjx-mtext {
+        display: inline-block;
+      }
+
+      mjx-mstyle {
+        display: inline-block;
+      }
+
+      mjx-merror {
+        display: inline-block;
+        color: red;
+        background-color: yellow;
+      }
+
+      mjx-mphantom {
+        visibility: hidden;
+      }
+
+      _::-webkit-full-page-media,
+      _:future,
+      :root mjx-container {
+        will-change: opacity;
+      }
+
+      mjx-assistive-mml {
+        position: absolute !important;
+        top: 0px;
+        left: 0px;
+        clip: rect(1px, 1px, 1px, 1px);
+        padding: 1px 0px 0px 0px !important;
+        border: 0px !important;
+        display: block !important;
+        width: auto !important;
+        overflow: hidden !important;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      mjx-assistive-mml[display='block'] {
+        width: 100% !important;
+      }
+
+      mjx-math {
+        display: inline-block;
+        text-align: left;
+        line-height: 0;
+        text-indent: 0;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 100%;
+        font-size-adjust: none;
+        letter-spacing: normal;
+        border-collapse: collapse;
+        word-wrap: normal;
+        word-spacing: normal;
+        white-space: nowrap;
+        direction: ltr;
+        padding: 1px 0;
+      }
+
+      mjx-container[jax='CHTML'][display='true'] {
+        display: block;
+        text-align: center;
+        margin: 1em 0;
+      }
+
+      mjx-container[jax='CHTML'][display='true'][width='full'] {
+        display: flex;
+      }
+
+      mjx-container[jax='CHTML'][display='true'] mjx-math {
+        padding: 0;
+      }
+
+      mjx-container[jax='CHTML'][justify='left'] {
+        text-align: left;
+      }
+
+      mjx-container[jax='CHTML'][justify='right'] {
+        text-align: right;
+      }
+
+      mjx-mi {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-c {
+        display: inline-block;
+      }
+
+      mjx-utext {
+        display: inline-block;
+        padding: 0.75em 0 0.2em 0;
+      }
+
+      mjx-msub {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-mo {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-stretchy-h {
+        display: inline-table;
+        width: 100%;
+      }
+
+      mjx-stretchy-h > * {
+        display: table-cell;
+        width: 0;
+      }
+
+      mjx-stretchy-h > * > mjx-c {
+        display: inline-block;
+        transform: scalex(1.0000001);
+      }
+
+      mjx-stretchy-h > * > mjx-c::before {
+        display: inline-block;
+        width: initial;
+      }
+
+      mjx-stretchy-h > mjx-ext {
+        /* IE */
+        overflow: hidden;
+        /* others */
+        overflow: clip visible;
+        width: 100%;
+      }
+
+      mjx-stretchy-h > mjx-ext > mjx-c::before {
+        transform: scalex(500);
+      }
+
+      mjx-stretchy-h > mjx-ext > mjx-c {
+        width: 0;
+      }
+
+      mjx-stretchy-h > mjx-beg > mjx-c {
+        margin-right: -0.1em;
+      }
+
+      mjx-stretchy-h > mjx-end > mjx-c {
+        margin-left: -0.1em;
+      }
+
+      mjx-stretchy-v {
+        display: inline-block;
+      }
+
+      mjx-stretchy-v > * {
+        display: block;
+      }
+
+      mjx-stretchy-v > mjx-beg {
+        height: 0;
+      }
+
+      mjx-stretchy-v > mjx-end > mjx-c {
+        display: block;
+      }
+
+      mjx-stretchy-v > * > mjx-c {
+        transform: scaley(1.0000001);
+        transform-origin: left center;
+        overflow: hidden;
+      }
+
+      mjx-stretchy-v > mjx-ext {
+        display: block;
+        height: 100%;
+        box-sizing: border-box;
+        border: 0px solid transparent;
+        /* IE */
+        overflow: hidden;
+        /* others */
+        overflow: visible clip;
+      }
+
+      mjx-stretchy-v > mjx-ext > mjx-c::before {
+        width: initial;
+        box-sizing: border-box;
+      }
+
+      mjx-stretchy-v > mjx-ext > mjx-c {
+        transform: scaleY(500) translateY(0.075em);
+        overflow: visible;
+      }
+
+      mjx-mark {
+        display: inline-block;
+        height: 0px;
+      }
+
+      mjx-mfrac {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-frac {
+        display: inline-block;
+        vertical-align: 0.17em;
+        padding: 0 0.22em;
+      }
+
+      mjx-frac[type='d'] {
+        vertical-align: 0.04em;
+      }
+
+      mjx-frac[delims] {
+        padding: 0 0.1em;
+      }
+
+      mjx-frac[atop] {
+        padding: 0 0.12em;
+      }
+
+      mjx-frac[atop][delims] {
+        padding: 0;
+      }
+
+      mjx-dtable {
+        display: inline-table;
+        width: 100%;
+      }
+
+      mjx-dtable > * {
+        font-size: 2000%;
+      }
+
+      mjx-dbox {
+        display: block;
+        font-size: 5%;
+      }
+
+      mjx-num {
+        display: block;
+        text-align: center;
+      }
+
+      mjx-den {
+        display: block;
+        text-align: center;
+      }
+
+      mjx-mfrac[bevelled] > mjx-num {
+        display: inline-block;
+      }
+
+      mjx-mfrac[bevelled] > mjx-den {
+        display: inline-block;
+      }
+
+      mjx-den[align='right'],
+      mjx-num[align='right'] {
+        text-align: right;
+      }
+
+      mjx-den[align='left'],
+      mjx-num[align='left'] {
+        text-align: left;
+      }
+
+      mjx-nstrut {
+        display: inline-block;
+        height: 0.054em;
+        width: 0;
+        vertical-align: -0.054em;
+      }
+
+      mjx-nstrut[type='d'] {
+        height: 0.217em;
+        vertical-align: -0.217em;
+      }
+
+      mjx-dstrut {
+        display: inline-block;
+        height: 0.505em;
+        width: 0;
+      }
+
+      mjx-dstrut[type='d'] {
+        height: 0.726em;
+      }
+
+      mjx-line {
+        display: block;
+        box-sizing: border-box;
+        min-height: 1px;
+        height: 0.06em;
+        border-top: 0.06em solid;
+        margin: 0.06em -0.1em;
+        overflow: hidden;
+      }
+
+      mjx-line[type='d'] {
+        margin: 0.18em -0.1em;
+      }
+
+      mjx-mrow {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-msqrt {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-root {
+        display: inline-block;
+        white-space: nowrap;
+      }
+
+      mjx-surd {
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      mjx-sqrt {
+        display: inline-block;
+        padding-top: 0.07em;
+      }
+
+      mjx-sqrt > mjx-box {
+        border-top: 0.07em solid;
+      }
+
+      mjx-sqrt.mjx-tall > mjx-box {
+        padding-left: 0.3em;
+        margin-left: -0.3em;
+      }
+
+      mjx-mn {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-msup {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-TeXAtom {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-mroot {
+        display: inline-block;
+        text-align: left;
+      }
+
+      mjx-c::before {
+        display: block;
+        width: 0;
+      }
+
+      .MJX-TEX {
+        font-family: MJXZERO, MJXTEX;
+      }
+
+      .TEX-B {
+        font-family: MJXZERO, MJXTEX-B;
+      }
+
+      .TEX-I {
+        font-family: MJXZERO, MJXTEX-I;
+      }
+
+      .TEX-MI {
+        font-family: MJXZERO, MJXTEX-MI;
+      }
+
+      .TEX-BI {
+        font-family: MJXZERO, MJXTEX-BI;
+      }
+
+      .TEX-S1 {
+        font-family: MJXZERO, MJXTEX-S1;
+      }
+
+      .TEX-S2 {
+        font-family: MJXZERO, MJXTEX-S2;
+      }
+
+      .TEX-S3 {
+        font-family: MJXZERO, MJXTEX-S3;
+      }
+
+      .TEX-S4 {
+        font-family: MJXZERO, MJXTEX-S4;
+      }
+
+      .TEX-A {
+        font-family: MJXZERO, MJXTEX-A;
+      }
+
+      .TEX-C {
+        font-family: MJXZERO, MJXTEX-C;
+      }
+
+      .TEX-CB {
+        font-family: MJXZERO, MJXTEX-CB;
+      }
+
+      .TEX-FR {
+        font-family: MJXZERO, MJXTEX-FR;
+      }
+
+      .TEX-FRB {
+        font-family: MJXZERO, MJXTEX-FRB;
+      }
+
+      .TEX-SS {
+        font-family: MJXZERO, MJXTEX-SS;
+      }
+
+      .TEX-SSB {
+        font-family: MJXZERO, MJXTEX-SSB;
+      }
+
+      .TEX-SSI {
+        font-family: MJXZERO, MJXTEX-SSI;
+      }
+
+      .TEX-SC {
+        font-family: MJXZERO, MJXTEX-SC;
+      }
+
+      .TEX-T {
+        font-family: MJXZERO, MJXTEX-T;
+      }
+
+      .TEX-V {
+        font-family: MJXZERO, MJXTEX-V;
+      }
+
+      .TEX-VB {
+        font-family: MJXZERO, MJXTEX-VB;
+      }
+
+      mjx-stretchy-v mjx-c,
+      mjx-stretchy-h mjx-c {
+        font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A !important;
+      }
+
+      @font-face /* 0 */ {
+        font-family: MJXZERO;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff')
+          format('woff');
+      }
+
+      @font-face /* 1 */ {
+        font-family: MJXTEX;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 2 */ {
+        font-family: MJXTEX-B;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff')
+          format('woff');
+      }
+
+      @font-face /* 3 */ {
+        font-family: MJXTEX-I;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff')
+          format('woff');
+      }
+
+      @font-face /* 4 */ {
+        font-family: MJXTEX-MI;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff')
+          format('woff');
+      }
+
+      @font-face /* 5 */ {
+        font-family: MJXTEX-BI;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff')
+          format('woff');
+      }
+
+      @font-face /* 6 */ {
+        font-family: MJXTEX-S1;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 7 */ {
+        font-family: MJXTEX-S2;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 8 */ {
+        font-family: MJXTEX-S3;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 9 */ {
+        font-family: MJXTEX-S4;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 10 */ {
+        font-family: MJXTEX-A;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 11 */ {
+        font-family: MJXTEX-C;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 12 */ {
+        font-family: MJXTEX-CB;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff')
+          format('woff');
+      }
+
+      @font-face /* 13 */ {
+        font-family: MJXTEX-FR;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 14 */ {
+        font-family: MJXTEX-FRB;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff')
+          format('woff');
+      }
+
+      @font-face /* 15 */ {
+        font-family: MJXTEX-SS;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 16 */ {
+        font-family: MJXTEX-SSB;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff')
+          format('woff');
+      }
+
+      @font-face /* 17 */ {
+        font-family: MJXTEX-SSI;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff')
+          format('woff');
+      }
+
+      @font-face /* 18 */ {
+        font-family: MJXTEX-SC;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 19 */ {
+        font-family: MJXTEX-T;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 20 */ {
+        font-family: MJXTEX-V;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff')
+          format('woff');
+      }
+
+      @font-face /* 21 */ {
+        font-family: MJXTEX-VB;
+        src: url('https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff')
+          format('woff');
+      }
+
+      mjx-c.mjx-c1D6E5.TEX-I::before {
+        padding: 0.716em 0.833em 0 0;
+        content: '\394';
+      }
+
+      mjx-c.mjx-c1D45D.TEX-I::before {
+        padding: 0.442em 0.503em 0.194em 0;
+        content: 'p';
+      }
+
+      mjx-c.mjx-c1D450.TEX-I::before {
+        padding: 0.442em 0.433em 0.011em 0;
+        content: 'c';
+      }
+
+      mjx-c.mjx-c1D43F.TEX-I::before {
+        padding: 0.683em 0.681em 0 0;
+        content: 'L';
+      }
+
+      mjx-c.mjx-c1D440.TEX-I::before {
+        padding: 0.683em 1.051em 0 0;
+        content: 'M';
+      }
+
+      mjx-c.mjx-c1D445.TEX-I::before {
+        padding: 0.683em 0.759em 0.021em 0;
+        content: 'R';
+      }
+
+      mjx-c.mjx-c3D::before {
+        padding: 0.583em 0.778em 0.082em 0;
+        content: '=';
+      }
+
+      mjx-c.mjx-c221A.TEX-S2::before {
+        padding: 1.15em 1.02em 0.65em 0;
+        content: '\221A';
+      }
+
+      mjx-c.mjx-c31::before {
+        padding: 0.666em 0.5em 0 0;
+        content: '1';
+      }
+
+      mjx-c.mjx-c2B::before {
+        padding: 0.583em 0.778em 0.082em 0;
+        content: '+';
+      }
+
+      mjx-c.mjx-c38::before {
+        padding: 0.666em 0.5em 0.022em 0;
+        content: '8';
+      }
+
+      mjx-c.mjx-c22C5::before {
+        padding: 0.31em 0.278em 0 0;
+        content: '\22C5';
+      }
+
+      mjx-c.mjx-c30::before {
+        padding: 0.666em 0.5em 0.022em 0;
+        content: '0';
+      }
+
+      mjx-c.mjx-c32::before {
+        padding: 0.666em 0.5em 0 0;
+        content: '2';
+      }
+
+      mjx-c.mjx-c2212::before {
+        padding: 0.583em 0.778em 0.082em 0;
+        content: '\2212';
+      }
+
+      mjx-c.mjx-c28::before {
+        padding: 0.75em 0.389em 0.25em 0;
+        content: '(';
+      }
+
+      mjx-c.mjx-c29::before {
+        padding: 0.75em 0.389em 0.25em 0;
+        content: ')';
+      }
+
+      mjx-c.mjx-c35::before {
+        padding: 0.666em 0.5em 0.022em 0;
+        content: '5';
+      }
+
+      mjx-c.mjx-c33::before {
+        padding: 0.665em 0.5em 0.022em 0;
+        content: '3';
+      }
+
+      mjx-c.mjx-c394::before {
+        padding: 0.716em 0.833em 0 0;
+        content: '\394';
+      }
+
+      mjx-c.mjx-c36::before {
+        padding: 0.666em 0.5em 0.022em 0;
+        content: '6';
+      }
+
+      mjx-c.mjx-c2E::before {
+        padding: 0.12em 0.278em 0 0;
+        content: '.';
+      }
+
+      mjx-c.mjx-c34::before {
+        padding: 0.677em 0.5em 0 0;
+        content: '4';
+      }
+
+      mjx-c.mjx-c37::before {
+        padding: 0.676em 0.5em 0.022em 0;
+        content: '7';
+      }
+
+      mjx-c.mjx-c1D465.TEX-I::before {
+        padding: 0.442em 0.572em 0.011em 0;
+        content: 'x';
+      }
+
+      mjx-c.mjx-c1D466.TEX-I::before {
+        padding: 0.442em 0.49em 0.205em 0;
+        content: 'y';
+      }
+    </style>
+  </head>
+
+  <body class="post-template">
+    <div class="site">
+      <header id="site-header" class="site-header">
+        <div class="header-inner">
+          <div class="header-brand">
+            <a class="logo" href="https://www.sirpinski.com/">
+              <span class="logo-text">Gasket Case</span>
+            </a>
+
+            <div class="burger">
+              <div class="burger-bar"></div>
+              <div class="burger-bar"></div>
+            </div>
+          </div>
+
+          <nav class="header-nav">
+            <a class="menu-item menu-item-home" href="https://www.sirpinski.com/">Home</a>
+            <a class="menu-item menu-item-about" href="https://www.sirpinski.com/about/">About</a>
+          </nav>
+
+          <div class="header-actions">
+            <div class="social">
+              <a
+                class="social-item social-item-twitter"
+                href="https://x.com/Ant_Pecorella"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Twitter"
+              >
+                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"
+                  ></path>
+                </svg>
+              </a>
+            </div>
+
+            <button class="button-text menu-item members-login" data-portal="signin">Login</button>
+          </div>
+        </div>
+      </header>
+
+      <div class="site-content">
+        <div class="content-area">
+          <main class="site-main">
+            <article class="single post">
+              <header class="single-header kg-canvas">
+                <div class="single-meta">
+                  <span class="single-meta-item single-meta-date">
+                    <time datetime="2021-07-30"> Jul 30, 2021 </time>
+                  </span>
+
+                  <span class="single-meta-item single-meta-length"> 8 min read </span>
+                </div>
+
+                <h1 class="single-title">The Math of Idle Games, Part III</h1>
+
+                <figure class="single-media kg-width-wide">
+                  <img
+                    srcset="
+                      The%20Math%20of%20Idle%20Games,%20Part%20III_files/imageonline-co-textimage--1-_004.png  400w,
+                      The%20Math%20of%20Idle%20Games,%20Part%20III_files/imageonline-co-textimage--1-_003.png  750w,
+                      The%20Math%20of%20Idle%20Games,%20Part%20III_files/imageonline-co-textimage--1-.png      960w,
+                      The%20Math%20of%20Idle%20Games,%20Part%20III_files/imageonline-co-textimage--1-_002.png 1140w
+                    "
+                    sizes="(min-width: 1023px) 920px, calc(90vw)"
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/imageonline-co-textimage--1-.png"
+                    alt="The Math of Idle Games, Part III"
+                  />
+                </figure>
+              </header>
+
+              <div class="single-content kg-canvas u-text-format">
+                <p><em>Originally published January 12, 2017</em></p>
+                <p>
+                  This three-part series is intended to break apart my
+                  <a
+                    href="http://www.slideshare.net/AnthonyPecorella/the-rise-and-rise-of-idle-games-68916528?ref=sirpinski.com"
+                    >MIGS 2016 slides</a
+                  >
+                  into what are hopefully detailed but accessible angles on the math and mechanics
+                  behind idle and incremental games. The sections draw heavily from a
+                  <a
+                    href="https://drive.google.com/drive/folders/1lKCEfXU60vv6AOfna4MS6nxayw_aFpn0?usp=sharing&amp;ref=sirpinski.com"
+                    >collection of spreadsheet models</a
+                  >
+                  I built and have opened up for you to play around with.
+                </p>
+                <p>
+                  In
+                  <a href="https://www.sirpinski.com/the-math-of-idle-games-part-i/">Part I</a> we
+                  looked at some of the standard math behind rapid-growth idle games, primarily at
+                  the relationships between exponential and polynomial growth and some methods of
+                  checking and adjusting the balance of the various generators over time.
+                </p>
+                <p>
+                  In
+                  <a href="https://www.sirpinski.com/the-math-of-idle-games-part-ii/">Part II</a> we
+                  explored different options for growth outside of the Cookie Clicker exponential
+                  model, as well as other options for interactions of generators.
+                </p>
+                <p>
+                  Now, in the final part, we will look at prestige loops, including analyzing the
+                  design behind real-world examples and how to vary them to keep things interesting
+                  for the player.
+                </p>
+                <p>
+                  The ability to reset your game with a multiplier to progress, often called a
+                  “prestige,” is one of the crucial mechanics behind most modern idle games,
+                  originally popularized (and conceived?) by Orteil’s Cookie Clicker. At a high
+                  level, these systems serve two primary purposes:
+                </p>
+                <p>
+                  1) They create the “ladder climbing” effect that contributes to why idle games are
+                  so compelling. It gives players the ability to reset with a huge boost that gives
+                  a sense of power and progres. This is similar to how “launch games” (like
+                  <a
+                    href="http://www.kongregate.com/games/JuicyBeast/burrito-bison-launcha-libre?ref=sirpinski.com"
+                    >Burrito Bison: Launcha Libre</a
+                  >
+                  or
+                  <a
+                    href="http://www.kongregate.com/games/Kongregate/curl-up-and-fly?ref=sirpinski.com"
+                    >Curl Up and Fly</a
+                  >) have the player go as far as possible, then upgrade, then launch again.
+                </p>
+                <p>
+                  2) They rein growth back into a more manageable number. This can give you as a
+                  developer a more stable number to key progress and upgrades off of, since growth
+                  here will be slower.
+                </p>
+                <p>
+                  <em
+                    >Note: I have incorrectly called this “taking a log” in the past. Most prestiges
+                    are a fractional exponent (e.g. a square or cube root) rather than a
+                    mathematical log function, so growth is still very large in some cases. Clicker
+                    Heroes is an exception that really does have a log-type effect. That said, some
+                    of these games have since added systems that do substantially rein in numbers,
+                    such as Realm Grinder’s Reincarnations and AdVenture Capitalist’s Mega
+                    Bucks.</em
+                  >
+                </p>
+                <p>
+                  The amount of prestige currency generated can be calculated off a variety of
+                  factors, including (but not limited to):
+                </p>
+                <ul>
+                  <li>Max earnings (Realm Grinder)</li>
+                  <li>Lifetime earnings (Cookie Clicker, AdVenture Capitalist)</li>
+                  <li>Earnings since last reset (Egg, Inc.)</li>
+                  <li>Number of upgrades purchased since last reset (Clicker Heroes)</li>
+                </ul>
+                <p>
+                  These fall into two primary categories: lifetime stats and since-reset. This
+                  fundamental difference guides general reset behavior in a significant way. Let’s
+                  dig into each of these examples a bit more to see how. For these formulas, the
+                  variables will be:
+                </p>
+                <p>
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="0"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D6E5 TEX-I"></mjx-c></mjx-mi
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>Δ</mi><mi>p</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  = prestige currency to gain<br /><mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="1"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>p</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  = total prestige currency<br /><mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="2"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-msub
+                        ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                        ><mjx-script style="vertical-align: -0.15em"
+                          ><mjx-mi class="mjx-i" size="s"
+                            ><mjx-c
+                              class="mjx-c1D43F TEX-I"
+                            ></mjx-c></mjx-mi></mjx-script></mjx-msub></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><msub><mi>c</mi><mi>L</mi></msub></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  = lifetime currency<br /><mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="3"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-msub
+                        ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                        ><mjx-script style="vertical-align: -0.15em"
+                          ><mjx-mi class="mjx-i" size="s"
+                            ><mjx-c
+                              class="mjx-c1D440 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-script></mjx-msub></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><msub><mi>c</mi><mi>M</mi></msub></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  = max currency<br /><mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="4"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-msub
+                        ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                        ><mjx-script style="vertical-align: -0.15em"
+                          ><mjx-mi class="mjx-i" size="s"
+                            ><mjx-c
+                              class="mjx-c1D445 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-script></mjx-msub></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><msub><mi>c</mi><mi>R</mi></msub></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  = currency this run
+                </p>
+                <p><strong>First up, Realm Grinder:</strong></p>
+                <figure class="kg-card kg-image-card">
+                  <img
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/Gems.webp"
+                    class="kg-image"
+                    alt=""
+                    loading="lazy"
+                  />
+                </figure>
+                <p>
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="5"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi
+                      ><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo
+                      ><mjx-mfrac space="4"
+                        ><mjx-frac
+                          ><mjx-num
+                            ><mjx-nstrut></mjx-nstrut
+                            ><mjx-mrow size="s"
+                              ><mjx-msqrt
+                                ><mjx-sqrt
+                                  ><mjx-surd
+                                    ><mjx-mo class="mjx-lop"
+                                      ><mjx-c class="mjx-c221A TEX-S2"></mjx-c></mjx-mo></mjx-surd
+                                  ><mjx-box style="padding-top: 0.199em"
+                                    ><mjx-mn class="mjx-n"><mjx-c class="mjx-c31"></mjx-c></mjx-mn
+                                    ><mjx-mo class="mjx-n"><mjx-c class="mjx-c2B"></mjx-c></mjx-mo
+                                    ><mjx-mn class="mjx-n"><mjx-c class="mjx-c38"></mjx-c></mjx-mn
+                                    ><mjx-mo class="mjx-n"><mjx-c class="mjx-c22C5"></mjx-c></mjx-mo
+                                    ><mjx-mfrac
+                                      ><mjx-frac
+                                        ><mjx-num
+                                          ><mjx-nstrut></mjx-nstrut
+                                          ><mjx-msub size="s"
+                                            ><mjx-mi class="mjx-i"
+                                              ><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                                            ><mjx-script style="vertical-align: -0.329em"
+                                              ><mjx-mi class="mjx-i"
+                                                ><mjx-c
+                                                  class="mjx-c1D440 TEX-I"
+                                                ></mjx-c></mjx-mi></mjx-script></mjx-msub></mjx-num
+                                        ><mjx-dbox
+                                          ><mjx-dtable
+                                            ><mjx-line></mjx-line
+                                            ><mjx-row
+                                              ><mjx-den
+                                                ><mjx-dstrut></mjx-dstrut
+                                                ><mjx-msup size="s"
+                                                  ><mjx-mn class="mjx-n"
+                                                    ><mjx-c class="mjx-c31"></mjx-c
+                                                    ><mjx-c class="mjx-c30"></mjx-c></mjx-mn
+                                                  ><mjx-script style="vertical-align: 0.289em"
+                                                    ><mjx-texatom texclass="ORD"
+                                                      ><mjx-mn class="mjx-n"
+                                                        ><mjx-c class="mjx-c31"></mjx-c
+                                                        ><mjx-c
+                                                          class="mjx-c32"
+                                                        ></mjx-c></mjx-mn></mjx-texatom></mjx-script></mjx-msup></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-box></mjx-sqrt></mjx-msqrt
+                              ><mjx-mo class="mjx-n"><mjx-c class="mjx-c2212"></mjx-c></mjx-mo
+                              ><mjx-mn class="mjx-n"
+                                ><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-mrow></mjx-num
+                          ><mjx-dbox
+                            ><mjx-dtable
+                              ><mjx-line></mjx-line
+                              ><mjx-row
+                                ><mjx-den
+                                  ><mjx-dstrut></mjx-dstrut
+                                  ><mjx-mn class="mjx-n" size="s"
+                                    ><mjx-c
+                                      class="mjx-c32"
+                                    ></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>p</mi><mo>=</mo
+                        ><mfrac
+                          ><mrow
+                            ><msqrt
+                              ><mn>1</mn><mo>+</mo><mn>8</mn><mo>⋅</mo
+                              ><mfrac
+                                ><msub><mi>c</mi><mi>M</mi></msub
+                                ><msup
+                                  ><mn>10</mn><mrow data-mjx-texclass="ORD"><mn>12</mn></mrow></msup
+                                ></mfrac
+                              ></msqrt
+                            ><mo>−</mo><mn>1</mn></mrow
+                          ><mn>2</mn></mfrac
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                </p>
+                <p>
+                  That seems like a pretty bizarre formula, but it's actually very simple. Why? The
+                  equation for the amount
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="6"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-msub
+                        ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                        ><mjx-script style="vertical-align: -0.15em"
+                          ><mjx-mi class="mjx-i" size="s"
+                            ><mjx-c
+                              class="mjx-c1D440 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-script></mjx-msub></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><msub><mi>c</mi><mi>M</mi></msub></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  required for
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="7"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>p</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  is:
+                </p>
+                <p>
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="8"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-msub
+                        ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                        ><mjx-script style="vertical-align: -0.15em"
+                          ><mjx-mi class="mjx-i" size="s"
+                            ><mjx-c
+                              class="mjx-c1D440 TEX-I"
+                            ></mjx-c></mjx-mi></mjx-script></mjx-msub
+                      ><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo
+                      ><mjx-msup space="4"
+                        ><mjx-mn class="mjx-n"
+                          ><mjx-c class="mjx-c31"></mjx-c><mjx-c class="mjx-c30"></mjx-c></mjx-mn
+                        ><mjx-script style="vertical-align: 0.393em"
+                          ><mjx-texatom size="s" texclass="ORD"
+                            ><mjx-mn class="mjx-n"
+                              ><mjx-c class="mjx-c31"></mjx-c
+                              ><mjx-c
+                                class="mjx-c32"
+                              ></mjx-c></mjx-mn></mjx-texatom></mjx-script></mjx-msup
+                      ><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c22C5"></mjx-c></mjx-mo
+                      ><mjx-mfrac space="3"
+                        ><mjx-frac
+                          ><mjx-num
+                            ><mjx-nstrut></mjx-nstrut
+                            ><mjx-mrow size="s"
+                              ><mjx-mi class="mjx-i"
+                                ><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi
+                              ><mjx-mo class="mjx-n"><mjx-c class="mjx-c28"></mjx-c></mjx-mo
+                              ><mjx-mi class="mjx-i"
+                                ><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi
+                              ><mjx-mo class="mjx-n"><mjx-c class="mjx-c2B"></mjx-c></mjx-mo
+                              ><mjx-mn class="mjx-n"><mjx-c class="mjx-c31"></mjx-c></mjx-mn
+                              ><mjx-mo class="mjx-n"
+                                ><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-mrow></mjx-num
+                          ><mjx-dbox
+                            ><mjx-dtable
+                              ><mjx-line></mjx-line
+                              ><mjx-row
+                                ><mjx-den
+                                  ><mjx-dstrut></mjx-dstrut
+                                  ><mjx-mn class="mjx-n" size="s"
+                                    ><mjx-c
+                                      class="mjx-c32"
+                                    ></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><msub><mi>c</mi><mi>M</mi></msub
+                        ><mo>=</mo
+                        ><msup
+                          ><mn>10</mn><mrow data-mjx-texclass="ORD"><mn>12</mn></mrow></msup
+                        ><mo>⋅</mo
+                        ><mfrac
+                          ><mrow
+                            ><mi>p</mi><mo stretchy="false">(</mo><mi>p</mi><mo>+</mo><mn>1</mn
+                            ><mo stretchy="false">)</mo></mrow
+                          ><mn>2</mn></mfrac
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                </p>
+                <p>
+                  You may recognize that as the summation formula. So now we need to solve for
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="9"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>p</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >. Hmm, let's see...
+                </p>
+                <p>
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="10"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-msup
+                        ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi
+                        ><mjx-script style="vertical-align: 0.363em"
+                          ><mjx-mn class="mjx-n" size="s"
+                            ><mjx-c class="mjx-c32"></mjx-c></mjx-mn></mjx-script></mjx-msup
+                      ><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c2B"></mjx-c></mjx-mo
+                      ><mjx-mi class="mjx-i" space="3"
+                        ><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi
+                      ><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c2212"></mjx-c></mjx-mo
+                      ><mjx-mfrac space="3"
+                        ><mjx-frac
+                          ><mjx-num
+                            ><mjx-nstrut></mjx-nstrut
+                            ><mjx-mrow size="s"
+                              ><mjx-mn class="mjx-n"><mjx-c class="mjx-c32"></mjx-c></mjx-mn
+                              ><mjx-msub
+                                ><mjx-mi class="mjx-i"
+                                  ><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                                ><mjx-script style="vertical-align: -0.15em"
+                                  ><mjx-mi class="mjx-i" size="s"
+                                    ><mjx-c
+                                      class="mjx-c1D440 TEX-I"
+                                    ></mjx-c></mjx-mi></mjx-script></mjx-msub></mjx-mrow></mjx-num
+                          ><mjx-dbox
+                            ><mjx-dtable
+                              ><mjx-line></mjx-line
+                              ><mjx-row
+                                ><mjx-den
+                                  ><mjx-dstrut></mjx-dstrut
+                                  ><mjx-msup size="s"
+                                    ><mjx-mn class="mjx-n"
+                                      ><mjx-c class="mjx-c31"></mjx-c
+                                      ><mjx-c class="mjx-c30"></mjx-c></mjx-mn
+                                    ><mjx-script style="vertical-align: 0.393em"
+                                      ><mjx-texatom size="s" texclass="ORD"
+                                        ><mjx-mn class="mjx-n"
+                                          ><mjx-c class="mjx-c31"></mjx-c
+                                          ><mjx-c
+                                            class="mjx-c32"
+                                          ></mjx-c></mjx-mn></mjx-texatom></mjx-script></mjx-msup></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac
+                      ><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo
+                      ><mjx-mn class="mjx-n" space="4"
+                        ><mjx-c class="mjx-c30"></mjx-c></mjx-mn></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><msup><mi>p</mi><mn>2</mn></msup
+                        ><mo>+</mo><mi>p</mi><mo>−</mo
+                        ><mfrac
+                          ><mrow
+                            ><mn>2</mn><msub><mi>c</mi><mi>M</mi></msub></mrow
+                          ><msup
+                            ><mn>10</mn><mrow data-mjx-texclass="ORD"><mn>12</mn></mrow></msup
+                          ></mfrac
+                        ><mo>=</mo><mn>0</mn></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                </p>
+                <p>
+                  Yup, that's right. You're about to use the quadratic formula. For your job/hobby.
+                  In the real world. I bet you never thought you would! Plug it in and you'll get
+                  that first equation up there.
+                  <em>(This legitimately got me so excited that I posted about it on Facebook.)</em>
+                </p>
+                <figure class="kg-card kg-image-card">
+                  <img
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/1479054311-20161113.png"
+                    class="kg-image"
+                    alt=""
+                    loading="lazy"
+                  />
+                </figure>
+                <p><em>© Saturday Morning Breakfast Cereal (SMBC), used with permission</em></p>
+                <p>
+                  Since this formula is based on the square root of the max currency earned, it
+                  means that if you reset at the same point you will earn literally no more prestige
+                  currency. To double prestige currency, a player would need to earn 4 times as much
+                  as the previous run, so that gives you a rough target to keep in mind when
+                  modeling and balancing.
+                </p>
+                <p><strong>Next, AdVenture Capitalist:</strong></p>
+                <figure class="kg-card kg-image-card">
+                  <img
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/2015-07-10_00002.webp"
+                    class="kg-image"
+                    alt=""
+                    loading="lazy"
+                  />
+                </figure>
+                <p>
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="11"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi
+                      ><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo
+                      ><mjx-mn class="mjx-n" space="4"
+                        ><mjx-c class="mjx-c31"></mjx-c><mjx-c class="mjx-c35"></mjx-c
+                        ><mjx-c class="mjx-c30"></mjx-c></mjx-mn
+                      ><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c22C5"></mjx-c></mjx-mo
+                      ><mjx-msqrt space="3"
+                        ><mjx-sqrt
+                          ><mjx-surd
+                            ><mjx-mo class="mjx-lop"
+                              ><mjx-c class="mjx-c221A TEX-S2"></mjx-c></mjx-mo></mjx-surd
+                          ><mjx-box style="padding-top: 0.295em"
+                            ><mjx-mfrac
+                              ><mjx-frac
+                                ><mjx-num
+                                  ><mjx-nstrut></mjx-nstrut
+                                  ><mjx-msub size="s"
+                                    ><mjx-mi class="mjx-i"
+                                      ><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                                    ><mjx-script style="vertical-align: -0.15em"
+                                      ><mjx-mi class="mjx-i" size="s"
+                                        ><mjx-c
+                                          class="mjx-c1D43F TEX-I"
+                                        ></mjx-c></mjx-mi></mjx-script></mjx-msub></mjx-num
+                                ><mjx-dbox
+                                  ><mjx-dtable
+                                    ><mjx-line></mjx-line
+                                    ><mjx-row
+                                      ><mjx-den
+                                        ><mjx-dstrut></mjx-dstrut
+                                        ><mjx-msup size="s"
+                                          ><mjx-mn class="mjx-n"
+                                            ><mjx-c class="mjx-c31"></mjx-c
+                                            ><mjx-c class="mjx-c30"></mjx-c></mjx-mn
+                                          ><mjx-script style="vertical-align: 0.393em"
+                                            ><mjx-texatom size="s" texclass="ORD"
+                                              ><mjx-mn class="mjx-n"
+                                                ><mjx-c class="mjx-c31"></mjx-c
+                                                ><mjx-c
+                                                  class="mjx-c35"
+                                                ></mjx-c></mjx-mn></mjx-texatom></mjx-script></mjx-msup></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-box></mjx-sqrt></mjx-msqrt></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>p</mi><mo>=</mo><mn>150</mn><mo>⋅</mo
+                        ><msqrt
+                          ><mfrac
+                            ><msub><mi>c</mi><mi>L</mi></msub
+                            ><msup
+                              ><mn>10</mn><mrow data-mjx-texclass="ORD"><mn>15</mn></mrow></msup
+                            ></mfrac
+                          ></msqrt
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                </p>
+                <p>
+                  Here we similarly have a square root, but this time based on lifetime earnings.
+                  Again assuming we want to double prestige currency each run, how much more than
+                  the previous run do we need to earn? It depends a bit on your assumptions about
+                  the previous run, but it’s likely somewhere in the similar 3x - 4x range. However,
+                  a fundamental difference is that you can keep resetting at the same point and gain
+                  currency. That said, the amount of currency diminishes each time, which means that
+                  players do need to be able to advance to make appreciable gains.
+                </p>
+                <p><strong>How about Cookie Clicker?</strong></p>
+                <figure class="kg-card kg-image-card">
+                  <img
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/Hco.webp"
+                    class="kg-image"
+                    alt=""
+                    loading="lazy"
+                  />
+                </figure>
+                <p>
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="12"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi
+                      ><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo
+                      ><mjx-mroot space="4"
+                        ><mjx-root style="vertical-align: 0.315em; width: 0px"
+                          ><mjx-mn class="mjx-n" size="ss" style="padding-left: 0.724em"
+                            ><mjx-c class="mjx-c33"></mjx-c></mjx-mn></mjx-root
+                        ><mjx-sqrt
+                          ><mjx-surd
+                            ><mjx-mo class="mjx-lop"
+                              ><mjx-c class="mjx-c221A TEX-S2"></mjx-c></mjx-mo></mjx-surd
+                          ><mjx-box style="padding-top: 0.295em"
+                            ><mjx-mfrac
+                              ><mjx-frac
+                                ><mjx-num
+                                  ><mjx-nstrut></mjx-nstrut
+                                  ><mjx-msub size="s"
+                                    ><mjx-mi class="mjx-i"
+                                      ><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                                    ><mjx-script style="vertical-align: -0.15em"
+                                      ><mjx-mi class="mjx-i" size="s"
+                                        ><mjx-c
+                                          class="mjx-c1D43F TEX-I"
+                                        ></mjx-c></mjx-mi></mjx-script></mjx-msub></mjx-num
+                                ><mjx-dbox
+                                  ><mjx-dtable
+                                    ><mjx-line></mjx-line
+                                    ><mjx-row
+                                      ><mjx-den
+                                        ><mjx-dstrut></mjx-dstrut
+                                        ><mjx-msup size="s"
+                                          ><mjx-mn class="mjx-n"
+                                            ><mjx-c class="mjx-c31"></mjx-c
+                                            ><mjx-c class="mjx-c30"></mjx-c></mjx-mn
+                                          ><mjx-script style="vertical-align: 0.393em"
+                                            ><mjx-texatom size="s" texclass="ORD"
+                                              ><mjx-mn class="mjx-n"
+                                                ><mjx-c class="mjx-c31"></mjx-c
+                                                ><mjx-c
+                                                  class="mjx-c32"
+                                                ></mjx-c></mjx-mn></mjx-texatom></mjx-script></mjx-msup></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-box></mjx-sqrt></mjx-mroot></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>p</mi><mo>=</mo
+                        ><mroot
+                          ><mfrac
+                            ><msub><mi>c</mi><mi>L</mi></msub
+                            ><msup
+                              ><mn>10</mn><mrow data-mjx-texclass="ORD"><mn>12</mn></mrow></msup
+                            ></mfrac
+                          ><mn>3</mn></mroot
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                </p>
+                <p>
+                  It is also based on lifetime earnings, but using a cube root, meaning to double
+                  prestige currency, a player needs to earn roughly 8 times the previous run.
+                </p>
+                <p>
+                  On the other side we have the systems that are agnostic to previous performance --
+                  each run is an independent event as far as the prestige currency calculation is
+                  concerned. This means that if you reset at the same point a few times in a row you
+                  will get the same amount of currency each time. This is a very different dynamic
+                  that can create ideal strategies that don’t involve much progress in the game
+                  beyond a certain point.
+                </p>
+                <p>
+                  These types of systems must be balanced quite differently. They have very flat
+                  curves for calculating prestige currency (that is, getting farther in a run has
+                  rapidly diminished returns).
+                </p>
+                <p><strong>Let's look at Egg, Inc.:</strong></p>
+                <figure class="kg-card kg-image-card">
+                  <img
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/chrome_2017-01-12_17-45-57.webp"
+                    class="kg-image"
+                    alt=""
+                    loading="lazy"
+                  />
+                </figure>
+                <p>
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="13"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-n"><mjx-c class="mjx-c394"></mjx-c></mjx-mi
+                      ><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D45D TEX-I"></mjx-c></mjx-mi
+                      ><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo
+                      ><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c28"></mjx-c></mjx-mo
+                      ><mjx-mfrac
+                        ><mjx-frac
+                          ><mjx-num
+                            ><mjx-nstrut></mjx-nstrut
+                            ><mjx-msub size="s"
+                              ><mjx-mi class="mjx-i"
+                                ><mjx-c class="mjx-c1D450 TEX-I"></mjx-c></mjx-mi
+                              ><mjx-script style="vertical-align: -0.15em"
+                                ><mjx-mi class="mjx-i" size="s"
+                                  ><mjx-c
+                                    class="mjx-c1D445 TEX-I"
+                                  ></mjx-c></mjx-mi></mjx-script></mjx-msub></mjx-num
+                          ><mjx-dbox
+                            ><mjx-dtable
+                              ><mjx-line></mjx-line
+                              ><mjx-row
+                                ><mjx-den
+                                  ><mjx-dstrut></mjx-dstrut
+                                  ><mjx-msup size="s"
+                                    ><mjx-mn class="mjx-n"
+                                      ><mjx-c class="mjx-c31"></mjx-c
+                                      ><mjx-c class="mjx-c30"></mjx-c></mjx-mn
+                                    ><mjx-script style="vertical-align: 0.393em"
+                                      ><mjx-mn class="mjx-n" size="s"
+                                        ><mjx-c
+                                          class="mjx-c36"
+                                        ></mjx-c></mjx-mn></mjx-script></mjx-msup></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac
+                      ><mjx-msup
+                        ><mjx-mo class="mjx-n"><mjx-c class="mjx-c29"></mjx-c></mjx-mo
+                        ><mjx-script style="vertical-align: 0.363em"
+                          ><mjx-texatom size="s" texclass="ORD"
+                            ><mjx-mn class="mjx-n"
+                              ><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c2E"></mjx-c
+                              ><mjx-c class="mjx-c31"></mjx-c
+                              ><mjx-c
+                                class="mjx-c34"
+                              ></mjx-c></mjx-mn></mjx-texatom></mjx-script></mjx-msup></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi mathvariant="normal">Δ</mi><mi>p</mi><mo>=</mo
+                        ><mo stretchy="false">(</mo
+                        ><mfrac
+                          ><msub><mi>c</mi><mi>R</mi></msub
+                          ><msup><mn>10</mn><mn>6</mn></msup></mfrac
+                        ><msup
+                          ><mo stretchy="false">)</mo
+                          ><mrow data-mjx-texclass="ORD"><mn>0.14</mn></mrow></msup
+                        ></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                </p>
+                <p>
+                  That’s roughly an exponent of
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="14"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mfrac
+                        ><mjx-frac
+                          ><mjx-num
+                            ><mjx-nstrut></mjx-nstrut
+                            ><mjx-mn class="mjx-n" size="s"
+                              ><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-num
+                          ><mjx-dbox
+                            ><mjx-dtable
+                              ><mjx-line></mjx-line
+                              ><mjx-row
+                                ><mjx-den
+                                  ><mjx-dstrut></mjx-dstrut
+                                  ><mjx-mn class="mjx-n" size="s"
+                                    ><mjx-c
+                                      class="mjx-c37"
+                                    ></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mfrac><mn>1</mn><mn>7</mn></mfrac></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >. So where doubling in Realm Grinder would require 4 times as much as the
+                  previous run, Egg, Inc. would require 128 (<mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="15"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-msup
+                        ><mjx-mn class="mjx-n"><mjx-c class="mjx-c32"></mjx-c></mjx-mn
+                        ><mjx-script style="vertical-align: 0.363em"
+                          ><mjx-mn class="mjx-n" size="s"
+                            ><mjx-c
+                              class="mjx-c37"
+                            ></mjx-c></mjx-mn></mjx-script></mjx-msup></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><msup><mn>2</mn><mn>7</mn></msup></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >) times as much! This could be done for a variety of design reasons, but I think
+                  one of the clearest is to nudge players into more active play and reduce the
+                  influence of time on progression. Or conversely, to accelerate progress in an
+                  offline-limited system.
+                </p>
+                <p>
+                  In the case of Egg, Inc. I believe it to be the latter. Players are limited to 2
+                  hours of offline play by the game. By allowing players to earn equivalent currency
+                  on equivalent runs, the game minimizes the dependency of idle gains, which is
+                  important since it has created hard limits on those gains. Progress then happens
+                  in staircase tiers through the sub-prestige loop (which roughly multiplies
+                  earnings by 5x each time) and general upgrades.
+                </p>
+                <p>
+                  Clicker Heroes, on the other hand, has no such limits to offline gains. Instead it
+                  has a very steep difficulty curve that makes progression through the main series
+                  of “hero zones” fairly slow. As a result, the ability to keep earning prestige
+                  currency at about the same point gives players the ability to progress despite a
+                  pretty substantial progress wall. The currency itself is based on the number of
+                  upgrades purchased for the generators (heroes). Because the cost of upgrades grows
+                  at an exponential rate, this does effectively “take a log” of the overall growth
+                  curve.
+                </p>
+                <p>
+                  Pulling these all together, in the chart below we look at the relative prestige
+                  currency gains based on earnings relative to the previous run. So the
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="16"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>x</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >-axis is a multiple of the previous run, meaning
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="17"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>x</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >=1 is earning the same amount as the previous run,
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="18"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>x</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >=2 is double, etc. The
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="19"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>y</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >-axis is prestige currency, normalized to the amount currently owned. So
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="20"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>y</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >=1 would mean that you would double your prestige currency (i.e. you earn +100%).
+                  For the sake of sanity, we’re making an assumption that the previous earnings for
+                  the lifetime calculations were ¾ of the total earnings (i.e. the previous run
+                  quadrupled the lifetime earnings to that point), so lifetime earning is
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="21"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mfrac
+                        ><mjx-frac
+                          ><mjx-num
+                            ><mjx-nstrut></mjx-nstrut
+                            ><mjx-mn class="mjx-n" size="s"
+                              ><mjx-c class="mjx-c34"></mjx-c></mjx-mn></mjx-num
+                          ><mjx-dbox
+                            ><mjx-dtable
+                              ><mjx-line></mjx-line
+                              ><mjx-row
+                                ><mjx-den
+                                  ><mjx-dstrut></mjx-dstrut
+                                  ><mjx-mn class="mjx-n" size="s"
+                                    ><mjx-c
+                                      class="mjx-c33"
+                                    ></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mfrac><mn>4</mn><mn>3</mn></mfrac></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >
+                  of the previous run.
+                </p>
+                <figure class="kg-card kg-image-card">
+                  <img
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/chrome_2017-01-12_16-08-25.webp"
+                    class="kg-image"
+                    alt=""
+                    loading="lazy"
+                  />
+                </figure>
+                <p>
+                  Looking at
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="22"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>y</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >=1 you can see rough relative earnings required to double your current prestige
+                  currency. As expected, this occurs at
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="23"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D465 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>x</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >=1 for both Egg, Inc. and Clicker Heroes, since they are independent from
+                  previous runs. Both of those curves flatten out quickly, though, and are overtaken
+                  by the other three before long.
+                </p>
+                <p>
+                  So, that was a quick look at a variety of ways to calculate prestige currency and
+                  the design implications of them. But once you settle on a method for your game (or
+                  even use a few methods if you want to get crazy with multiple prestige
+                  currencies), how do you balance it?
+                </p>
+                <p>
+                  To try to get a bit of a handle on this I put together “yet another spreadsheet”™
+                  to let you play around with implications of varying the parameters. It can be
+                  found in this collection of
+                  <a
+                    href="https://drive.google.com/drive/folders/0B-XwqDnGiT2KWjdPbzNURkhKbmM?ref=sirpinski.com"
+                    >idle game models</a
+                  >, specifically sheet 3a. This is a very simple prestige system with only a single
+                  generator, but it can help understand the dynamics at play.
+                </p>
+                <p>
+                  One thing to consider is that in the same way that you want to make progress
+                  through a run somewhat “bumpy” with slow parts and fast parts, you likely want to
+                  have similar variation in your prestige resets too. Much of this variation comes
+                  from the interplay of multipliers/upgrades and the rate at which prestige currency
+                  is gained (as well as the player’s targets for when to reset). Predicting player
+                  behavior in this case is difficult, but you can likely capture most players by
+                  varying within reasonable ranges.
+                </p>
+                <figure class="kg-card kg-image-card">
+                  <img
+                    src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/EXCEL_2017-01-12_16-34-32.webp"
+                    class="kg-image"
+                    alt=""
+                    loading="lazy"
+                  />
+                </figure>
+                <p>
+                  In this chart, generated by that spreadsheet, the
+                  <mjx-container
+                    class="MathJax CtxtMenu_Attached_0"
+                    jax="CHTML"
+                    style="font-size: 113.1%; position: relative"
+                    tabindex="0"
+                    ctxtmenu_counter="24"
+                    ><mjx-math class="MJX-TEX" aria-hidden="true"
+                      ><mjx-mi class="mjx-i"
+                        ><mjx-c class="mjx-c1D466 TEX-I"></mjx-c></mjx-mi></mjx-math
+                    ><mjx-assistive-mml unselectable="on" display="inline"
+                      ><math xmlns="http://www.w3.org/1998/Math/MathML"
+                        ><mi>y</mi></math
+                      ></mjx-assistive-mml
+                    ></mjx-container
+                  >- axis is the number of generators owned. Each time that hits 0 it’s a prestige
+                  reset. You can see bumps of rapid purchases at 300, 400, 500, etc. generators
+                  owned -- those are due to multipliers kicking in at those totals.
+                </p>
+                <p>
+                  There’s also a fairly long prestige starting at 120 minutes. It finally breaks at
+                  500 generators, which is when a large 16x multiplier triggers. This is a case in
+                  which the model likely would be off -- a player who just hit a big milestone is
+                  likely to keep going for a while since that’s a fast section of the game. The
+                  point being that you should not use this model as an accurate simulation but
+                  instead as a way to try to get a rough feel for how your system would behave.
+                </p>
+                <p>
+                  So, that’s three blog posts full of equations, graphs, and spreadsheets. While I
+                  hope that those will be useful tools for anyone working on an idle game, I think
+                  the meta takeaways are:
+                </p>
+                <ul>
+                  <li>
+                    There’s a lot more variety possible than the two most-common models (Cookie
+                    Clicker and Clicker Heroes). In particular, think about ways that generators can
+                    interact with one another. Draw a flowchart, then mess around with the arrows.
+                  </li>
+                  <li>
+                    Balancing progression is hard. Spreadsheet models can help, but there’s a lot of
+                    iteration required and you have many tools at your disposal.
+                  </li>
+                  <li>
+                    When designing your game, determine where the “fun” is and focus on that. Is it
+                    unfolding new features? Collecting tons of achievements? Optimizing the prestige
+                    loop? The novelty of big numbers on their own is largely gone, but there are
+                    still many opportunities for surprising and delighting players.
+                  </li>
+                </ul>
+                <p>
+                  And with that we’ll conclude this series of idle math blog posts. I hope they have
+                  been helpful, and as always please reach out if you have any questions or cool
+                  games you want to share. :)
+                </p>
+                <p>
+                  <em
+                    >If you would like to contact me, shoot me an email at
+                    anthony.pecorella@leveluplabs.com. I also want to give credit to the tools used
+                    in this post:
+                    <a href="https://www.mathjax.org/?ref=sirpinski.com">MathJax</a> did the awesome
+                    live-rendering of LaTeX and
+                    <a href="https://www.desmos.com/?ref=sirpinski.com">Desmos</a> is a slick
+                    in-browser graphing calculator with some great educational functionality.</em
+                  >
+                </p>
+              </div>
+
+              <footer class="single-footer container small">
+                <div class="single-footer-left">
+                  <div class="navigation navigation-previous">
+                    <a
+                      class="navigation-link"
+                      href="https://www.sirpinski.com/the-math-of-idle-games-part-ii/"
+                      aria-label="Previous post"
+                    >
+                      <span class="navigation-icon"
+                        ><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                          <path
+                            d="M26.667 14.667v2.667h-16L18 24.667l-1.893 1.893L5.547 16l10.56-10.56L18 7.333l-7.333 7.333h16z"
+                          ></path></svg
+                      ></span>
+                    </a>
+                  </div>
+                </div>
+
+                <div class="single-footer-middle">
+                  <div class="single-footer-top">
+                    <h3 class="single-footer-title">Published by:</h3>
+                    <div class="author-list">
+                      <div class="author-image-placeholder u-placeholder square">
+                        <a
+                          href="https://www.sirpinski.com/author/anthony/"
+                          title="Anthony Pecorella"
+                        >
+                          <img
+                            class="author-image u-object-fit"
+                            src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/IMG_3675.jpg"
+                            alt="Anthony Pecorella"
+                            loading="lazy"
+                          />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="single-footer-bottom">
+                    <div class="share">
+                      <a
+                        class="share-link share-link-facebook"
+                        href="https://www.facebook.com/sharer.php?u=https://www.sirpinski.com/the-math-of-idle-games-part-iii/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M23.9981 11.9991C23.9981 5.37216 18.626 0 11.9991 0C5.37216 0 0 5.37216 0 11.9991C0 17.9882 4.38789 22.9522 10.1242 23.8524V15.4676H7.07758V11.9991H10.1242V9.35553C10.1242 6.34826 11.9156 4.68714 14.6564 4.68714C15.9692 4.68714 17.3424 4.92149 17.3424 4.92149V7.87439H15.8294C14.3388 7.87439 13.8739 8.79933 13.8739 9.74824V11.9991H17.2018L16.6698 15.4676H13.8739V23.8524C19.6103 22.9522 23.9981 17.9882 23.9981 11.9991Z"
+                          ></path>
+                        </svg>
+                        Share
+                      </a>
+                      <a
+                        class="share-link share-link-twitter"
+                        href="https://twitter.com/intent/tweet?url=https://www.sirpinski.com/the-math-of-idle-games-part-iii/&amp;text=The%20Math%20of%20Idle%20Games%2C%20Part%20III"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"
+                          ></path>
+                        </svg>
+                        Tweet
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="single-footer-right">
+                  <div class="navigation navigation-next">
+                    <a
+                      class="navigation-link"
+                      href="https://www.sirpinski.com/boomers-vr/"
+                      aria-label="Next post"
+                    >
+                      <span class="navigation-icon"
+                        ><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                          <path
+                            d="M5.333 14.667v2.667h16L14 24.667l1.893 1.893L26.453 16 15.893 5.44 14 7.333l7.333 7.333h-16z"
+                          ></path></svg
+                      ></span>
+                    </a>
+                  </div>
+                </div>
+              </footer>
+            </article>
+          </main>
+        </div>
+      </div>
+
+      <footer class="site-footer container">
+        <div class="footer-inner">
+          <div class="footer-left">
+            <div class="copyright">Gasket Case © 2026</div>
+          </div>
+
+          <nav class="footer-nav">
+            <a
+              class="menu-item badge"
+              href="https://ghost.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Published with Ghost</a
+            >
+          </nav>
+
+          <div class="footer-right">
+            <div class="social">
+              <a
+                class="social-item social-item-twitter"
+                href="https://x.com/Ant_Pecorella"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Twitter"
+              >
+                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"
+                  ></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
+      <!-- Root element of PhotoSwipe. Must have class pswp. -->
+      <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+        <!-- Background of PhotoSwipe.
+        It's a separate element as animating opacity is faster than rgba(). -->
+        <div class="pswp__bg"></div>
+
+        <!-- Slides wrapper with overflow:hidden. -->
+        <div class="pswp__scroll-wrap">
+          <!-- Container that holds slides.
+          PhotoSwipe keeps only 3 of them in the DOM to save memory.
+          Don't modify these 3 pswp__item elements, data is added later on. -->
+          <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+          </div>
+
+          <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+          <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+              <!--  Controls are self-explanatory. Order can be changed. -->
+              <div class="pswp__counter"></div>
+
+              <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+              <button class="pswp__button pswp__button--share" title="Share"></button>
+              <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+              <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+              <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+              <!-- element will get class pswp__preloader--active when preloader is running -->
+              <div class="pswp__preloader">
+                <div class="pswp__preloader__icn">
+                  <div class="pswp__preloader__cut">
+                    <div class="pswp__preloader__donut"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+              <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button
+              class="pswp__button pswp__button--arrow--left"
+              title="Previous (arrow left)"
+            ></button>
+            <button
+              class="pswp__button pswp__button--arrow--right"
+              title="Next (arrow right)"
+            ></button>
+
+            <div class="pswp__caption">
+              <div class="pswp__caption__center"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      if (document.body.classList.contains('with-full-cover')) {
+        document.getElementsByClassName('cover')[0].style.height = window.innerHeight + 'px';
+      }
+    </script>
+
+    <script>
+      var feed = document.querySelector('.post-feed');
+      if (feed && !feed.classList.contains('related-feed')) {
+        var wrapper = document.querySelector('.feed-layout');
+        var feedLayout = localStorage.getItem('edition_layout');
+        switch (feedLayout) {
+          case 'compact':
+            wrapper.classList.remove('expanded');
+            feed.classList.remove('expanded');
+            break;
+          default:
+            break;
+        }
+      }
+    </script>
+
+    <script src="The%20Math%20of%20Idle%20Games,%20Part%20III_files/main.min.js"></script>
+
+    <div id="sodo-search-root"></div>
+  </body>
+</html>
