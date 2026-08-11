@@ -9,6 +9,10 @@ const r = cite(props);
     <a class="cite" href={r.url} target="_blank" rel="noopener noreferrer">
       <code>{r.display}</code>
     </a>
+  ) : r.local ? (
+    <code class="cite cite-local" title="In-corpus source with no hosted upstream">
+      {r.display}
+    </code>
   ) : (
     <code
       class="cite cite-unresolved"

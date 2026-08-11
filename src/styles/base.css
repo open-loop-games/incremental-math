@@ -450,6 +450,11 @@ body {
   font-size: 0.85em;
 }
 
+.cite-local {
+  color: var(--color-text-muted);
+  border-bottom: 1px dotted var(--color-border);
+}
+
 .cite-unresolved {
   color: var(--color-text-muted);
   text-decoration: line-through dotted;

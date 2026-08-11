@@ -10,6 +10,7 @@ import BestResponseDynamics from '../../components/rate-functions/bifurcations/B
 import DistributionShapeSampler from '../../components/rate-functions/bifurcations/DistributionShapeSampler.vue';
 import TriggerChainStepThrough from '../../components/rate-functions/bifurcations/TriggerChainStepThrough.vue';
 import MaxFlowGraph from '../../components/rate-functions/bifurcations/MaxFlowGraph.vue';
+import InterdictionGrid from '../../components/rate-functions/bifurcations/InterdictionGrid.vue';
 import OptimalStoppingThreshold from '../../components/rate-functions/bifurcations/OptimalStoppingThreshold.vue';
 import CombinatorialDAG from '../../components/rate-functions/bifurcations/CombinatorialDAG.vue';
 
@@ -29,7 +30,7 @@ changes is the algebra of "rate" and the meaning of "cumulative." Each row
 also has a body of named mathematics that gives a different shape of spec —
 not "give up and simulate."
 
-## The seven buckets
+## The eight buckets
 
 | Bucket                       | Rate-function shape that fails to close                                    | Named adjacent math                          |
 | ---------------------------- | -------------------------------------------------------------------------- | -------------------------------------------- |
@@ -38,6 +39,7 @@ not "give up and simulate."
 | Stochastic load-bearing      | Distribution shape carries design intent, not just the mean                | Markov chains, phase-type, first-passage     |
 | Discrete-event coupled       | Combinatorial trigger ordering across multiple subsystems                  | Combinatorial game theory, MDPs              |
 | Network-topological          | Throughput bounded by graph topology, not rates                            | Max-flow min-cut, LP duality, network flows  |
+| Bilevel interdiction         | Constraints chosen against an adversary who re-optimizes                   | Stackelberg/bilevel, interdiction, cutting planes |
 | Optimal stopping             | When to reset is itself the decision                                       | Bellman equation, Snell envelope, free-boundary |
 | Combinatorial selection      | Configuration choice from a discrete option space                          | Combinatorial optimization, search           |
 
@@ -199,6 +201,100 @@ moves throughput one-for-one until the cut shifts elsewhere.
 
 <MaxFlowGraph client:visible />
 
+## Bilevel interdiction
+
+When the player's decision is not a route through the graph but a *constraint on
+someone else's* — place budget-bounded blockers, and an adversary re-solves its
+own shortest path against whatever you left open. Maze-building tower defense is
+the genre's carrier: the enemy path is not authored, it is whatever survives the
+walls.
+
+Per fixed blocker set the inner problem closes and closes cheaply — a distance
+field over the open cells, polynomial, exact. What fails to close is the outer
+choice. The leader picks a blocker set $B$ within budget, the follower answers
+with $\min$ over paths, and the design objective is the
+[max-min](https://en.wikipedia.org/wiki/Minimax):
+
+$$\max_{B\,:\,c(B)\le b} \;\; \min_{p \in P(B)} \; \ell(p)$$
+
+Two nested optimizations with opposed objectives is a
+[bilevel program](https://en.wikipedia.org/wiki/Bilevel_optimization), and this
+particular one — shortest-path network interdiction, the $k$-most-vital-nodes
+problem — is NP-hard even though its inner problem is textbook.
+
+The bucket is adjacent to two others and belongs to neither. It is not
+network-topological: max-flow closes by LP duality, whereas interdiction's
+[linear relaxation](https://en.wikipedia.org/wiki/Linear_programming_relaxation)
+has an integrality gap wide enough to eat the certificate, so the bound it
+returns doesn't grade anything. It is not strategy-space integration either: a
+[Stackelberg](https://en.wikipedia.org/wiki/Stackelberg_competition) leader
+commits first and the follower answers, which resolves by decomposition rather
+than by equilibrium — nobody is looking for a fixed point.
+
+The spec layer is four statements: the blocker budget and its cost schedule, the
+follower's objective and what counts as passable to it, the feasibility
+constraint (usually that the route must survive — s–t connectivity, where
+[Menger's theorem](https://en.wikipedia.org/wiki/Menger%27s_theorem) says a
+placement is illegal exactly when it separates spawn from goal), and the
+acceptance criterion in path length. Write those down and the greedy that places
+one blocker at a time becomes the *fast solver* rather than the definition of
+the mechanic — which matters, because the literature says exactly where that
+greedy is blind. It is pair-blind: on boards with a plateau, no single blocker
+lengthens the path and two placed together do, so single-step marginal scoring
+reads the plateau as "nothing left to buy." Lookahead patches the plateaus
+someone noticed; the exact decomposition — generate a constraint per incumbent
+path, "block at least one cell of this one," and re-solve — handles plateaus of
+arbitrary width by construction. The restriction that only cells on the standing
+path are worth evaluating is not a shortcut, it is that method's separation
+oracle, and implementations reach it independently.
+
+The first-passage analog reads as "time for the follower to cross given blocker
+budget $b$" — $T(b) = \ell^*(b)/v$, nondecreasing in $b$ and saturating at the
+unbudgeted maximum $\ell^*(\infty)$, which is a longest-simple-path ceiling on
+the open region. That saturation point is the useful artifact: it grades a
+funded greedy against what unlimited money could have bought.
+
+GemCraft is the corpus's clearest exemplar, and unusually explicit about it. A
+wall is a pure blocker — the class carries a grid position and an empty
+per-frame handler, no damage, no range — so the routing decision is separated
+from the coverage decision in the game's own type system. The follower's problem
+is a relaxation sweep to fixpoint over a matrix where every building is
+impassable:
+
+<Cite
+  repo="gemcraft-chasing-shadows"
+  path="scripts/com/giab/games/gccs/steam/ingame/IngameCalculator.as"
+  line="678-700"
+/>
+
+And the feasibility constraint runs that same solve *speculatively*, on a copy
+of the board with the tentative placement marked impassable, rejecting the build
+if any spawn node is left unreachable:
+
+<Cite
+  repo="gemcraft-chasing-shadows"
+  path="scripts/com/giab/games/gccs/steam/ingame/IngameCalculator.as"
+  line="309-400"
+/>
+
+The budget is mana, and it is convex: each wall in a drag costs more than the
+last, and the per-wall price ratchets upward permanently across the run, so the
+cost schedule is itself a design knob rather than a flat count. Frostborn Wrath
+then adds the refinement the spec layer predicts — a second enemy class that
+treats walls as passable, carrying its own solver, so one blocker set faces two
+followers with different traversal costs. Desktop Tower Defense, the founding
+maze-builder, is the same shape with the constraint dropped: it re-floods its
+cost field on every placement but has no legality gate, so sealing the board is
+a thing the game handles rather than a thing it forbids.
+
+The demo makes the max-min felt. Move the budget and watch the follower re-route
+around each new wall; the greedy places one wall at a time by immediate gain,
+the optimum searches blocker sets together, and the gap between the two curves
+opens exactly on the plateau boards where the greedy has nothing to buy and the
+pair has everything.
+
+<InterdictionGrid client:visible />
+
 ## Optimal stopping
 
 When *when to reset* is itself the decision; the value function is the supremum
@@ -295,7 +391,7 @@ subsystem is calibration; the spec is the equilibrium concept. The distinction
 matters for the same reason it matters in the closed-form regime: the spec
 compresses the design space and tells you which knobs are independent.
 
-The catalog stops where the algebra stops, and the seven rows above are the
+The catalog stops where the algebra stops, and the eight rows above are the
 boundary the design space turns at.
 
 <Sources
@@ -311,6 +407,12 @@ boundary the design space turns at.
       path: 'assets/Script/CoreGame/Buildings/BuildingDefinitions.ts',
       line: '69-145',
       note: 'Industry Idle building input/output sets — supply graph as adjacency data; reachability is a graph walk. Network-topological: min-cut bounds throughput.',
+    },
+    {
+      repo: 'gemcraft-chasing-shadows',
+      path: 'scripts/com/giab/games/gccs/steam/ingame/IngameCalculator.as',
+      line: '309-400',
+      note: 'GemCraft placement legality — the tentative build is flooded speculatively and rejected if it leaves a spawn node unreachable, with calculatePaths (:678) the follower’s own distance field. Bilevel interdiction: budget-bounded blockers against a re-optimizing path. Decompiled in-corpus source, no hosted upstream.',
     },
     {
       repo: 'AntimatterDimensionsSourceCode',

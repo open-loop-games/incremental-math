@@ -10,12 +10,14 @@ export interface CiteRef {
 export interface ResolvedCite extends CiteRef {
   url: string | null;
   display: string;
+  /** Known corpus source with no hosted upstream — cites by path, not by link. */
+  local: boolean;
 }
 
 interface RepoMeta {
-  webBase: string;
-  sha: string;
-  host: 'github' | 'gitlab' | 'other';
+  webBase?: string;
+  sha?: string;
+  host: 'github' | 'gitlab' | 'other' | 'local';
   pathPrefix?: string;
 }
 
@@ -36,7 +38,8 @@ export function cite(ref: CiteRef): ResolvedCite {
   const lineSuffix = ref.line != null ? `:${ref.line}` : '';
   const display = `${ref.repo}/${ref.path}${lineSuffix}`;
 
-  if (!repo) return { ...ref, url: null, display };
+  if (!repo) return { ...ref, url: null, display, local: false };
+  if (repo.host === 'local') return { ...ref, url: null, display, local: true };
 
   const frag = lineFragment(ref.line);
   const fullPath = (repo.pathPrefix ?? '') + ref.path;
@@ -46,7 +49,7 @@ export function cite(ref: CiteRef): ResolvedCite {
   } else if (repo.host === 'gitlab') {
     url = `${repo.webBase}/-/blob/${repo.sha}/${fullPath}${frag}`;
   } else {
-    url = repo.webBase;
+    url = repo.webBase!;
   }
-  return { ...ref, url, display };
+  return { ...ref, url, display, local: false };
 }

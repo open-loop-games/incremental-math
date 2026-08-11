@@ -3,7 +3,7 @@
 // Runs automatically as a prebuild step; exits silently if open-loop-research
 // is not present (CI uses the committed JSON instead).
 
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, writeFileSync, existsSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -45,6 +45,15 @@ for (const [path, url] of pathToUrl) {
   if (url.includes('github.com')) host = 'github';
   else if (url.includes('gitlab.com')) host = 'gitlab';
   out[repo] = { webBase, sha, host, ...(PATH_PREFIX[repo] ? { pathPrefix: PATH_PREFIX[repo] } : {}) };
+}
+
+// Corpora committed into open-loop-research directly rather than as submodules —
+// decompiled Flash/Java trees with no hosted upstream. They cite by path only.
+for (const entry of readdirSync(resolve(REF_ROOT, 'reference-code'), { withFileTypes: true })) {
+  if (!entry.isDirectory() || out[entry.name]) continue;
+  // Grouping directories (reference-code/adjacent/<family>/<repo>) are not corpora themselves.
+  if (Object.keys(out).some((k) => k.startsWith(`${entry.name}/`))) continue;
+  out[entry.name] = { host: 'local' };
 }
 
 writeFileSync(OUT, JSON.stringify(out, null, 2) + '\n');

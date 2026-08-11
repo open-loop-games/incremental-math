@@ -19,11 +19,6 @@
     "sha": "2c6c3c6ba45de78280bcc6df58a0a7f923c6a252",
     "host": "github"
   },
-  "groundhog-life": {
-    "webBase": "https://github.com/tcztzy/groundhog-life",
-    "sha": "69de52f8210fc07b20128a719507c19a39791328",
-    "host": "github"
-  },
   "Evolve": {
     "webBase": "https://github.com/pmotschmann/Evolve",
     "sha": "f3168211172c11808eb48bc3753642f193e9b5b4",
@@ -699,5 +694,173 @@
     "webBase": "https://github.com/bitburner-official/bitburner-src",
     "sha": "eb431145eebb1bda1d06e3346a1a92a5f92aacbc",
     "host": "github"
+  },
+  "adventure-capitalist": {
+    "host": "local"
+  },
+  "age-of-war": {
+    "host": "local"
+  },
+  "asbury-pines": {
+    "host": "local"
+  },
+  "ballionaire": {
+    "host": "local"
+  },
+  "bloons-td-1": {
+    "host": "local"
+  },
+  "bloons-td-2": {
+    "host": "local"
+  },
+  "bloons-td-4": {
+    "host": "local"
+  },
+  "cell-to-singularity": {
+    "host": "local"
+  },
+  "chillquarium": {
+    "host": "local"
+  },
+  "chonkers": {
+    "host": "local"
+  },
+  "civ-idle": {
+    "host": "local"
+  },
+  "clicker-heroes-2": {
+    "host": "local"
+  },
+  "clickpocalypse-2": {
+    "host": "local"
+  },
+  "crusaders-of-the-lost-idols": {
+    "host": "local"
+  },
+  "desktop-tower-defense": {
+    "host": "local"
+  },
+  "digseum": {
+    "host": "local"
+  },
+  "dome-keeper": {
+    "host": "local"
+  },
+  "farmer-against-potatoes-idle": {
+    "host": "local"
+  },
+  "fill-up-the-hole": {
+    "host": "local"
+  },
+  "finn-dorset": {
+    "host": "local"
+  },
+  "flash-element-td": {
+    "host": "local"
+  },
+  "gemcraft-2008": {
+    "host": "local"
+  },
+  "gemcraft-chasing-shadows": {
+    "host": "local"
+  },
+  "gemcraft-frostborn-wrath": {
+    "host": "local"
+  },
+  "groundhog-life": {
+    "host": "local"
+  },
+  "idle-champions": {
+    "host": "local"
+  },
+  "idle-momentum": {
+    "host": "local"
+  },
+  "idle-research": {
+    "host": "local"
+  },
+  "idle-wizard": {
+    "host": "local"
+  },
+  "infinitode-2": {
+    "host": "local"
+  },
+  "journey-to-incrementalia": {
+    "host": "local"
+  },
+  "kiwi-clicker": {
+    "host": "local"
+  },
+  "leaf-blower-revolution": {
+    "host": "local"
+  },
+  "legion-td-2": {
+    "host": "local"
+  },
+  "lored": {
+    "host": "local"
+  },
+  "ngu-industries": {
+    "host": "local"
+  },
+  "nodebuster": {
+    "host": "local"
+  },
+  "onslaught-2": {
+    "host": "local"
+  },
+  "orb-of-creation": {
+    "host": "local"
+  },
+  "papers": {
+    "host": "local"
+  },
+  "realm-grinder": {
+    "host": "local"
+  },
+  "rustys-retirement": {
+    "host": "local"
+  },
+  "sixty-four": {
+    "host": "local"
+  },
+  "spaceplan": {
+    "host": "local"
+  },
+  "stone-story-rpg": {
+    "host": "local"
+  },
+  "stuck-in-time": {
+    "host": "local"
+  },
+  "the-farmer-was-replaced": {
+    "host": "local"
+  },
+  "the-idle-class": {
+    "host": "local"
+  },
+  "tiny-pasture": {
+    "host": "local"
+  },
+  "tower-wizard": {
+    "host": "local"
+  },
+  "underworld-idle": {
+    "host": "local"
+  },
+  "unnamed-space-idle": {
+    "host": "local"
+  },
+  "upload-labs": {
+    "host": "local"
+  },
+  "warfare-1917": {
+    "host": "local"
+  },
+  "warfare-1944": {
+    "host": "local"
+  },
+  "widget-inc": {
+    "host": "local"
   }
 }

@@ -48,7 +48,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   {
     resolved.length > 0 && (
       <>
-        <p>Source-code citations (pinned to current submodule SHAs):</p>
+        <p>Source-code citations (pinned to current corpus snapshots):</p>
         <ul>
           {resolved.map((r) => (
             <li>
@@ -56,6 +56,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
                 <a href={r.url} target="_blank" rel="noopener noreferrer">
                   <code>{r.display}</code>
                 </a>
+              ) : r.local ? (
+                <code class="cite-local" title="In-corpus source with no hosted upstream">
+                  {r.display}
+                </code>
               ) : (
                 <code class="cite-unresolved">{r.display}</code>
               )}
