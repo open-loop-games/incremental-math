@@ -29,7 +29,7 @@ designer didn't intend — the rate function has outgrown its purpose, and a sof
 is the answer.
 
 The negative diagnosis is just as important: if the rate's runaway _is_ the meaningful
-progression — Cookie Clicker's late-game cookie counts running into 1e308 territory is
+progression — a late-game cookie count climbing past anything the player can read is
 the _point_ of the late game, not a bug — soft capping is the wrong move. The math
 doesn't say "all unbounded progression must be capped." It says "if the cumulative isn't
 delivering value past a threshold, cap it there."
@@ -56,8 +56,8 @@ harsh, $p = 0.7$ is gentle.
 **Log**. $g(x, t) = t + k \cdot \log_{10}(x - t + 1)$. Lives near the
 [logarithmic entry](/rate-functions/log-frontier#logarithmic-rate). The post-cap growth is _very_
 sublinear — every $10\times$ in input adds a fixed $k$ to output. Pick this when the
-cap's role is "compress many orders of magnitude into a small number." NGU Idle's
-many stacked log caps are this shape because the game's underlying values span 50+
+cap's role is "compress many orders of magnitude into a small number." Games that
+stack many log caps use this shape because their underlying values span dozens of
 orders of magnitude and need to land on a stat the player can read.
 
 **Hyperbolic / asymptotic**. $g(x) = L \cdot x / (x + k)$. Lives at the
@@ -94,8 +94,9 @@ in this one parenthesized expression.
 **Piecewise / regime split**. Different rate or growth on each side of a threshold,
 glued continuously. Lives at the [piecewise composition](/rate-functions/composition#piecewise-splice)
 rule. Pick this when the cap's role is "change the regime visibly so the player feels
-the transition." Realm Grinder's pre/post-Ascension cost shift is two geometrics
-spliced; the player crosses a named threshold and the game's pacing visibly changes.
+the transition." A pre/post-prestige cost shift built as two geometrics spliced is
+the common instance: the player crosses a named threshold and the game's pacing
+visibly changes.
 Antimatter Dimensions ships the same shape as a parameterized class:
 
 <Cite repo="AntimatterDimensionsSourceCode" path="src/core/math.js" line="320-352" />
@@ -136,10 +137,9 @@ Working answers from the corpus:
 - **One cap, one threshold.** Most early softcap implementations. Late-game has one
   obvious "wall" the player aims at and breaks through. Simple, legible, but the
   late-late-game often runs out of structure.
-- **Two-tier.** Early cap for "first slowdown," late cap for "the real wall." Realm
-  Grinder's pre-/mid-/post-Ascension split is effectively this when read as cost
-  caps. Common when the game has one major prestige layer.
-- **Many caps, named individually.** Prestige Tree, Synergism, NGU Idle. Each cap is
+- **Two-tier.** Early cap for "first slowdown," late cap for "the real wall."
+  Common when the game has one major prestige layer.
+- **Many caps, named individually.** Prestige Tree, Synergism. Each cap is
   addressable by name; upgrades target specific caps; challenges swap cap shapes.
   The pattern works because the game's _content_ loops around the caps — knowing
   which cap is binding is a real piece of late-game knowledge. Three or more caps
@@ -156,17 +156,22 @@ The piecewise composition rule is symmetric — nothing in the math forbids the
 post-threshold regime from being _gentler_ than the pre-threshold regime. The genre
 default is that softcaps make later progress harder, but that's a convention, not a rule.
 
-Fundamental ships the cleanest non-monotonic curve in the corpus. Six stages, each
-with its own per-purchase cost multiplier:
+Fundamental ships a clean non-monotonic curve. Six stages, each building with its own
+per-purchase cost multiplier; the spread within a stage is what sets that stage's feel:
 
-| Stage | Multiplier      | Feel                |
-| ----- | --------------- | ------------------- |
-| 1     | $1.40$          | moderate            |
-| 2     | $\approx 2$     | moderate-aggressive |
-| 3     | $10.0$          | harsh — peak wall   |
-| 4     | $\approx 1.7$   | moderate-high       |
-| 5     | $1.11$          | gentle — valley     |
-| 6     | $1.40$          | moderate            |
+| Stage | Multipliers per building        | Feel                          |
+| ----- | ------------------------------- | ----------------------------- |
+| 1     | $1.40$ throughout               | moderate                      |
+| 2     | $1.15$–$1.40$, last building $4$ | moderate, one aggressive outlier |
+| 3     | $1.15$–$1.35$, last two $10$     | harsh — peak wall             |
+| 4     | $1.40$–$2$                      | moderate-high                 |
+| 5     | $2$, $2$, then $1.11$           | gentle — valley on the final building |
+| 6     | $1.40$                          | moderate                      |
+
+<Cite repo="fundamental" path="Source_TS/Player.ts" line="318-325" />
+
+The demo collapses each stage to one representative multiplier so the shape reads as a
+single curve.
 
 <FundamentalStagesDemo client:visible />
 
@@ -197,8 +202,9 @@ end the relevant gameplay loop and should be avoided; hard caps on _resource
 containers_ (slot count, queue depth, simultaneous-effect count) are fine because the
 player can read them as content shape rather than as a wall.
 
-When hard caps work for progression: when the _cap is the milestone_. Early Trimps
-helium is exactly zero before zone 19; the hard cutoff is content, not a wall. The
+When hard caps work for progression: when the _cap is the milestone_. Trimps awards
+no helium before world 19; the hard cutoff is content, not a wall.
+<Cite repo="Trimps" path="main.js" line="4194" /> The
 player doesn't experience it as "I'm capped"; they experience it as "I can't earn
 helium yet." The design distinction is whether the player is _trying_ to cross the
 cap when they hit it. If yes (cap as wall), the discontinuity is felt as the wall it
@@ -272,6 +278,18 @@ how it feels.
       path: 'src/core/math.js',
       line: '320-352',
       note: 'ExponentialCostScaling: parameterized two-regime piecewise — geometric pre-threshold, accelerated geometric post-threshold.',
+    },
+    {
+      repo: 'fundamental',
+      path: 'Source_TS/Player.ts',
+      line: '318-325',
+      note: 'buildingsInfo.increase — per-building cost multipliers by stage; the non-monotonic stage feel comes from the spread and outliers within each row.',
+    },
+    {
+      repo: 'Trimps',
+      path: 'main.js',
+      line: '4194',
+      note: 'Helium reward level is (level − 1900) / 100, floored to zero — no helium before world 19.',
     },
   ]}
 />

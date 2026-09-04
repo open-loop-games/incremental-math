@@ -11,7 +11,7 @@ import Sources from '../../components/Sources.astro';
 
 Pecorella's Part I assumes the cost line is a single straight slope on a log chart — `cost = base × mult^owned` — and the production line crosses it at a constant rate. The seesaw is set up to tilt forever at the same angle. Whatever the player buys, the next thing costs `mult` times more, and that ratio is locked at the start.
 
-Antimatter Dimensions, released the same week Pecorella published, shipped with a different shape. For a long stretch of the early game, costs grew exactly as Pecorella described. Then, at a threshold, the slope itself started getting steeper. The eighth dimension at 7,000 purchases didn't cost `mult^7000` of the first one; it cost something far past that, with the multiplier compounding on itself purchase by purchase. The genre called the result the *infinity wall*, and within a few years it had become the default for any game whose late-game design pushed past `1e308`.
+Antimatter Dimensions, already public when Pecorella published, shipped with a different shape. For a long stretch of the early game, costs grew exactly as Pecorella described. Then, at a threshold, the slope itself started getting steeper. The eighth dimension deep into a run didn't cost `mult^n` times the first one; it cost something far past that, with the multiplier compounding on itself purchase by purchase. The genre called the result the *infinity wall*, and within a few years it had become the default for any game whose late-game design pushed past `1e308`.
 
 This page is about that shape. What it is, why it appeared, how it inverts in closed form, and what it bought designers that pure exponentials couldn't. The underlying algebra — geometric spliced into a faster geometric at a threshold — is the [piecewise splice rule](/rate-functions/composition#piecewise-splice) over two [exponential-family](/rate-functions/exponential) regimes; this page walks AD's design choice, the [composition page](/rate-functions/composition#piecewise-splice) walks the math.
 
@@ -33,7 +33,7 @@ The post-Pecorella genre wanted bend.
 
 Pecorella's framing was implicitly bounded by JavaScript's number ceiling. If the cost line passes `1e308` somewhere in the late game, your variable becomes `Infinity`, comparisons stop working, and the seesaw breaks. Any slope steeper than necessary just hits the wall sooner. The discipline was: pick a `mult` your game can survive for the duration you want, and accept that the *shape* is whatever it is.
 
-The [big-numbers page](/modern/big-numbers) covers what changed in 2018. `break_infinity.js` lifted the ceiling from $10^{308}$ to roughly $10^{1.8 \times 10^{308}}$, and `break_eternity.js` removed it entirely as a practical constraint. The math available to a designer no longer ended at the IEEE 754 cap. With substrate that could carry the values, designers got a free hand to make cost curves whatever shape they wanted them to be.
+The [big-numbers page](/modern/big-numbers) covers what changed. `break_infinity.js` lifted the ceiling from $10^{308}$ to roughly $10^{1.8 \times 10^{308}}$, and `break_eternity.js` removed it entirely as a practical constraint. The math available to a designer no longer ended at the IEEE 754 cap. With substrate that could carry the values, designers got a free hand to make cost curves whatever shape they wanted them to be.
 
 The first thing many of them wanted was a parabola.
 
@@ -90,7 +90,7 @@ The two curves on one chart, with sliders for the four parameters that define th
 
 A few things to feel for:
 
-**The kink is sharp but not abrupt.** At the threshold, the parabolic term is zero (because `excess = 0`); one purchase past the threshold, it's $\tfrac{1}{2} \cdot 1 \cdot 2 \cdot \log_{10}(\text{scale})$, which for `scale = 10` adds exactly one decade. Two past, it adds three more decades on top. Three past, six more. The first few purchases past the wall feel like a cliff.
+**The kink is sharp but not abrupt.** At the threshold, the parabolic term is zero (because `excess = 0`); one purchase past the threshold, it's $\tfrac{1}{2} \cdot 1 \cdot 2 \cdot \log_{10}(\text{scale})$, which for `scale = 10` adds one decade. Two past, the term is three decades; three past, six. Each purchase past the threshold adds one more decade than the last did. The first few purchases past the wall feel like a cliff.
 
 **The pure-exponential slope is irrelevant past the threshold.** Whatever `mult` you set, the parabolic term dominates within ten or twenty purchases of the threshold. The early-game knob and the late-game knob are decoupled — `mult` tunes the warmup, `scale` tunes the wall. Pecorella's single lever became two.
 
@@ -140,7 +140,7 @@ A parabola in log space — exponential in a quadratic — is one rung above pur
 
 The reason the genre converged here, rather than on a third or higher level, is mostly inversion. A quadratic-in-log inverts to a square root. A cubic-in-log inverts to a [cubic formula](https://en.wikipedia.org/wiki/Cubic_equation), which exists but is gnarly. A non-polynomial in log inverts to nothing closed-form at all, and "buy max" stops being a constant-time operation. The parabola sits on a Pareto frontier: aggressive enough to be a real wall, simple enough to invert at native speed.
 
-The other consideration is felt-pacing. With pure exponentials, every purchase is roughly the same fraction of the player's bankroll — Pecorella's seesaw at constant tilt. With a parabolic wall, the *first* purchase past the threshold is a small step, the second is a larger step, the third is larger still, and so on. The wall doesn't slap; it tightens. Players describe the late-game AD experience as "watching the next purchase get harder by feel, not by surprise." That experience is the parabola's signature: sublinear acceleration in *purchase number*, which translates to a smooth visual deceleration in the buy rate.
+The other consideration is felt-pacing. With pure exponentials, every purchase is roughly the same fraction of the player's bankroll — Pecorella's seesaw at constant tilt. With a parabolic wall, the *first* purchase past the threshold is a small step, the second is a larger step, the third is larger still, and so on. The wall doesn't slap; it tightens. That is the parabola's signature: sublinear acceleration in *purchase number*, which translates to a smooth visual deceleration in the buy rate.
 
 ## Other shapes in the wild
 
@@ -160,9 +160,9 @@ These are surface variations. The structural template — pure-exponential up to
 
 ## What it didn't fix
 
-**Designer effort.** The threshold and the scaling factor are now two parameters the designer has to tune. AD's first eight dimensions all share the same `costScale` (10) but have different `baseCost`, different `mult`, and an implicit threshold determined by `scalingCostThreshold = Number.MAX_VALUE`. That's seven free parameters per dimension, eight dimensions, and the result is a tuning problem that took years to settle. Pecorella's pure exponential had two parameters per generator and was tunable in an afternoon.
+**Designer effort.** The threshold and the scaling factor are now two parameters the designer has to tune. AD's first eight dimensions all share the same `costScale` (10) but have different `baseCost`, different `mult`, and an implicit threshold determined by `scalingCostThreshold = Number.MAX_VALUE`. That's four parameters per dimension across eight dimensions, and the result is a coupled tuning problem. Pecorella's pure exponential had two parameters per generator and was tunable in an afternoon.
 
-**Curve fatigue.** Once the genre standardized on parabolic acceleration, players started recognizing the shape. A 2020 Reddit discussion about an unfamiliar idle game described the cost curve as "AD-shaped" within an hour of playing. Genre-savvy players read the curve before they read the prose. The wall stopped being a surprise.
+**Curve fatigue.** Once the genre standardized on parabolic acceleration, players started recognizing the shape. Genre-savvy players read the curve before they read the prose. The wall stopped being a surprise.
 
 **The need for prestige.** Cost acceleration is a tool for slowing the player down inside a single run. It does not, by itself, give the player a way to come back stronger — the seesaw still tilts the same way every reset. The post-Pecorella genre paired cost acceleration with [layered prestige](/modern/layered-prestige) almost immediately; one without the other is incomplete.
 

@@ -48,6 +48,7 @@ The design call:
   Cookie Clicker has cookies and Heavenly Chips, but only because they represent
   _different_ things (current-run accumulation vs cross-run prestige). If both
   represented "produced cookies," they'd be one number.
+  <Cite repo="cookie-clicker" path="main.js" line="4196" />
 
 What the math forbids: bidirectional coupling between rates that doesn't decouple
 into a triangular system. If currency A's rate depends on B and B's rate depends on
@@ -243,6 +244,12 @@ diagnoses fast; the fixes are the design work.
       path: 'src/game.js',
       line: '138-154',
       note: 'gainedEternityPoints — EP gain reads IP cumulative directly via gainedInfinityPoints(); the antimatter→IP→EP triangle is one expression.',
+    },
+    {
+      repo: 'cookie-clicker',
+      path: 'main.js',
+      line: '4196',
+      note: 'EarnHeavenlyChips — the cross-run prestige currency is a separate resource from in-run cookies.',
     },
   ]}
 />

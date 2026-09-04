@@ -15,8 +15,7 @@ cycles. They cover _zero_ of what modern games call **challenge runs** —
 opt-in resets where the rules of the game are deliberately worse, and
 the reward for finishing is a permanent buff that bends the
 post-challenge curve upward. The mechanic was rare in 2016 and is now
-near-universal: every long-running idle game in the post-2016 corpus
-ships some flavor of it.
+near-universal among long-running idle games.
 
 The interesting design question is not _whether_ to add a hard mode but
 _what shape of difficulty to add_. A challenge that simply slows the
@@ -39,11 +38,15 @@ the slot's reward — usually an upgradeable autobuyer or a permanent
 multiplier — is unlocked forever. The challenge itself is a piece of
 content that gets _consumed_.
 
-Antimatter Dimensions is the canonical example. The eight normal
-challenges include "1st Dimension production halts when you buy a 2nd
-Dimension upgrade" (challenge 2), "1st Dimension cost scaling is much
-steeper" (challenge 3), and "buying a higher Dimension erases all
-lower ones" (challenge 4). Each one breaks a specific assumption of the
+Antimatter Dimensions is the canonical example. Its normal challenges
+include "buying Antimatter Dimensions or Tickspeed upgrades halts
+production of all Antimatter Dimensions" (challenge 2), "the 1st
+Antimatter Dimension is heavily weakened, but gets an uncapped
+exponentially increasing multiplier" (challenge 3), and "buying an
+Antimatter Dimension automatically erases all lower tier Antimatter
+Dimensions" (challenge 4).
+<Cite repo="AntimatterDimensionsSourceCode" path="src/core/secret-formula/challenges/normal-challenges.js" line="23-55" />
+Each one breaks a specific assumption of the
 base game's loop, forces the player to find a new strategy, and is
 done forever once goal is reached.
 
@@ -63,7 +66,9 @@ complete() {
 The completion state is a single integer's bitmask — one bit per
 challenge. There is no completion _count_; once a bit is set it stays
 set. Eternity Challenges in the same game push this further by adding a
-small `maxCompletions` (typically 5), where each successive run requires
+small `maxCompletions` (typically 5),
+<Cite repo="AntimatterDimensionsSourceCode" path="src/core/eternity-challenge.js" line="82-84" />
+where each successive run requires
 a higher goal and yields a stronger reward — a hybrid of single-
 completable with a five-step ladder.
 
@@ -83,7 +88,8 @@ Where AD's challenges are discrete one-shots, Synergism's
 **corruptions** are a continuous additive ladder. Eight named
 corruptions — viscosity, deflation, dilation, hyperchallenge,
 illiteracy, drought, recession, extinction — each take an integer level
-from 0 to ~15. The ascension you run is parameterized by a _loadout_: a
+from 0 into the low teens.
+<Cite repo="SynergismOfficial" path="src/Corruptions.ts" line="18-25" /> The ascension you run is parameterized by a _loadout_: a
 levels-vector across all eight. Higher levels make the run harder; the
 final run-score multiplier rewards harder loadouts.
 
@@ -179,7 +185,7 @@ Pandemonium: {
 }
 ```
 
-`getEnemyMult = 5^completions`. The fourth Pandemonium run is 625× as
+`getEnemyMult = 5^completions`. The fifth Pandemonium run is 625× as
 hard as the first. The player's permanent reward grows additively (10%
 per completion) while the next run's difficulty grows
 _multiplicatively_ — which is the same `5^N` shape used in the
@@ -192,11 +198,13 @@ difficulty climb together.
 Pandemonium also progressively _removes_ equipment slots — every two
 completions another armor or weapon slot becomes unavailable. The
 challenge's content surface shrinks even as its difficulty grows.
+<Cite repo="Trimps" path="config.js" line="5639" />
 
 ## The combinatorial case — Realm Grinder
 
 Realm Grinder doesn't fit any of the four shapes cleanly because it
-combines them. The R-challenges (Reincarnation challenges) are
+combines them. (Its source is closed, so this is the design as its
+community documents it rather than as read from code.) The R-challenges (Reincarnation challenges) are
 single-completable like AD's, but the active _faction_ the player
 chose at run start interacts multiplicatively with the challenge
 constraint, which interacts further with research bonuses, which
@@ -302,6 +310,24 @@ are necessary; neither replaces the other.
       path: 'playerSpire.js',
       line: '100-140',
       note: 'Spire trap-grid initialization — each Spire run has its own buyable defense layout (Fire, Frost, Poison, Lightning, Strength, Condenser, Knowledge), distinct currencies (Spirestones), and clear-percentage rewards. The challenge as a self-contained content zone.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/secret-formula/challenges/normal-challenges.js',
+      line: '23-55',
+      note: 'Normal challenge definitions — each description names the base-game assumption the challenge breaks.',
+    },
+    {
+      repo: 'SynergismOfficial',
+      path: 'src/Corruptions.ts',
+      line: '18-25',
+      note: 'The eight corruption keys, in enum order.',
+    },
+    {
+      repo: 'Trimps',
+      path: 'config.js',
+      line: '5639',
+      note: 'Pandemonium: "Another piece of equipment will be disabled every 2 completions after Shield is lost."',
     },
   ]}
 />

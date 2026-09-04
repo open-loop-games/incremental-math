@@ -34,7 +34,7 @@ That's the whole framework. The shapes below are five well-trodden picks for $g$
 
 ## Why not a hard cap?
 
-A hard cap is `min(x, c)`. Past the cap, gain is exactly zero. This is the simplest possible choice, and games do use it — Cell to Singularity caps offline accumulation at 10% of online rate; many games bound an inventory slot or a multiplier slot at a fixed integer. Hard caps are appropriate when the value being capped represents a _resource container_ (slots, queue depth, simultaneous-effect count) where overflow has no meaning.
+A hard cap is `min(x, c)`. Past the cap, gain is exactly zero. This is the simplest possible choice, and games do use it — offline progress capped at a fixed number of hours; inventory slots or multiplier slots bounded at a fixed integer. Hard caps are appropriate when the value being capped represents a _resource container_ (slots, queue depth, simultaneous-effect count) where overflow has no meaning.
 
 But hard caps applied to a _progression value_ have a different effect: they end the relevant gameplay loop. Once the player hits the cap, every subsequent action that would have moved that value does nothing. The number on screen stops responding to clicks. This is felt as a wall, and the wall is exactly the design failure most modern incrementals built their late game to avoid. The genre's working answer is to keep returning _something_ per click — even if that something is so small it takes a thousand clicks to be visible — because the rhythm of "click, see number rise" is what the game is. Softcaps preserve the rhythm.
 
@@ -42,7 +42,7 @@ The mathematical version of this argument: a hard cap has a discontinuity in its
 
 ## The four canonical shapes
 
-The genre converged on four softcap shapes, each with a recognized lead game where the shape is either definitive, dense, or central. The replicanti softcap in Antimatter Dimensions is the most-cited single example in genre writeups, but it's one shape among four, not the whole story.
+The genre converged on four softcap shapes, each with a recognized lead game where the shape is either definitive, dense, or central. The replicanti softcap in Antimatter Dimensions is the best-known single example, but it's one shape among four, not the whole story.
 
 ### Sqrt softcap — Realm Grinder faction bonuses
 
@@ -50,7 +50,7 @@ $$g(x, t) = t \cdot (x/t)^p, \quad 0 < p < 1$$
 
 The simplest shape and the easiest to read. Past the threshold, the input's ratio to the threshold gets a fractional power applied to it. With $p = 0.5$ this is the standard square-root softcap; smaller $p$ is harsher, larger $p$ is gentler.
 
-Realm Grinder's faction bonuses ride on this family. Goblin Slave Trading scales as $2 \cdot \text{evilBuildings}^{0.7} / 100$ — a power softcap with $p = 0.7$. Fairy Worker is $5 \cdot \ln(1 + \text{assistants})^{2.5} / 100$ — a more exotic power-of-log shape that produces a similar curve in the relevant range. Goblin Mana Bonus is $0.75 \cdot \log_{10}(1 + \text{gold})^{1.25} / 100$, again a fractional-power-of-log. The genre name "sqrt softcap" is a slight misnomer for the whole family — these aren't all square roots, they're various sublinear powers — but the shape and effect are the same: every additional building still contributes, but at a falling marginal rate that keeps any one faction strategy from dominating the others.
+Realm Grinder's faction bonuses, as its community documents them, ride on this family: some are fractional powers of a building count, others fractional powers of the log of a count, all producing a similar curve in the relevant range. The genre name "sqrt softcap" is a slight misnomer for the whole family — these aren't all square roots, they're various sublinear powers — but the shape and effect are the same: every additional building still contributes, but at a falling marginal rate that keeps any one faction strategy from dominating the others.
 
 A clean general-purpose implementation, from a community-built game framework that exposes its softcap as a named utility:
 
@@ -102,7 +102,7 @@ $$g(x, t) = t + k \cdot \log_{10}(x - t + 1)$$
 
 The most aggressive of the standard shapes. Past the threshold, every $10\times$ in input adds a fixed $k$ to the output. A value that would naïvely be $10^{1000}$ comes out as approximately $t + 1000k$ — a few thousand, plus the threshold, no matter how big the input got.
 
-NGU Idle is the genre's most softcap-dense game by a clear margin. Energy and magic capacities, beard talents, sniping XP, advanced training, multiple wishes — every late-game subsystem has a log-shaped softcap, and several have multiple log caps stacked at different thresholds with different strengths. A player understanding NGU's late-game progression is largely a player understanding which log cap they're currently regulating and which upgrades push it. The game's metagame is essentially "which of the dozen active softcaps is binding right now."
+NGU Idle has a reputation as the genre's most softcap-dense game. Energy and magic capacities, beard talents, sniping XP, advanced training, multiple wishes — every late-game subsystem has a log-shaped softcap, and several have multiple log caps stacked at different thresholds with different strengths. A player understanding NGU's late-game progression is largely a player understanding which log cap they're currently regulating and which upgrades push it. The game's metagame is essentially "which of the active softcaps is binding right now."
 
 Trimps' fluffy pet XP shows the shape in concentrated form:
 
@@ -141,7 +141,7 @@ $$g(x, t_1, t_2, \ldots) = \begin{cases} x, & x \le t_1 \\ a_1 + k_1 \cdot \log_
 
 A different log strength in each band, glued continuously at thresholds. Reads like a series of breakthrough plateaus rather than one smooth taper.
 
-Leaf Blower Revolution's "leaf softcap" is a genre meme. The game's primary currency hits a piecewise log around the first major scale, then another, then another, with each band feeling like its own progression regime. The player learns the shape of the cap before they learn most of the late-game upgrade tree, because the cap defines the regime they're currently optimizing inside; community guides for the game are organized by which softcap band the player has just broken into, not by which feature they've just unlocked.
+Leaf Blower Revolution's "leaf softcap" is part of its players' vocabulary. The game's primary currency hits a piecewise log around the first major scale, then another, then another, with each band feeling like its own progression regime. The player learns the shape of the cap before they learn most of the late-game upgrade tree, because the cap defines the regime they're currently optimizing inside; players describe where they are in the game by which softcap band they've just broken into, not by which feature they've just unlocked.
 
 A canonical compact form, illustrative of the shape:
 
@@ -153,9 +153,9 @@ function softcap(value) {
 }
 ```
 
-The Realm Grinder pre/post-Ascension cost shift sits in the same family but uses two exponential bands rather than two log bands. Pre-Ascension, building costs grow at $1.15^n$. Post-Ascension, $1.03^n$. The function is continuous, the shape is two distinct exponential regimes glued at $n = t$, and the player feels the gear-shift as a moment in the run rather than a smooth taper:
+The Realm Grinder pre/post-Ascension cost shift sits in the same family but uses two exponential bands rather than two log bands: a steeper ratio $m_1$ before the threshold, a shallower $m_2$ after. The function is continuous, the shape is two distinct exponential regimes glued at $n = t$, and the player feels the gear-shift as a moment in the run rather than a smooth taper:
 
-$$\text{cost}(n) = \begin{cases} c_0 \cdot 1.15^n, & n \le t \\ c_0 \cdot 1.15^t \cdot 1.03^{n-t}, & n > t \end{cases}$$
+$$\text{cost}(n) = \begin{cases} c_0 \cdot m_1^{\,n}, & n \le t \\ c_0 \cdot m_1^{\,t} \cdot m_2^{\,n-t}, & n > t \end{cases} \qquad m_2 < m_1$$
 
 Mechanically this isn't sublinear — both segments are still exponential, the second is just shallower. It qualifies as a softcap because the _post-threshold derivative_ is everywhere smaller than the pre-threshold derivative. What it gives up versus a true sublinear cap is the [asymptote](https://en.wikipedia.org/wiki/Asymptote): the cost still runs away to infinity, just slower. What it gains is a clean threshold the player can see, narrate, and push against — the band itself becomes a feature.
 
@@ -188,9 +188,9 @@ The point of the hard-then-soft shape is to make a resource _visible but inacces
 
 ## Specialty: math-motivated softcaps
 
-Exponential Idle — a mobile theory-grinding incremental — uses softcaps as the _math motivation_ of late-game theories rather than as balance patches on otherwise-runaway formulas. Theory 5 introduces a softcap on a particular term as the calculus exercise the theory is built around; later theories construct their progression around the player observing how a particular function $f(x)$ behaves past its softcap regime. The softcap is the puzzle.
+Exponential Idle — a mobile theory-grinding incremental — uses softcaps as the _math motivation_ of late-game theories rather than as balance patches on otherwise-runaway formulas: a theory introduces a softcap on a particular term as the calculus exercise it is built around, and later theories construct their progression around the player observing how a function behaves past its softcap regime. The softcap is the puzzle.
 
-This is rare in the corpus. Most softcaps are pacing tools — the math is invisible to the player and exists to shape the curve a designer would otherwise have to bound by some other mechanism. Exponential Idle's exposed softcaps are an existence proof that the form has a use beyond curve-shaping; they become a teaching surface for the calculus they implement, and the game's progression is the player learning to read them.
+This is rare. Most softcaps are pacing tools — the math is invisible to the player and exists to shape the curve a designer would otherwise have to bound by some other mechanism. Exponential Idle's exposed softcaps are an existence proof that the form has a use beyond curve-shaping; they become a teaching surface for the calculus they implement, and the game's progression is the player learning to read them.
 
 ## Asymptotic (bonus shape)
 
@@ -297,11 +297,11 @@ The pattern is content-side, not engine-side. The engine provides the formula pr
 
 ## Where softcaps actually live
 
-Across the analyzed corpus, softcaps cluster on three surfaces:
+Softcaps cluster on three surfaces:
 
-- **Prestige currency.** The dominant location. The conversion from a primary currency (spanning many orders of magnitude) into a prestige currency (spanning a controlled, designer-chosen range) is essentially what prestige _is_ in math terms — and that conversion is overwhelmingly some shape of softcap. Cookie Clicker's cube root, AdVenture Capitalist's square root, Kittens Game's paragon cube root, Calculator Evolution's sixth root, AD's IP formula. A run-ratio plot like Pecorella's Part III is a softcap-of-a-softcap chart; the modern variant is to render the softcap shape itself as a designable knob.
+- **Prestige currency.** The dominant location. The conversion from a primary currency (spanning many orders of magnitude) into a prestige currency (spanning a controlled, designer-chosen range) is essentially what prestige _is_ in math terms — and that conversion is overwhelmingly some shape of softcap. Cookie Clicker's cube root, AdVenture Capitalist's square root, Calculator Evolution's sixth root, AD's IP formula. <Cite repo="adventure-capitalist" path="Assembly-CSharp/AngelInvestorService.cs" line="136" /> <Cite repo="calculator-evolution" path="scripts/progress/reboot.js" line="138" /> A run-ratio plot like Pecorella's Part III is a softcap-of-a-softcap chart; the modern variant is to render the softcap shape itself as a designable knob.
 - **Stat scaling.** A softcap on a derived stat — energy capacity, magic capacity, building level cap. The point is to keep individual stats from running away from each other; whichever stat the player happened to invest in doesn't dominate. NGU Idle's energy/magic caps are the canonical example.
-- **Building costs.** Less common in pure form (Pecorella's exponential cost is already itself a kind of soft-by-virtue-of-being-slow softcap), but very common as a piecewise shift — Realm Grinder pre/post-Ascension is the lead example, with Antimatter Dimensions' quadratic-in-exponent past a breakpoint as a related variant (covered on the [cost acceleration](/modern/cost-acceleration) page).
+- **Building costs.** Less common in pure form (Pecorella's exponential cost is already itself a kind of soft-by-virtue-of-being-slow softcap), but very common as a piecewise shift — a pre/post-prestige ratio shift like Realm Grinder's is the lead example, with Antimatter Dimensions' quadratic-in-exponent past a breakpoint as a related variant (covered on the [cost acceleration](/modern/cost-acceleration) page).
 
 The fourth surface — modifier outputs themselves — sometimes shows up but more often the modifier is _defined_ as the softcap's output rather than as something separately softcapped. A multiplier that reads "your Heavenly Chips squared, softcapped" is conceptually a softcap, but in code it tends to be a single combined formula rather than a separately-applied softcap on a separate-multiplier value.
 
@@ -309,7 +309,7 @@ The fourth surface — modifier outputs themselves — sometimes shows up but mo
 
 A softcap that surprises the player is a UX failure. A softcap the player understands and can plan against is a tool. The genre split:
 
-**Show:** Cookie Clicker, AD, Synergism, Prestige Tree all show their formulas — sometimes hidden behind an opt-in "Nerd Mode" toggle, but exposed. This works for player bases that read formulas as part of the game (the same population that reads the wiki and runs spreadsheets). The downside is it converts the late game into a math problem the player optimizes externally; the upside is it converts the late game into a math problem the player actually likes.
+**Show:** Cookie Clicker, AD, Synergism, Prestige Tree all show their formulas — sometimes behind an opt-in toggle (Prestige Tree calls its "Nerd Mode"), but exposed. <Cite repo="Prestige-Tree" path="js/utils.js" line="1003" /> This works for player bases that read formulas as part of the game (the same population that reads the wiki and runs spreadsheets). The downside is it converts the late game into a math problem the player optimizes externally; the upside is it converts the late game into a math problem the player actually likes.
 
 **Hide:** Candy Box, narrative-first games, simulation-heavy games. The formulas are part of the implicit model; the player knows progression has slowed but not exactly when or how. This works for player bases that play for the _feel_ of discovery, where exposing the math would shrink the world. The downside is the player can't plan, the upside is they don't have to.
 
@@ -382,6 +382,24 @@ The Modern section pages downstream of this one (cost acceleration, layered pres
       path: 'src/core/tickspeed.js',
       line: '197-266',
       note: "FreeTickspeed.fromShards: AD's replicanti-adjacent softcap on tickspeed upgrade count. Supporting example of the piecewise family — not the page lead.",
+    },
+    {
+      repo: 'adventure-capitalist',
+      path: 'Assembly-CSharp/AngelInvestorService.cs',
+      line: '136',
+      note: 'CalculateAngelInvestors — sqrt(9 · cash / 1e11) / 2: the square-root prestige conversion.',
+    },
+    {
+      repo: 'calculator-evolution',
+      path: 'scripts/progress/reboot.js',
+      line: '138',
+      note: 'calcRPGain — reboot gain takes a sixth root of the run total.',
+    },
+    {
+      repo: 'Prestige-Tree',
+      path: 'js/utils.js',
+      line: '1003',
+      note: 'tmp.nerdMode toggle — the opt-in formula display.',
     },
   ]}
 />

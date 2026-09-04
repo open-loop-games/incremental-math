@@ -35,10 +35,10 @@ precomputed, the global first-passage is a regime lookup followed by an
 intra-regime inversion.
 
 The genre's lead piecewise pattern is "two geometrics glued at a threshold": a normal-paced
-ratio before some level, a slower ratio past it. Realm Grinder's pre/post-Ascension cost
-shift is the canonical example — $c_0 \cdot 1.15^n$ for $n \le t$, $c_0 \cdot 1.15^t \cdot
-1.03^{n-t}$ for $n > t$. Antimatter Dimensions ships the same pattern as a parameterized
-class — pre-threshold is the geometric ladder, post-threshold the per-step ratio shifts:
+ratio before some level, a slower ratio past it — $c_0 \cdot m_1^{\,n}$ for $n \le t$,
+$c_0 \cdot m_1^{\,t} \cdot m_2^{\,n-t}$ for $n > t$, with $m_2 < m_1$. Realm Grinder's
+pre/post-Ascension cost shift is the familiar example; Antimatter Dimensions ships the
+same pattern as a parameterized class — pre-threshold is the geometric ladder, post-threshold the per-step ratio shifts:
 
 <Cite repo="AntimatterDimensionsSourceCode" path="src/core/math.js" line="320-352" />
 

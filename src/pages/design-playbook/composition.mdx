@@ -191,6 +191,7 @@ Three concrete versions of "yes":
 - **The new layer's currency is a multiplier on the old layer's rate.** Cookie Clicker's
   Heavenly Chips multiply CPS; you keep upgrading buildings post-prestige because the
   Chips multiplier and the building output are _multiplicatively_ composed.
+  <Cite repo="cookie-clicker" path="main.js" line="4284" />
 - **The new layer's currency unlocks new sources for the old layer's state.** A new
   prestige tier opens additional ways to produce the primary currency. The old loops
   matter because the new sources flow through them.
@@ -240,6 +241,12 @@ runs do, and it surfaces problems before the playtests would.
       path: 'src/core/dimensions/antimatter-dimension.js',
       line: '588',
       note: 'Antimatter dimension production: amount × multiplier × Tickspeed.perSecond — the line where the galaxy-fed tickspeed multiplier reaches every dimension.',
+    },
+    {
+      repo: 'cookie-clicker',
+      path: 'main.js',
+      line: '4284',
+      note: 'Ascend tooltip: each prestige level grants a permanent +1% CpS — the cross-run currency composes multiplicatively with in-run building output.',
     },
   ]}
 />

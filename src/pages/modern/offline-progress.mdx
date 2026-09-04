@@ -76,6 +76,7 @@ defocused or laggy and replays it on focus, but caps the accumulator at
 five seconds — so a forgotten tab in a background window doesn't dump an
 hour of cookies on refocus, it dumps five seconds. Offline progress fills
 the gap past five seconds; the in-tab catch-up handles the small one.
+<Cite repo="cookie-clicker" path="main.js" line="17189" />
 
 <HardCapDemo client:visible />
 
@@ -271,8 +272,8 @@ but only the active player exhausts it efficiently.
 
 Cap upgradability is a progression hook. Cookie Clicker's Hells double
 the cap once each; Synergism's research extends the base 72h by additional
-fixed hours; Clickpocalypse 2 advertises a 3h → 11h ramp through normal
-play. The cap itself becomes a thing the player buys, and the metaphor —
+fixed hours; Clickpocalypse 2 sells offline-time bonuses in fixed two-hour
+steps. <Cite repo="clickpocalypse-2" path="c2.js" /> The cap itself becomes a thing the player buys, and the metaphor —
 "unlocking more time" — sells well even though the operation is just
 raising a constant.
 
@@ -360,6 +361,17 @@ seesaw-time, not just more numbers.
       path: 'js/main.js',
       line: '432-444',
       note: 'Hybrid path: minute-hand instant payout plus optional Overtime aspect that doubles the immediate gain into both the minute hand and a parallel bonus-time bank.',
+    },
+    {
+      repo: 'clickpocalypse-2',
+      path: 'c2.js',
+      note: 'offlineTimeBonus1/2 upgrades, each "+2 Hours" on the offline cap (minified source, no stable line).',
+    },
+    {
+      repo: 'cookie-clicker',
+      path: 'main.js',
+      line: '17189',
+      note: 'Game.Loop latency compensator: accumulatedDelay is clamped to 5 seconds before the catch-up loop replays logic frames.',
     },
   ]}
 />

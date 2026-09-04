@@ -4,6 +4,8 @@ title: Bounded growth (logistic)
 ---
 
 import LogisticDemo from '../../components/rate-functions/LogisticDemo.vue';
+import Cite from '../../components/Cite.astro';
+import Sources from '../../components/Sources.astro';
 
 # Bounded growth
 
@@ -87,9 +89,10 @@ The places pure logistic does show up:
   surface rather than a pacing tool. The shape is not hidden — it's the headline.
 - **Population-style mechanics** where the state is literally a population (kingdoms,
   ecosystems, civilizations) and the carrying-capacity framing is part of the fiction. The
-  Kittens Game's kitten cap behaves logistically in its design intent; the shipped formula
-  uses a piecewise rule but the underlying model the designers built it around is
+  Kittens Game's kitten cap behaves logistically in its design intent; the ratio bonus that
+  scales the cap uses a piecewise diminishing-returns rule, and the underlying model is
   carrying-capacity-shaped.
+  <Cite repo="kittensgame" path="game.js" line="2202-2215" />
 - **Reachability gates** where a stat must approach but not exceed a hard limit (luck
   caps, multiplicative ceilings). When the cap is _narrative_ — "a statistic that
   represents a fraction" — the logistic is the right intent.
@@ -119,3 +122,14 @@ multiplier is constant on the integration scale and not when it isn't. The catal
 about composition closure (covered on the [composition page](/rate-functions/composition)) holds for the
 logistic the same way it holds for the others: clean compositions stay closed; coupled
 compositions migrate into [bifurcations](https://en.wikipedia.org/wiki/Bifurcation_theory).
+
+<Sources
+  cites={[
+    {
+      repo: 'kittensgame',
+      path: 'game.js',
+      line: '2202-2215',
+      note: 'getLimitedDR — the first 75% of a limit is undiminished, the remainder approaches the limit hyperbolically; applied to the kitten-cap ratio bonus.',
+    },
+  ]}
+/>

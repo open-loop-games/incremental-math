@@ -23,7 +23,8 @@ mechanics that all reframe `t` from a coordinate to a quantity.
 
 The cleanest reframe is the time loop. Groundhog Life gives the player a
 fixed number of minutes per loop — 1440, the minutes in a day — and a list
-of activities competing for them. Whatever you don't spend, you lose at the
+of activities competing for them.
+<Cite repo="groundhog-life" path="app-unminified.js" line="4183" /> Whatever you don't spend, you lose at the
 end of the loop. Whatever you do spend produces persistent meta-progress
 the next loop inherits. The math at allocation time is a continuous
 [knapsack problem](https://en.wikipedia.org/wiki/Continuous_knapsack_problem):
@@ -45,6 +46,7 @@ Mana, in Omsi, is time: actions consume mana at a base rate of fifty mana
 per second of wall-clock, and each tick of an action increments
 `manaUsed` and accumulates `timeSpent`:
 
+<Cite repo="idle-loops-omsi" path="loops/driver.js" line="5" />
 <Cite repo="idle-loops-omsi" path="loops/actions.js" line="22-23" />
 
 ```js
@@ -117,8 +119,8 @@ different from the constant case, because every tick the player buys more
 tickspeed and the rate of effective-time accumulation jumps.
 
 Progress Knight 2's Time Warping is a less-mechanically-coupled instance
-of the same pattern: a slider that multiplies game speed, unlocked through
-the skill tree, peaking at four-figure multipliers.
+of the same pattern: a skill whose level feeds a slow logarithmic multiplier
+on game speed.
 
 <Cite repo="progress_knight_2" path="js/main.js" line="567-572" />
 
@@ -213,16 +215,10 @@ budgeted is queue-seconds, not wall-clock seconds, and the player gets
 zero of them by sitting at the screen with nothing queued.
 
 Inside an active queue, a pressure function grows exponentially in
-executed seconds. Increlution's shape is approximately
-
-$$
-\text{pressure}(s) = 0.5 \cdot 1.25^{s/60}
-$$
-
-— a base of `1.25` per minute of queue runtime. Once pressure crosses
-the survival threshold the generation ends and the run resets to its
-meta-progression layer; at base configuration this caps a generation
-near the hour mark. Skills and equipment in the meta-progression layer
+executed seconds, compounding by a fixed factor per minute of queue
+runtime. Once pressure crosses the survival threshold the generation
+ends and the run resets to its meta-progression layer. Skills and
+equipment in the meta-progression layer
 soften the exponent — that is what raises the queue-second budget on
 subsequent generations and makes harder action sequences reachable.
 
@@ -243,8 +239,7 @@ remain in the current generation.
 
 A softer version of the pressure idea shows up in mechanics that run on
 wall-clock time instead of queue-time: starvation timers in Kittens
-Game, seasonal cycles in Evolve, the Ritual buff in Omsi (which decays
-between sessions). These push the optimization from "produce" to
+Game, seasonal cycles in Evolve, the Ritual speed buff in Omsi. These push the optimization from "produce" to
 "produce *now*" without making `t` itself contingent on queueing
 actions. The queue-gated reframe is the strict version of the same
 move.
@@ -323,6 +318,18 @@ compatible with the standard offline model.
       path: 'predictor.js',
       line: '344-373',
       note: 'Koviko.Predictor — the planner class that simulates a queue forward through stat gain, skill gain, resource accumulation, and per-action progression to estimate loop outcomes ahead of execution. Originally from GustavJakobsson/IdleLoops-Predictor and integrated into the dmchurch fork.',
+    },
+    {
+      repo: 'groundhog-life',
+      path: 'app-unminified.js',
+      line: '4183',
+      note: 'The loop budget is asserted to be exactly 1440 minutes — one day.',
+    },
+    {
+      repo: 'idle-loops-omsi',
+      path: 'loops/driver.js',
+      line: '5',
+      note: 'baseManaPerSecond = 50: the wall-clock-to-mana exchange rate.',
     },
   ]}
 />

@@ -78,7 +78,7 @@ these three.
 
 ## Universal Paperclips as a worked example
 
-Universal Paperclips is the cleanest small graph in the corpus — six nodes, narrative-driven
+Universal Paperclips is a clean small graph: a handful of nodes, narrative-driven
 topology shifts, and source code small enough to read in one sitting.
 Stage 1 of the game runs a graph that looks like:
 
@@ -159,7 +159,7 @@ The whole stage 1 graph is:
 | funds → autoclippers (purchase)       | exponential cost curve                                                                          |
 | clips → funds (sale)                  | $\text{margin}$ per clip given current $\text{demand}$                                          |
 
-Six nodes, eight edges, no cycles in stage 1 — except for the implicit
+A handful of nodes and edges, no cycles in stage 1 — except for the implicit
 funds-buys-autoclippers-which-make-clips-which-sell-for-funds loop,
 which is the drone payoff loop
 the entire early game runs on. The cycle is closed by the *demand
@@ -195,8 +195,8 @@ The first preset in the demo at the bottom of the page reproduces this
 exactly. The chain dynamics produce $A,B,C,D$ curves whose log-log
 slopes are $1, 2, 3, 4$ at small times, with each lower tier crossing
 the one above as $t$ grows. The same picture appears in Antimatter Dimensions and in Derivative
-Clicker, both of which run the chain with $d \in \{4, 5, 8\}$
-depending on which prestige tier is unlocked.
+Clicker, both of which run the chain several tiers deep, with more tiers unlocking as
+the game progresses.
 
 ## DAGs: superposition of polynomials
 
@@ -214,8 +214,7 @@ longer-path contribution dominates at large $t$ but the shorter-path
 contribution dominates initially — the curve has a knee where the
 longer path catches up.
 
-Synergism writes the densest currency DAG in
-the corpus: particles produced by transcending, transcend shards
+Synergism writes one of the genre's densest currency DAGs: particles produced by transcending, transcend shards
 produced by reincarnating, ascension cubes produced by ascending,
 plus a handful of side-channel currencies that drop from various
 unlocks. The particle-gain edge is
@@ -269,8 +268,8 @@ shrinks as the target grows — keeps $\rho(A) \le 1$ asymptotically and
 parks the system at a non-trivial steady state.
 
 NGU Idle is the most
-overt cycle in the corpus. Energy buys magic-related items, magic buys
-energy-related items, and both feed into R3 which boosts both. The
+overt cycle of the lot: its two base resources each buy upgrades that
+feed the other, and a third resource downstream boosts both. The
 inner loop is genuinely circular and the only thing keeping it from
 running away is that each "buy" is a discrete one-time purchase whose
 cost climbs faster than the corresponding rate gain — a per-edge
@@ -319,14 +318,13 @@ edge entirely while doubling the particle → upgrade edge weight. Two
 runs with different corruption settings are dynamics on different
 graphs.
 
-NGU Idle does the same
-thing more crudely with rebirth tiers — each rebirth layer adds a new
+Games built on rebirth tiers do the same
+thing more crudely — each rebirth layer adds a new
 node and a new set of edges into and out of the existing graph,
 preserving the lower layers but quietly retiring some of their edges
 as the player ramps the new layer.
-Realm Grinder faction switches do it as a wholesale graph swap — the production
-matrix you run after switching to the Demon faction shares few edges
-with the Fairy production matrix. The dynamics equation is the same;
+Faction systems like Realm Grinder's do it as a wholesale graph swap — the production
+matrix after a faction switch shares few edges with the one before it. The dynamics equation is the same;
 the matrix you plug in is not.
 
 The progression a long-running game offers is, in this view, a sequence

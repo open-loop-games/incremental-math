@@ -34,11 +34,11 @@ patterns and the catalog's "what doesn't compose cleanly" notes meet.
 
 The earliest shipped form is a single function that walks through every
 possible bonus and applies each one if its condition holds. Cookie Clicker
-is the canonical example. `Game.CalculateGains` is several hundred lines
-long and contains over a hundred `mult *= ...` assignments, each gated on a
+is the canonical example. `Game.CalculateGains` runs a couple of hundred
+lines and contains dozens of `mult *= ...` assignments, each gated on a
 specific upgrade, achievement, or building purchase:
 
-<Cite repo="cookie-clicker" path="main.js" line="4938" />
+<Cite repo="cookie-clicker" path="main.js" line="5155-5396" />
 
 ```js
 Game.CalculateGains = function () {
@@ -47,7 +47,7 @@ Game.CalculateGains = function () {
   // ... a few hundred lines later ...
   if (Game.Has('Sugar baking')) mult *= 1 + Math.min(100, Game.lumps) * 0.01;
   mult *= 1 + Game.auraMult('Radiant Appetite');
-  // ... and so on, for 100+ branches ...
+  // ... and so on, for dozens of branches ...
   Game.cookiesPs = Game.unbuffedCps; // after all multipliers
 };
 ```
@@ -277,9 +277,9 @@ most-consulted screens in the game.
 **Realm Grinder** stacks the same way around faction choice: building
 production runs through faction bonuses, alignment bonus, pact effects,
 spell effects, research, mercenary trades, abdication bonuses, and
-challenge-squared multipliers. The post-Faction-Coins extraction
-documents capture the per-faction production chains as separate
-multipliers folding into a single per-second rate.
+challenge-squared multipliers. Community documentation of the per-faction
+production chains reads as separate multipliers folding into a single
+per-second rate.
 
 The unifying observation: every one of these games converged on the same
 shape — a list of named contributors, each one-line evaluable, folded
@@ -452,8 +452,8 @@ one-page-of-code problem instead of a re-implementation.
     {
       repo: 'cookie-clicker',
       path: 'main.js',
-      line: '4938',
-      note: 'Game.CalculateGains — the canonical hand-rolled chain. ~600 lines, 100+ multiplications, single function.',
+      line: '5155-5396',
+      note: 'Game.CalculateGains — the canonical hand-rolled chain: a couple of hundred lines, dozens of gated multiplications, one function.',
     },
     {
       repo: 'Prestige-Tree',

@@ -100,7 +100,7 @@ for (var i in me.synergies) {
 adds an edge to the synergy graph between Farms and Time Machines. Buying both
 buildings is required for the upgrade to *unlock*; buying the upgrade is
 required for the bonus to *fire*. The bonus from each side scales with the
-other side's count. Forty pair-synergy upgrades are defined this way, two
+other side's count. A few dozen pair-synergy upgrades are defined this way, two
 tiers each, forming a dense bipartite graph between buildings.
 
 The aggregation code is honest about what it's modeling. Cookie Clicker's
@@ -130,13 +130,11 @@ appear on the Farm's row of the main UI; it lives in the graph.
 ## Realm Grinder: faction as set selector
 
 Realm Grinder's faction system is a synergy structure the player chooses
-explicitly. Each faction (Fairy, Goblin, Demon, Druid, Faceless, ...) defines
-which subset of buildings it amplifies and how. The Fairy faction gates a
-bonus on building *identity* (a fixed subset of "good" buildings — Farms,
-Inns, Blacksmiths) and scales it by the count of *assistants*, a different
-category entirely. The Goblin faction gates on *evil-ness* (a property
-predicate over buildings) and scales by how many evil buildings you own.
-Demon flatly multiplies the highest-tier buildings. Each faction is a
+explicitly. Each faction defines which subset of buildings it amplifies and
+how. One gates a bonus on building *identity* (a fixed subset of buildings)
+and scales it by the count of a different category entirely. Another gates on
+a property predicate over buildings and scales by how many satisfy it. Another
+flatly multiplies the highest-tier buildings. Each faction is a
 different *function over the set of owned buildings* — same player inventory,
 different score depending on which faction's predicate-and-scaler the player
 selected.
@@ -238,10 +236,8 @@ $$
 In words: the marginal value of adding $i$ to a smaller set is at least as
 large as adding it to a bigger set. *Diminishing returns at the set level.*
 
-Realm Grinder factions are submodular in their building bonuses:
-$5 \cdot \log(1 + \text{assistants})^{2.5} / 100$ is concave in assistants, so
-each new assistant building contributes less to the Fairy bonus than the
-previous one. Cookie Clicker's pair synergies are nearly submodular when the
+Faction bonuses that scale with a logarithm of a count are submodular in that
+count: each new building contributes less to the bonus than the previous one. Cookie Clicker's pair synergies are nearly submodular when the
 buildings that pair-synergize already exist (the `+0.05 \cdot \text{count}`
 term doesn't compound). Synergism's corruption score has each corruption's
 multiplier diminish in marginal contribution as overall difficulty grows.
@@ -254,9 +250,8 @@ enumeration; just walk through the items in marginal-value order and take.
 
 That's why these games *feel solvable*. A player who thinks "I'll buy the next
 upgrade that gives me the biggest CpS bump" is running greedy on a submodular
-function and is provably within 37% of optimal. The optimal-play guides for
-Cookie Clicker, Realm Grinder, and Synergism converge on greedy heuristics with
-small lookahead exactly because the underlying function rewards them.
+function and is provably within 37% of optimal. Informal optimal-play strategies
+for these games converge on greedy heuristics with small lookahead exactly because the underlying function rewards them.
 
 ### Where it isn't submodular
 
@@ -308,9 +303,8 @@ value per item plus interaction bonuses keyed on subsets.
 A few patterns drop out of viewing synergies as set functions.
 
 **Synergy graphs become content.** A pair-synergy graph with $n$ nodes has up
-to $\binom{n}{2}$ edges. At $n=15$ buildings (Cookie Clicker's mid-game count),
-that's 105 potential edges, of which Cookie Clicker uses about 40 (two tiers
-each). Each edge is content — the player learns the graph, plans around it,
+to $\binom{n}{2}$ edges. Cookie Clicker's twenty buildings give 190 potential
+pairs, of which its synergy upgrades cover a few dozen (two tiers each). Each edge is content — the player learns the graph, plans around it,
 prioritizes purchases that activate the most edges. The graph itself is the
 mechanic; individual upgrade values are tuning knobs on it. This is
 qualitatively different from a modifier chain, where adding a new modifier is
@@ -332,7 +326,7 @@ anything" gates. A designer who wants the game to feel *combinatorial*
 (planning required) inserts supermodular gates: pair upgrades that need both
 members, set-of-N achievements, faction-specific buildings that are dead
 weight without the faction. The mix determines the play feel. Cookie Clicker
-runs about 90% submodular, 10% supermodular pockets — enough to reward
+is mostly submodular with a few supermodular pockets — enough to reward
 planning without punishing intuition.
 
 **Attribution panels as the synergy UI.** A modifier chain renders as a

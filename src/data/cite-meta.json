@@ -439,27 +439,27 @@
     "sha": "a8cd02c2fd080bc0a4be6fb8ed2da583b7bf82c4",
     "host": "github"
   },
-  "kitten-scientists": {
+  "adjacent/userscripts/kitten-scientists": {
     "webBase": "https://github.com/kitten-science/kitten-scientists",
     "sha": "cd12edb4509aab9ce720ac8c13402e7faf47c46e",
     "host": "github"
   },
-  "evolve-scripting-edition": {
+  "adjacent/userscripts/evolve-scripting-edition": {
     "webBase": "https://github.com/TMVictor/Evolve-Scripting-Edition",
     "sha": "c88cbff416bcb1880d72abf1d1de7e96796690ca",
     "host": "github"
   },
-  "frozen-cookies": {
+  "adjacent/userscripts/frozen-cookies": {
     "webBase": "https://github.com/Icehawk78/FrozenCookies",
     "sha": "4a64057708d4bf182b42889340393d7dcbf46440",
     "host": "github"
   },
-  "cookie-monster": {
+  "adjacent/userscripts/cookie-monster": {
     "webBase": "https://github.com/CookieMonsterTeam/CookieMonster",
     "sha": "7f06fd383a280747200aff8e76280abc5d505ddc",
     "host": "github"
   },
-  "autotrimps": {
+  "adjacent/userscripts/autotrimps": {
     "webBase": "https://github.com/SadAugust/AutoTrimps",
     "sha": "7341f39464985d88198f15a670a690f293ef6939",
     "host": "github"
@@ -469,12 +469,12 @@
     "sha": "e9b8bdc6224155ac51ba2d7869f5ecebc0c9a094",
     "host": "github"
   },
-  "synergism-automation": {
+  "adjacent/userscripts/synergism-automation": {
     "webBase": "https://github.com/Galefury/synergism-automation",
     "sha": "52b7759caf049424210ba3d450b87ad4e7b58007",
     "host": "github"
   },
-  "synergism-hypersynergy": {
+  "adjacent/userscripts/synergism-hypersynergy": {
     "webBase": "https://github.com/ahvonenj/synergism-hypersynergy",
     "sha": "c44bc78babab152fed49f135089f466ed4834975",
     "host": "github"

@@ -4,16 +4,19 @@ import RatePlot from '../RatePlot.vue';
 import type { Annotation } from '../RatePlot.vue';
 import { SERIES_ORDER, seriesColor } from '../../lib/series-colors';
 
-// Fundamental's six-stage cost ladder. Per-purchase cost multiplier is constant
-// within each stage and changes at stage boundaries. Beat time T(n) = T₀ · Π mᵢ
-// over the multipliers for the stages crossed; within stage i the curve is a
-// straight line on log y with slope ln(mᵢ) per purchase.
+// Fundamental's six-stage cost ladder, collapsed to one representative per-purchase
+// multiplier per stage. The source (fundamental Source_TS/Player.ts,
+// buildingsInfo.increase) sets a multiplier per building, not per stage; the
+// defaults below pick one building from each row so the stage shape reads as a
+// single curve. Beat time T(n) = T₀ · Π mᵢ over the multipliers for the stages
+// crossed; within stage i the curve is a straight line on log y with slope ln(mᵢ)
+// per purchase.
 //
-//   stage 1: 1.40   moderate
-//   stage 2: 2.00   moderate-aggressive
-//   stage 3: 10.0   harsh — peak wall
-//   stage 4: 1.70   moderate-high
-//   stage 5: 1.11   gentle — valley
+//   stage 1: 1.40   moderate         (every building 1.4)
+//   stage 2: 1.40   moderate         (1.15–1.4; last building 4)
+//   stage 3: 10.0   harsh — peak wall (1.15–1.35; last two buildings 10)
+//   stage 4: 1.70   moderate-high    (1.4–2)
+//   stage 5: 1.11   gentle — valley  (2, 2, then 1.11)
 //   stage 6: 1.40   moderate
 //
 // The "valley reads as a breather *because* the peak existed" claim is what the
@@ -30,7 +33,7 @@ interface StageDef {
 
 const STAGE_DEFS: StageDef[] = [
   { label: 'I', feel: 'moderate', defaultMult: 1.4, hue: seriesColor(SERIES_ORDER[0]) },
-  { label: 'II', feel: 'moderate-aggressive', defaultMult: 2.0, hue: seriesColor(SERIES_ORDER[1]) },
+  { label: 'II', feel: 'moderate', defaultMult: 1.4, hue: seriesColor(SERIES_ORDER[1]) },
   { label: 'III', feel: 'harsh — peak', defaultMult: 10.0, hue: seriesColor(SERIES_ORDER[2]) },
   { label: 'IV', feel: 'moderate-high', defaultMult: 1.7, hue: seriesColor(SERIES_ORDER[3]) },
   { label: 'V', feel: 'gentle — valley', defaultMult: 1.11, hue: seriesColor(SERIES_ORDER[4]) },

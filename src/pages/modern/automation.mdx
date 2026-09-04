@@ -60,8 +60,8 @@ cents on G1 long after G2 would be the better marginal buy.
 The *priority slider* in the demo is the simplification of every
 priority autobuyer in the genre. At priority = 0 the policy walks
 generators low-to-high; at priority = 1 it walks them high-to-low. Real
-games (Antimatter Dimensions' priority sliders, Synergism's auto-buy
-priorities) expose an integer per generator and sort by it. The two
+games mostly fix the walk order in code and expose per-tier toggles and
+buy modes instead of a priority number. The two
 slider extremes produce qualitatively different regimes:
 
 - **Low priority everywhere.** Every spare cent goes to G1, then G2,
@@ -73,10 +73,10 @@ slider extremes produce qualitatively different regimes:
   top-tier currency. The curve is staircased — flat between G3
   purchases, jumps when one lands.
 
-The real-game version of this is Antimatter Dimensions exposing per-tier
-priority sliders on its dimension autobuyers. The internal state is a
-two-mode flag — buy one, or buy ten — plus the priority order; the
-purchase loop walks dimensions in priority order each tick:
+The real-game version of this is Antimatter Dimensions' per-tier dimension
+autobuyers. There is no priority number: each tier has an on/off switch, a
+two-mode flag — buy one, or buy ten — and an upgradable bulk, and the walk
+order is fixed in code:
 
 <Cite repo="AntimatterDimensionsSourceCode" path="src/core/autobuyers/antimatter-dimension-autobuyer.js" line="68-124" />
 
@@ -205,15 +205,15 @@ grown.
 
 This is the genre's clearest example of automation as a first-class
 progression mechanic. Pecorella's Optimal Choice answered "what next?"
-in one cell; Trimps answers it across forty knobs that interact with
+in one cell; Trimps answers it across dozens of knobs that interact with
 challenge runs, heirloom rolls, and equipment crafting. Mastery of the
 game is in large part mastery of those knobs.
 
 ## Bitburner: automation as the medium
 
 The post-Pecorella shift in automation goes furthest in Bitburner, where
-the player writes [Netscript](https://github.com/bitburner-official/bitburner-src/blob/dev/markdown/bitburner.md)
-(a JavaScript-flavored API) that runs inside the game world. The "autobuyer" is whatever the player
+the player writes Netscript (a JavaScript-flavored API) that runs inside the
+game world. <Cite repo="bitburner-src" path="markdown/bitburner.md" /> The "autobuyer" is whatever the player
 writes — a script that scans hostile servers, breaks them, schedules
 hack/grow/weaken loops, and spends earnings on stat-boosting augments.
 The game ships an in-engine code editor, a small standard library
@@ -238,13 +238,14 @@ Different games place automation at different points in the progression:
   passively after a manager is hired; the player never clicks them. The
   Pecorella seesaw runs in the background from the moment automation
   unlocks. Idle gameplay is the default mode.
+  <Cite repo="adventure-capitalist" path="Assembly-CSharp/GameState.cs" line="595" />
 - **Conditional auto-prestige.** Cookie Clicker, Antimatter Dimensions,
   and Synergism all expose a threshold for auto-prestige — reset when
   prestige currency exceeds X, or when prestige-gain rate falls below
   Y. Pecorella's Part III cadence question — *when do I prestige?* —
   becomes a number the player edits.
-- **Auto-cast spells with priority.** Realm Grinder's spell autocast
-  picks one of several spells per tick by player-set priority. Spells
+- **Auto-cast spells with priority.** Spell autocast in Realm Grinder-style
+  games picks one of several spells per tick by a player-set order. Spells
   are different effects with different costs, so the policy is a small
   scheduler picking from a queue.
 - **Tiered auto-everything.** Synergism's automation unlocks tier by
@@ -256,8 +257,8 @@ Different games place automation at different points in the progression:
   game: every skill action loops automatically once configured, and
   offline progress simulates the loop forward. The active gesture is
   setting up the next loop, not executing the current one.
-- **Stat- and reward-gated unlock.** NGU Idle's BAE (Buy All Enabled)
-  and advanced training, Clicker Heroes' auto-clickers as a resource —
+- **Stat- and reward-gated unlock.** NGU Idle's tiered automation
+  unlocks, Clicker Heroes' auto-clickers as a rationed resource —
   automation is rationed and upgraded across runs. The unlock curve
   is a content surface in its own right.
 
@@ -315,6 +316,17 @@ the policy itself becomes a thing the player buys.
       path: 'main.js',
       line: '10328-10339',
       note: 'GrandmaSynergy / autoclick upgrades — Cookie Clicker’s automation is a sequence of buyable upgrades, each unlocking one more loop. The "configure the policy" surface is the upgrade list itself.',
+    },
+    {
+      repo: 'adventure-capitalist',
+      path: 'Assembly-CSharp/GameState.cs',
+      line: '595',
+      note: 'Managers are a list of Upgrade objects on the game state; a hired manager makes its business produce without input.',
+    },
+    {
+      repo: 'bitburner-src',
+      path: 'markdown/bitburner.md',
+      note: 'Netscript API reference — ns.hack, ns.grow, ns.exec and the rest of the in-game standard library.',
     },
   ]}
 />

@@ -45,9 +45,9 @@ this.getPrice = function (n) {
 };
 ```
 
-That ratio — $1.15$ — became the genre default, copied without renegotiation across a
-decade of clones and originals. The reason the choice stuck is the doubling time:
-$\log_2(1.15)^{-1} \approx 4.96$, so each five purchases double the cost. A run that climbs
+That ratio — $1.15$ — became the genre default, adopted by later games with little
+renegotiation. The reason the choice stuck is the doubling time:
+$(\log_2 1.15)^{-1} \approx 4.96$, so each five purchases double the cost. A run that climbs
 through fifty purchases of a building has gone through ten doublings, $1024\times$ over the
 base cost. A run that climbs through a hundred has gone through twenty, $\approx 10^6\times$.
 The same formula holds at every scale; the _rate_ of difficulty escalation is constant.
@@ -75,8 +75,7 @@ distinct "speed" regimes.
 <GeometricRateDemo client:visible />
 
 The doubling-time readout updates as you slide $m$. At $m = 1.15$ the doubling time is
-about $5$, the genre default. At $m = 1.05$ — what Realm Grinder shifts to post-Ascension —
-doubling takes ~14 purchases, a markedly slower regime. At $m = 1.30$ the regime is harsh:
+about $5$, the genre default. At $m = 1.05$ doubling takes ~14 purchases, a markedly slower regime. At $m = 1.30$ the regime is harsh:
 each three purchases double the cost. Designers who pick a multiplier are picking the
 slope of the late-game wall.
 
@@ -88,7 +87,7 @@ The same family in continuous-time notation. The relationship $m = e^b$ — equi
 $b = \ln m$ — is what makes the two readings interchangeable. A geometric ladder with
 ratio $m = 1.15$ is a continuous exponential with $b = \ln(1.15) \approx 0.1398$;
 [doubling time](https://en.wikipedia.org/wiki/Doubling_time) in $x$ is $(\ln 2)/b$, the
-same number as $\log_2(1/m)^{-1}$ rounded to the same place.
+same number as $(\log_2 m)^{-1}$ rounded to the same place.
 
 Why both notations exist:
 
@@ -119,7 +118,7 @@ late-game runs that the genre's late-2010s production substrate (`break_infinity
 `break_eternity`) had to be engineered to handle — past $1e308$ the naïve `Math.pow` form
 overflows, and the exponential family's natural endpoint is somewhere past that. Big-number
 arithmetic (covered on the [big numbers page](/modern/big-numbers)) is what made the
-exponential family practical past 2018; before then, the late-game regime hit a wall not
+exponential family practical past the double ceiling; before then, the late-game regime hit a wall not
 because the math broke but because the floats did.
 
 The other direction the genre went is _softening_ the exponential past a threshold —

@@ -257,7 +257,8 @@ funded greedy against what unlimited money could have bought.
 GemCraft is the corpus's clearest exemplar, and unusually explicit about it. A
 wall is a pure blocker — the class carries a grid position and an empty
 per-frame handler, no damage, no range — so the routing decision is separated
-from the coverage decision in the game's own type system. The follower's problem
+from the coverage decision in the game's own type system.
+<Cite repo="gemcraft-chasing-shadows" path="scripts/com/giab/games/gccs/steam/entity/Wall.as" line="3-24" /> The follower's problem
 is a relaxation sweep to fixpoint over a matrix where every building is
 impassable:
 
@@ -279,13 +280,16 @@ if any spawn node is left unreachable:
 
 The budget is mana, and it is convex: each wall in a drag costs more than the
 last, and the per-wall price ratchets upward permanently across the run, so the
-cost schedule is itself a design knob rather than a flat count. Frostborn Wrath
-then adds the refinement the spec layer predicts — a second enemy class that
-treats walls as passable, carrying its own solver, so one blocker set faces two
-followers with different traversal costs. Desktop Tower Defense, the founding
-maze-builder, is the same shape with the constraint dropped: it re-floods its
-cost field on every placement but has no legality gate, so sealing the board is
-a thing the game handles rather than a thing it forbids.
+cost schedule is itself a design knob rather than a flat count.
+<Cite repo="gemcraft-chasing-shadows" path="scripts/com/giab/games/gccs/steam/ingame/IngameInputHandler2.as" line="602-643" />
+Frostborn Wrath is reported to add the refinement the spec layer predicts — a
+second enemy class that treats walls as passable, carrying its own solver, so one
+blocker set faces two followers with different traversal costs. Desktop Tower
+Defense, the early maze-builder, is reported to be the same shape with the
+constraint dropped: it re-floods its cost field on every placement but has no
+legality gate, so sealing the board is a thing the game handles rather than a
+thing it forbids. Neither claim is confirmed against source; both games survive
+only as obfuscated decompiles.
 
 The demo makes the max-min felt. Move the budget and watch the follower re-route
 around each new wall; the greedy places one wall at a time by immediate gain,
@@ -425,6 +429,18 @@ boundary the design space turns at.
       path: 'loops/actions.js',
       line: '137-196',
       note: 'Idle Loops action queue — prereq-gated action set the player composes plans over. Combinatorial selection: per-plan mana spend closes, plan-space optimization does not.',
+    },
+    {
+      repo: 'gemcraft-chasing-shadows',
+      path: 'scripts/com/giab/games/gccs/steam/ingame/IngameInputHandler2.as',
+      line: '602-643',
+      note: 'Wall drag: vCost += vIncrement per wall placed, then currentWallBuildingManaCost is set to the final vCost — the ratchet persists across the run.',
+    },
+    {
+      repo: 'gemcraft-chasing-shadows',
+      path: 'scripts/com/giab/games/gccs/steam/entity/Wall.as',
+      line: '3-24',
+      note: 'Wall — grid position fields and an empty doEnterFrame; a pure blocker with no combat surface.',
     },
   ]}
 />
