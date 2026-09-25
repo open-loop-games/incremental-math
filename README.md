@@ -22,8 +22,8 @@ pnpm dev              # Astro dev server
 pnpm build            # static output → dist/
 pnpm preview          # preview production build
 pnpm check            # astro check (type + content validation)
-pnpm lint             # eslint
-pnpm format           # prettier --write
+pnpm lint             # oxlint
+pnpm format           # oxfmt (prettier for .astro, which oxfmt skips)
 ```
 
 ## Layout

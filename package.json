@@ -9,14 +9,15 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "lint": "eslint src/",
-    "format": "prettier --write \"src/**/*.{ts,vue,astro,css,html,md}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,vue,astro,css,html,md}\"",
+    "lint": "oxlint src/",
+    "format": "oxfmt src && prettier --write \"src/**/*.astro\"",
+    "format:check": "oxfmt --check src && prettier --check \"src/**/*.astro\"",
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{ts,vue,astro,css,html,json,md}": "prettier --write",
-    "*.{ts,vue}": "eslint --fix"
+    "*.{ts,vue,css,html,json,md}": "oxfmt --no-error-on-unmatched-pattern",
+    "*.astro": "prettier --write",
+    "*.{ts,vue}": "oxlint --fix"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -29,21 +30,18 @@
     "vue": "^3.5.43"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
     "@types/node": "^24.13.6",
-    "eslint": "^10.1.0",
-    "eslint-plugin-vue": "^10.8.0",
-    "globals": "^17.4.0",
     "husky": "^9.1.7",
     "katex": "^0.16.45",
     "lint-staged": "^17.5.1",
+    "oxfmt": "^0.70.0",
+    "oxlint": "^1.85.0",
     "prettier": "^3.8.1",
     "prettier-plugin-astro": "^0.14.1",
     "rehype-external-links": "^3.0.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
-    "typescript": "~6.0.3",
-    "typescript-eslint": "^8.58.0"
+    "typescript": "~6.0.3"
   },
   "packageManager": "pnpm@12.6.0"
 }
