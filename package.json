@@ -44,5 +44,6 @@
     "remark-math": "^6.0.0",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.58.0"
-  }
+  },
+  "packageManager": "pnpm@12.6.0"
 }
