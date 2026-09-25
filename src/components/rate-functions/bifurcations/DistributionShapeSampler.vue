@@ -204,7 +204,9 @@ const annotations = computed<Annotation[]>(() => {
   ];
 });
 
-const samples = computed(() => (family.value === 'geometric' ? Math.min(800, xMax.value + 1) : 400));
+const samples = computed(() =>
+  family.value === 'geometric' ? Math.min(800, xMax.value + 1) : 400,
+);
 
 const cvLabel = computed(() => {
   const cv = stats.value.cv;
@@ -223,134 +225,64 @@ const cvLabel = computed(() => {
       >
         Geometric
       </button>
-      <button
-        type="button"
-        :class="{ active: family === 'erlang' }"
-        @click="family = 'erlang'"
-      >
+      <button type="button" :class="{ active: family === 'erlang' }" @click="family = 'erlang'">
         Erlang-k
       </button>
-      <button
-        type="button"
-        :class="{ active: family === 'hyperexp' }"
-        @click="family = 'hyperexp'"
-      >
+      <button type="button" :class="{ active: family === 'hyperexp' }" @click="family = 'hyperexp'">
         Hyperexp-2
       </button>
     </div>
 
-    <div
-      v-if="family === 'geometric'"
-      class="demo-controls"
-    >
+    <div v-if="family === 'geometric'" class="demo-controls">
       <label>
         <span class="demo-label">p (success per trial) = {{ geomP.toFixed(3) }}</span>
-        <input
-          v-model.number="geomP"
-          type="range"
-          min="0.005"
-          max="0.5"
-          step="0.005"
-        >
+        <input v-model.number="geomP" type="range" min="0.005" max="0.5" step="0.005" />
       </label>
       <label class="checkbox-row">
-        <input
-          v-model="pityOn"
-          type="checkbox"
-        >
+        <input v-model="pityOn" type="checkbox" />
         <span class="demo-label">pity at K (forced success)</span>
       </label>
       <label v-if="pityOn">
         <span class="demo-label">K = {{ pityK }}</span>
-        <input
-          v-model.number="pityK"
-          type="range"
-          min="5"
-          max="200"
-          step="1"
-        >
+        <input v-model.number="pityK" type="range" min="5" max="200" step="1" />
       </label>
     </div>
 
-    <div
-      v-else-if="family === 'erlang'"
-      class="demo-controls"
-    >
+    <div v-else-if="family === 'erlang'" class="demo-controls">
       <label>
         <span class="demo-label">k (number of stages) = {{ erlangK }}</span>
-        <input
-          v-model.number="erlangK"
-          type="range"
-          min="1"
-          max="20"
-          step="1"
-        >
+        <input v-model.number="erlangK" type="range" min="1" max="20" step="1" />
       </label>
       <label>
         <span class="demo-label">λ (per-stage rate) = {{ erlangLambda.toFixed(3) }}</span>
-        <input
-          v-model.number="erlangLambda"
-          type="range"
-          min="0.005"
-          max="0.5"
-          step="0.005"
-        >
+        <input v-model.number="erlangLambda" type="range" min="0.005" max="0.5" step="0.005" />
       </label>
     </div>
 
-    <div
-      v-else
-      class="demo-controls"
-    >
+    <div v-else class="demo-controls">
       <label>
         <span class="demo-label">λ₁ (fast rate) = {{ hexpL1.toFixed(3) }}</span>
-        <input
-          v-model.number="hexpL1"
-          type="range"
-          min="0.05"
-          max="1"
-          step="0.005"
-        >
+        <input v-model.number="hexpL1" type="range" min="0.05" max="1" step="0.005" />
       </label>
       <label>
         <span class="demo-label">λ₂ (slow rate) = {{ hexpL2.toFixed(4) }}</span>
-        <input
-          v-model.number="hexpL2"
-          type="range"
-          min="0.001"
-          max="0.1"
-          step="0.001"
-        >
+        <input v-model.number="hexpL2" type="range" min="0.001" max="0.1" step="0.001" />
       </label>
       <label>
         <span class="demo-label">q (mix on fast) = {{ hexpQ.toFixed(2) }}</span>
-        <input
-          v-model.number="hexpQ"
-          type="range"
-          min="0.05"
-          max="0.95"
-          step="0.01"
-        >
+        <input v-model.number="hexpQ" type="range" min="0.05" max="0.95" step="0.01" />
       </label>
     </div>
 
     <div class="plot-row">
       <div class="plot-panel">
-        <span class="triptych-panel-label">{{ family === 'geometric' ? 'pmf — wait until success' : 'pdf — wait time density' }}</span>
+        <span class="triptych-panel-label">{{
+          family === 'geometric' ? 'pmf — wait until success' : 'pdf — wait time density'
+        }}</span>
         <RatePlot
           :fn="density"
           :domain="domain"
-          :deps="[
-            family,
-            geomP,
-            pityOn,
-            pityK,
-            erlangK,
-            erlangLambda,
-            hexpL1,
-            hexpL2,
-            hexpQ,
-          ]"
+          :deps="[family, geomP, pityOn, pityK, erlangK, erlangLambda, hexpL1, hexpL2, hexpQ]"
           :samples="samples"
           x-label="t (trials or time)"
           y-label="density"
@@ -381,28 +313,27 @@ const cvLabel = computed(() => {
 
     <p class="demo-note">
       <span v-if="family === 'geometric' && !pityOn">
-        Pure geometric: <code>CV → 1</code> as <code>p</code> shrinks. The mass
-        on the left is heavy, the tail is long, and median sits well below the
-        mean. The "I pulled 200 times and got nothing" stories live in this tail.
+        Pure geometric: <code>CV → 1</code> as <code>p</code> shrinks. The mass on the left is
+        heavy, the tail is long, and median sits well below the mean. The "I pulled 200 times and
+        got nothing" stories live in this tail.
       </span>
       <span v-else-if="family === 'geometric' && pityOn">
-        Pity at <code>K = {{ pityK }}</code> truncates the tail and lumps its
-        mass at <code>n = K</code>. CV collapses; the mean barely moves. Same
-        average wait, fundamentally different player feel — the floor lifts off
-        the floor.
+        Pity at <code>K = {{ pityK }}</code> truncates the tail and lumps its mass at
+        <code>n = K</code>. CV collapses; the mean barely moves. Same average wait, fundamentally
+        different player feel — the floor lifts off the floor.
       </span>
       <span v-else-if="family === 'erlang'">
-        Erlang-{{ erlangK }} is <code>{{ erlangK }}</code> exponential stages
-        in series. <code>CV = 1/√k</code> — at <code>k = 1</code> this is the
-        memoryless exponential (CV 1, peaked at 0); at <code>k = 10</code>
-        the shape is nearly Gaussian, peaked near the mean. Phase-type
-        distributions extend this to mixtures of stages with different rates.
+        Erlang-{{ erlangK }} is <code>{{ erlangK }}</code> exponential stages in series.
+        <code>CV = 1/√k</code> — at <code>k = 1</code> this is the memoryless exponential (CV 1,
+        peaked at 0); at <code>k = 10</code>
+        the shape is nearly Gaussian, peaked near the mean. Phase-type distributions extend this to
+        mixtures of stages with different rates.
       </span>
       <span v-else>
         Hyperexponential mixes a fast and a slow exponential. <code>CV > 1</code>
-        is achievable — the design knob for "most pulls are quick, occasional
-        ones drag." Wire-market-style stochasticity. Mean and median diverge
-        sharply; the median can be tens of times smaller than the mean when
+        is achievable — the design knob for "most pulls are quick, occasional ones drag."
+        Wire-market-style stochasticity. Mean and median diverge sharply; the median can be tens of
+        times smaller than the mean when
         <code>q</code> is high.
       </span>
     </p>

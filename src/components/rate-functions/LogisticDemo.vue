@@ -39,56 +39,26 @@ const inflectionT = computed(() => {
     <div class="demo-controls">
       <label>
         <span class="demo-label">r (intrinsic rate) = {{ rcoef.toFixed(3) }}</span>
-        <input
-          v-model.number="rcoef"
-          type="range"
-          min="0.05"
-          max="1"
-          step="0.01"
-        >
+        <input v-model.number="rcoef" type="range" min="0.05" max="1" step="0.01" />
       </label>
       <label>
         <span class="demo-label">K (carrying capacity) = {{ K.toFixed(0) }}</span>
-        <input
-          v-model.number="K"
-          type="range"
-          min="20"
-          max="500"
-          step="5"
-        >
+        <input v-model.number="K" type="range" min="20" max="500" step="5" />
       </label>
       <label>
         <span class="demo-label">x₀ (initial state) = {{ x0.toFixed(2) }}</span>
-        <input
-          v-model.number="x0"
-          type="range"
-          min="0.1"
-          :max="K * 0.4"
-          step="0.1"
-        >
+        <input v-model.number="x0" type="range" min="0.1" :max="K * 0.4" step="0.1" />
       </label>
       <label>
         <span class="demo-label">t range = 0..{{ tMax.toFixed(0) }}</span>
-        <input
-          v-model.number="tMax"
-          type="range"
-          min="10"
-          max="200"
-          step="2"
-        >
+        <input v-model.number="tMax" type="range" min="10" max="200" step="2" />
       </label>
     </div>
 
     <div class="triptych">
       <div class="triptych-panel">
         <span class="triptych-panel-label">dx/dt = r · x · (1 − x/K)</span>
-        <RatePlot
-          :fn="rateOfState"
-          :domain="xDomain"
-          :deps="[rcoef, K]"
-          x-label="x"
-          y-label="ẋ"
-        />
+        <RatePlot :fn="rateOfState" :domain="xDomain" :deps="[rcoef, K]" x-label="x" y-label="ẋ" />
       </div>
       <div class="triptych-panel">
         <span class="triptych-panel-label">x(t) — trajectory</span>

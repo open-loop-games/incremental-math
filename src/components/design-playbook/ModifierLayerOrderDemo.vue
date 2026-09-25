@@ -54,33 +54,15 @@ const ratio = computed(() => finalRight.value / finalWrong.value);
     <div class="demo-controls">
       <label>
         <span class="demo-label">multiplier sources N = {{ N }}</span>
-        <input
-          v-model.number="N"
-          type="range"
-          min="1"
-          max="25"
-          step="1"
-        >
+        <input v-model.number="N" type="range" min="1" max="25" step="1" />
       </label>
       <label>
         <span class="demo-label">per-source multiplier m = {{ m.toFixed(2) }}</span>
-        <input
-          v-model.number="m"
-          type="range"
-          min="1.10"
-          max="2.50"
-          step="0.05"
-        >
+        <input v-model.number="m" type="range" min="1.10" max="2.50" step="0.05" />
       </label>
       <label>
         <span class="demo-label">additive sources (each +0.5) = {{ adds }}</span>
-        <input
-          v-model.number="adds"
-          type="range"
-          min="0"
-          max="10"
-          step="1"
-        >
+        <input v-model.number="adds" type="range" min="0" max="10" step="1" />
       </label>
     </div>
 
@@ -97,21 +79,15 @@ const ratio = computed(() => finalRight.value / finalWrong.value);
     <dl class="readout">
       <div>
         <dt>right at N</dt>
-        <dd :style="{ color: RIGHT }">
-          ×{{ finalRight.toFixed(1) }}
-        </dd>
+        <dd :style="{ color: RIGHT }">×{{ finalRight.toFixed(1) }}</dd>
       </div>
       <div>
         <dt>wrong at N</dt>
-        <dd :style="{ color: WRONG }">
-          ×{{ finalWrong.toFixed(1) }}
-        </dd>
+        <dd :style="{ color: WRONG }">×{{ finalWrong.toFixed(1) }}</dd>
       </div>
       <div>
         <dt>gap (right ÷ wrong)</dt>
-        <dd class="headline">
-          {{ ratio.toFixed(1) }}×
-        </dd>
+        <dd class="headline">{{ ratio.toFixed(1) }}×</dd>
       </div>
     </dl>
 

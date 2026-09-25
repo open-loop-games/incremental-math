@@ -15,7 +15,6 @@ import { seriesColor } from '../../../lib/series-colors';
 
 type CardId = 'Bash' | 'Hone' | 'Smite' | 'Mark';
 
-
 interface Card {
   id: CardId;
   name: string;
@@ -170,11 +169,11 @@ function cardColor(id: CardId): string {
 <template>
   <div class="demo">
     <p class="setup-note">
-      Initial state: <code>ATK = {{ INITIAL_ATK }}</code>,
-      <code>mark = 0</code>, enemy <code>HP = {{ INITIAL_HP }}</code>.
-      Reorder the four cards. Each card runs in sequence and mutates
-      <code>(ATK, mark, HP)</code>; total damage is the sum across the
-      four turns. Search space: <code>4! = 24</code> orderings.
+      Initial state: <code>ATK = {{ INITIAL_ATK }}</code
+      >, <code>mark = 0</code>, enemy <code>HP = {{ INITIAL_HP }}</code
+      >. Reorder the four cards. Each card runs in sequence and mutates
+      <code>(ATK, mark, HP)</code>; total damage is the sum across the four turns. Search space:
+      <code>4! = 24</code> orderings.
     </p>
 
     <div class="dual">
@@ -182,18 +181,8 @@ function cardColor(id: CardId): string {
         <div class="seq-header">
           <span class="panel-label">play order</span>
           <div class="seq-actions">
-            <button
-              type="button"
-              class="action-btn"
-              @click="reset"
-            >
-              reset
-            </button>
-            <button
-              type="button"
-              class="action-btn primary"
-              @click="applyOptimal"
-            >
+            <button type="button" class="action-btn" @click="reset">reset</button>
+            <button type="button" class="action-btn primary" @click="applyOptimal">
               apply optimum
             </button>
           </div>
@@ -254,29 +243,18 @@ function cardColor(id: CardId): string {
             <span class="step-dmg">—</span>
             <span class="step-hp">{{ INITIAL_HP }}</span>
           </div>
-          <div
-            v-for="(s, i) in userRun.steps"
-            :key="i"
-            class="step"
-            :class="cardClass(s.card)"
-          >
+          <div v-for="(s, i) in userRun.steps" :key="i" class="step" :class="cardClass(s.card)">
             <span class="step-i">{{ i + 1 }}</span>
             <span class="step-card">{{ s.card }}</span>
             <span class="step-atk">
               {{ s.atkAfter }}
-              <span
-                v-if="s.atkAfter !== s.atkBefore"
-                class="delta"
-              >
+              <span v-if="s.atkAfter !== s.atkBefore" class="delta">
                 (+{{ s.atkAfter - s.atkBefore }})
               </span>
             </span>
             <span class="step-mark">
               {{ s.markAfter }}
-              <span
-                v-if="s.markAfter !== s.markBefore"
-                class="delta"
-              >
+              <span v-if="s.markAfter !== s.markBefore" class="delta">
                 ({{ s.markAfter > s.markBefore ? '+' : '' }}{{ s.markAfter - s.markBefore }})
               </span>
             </span>
@@ -307,18 +285,15 @@ function cardColor(id: CardId): string {
     </div>
 
     <p class="demo-note">
-      The catalog's algebra is fine inside one ordering — sum the per-turn
-      damage, no surprises. Across orderings, the optimum is a search over
-      a permutation space. <code>Hone</code> and <code>Mark</code> deal
-      zero damage on their turn but multiply damage on a later turn
-      <em>if</em> they're scheduled before the right attack; played last
-      they're wasted entirely. Greedy "strongest first" doesn't find the
-      optimum here because the strongest single hit depends on the buffs,
-      and the buffs depend on the schedule. Slay the Spire's intent system,
-      Super Auto Pets' attack queue, and Inscryption's sigil-resolution
-      order are real-world languages built around exactly this — plus
-      multiple actors, conditional triggers, and chained on-faint effects
-      that combinatorially explode the search.
+      The catalog's algebra is fine inside one ordering — sum the per-turn damage, no surprises.
+      Across orderings, the optimum is a search over a permutation space. <code>Hone</code> and
+      <code>Mark</code> deal zero damage on their turn but multiply damage on a later turn
+      <em>if</em> they're scheduled before the right attack; played last they're wasted entirely.
+      Greedy "strongest first" doesn't find the optimum here because the strongest single hit
+      depends on the buffs, and the buffs depend on the schedule. Slay the Spire's intent system,
+      Super Auto Pets' attack queue, and Inscryption's sigil-resolution order are real-world
+      languages built around exactly this — plus multiple actors, conditional triggers, and chained
+      on-faint effects that combinatorially explode the search.
     </p>
   </div>
 </template>

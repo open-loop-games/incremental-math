@@ -122,20 +122,9 @@ function xTickPos(n: number): number {
     <div class="zstb-controls">
       <label>
         <span class="demo-label">budget T = {{ T }} min</span>
-        <input
-          v-model.number="T"
-          type="range"
-          min="60"
-          max="2880"
-          step="10"
-        >
+        <input v-model.number="T" type="range" min="60" max="2880" step="10" />
       </label>
-      <button
-        class="zstb-optimal"
-        @click="applyOptimal"
-      >
-        apply optimal allocation
-      </button>
+      <button class="zstb-optimal" @click="applyOptimal">apply optimal allocation</button>
     </div>
 
     <div class="zstb-readout">
@@ -146,20 +135,11 @@ function xTickPos(n: number): number {
     </div>
 
     <div class="zstb-rows">
-      <div
-        v-for="(a, i) in activities"
-        :key="a.name"
-        class="zstb-row"
-      >
-        <div
-          class="zstb-name"
-          :style="{ color: a.color }"
-        >
+      <div v-for="(a, i) in activities" :key="a.name" class="zstb-row">
+        <div class="zstb-name" :style="{ color: a.color }">
           {{ a.name }}
         </div>
-        <div class="zstb-coef">
-          a = {{ a.coef }}
-        </div>
+        <div class="zstb-coef">a = {{ a.coef }}</div>
         <input
           type="range"
           :min="0"
@@ -167,53 +147,20 @@ function xTickPos(n: number): number {
           :step="1"
           :value="a.minutes"
           @input="(e) => setMinutes(i, Number((e.target as HTMLInputElement).value))"
-        >
-        <div class="zstb-min">
-          {{ a.minutes }} min
-        </div>
-        <div class="zstb-yield">
-          y = {{ format(yieldOf(a)) }}
-        </div>
-        <div class="zstb-marg">
-          ∂y = {{ marginalOf(a).toFixed(3) }}
-        </div>
+        />
+        <div class="zstb-min">{{ a.minutes }} min</div>
+        <div class="zstb-yield">y = {{ format(yieldOf(a)) }}</div>
+        <div class="zstb-marg">∂y = {{ marginalOf(a).toFixed(3) }}</div>
       </div>
     </div>
 
-    <svg
-      :viewBox="`0 0 ${W} ${H}`"
-      class="zstb-chart"
-      role="img"
-      aria-label="Yield curves"
-    >
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t"
-        :x2="PAD.l"
-        :y2="PAD.t + PH"
-        class="zstb-axis"
-      />
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t + PH"
-        :x2="W - PAD.r"
-        :y2="PAD.t + PH"
-        class="zstb-axis"
-      />
-      <text
-        :x="PAD.l - 8"
-        :y="PAD.t + 4"
-        text-anchor="end"
-        class="zstb-tick"
-      >
+    <svg :viewBox="`0 0 ${W} ${H}`" class="zstb-chart" role="img" aria-label="Yield curves">
+      <line :x1="PAD.l" :y1="PAD.t" :x2="PAD.l" :y2="PAD.t + PH" class="zstb-axis" />
+      <line :x1="PAD.l" :y1="PAD.t + PH" :x2="W - PAD.r" :y2="PAD.t + PH" class="zstb-axis" />
+      <text :x="PAD.l - 8" :y="PAD.t + 4" text-anchor="end" class="zstb-tick">
         {{ format(yMax) }}
       </text>
-      <text
-        :x="PAD.l - 8"
-        :y="PAD.t + PH + 4"
-        text-anchor="end"
-        class="zstb-tick"
-      >0</text>
+      <text :x="PAD.l - 8" :y="PAD.t + PH + 4" text-anchor="end" class="zstb-tick">0</text>
       <text
         v-for="nx in X_TICKS"
         :key="nx"
@@ -224,12 +171,7 @@ function xTickPos(n: number): number {
       >
         {{ nx }}
       </text>
-      <text
-        :x="PAD.l + PW / 2"
-        :y="H - 4"
-        text-anchor="middle"
-        class="zstb-tick"
-      >
+      <text :x="PAD.l + PW / 2" :y="H - 4" text-anchor="middle" class="zstb-tick">
         minutes spent on activity
       </text>
 

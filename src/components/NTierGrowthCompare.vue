@@ -51,69 +51,37 @@ const domain = computed<[number, number]>(() => [0, tMax.value]);
     <div class="ngc-controls">
       <label>
         <span class="demo-label">t max = {{ tMax }}</span>
-        <input
-          v-model.number="tMax"
-          type="range"
-          min="10"
-          max="200"
-          step="1"
-        >
+        <input v-model.number="tMax" type="range" min="10" max="200" step="1" />
       </label>
       <label>
         <span class="demo-label">exponential growth = {{ expGrowth.toFixed(3) }}</span>
-        <input
-          v-model.number="expGrowth"
-          type="range"
-          min="1.01"
-          max="1.20"
-          step="0.001"
-        >
+        <input v-model.number="expGrowth" type="range" min="1.01" max="1.20" step="0.001" />
       </label>
       <label>
         <span class="demo-label">exponential base = {{ expBase.toFixed(2) }}</span>
-        <input
-          v-model.number="expBase"
-          type="range"
-          min="0.1"
-          max="10"
-          step="0.05"
-        >
+        <input v-model.number="expBase" type="range" min="0.1" max="10" step="0.05" />
       </label>
       <label class="ngc-toggle">
-        <input
-          v-model="logScale"
-          type="checkbox"
-        >
+        <input v-model="logScale" type="checkbox" />
         log scale
       </label>
     </div>
 
     <div class="ngc-legend">
-      <label
-        v-for="d in DEPTHS"
-        :key="d"
-        class="ngc-legend-item"
-      >
-        <input
-          v-model="visibleDepths[d]"
-          type="checkbox"
-        >
+      <label v-for="d in DEPTHS" :key="d" class="ngc-legend-item">
+        <input v-model="visibleDepths[d]" type="checkbox" />
+        <span class="ngc-swatch" :style="{ background: COLORS[d] }" />
         <span
-          class="ngc-swatch"
-          :style="{ background: COLORS[d] }"
-        />
-        <span>depth {{ d }}
-          <span class="ngc-formula">(t<sup>{{ d }}</sup>/{{ d === 1 ? '1' : d === 2 ? '2' : d === 3 ? '6' : d === 4 ? '24' : '120' }})</span></span>
+          >depth {{ d }}
+          <span class="ngc-formula"
+            >(t<sup>{{ d }}</sup
+            >/{{ d === 1 ? '1' : d === 2 ? '2' : d === 3 ? '6' : d === 4 ? '24' : '120' }})</span
+          ></span
+        >
       </label>
       <label class="ngc-legend-item">
-        <input
-          v-model="showExp"
-          type="checkbox"
-        >
-        <span
-          class="ngc-swatch"
-          :style="{ background: EXP_COLOR }"
-        />
+        <input v-model="showExp" type="checkbox" />
+        <span class="ngc-swatch" :style="{ background: EXP_COLOR }" />
         <span>exponential</span>
       </label>
     </div>

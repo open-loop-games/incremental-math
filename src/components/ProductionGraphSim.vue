@@ -291,64 +291,30 @@ function arcPath(e: Edge): string {
   <div class="demo pgs">
     <div class="pgs-controls">
       <fieldset class="pgs-presets">
-        <legend class="demo-label">
-          topology
-        </legend>
-        <label
-          v-for="t in Object.values(topologies) as Topology[]"
-          :key="t.key"
-        >
-          <input
-            v-model="activeKey"
-            type="radio"
-            :value="t.key"
-          >
+        <legend class="demo-label">topology</legend>
+        <label v-for="t in Object.values(topologies) as Topology[]" :key="t.key">
+          <input v-model="activeKey" type="radio" :value="t.key" />
           {{ t.label }}
         </label>
       </fieldset>
       <label>
         <span class="demo-label">base seed = {{ baseSeed.toFixed(2) }} / tick</span>
-        <input
-          v-model.number="baseSeed"
-          type="range"
-          min="0.1"
-          max="3"
-          step="0.05"
-        >
+        <input v-model.number="baseSeed" type="range" min="0.1" max="3" step="0.05" />
       </label>
       <label>
         <span class="demo-label">t range = 0..{{ tMax }}</span>
-        <input
-          v-model.number="tMax"
-          type="range"
-          min="10"
-          max="120"
-          step="5"
-        >
+        <input v-model.number="tMax" type="range" min="10" max="120" step="5" />
       </label>
       <label class="pgs-toggle">
-        <input
-          v-model="softcapEnabled"
-          type="checkbox"
-          :disabled="activeKey !== 'cycle'"
-        >
+        <input v-model="softcapEnabled" type="checkbox" :disabled="activeKey !== 'cycle'" />
         softcap on feedback edges
       </label>
       <label v-if="softcapEnabled && activeKey === 'cycle'">
         <span class="demo-label">softcap k = {{ softcapK.toFixed(0) }}</span>
-        <input
-          v-model.number="softcapK"
-          type="range"
-          min="5"
-          max="500"
-          step="5"
-        >
+        <input v-model.number="softcapK" type="range" min="5" max="500" step="5" />
       </label>
       <label class="pgs-toggle">
-        <input
-          v-model="showLog"
-          type="checkbox"
-        >
+        <input v-model="showLog" type="checkbox" />
         log y-scale
       </label>
     </div>
@@ -370,10 +336,7 @@ function arcPath(e: Edge): string {
             markerHeight="6"
             orient="auto-start-reverse"
           >
-            <path
-              d="M 0 0 L 10 5 L 0 10 z"
-              fill="var(--color-text-muted)"
-            />
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-text-muted)" />
           </marker>
         </defs>
         <g>
@@ -387,23 +350,9 @@ function arcPath(e: Edge): string {
           />
         </g>
         <g>
-          <g
-            v-for="(p, i) in nodePos[activeKey]"
-            :key="i"
-          >
-            <circle
-              :cx="p.x"
-              :cy="p.y"
-              r="18"
-              :fill="NODE_COLORS[i]"
-              class="pgs-node"
-            />
-            <text
-              :x="p.x"
-              :y="p.y + 4"
-              text-anchor="middle"
-              class="pgs-node-label"
-            >
+          <g v-for="(p, i) in nodePos[activeKey]" :key="i">
+            <circle :cx="p.x" :cy="p.y" r="18" :fill="NODE_COLORS[i]" class="pgs-node" />
+            <text :x="p.x" :y="p.y + 4" text-anchor="middle" class="pgs-node-label">
               {{ NODE_LABELS[i] }}
             </text>
           </g>
@@ -414,44 +363,13 @@ function arcPath(e: Edge): string {
       </p>
     </div>
 
-    <svg
-      :viewBox="`0 0 ${W} ${H}`"
-      class="pgs-chart"
-      role="img"
-      aria-label="Production over time"
-    >
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t"
-        :x2="PAD.l"
-        :y2="PAD.t + PH"
-        class="pgs-axis"
-      />
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t + PH"
-        :x2="W - PAD.r"
-        :y2="PAD.t + PH"
-        class="pgs-axis"
-      />
+    <svg :viewBox="`0 0 ${W} ${H}`" class="pgs-chart" role="img" aria-label="Production over time">
+      <line :x1="PAD.l" :y1="PAD.t" :x2="PAD.l" :y2="PAD.t + PH" class="pgs-axis" />
+      <line :x1="PAD.l" :y1="PAD.t + PH" :x2="W - PAD.r" :y2="PAD.t + PH" class="pgs-axis" />
       <g>
-        <g
-          v-for="t in yScale.ticks"
-          :key="t.label"
-        >
-          <line
-            :x1="PAD.l"
-            :y1="t.y"
-            :x2="W - PAD.r"
-            :y2="t.y"
-            class="pgs-grid"
-          />
-          <text
-            :x="PAD.l - 8"
-            :y="t.y + 3"
-            text-anchor="end"
-            class="pgs-tick"
-          >{{ t.label }}</text>
+        <g v-for="t in yScale.ticks" :key="t.label">
+          <line :x1="PAD.l" :y1="t.y" :x2="W - PAD.r" :y2="t.y" class="pgs-grid" />
+          <text :x="PAD.l - 8" :y="t.y + 3" text-anchor="end" class="pgs-tick">{{ t.label }}</text>
         </g>
       </g>
       <g>
@@ -466,12 +384,7 @@ function arcPath(e: Edge): string {
           {{ nx }}
         </text>
       </g>
-      <text
-        :x="PAD.l + PW / 2"
-        :y="H - 6"
-        text-anchor="middle"
-        class="pgs-tick"
-      >
+      <text :x="PAD.l + PW / 2" :y="H - 6" text-anchor="middle" class="pgs-tick">
         simulation time
       </text>
       <text
@@ -494,15 +407,8 @@ function arcPath(e: Edge): string {
     </svg>
 
     <div class="pgs-legend">
-      <span
-        v-for="(c, i) in NODE_COLORS"
-        :key="i"
-        class="pgs-legend-item"
-      >
-        <span
-          class="pgs-swatch"
-          :style="{ background: c }"
-        />
+      <span v-for="(c, i) in NODE_COLORS" :key="i" class="pgs-legend-item">
+        <span class="pgs-swatch" :style="{ background: c }" />
         <span>{{ NODE_LABELS[i] }} = {{ format(finals[i] ?? 0) }}</span>
       </span>
     </div>

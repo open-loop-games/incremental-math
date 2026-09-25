@@ -65,18 +65,8 @@ function fillAll() {
       </button>
     </div>
     <div class="cbm-actions">
-      <button
-        class="cbm-btn"
-        @click="clearAll"
-      >
-        clear
-      </button>
-      <button
-        class="cbm-btn"
-        @click="fillAll"
-      >
-        complete all
-      </button>
+      <button class="cbm-btn" @click="clearAll">clear</button>
+      <button class="cbm-btn" @click="fillAll">complete all</button>
     </div>
     <div class="cbm-readout">
       <p>
@@ -85,15 +75,8 @@ function fillAll() {
       </p>
       <p class="cbm-rewards">
         Permanent rewards unlocked ({{ unlockedRewards.length }} / {{ SLOTS.length }}):
-        <span
-          v-if="unlockedRewards.length === 0"
-          class="cbm-empty"
-        >— none —</span>
-        <span
-          v-for="r in unlockedRewards"
-          :key="r"
-          class="cbm-reward"
-        >{{ r }}</span>
+        <span v-if="unlockedRewards.length === 0" class="cbm-empty">— none —</span>
+        <span v-for="r in unlockedRewards" :key="r" class="cbm-reward">{{ r }}</span>
       </p>
       <p class="cbm-note">
         Order doesn't matter — completion is one int with one bit per challenge. Once a bit is set

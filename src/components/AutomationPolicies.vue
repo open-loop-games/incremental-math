@@ -227,108 +227,40 @@ const finalSummary = computed(() =>
     <div class="apol-controls">
       <label>
         <span class="demo-label">sim duration = {{ simSeconds }} s</span>
-        <input
-          v-model.number="simSeconds"
-          type="range"
-          min="30"
-          max="600"
-          step="10"
-        >
+        <input v-model.number="simSeconds" type="range" min="30" max="600" step="10" />
       </label>
       <label>
         <span class="demo-label">starting currency = {{ format(startCurrency) }}</span>
-        <input
-          v-model.number="startCurrency"
-          type="range"
-          min="10"
-          max="1000"
-          step="10"
-        >
+        <input v-model.number="startCurrency" type="range" min="10" max="1000" step="10" />
       </label>
       <label>
         <span class="demo-label">threshold multiple = {{ thresholdMult.toFixed(0) }}× cost</span>
-        <input
-          v-model.number="thresholdMult"
-          type="range"
-          min="1"
-          max="50"
-          step="1"
-        >
+        <input v-model.number="thresholdMult" type="range" min="1" max="50" step="1" />
       </label>
       <label>
         <span class="demo-label">priority bias = {{ priority.toFixed(2) }} (low→high)</span>
-        <input
-          v-model.number="priority"
-          type="range"
-          min="0"
-          max="1"
-          step="0.05"
-        >
+        <input v-model.number="priority" type="range" min="0" max="1" step="0.05" />
       </label>
       <label class="apol-toggle">
-        <input
-          v-model="logScale"
-          type="checkbox"
-        >
+        <input v-model="logScale" type="checkbox" />
         log y-scale
       </label>
     </div>
 
     <div class="apol-legend">
-      <label
-        v-for="p in POLICIES"
-        :key="p.key"
-        class="apol-legend-item"
-      >
-        <input
-          v-model="p.visibleRef.value"
-          type="checkbox"
-        >
-        <span
-          class="apol-swatch"
-          :style="{ background: p.color }"
-        />
+      <label v-for="p in POLICIES" :key="p.key" class="apol-legend-item">
+        <input v-model="p.visibleRef.value" type="checkbox" />
+        <span class="apol-swatch" :style="{ background: p.color }" />
         <span>{{ p.label }}</span>
       </label>
     </div>
 
-    <svg
-      :viewBox="`0 0 ${W} ${H}`"
-      class="apol-chart"
-      role="img"
-      aria-label="Policy comparison"
-    >
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t"
-        :x2="PAD.l"
-        :y2="PAD.t + PH"
-        class="apol-axis"
-      />
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t + PH"
-        :x2="W - PAD.r"
-        :y2="PAD.t + PH"
-        class="apol-axis"
-      />
-      <g
-        v-for="t in yScale.ticks"
-        :key="t.label"
-      >
-        <line
-          :x1="PAD.l"
-          :y1="t.y"
-          :x2="W - PAD.r"
-          :y2="t.y"
-          class="apol-grid"
-        />
-        <text
-          :x="PAD.l - 8"
-          :y="t.y + 3"
-          text-anchor="end"
-          class="apol-tick"
-        >{{ t.label }}</text>
+    <svg :viewBox="`0 0 ${W} ${H}`" class="apol-chart" role="img" aria-label="Policy comparison">
+      <line :x1="PAD.l" :y1="PAD.t" :x2="PAD.l" :y2="PAD.t + PH" class="apol-axis" />
+      <line :x1="PAD.l" :y1="PAD.t + PH" :x2="W - PAD.r" :y2="PAD.t + PH" class="apol-axis" />
+      <g v-for="t in yScale.ticks" :key="t.label">
+        <line :x1="PAD.l" :y1="t.y" :x2="W - PAD.r" :y2="t.y" class="apol-grid" />
+        <text :x="PAD.l - 8" :y="t.y + 3" text-anchor="end" class="apol-tick">{{ t.label }}</text>
       </g>
       <g>
         <text
@@ -342,12 +274,7 @@ const finalSummary = computed(() =>
           {{ nx }}
         </text>
       </g>
-      <text
-        :x="PAD.l + PW / 2"
-        :y="H - 6"
-        text-anchor="middle"
-        class="apol-tick"
-      >
+      <text :x="PAD.l + PW / 2" :y="H - 6" text-anchor="middle" class="apol-tick">
         simulated seconds
       </text>
       <text
@@ -381,16 +308,8 @@ const finalSummary = computed(() =>
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="r in finalSummary"
-          :key="r.key"
-        >
-          <td>
-            <span
-              class="apol-swatch"
-              :style="{ background: r.color }"
-            /> {{ r.label }}
-          </td>
+        <tr v-for="r in finalSummary" :key="r.key">
+          <td><span class="apol-swatch" :style="{ background: r.color }" /> {{ r.label }}</td>
           <td>{{ r.owned[0] }}</td>
           <td>{{ r.owned[1] }}</td>
           <td>{{ r.owned[2] }}</td>

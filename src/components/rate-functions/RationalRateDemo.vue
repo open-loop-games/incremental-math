@@ -53,102 +53,49 @@ const cDomain = computed<[number, number]>(() => {
     <div class="demo-controls">
       <label>
         <span class="demo-label">a = {{ a.toFixed(2) }}</span>
-        <input
-          v-model.number="a"
-          type="range"
-          min="0.1"
-          max="3"
-          step="0.05"
-        >
+        <input v-model.number="a" type="range" min="0.1" max="3" step="0.05" />
       </label>
       <label>
         <span class="demo-label">b (offset) = {{ b.toFixed(2) }}</span>
-        <input
-          v-model.number="b"
-          type="range"
-          min="0.1"
-          max="5"
-          step="0.05"
-        >
+        <input v-model.number="b" type="range" min="0.1" max="5" step="0.05" />
       </label>
       <label>
         <span class="demo-label">p = {{ p.toFixed(2) }}</span>
-        <input
-          v-model.number="p"
-          type="range"
-          min="0.3"
-          max="3"
-          step="0.05"
-        >
+        <input v-model.number="p" type="range" min="0.3" max="3" step="0.05" />
       </label>
       <label>
         <span class="demo-label">x range = 0..{{ xMax.toFixed(0) }}</span>
-        <input
-          v-model.number="xMax"
-          type="range"
-          min="10"
-          max="200"
-          step="5"
-        >
+        <input v-model.number="xMax" type="range" min="10" max="200" step="5" />
       </label>
       <label>
         <span class="demo-label">C range = 0..{{ cMax.toFixed(2) }}</span>
-        <input
-          v-model.number="cMax"
-          type="range"
-          min="0.5"
-          max="20"
-          step="0.1"
-        >
+        <input v-model.number="cMax" type="range" min="0.5" max="20" step="0.1" />
       </label>
     </div>
 
     <div class="triptych">
       <div class="triptych-panel">
         <span class="triptych-panel-label">r(x) = a / (b + x)^p</span>
-        <RatePlot
-          :fn="r"
-          :domain="xDomain"
-          :deps="[a, b, p]"
-          x-label="x"
-          y-label="r"
-        />
+        <RatePlot :fn="r" :domain="xDomain" :deps="[a, b, p]" x-label="x" y-label="r" />
       </div>
       <div class="triptych-panel">
         <span class="triptych-panel-label">R(x) — cumulative</span>
-        <RatePlot
-          :fn="R"
-          :domain="xDomain"
-          :deps="[a, b, p]"
-          x-label="x"
-          y-label="R"
-        />
+        <RatePlot :fn="R" :domain="xDomain" :deps="[a, b, p]" x-label="x" y-label="R" />
       </div>
       <div class="triptych-panel">
         <span class="triptych-panel-label">T(C) — first-passage</span>
-        <RatePlot
-          :fn="T"
-          :domain="cDomain"
-          :deps="[a, b, p]"
-          x-label="C"
-          y-label="T"
-        />
+        <RatePlot :fn="T" :domain="cDomain" :deps="[a, b, p]" x-label="C" y-label="T" />
       </div>
     </div>
 
-    <p
-      v-if="ceiling !== null"
-      class="demo-note"
-    >
+    <p v-if="ceiling !== null" class="demo-note">
       With <code>p &gt; 1</code> the cumulative is bounded —
-      <code>R(∞) = a · b^(1−p) / (p − 1) ≈ {{ ceiling.toFixed(3) }}</code>. Any threshold <code>C ≥ R(∞)</code> is unreachable; <code>T(C) → ∞</code> as
+      <code>R(∞) = a · b^(1−p) / (p − 1) ≈ {{ ceiling.toFixed(3) }}</code
+      >. Any threshold <code>C ≥ R(∞)</code> is unreachable; <code>T(C) → ∞</code> as
       <code>C → R(∞)</code>. This is the cleanest math for a soft cap with a real ceiling: the rate
       never hits zero, but the integral does.
     </p>
-    <p
-      v-else
-      class="demo-note"
-    >
+    <p v-else class="demo-note">
       With <code>p ≤ 1</code> the cumulative is unbounded but grows sublinearly. The boundary case
       <code>p = 1</code> integrates to <code>a · ln((b+x)/b)</code>; the first-passage becomes the
       inverse <code>T(C) = b · (e^(C/a) − 1)</code>.

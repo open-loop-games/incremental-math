@@ -40,9 +40,7 @@ interface FlowResult {
 
 function maxFlow(): FlowResult {
   // Build residual capacity matrix indexed by (from, to).
-  const cap: number[][] = Array.from({ length: NODE_COUNT }, () =>
-    Array(NODE_COUNT).fill(0),
-  );
+  const cap: number[][] = Array.from({ length: NODE_COUNT }, () => Array(NODE_COUNT).fill(0));
   for (const e of edges.value) {
     cap[e.from][e.to] += e.capacity;
   }
@@ -182,28 +180,16 @@ const colorIdle = seriesColor('gray');
 <template>
   <div class="demo">
     <div class="demo-controls">
-      <label
-        v-for="(e, i) in edges"
-        :key="e.id"
-      >
+      <label v-for="(e, i) in edges" :key="e.id">
         <span class="demo-label">
           {{ NODE_LABELS[e.from] }} → {{ NODE_LABELS[e.to] }} cap = {{ e.capacity }}
         </span>
-        <input
-          v-model.number="edges[i].capacity"
-          type="range"
-          min="0"
-          max="20"
-          step="1"
-        >
+        <input v-model.number="edges[i].capacity" type="range" min="0" max="20" step="1" />
       </label>
     </div>
 
     <div class="graph-wrap">
-      <svg
-        viewBox="0 0 400 300"
-        class="graph"
-      >
+      <svg viewBox="0 0 400 300" class="graph">
         <defs>
           <marker
             id="arrow-flow"
@@ -214,10 +200,7 @@ const colorIdle = seriesColor('gray');
             markerHeight="6"
             orient="auto"
           >
-            <path
-              d="M 0 0 L 10 5 L 0 10 z"
-              :fill="colorFlow"
-            />
+            <path d="M 0 0 L 10 5 L 0 10 z" :fill="colorFlow" />
           </marker>
           <marker
             id="arrow-cut"
@@ -228,10 +211,7 @@ const colorIdle = seriesColor('gray');
             markerHeight="6"
             orient="auto"
           >
-            <path
-              d="M 0 0 L 10 5 L 0 10 z"
-              :fill="colorCut"
-            />
+            <path d="M 0 0 L 10 5 L 0 10 z" :fill="colorCut" />
           </marker>
           <marker
             id="arrow-idle"
@@ -242,17 +222,11 @@ const colorIdle = seriesColor('gray');
             markerHeight="6"
             orient="auto"
           >
-            <path
-              d="M 0 0 L 10 5 L 0 10 z"
-              :fill="colorIdle"
-            />
+            <path d="M 0 0 L 10 5 L 0 10 z" :fill="colorIdle" />
           </marker>
         </defs>
 
-        <g
-          v-for="e in edges"
-          :key="e.id"
-        >
+        <g v-for="e in edges" :key="e.id">
           <line
             :x1="edgePath(e).x1"
             :y1="edgePath(e).y1"
@@ -266,11 +240,12 @@ const colorIdle = seriesColor('gray');
                   : colorIdle
             "
             :stroke-width="
-              Math.max(1, Math.min(8, ((result.flow.get(e.id) ?? 0) / Math.max(1, e.capacity)) * 6 + 1))
+              Math.max(
+                1,
+                Math.min(8, ((result.flow.get(e.id) ?? 0) / Math.max(1, e.capacity)) * 6 + 1),
+              )
             "
-            :stroke-dasharray="
-              (result.flow.get(e.id) ?? 0) === 0 ? '4 4' : ''
-            "
+            :stroke-dasharray="(result.flow.get(e.id) ?? 0) === 0 ? '4 4' : ''"
             :marker-end="
               result.cutEdges.has(e.id)
                 ? 'url(#arrow-cut)'
@@ -290,22 +265,18 @@ const colorIdle = seriesColor('gray');
           </text>
         </g>
 
-        <g
-          v-for="(p, i) in NODE_POS"
-          :key="i"
-        >
+        <g v-for="(p, i) in NODE_POS" :key="i">
           <circle
             :cx="p.x"
             :cy="p.y"
             r="18"
-            :class="{ source: i === 0, sink: i === NODE_COUNT - 1, 'cut-side': result.cutSide.has(i) && i !== 0 }"
+            :class="{
+              source: i === 0,
+              sink: i === NODE_COUNT - 1,
+              'cut-side': result.cutSide.has(i) && i !== 0,
+            }"
           />
-          <text
-            :x="p.x"
-            :y="p.y + 4"
-            text-anchor="middle"
-            class="node-label"
-          >
+          <text :x="p.x" :y="p.y + 4" text-anchor="middle" class="node-label">
             {{ NODE_LABELS[i] }}
           </text>
         </g>
@@ -328,22 +299,20 @@ const colorIdle = seriesColor('gray');
     </div>
 
     <p class="demo-note">
-      Edge thickness is proportional to its flow share; dashed grey edges
-      carry no flow. The min-cut — the set of saturated edges separating
-      the source-reachable subgraph from <code>T</code> — is highlighted
-      in mauve, and its total capacity equals the max flow (the
+      Edge thickness is proportional to its flow share; dashed grey edges carry no flow. The min-cut
+      — the set of saturated edges separating the source-reachable subgraph from <code>T</code> — is
+      highlighted in mauve, and its total capacity equals the max flow (the
       <a
         href="https://en.wikipedia.org/wiki/Max-flow_min-cut_theorem"
         target="_blank"
         rel="noopener noreferrer"
-      >max-flow / min-cut theorem</a>).
-      Bumping a cut edge's capacity raises the throughput one-for-one until
-      the cut shifts elsewhere; bumping a non-cut edge does nothing. Notice
-      that adding capacity to <code>A → B</code> can <em>increase</em> total
-      throughput by letting the bridge re-route flow, even though the
-      direct edges from <code>S</code> are unchanged — the rate-function
-      catalog has no vocabulary for this. Industry Idle's building graph
-      computes shipping throughput exactly this way.
+        >max-flow / min-cut theorem</a
+      >). Bumping a cut edge's capacity raises the throughput one-for-one until the cut shifts
+      elsewhere; bumping a non-cut edge does nothing. Notice that adding capacity to
+      <code>A → B</code> can <em>increase</em> total throughput by letting the bridge re-route flow,
+      even though the direct edges from <code>S</code> are unchanged — the rate-function catalog has
+      no vocabulary for this. Industry Idle's building graph computes shipping throughput exactly
+      this way.
     </p>
   </div>
 </template>

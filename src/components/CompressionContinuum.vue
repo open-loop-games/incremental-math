@@ -74,40 +74,18 @@ function fmtMultiplier(v: number): string {
     <div class="cc-controls">
       <label>
         <span class="demo-label">exponent e = {{ e.toFixed(2) }}</span>
-        <input
-          v-model.number="e"
-          type="range"
-          min="0.05"
-          max="1.0"
-          step="0.01"
-        >
+        <input v-model.number="e" type="range" min="0.05" max="1.0" step="0.01" />
         <span class="cc-ticks">
-          <button
-            type="button"
-            class="cc-tick"
-            @click="setExponent(0.33)"
-          >cube root (0.33)</button>
-          <button
-            type="button"
-            class="cc-tick"
-            @click="setExponent(0.5)"
-          >sqrt (0.5)</button>
-          <button
-            type="button"
-            class="cc-tick"
-            @click="setExponent(1.0)"
-          >linear (1.0)</button>
+          <button type="button" class="cc-tick" @click="setExponent(0.33)">cube root (0.33)</button>
+          <button type="button" class="cc-tick" @click="setExponent(0.5)">sqrt (0.5)</button>
+          <button type="button" class="cc-tick" @click="setExponent(1.0)">linear (1.0)</button>
         </span>
       </label>
       <label>
-        <span class="demo-label">resource ratio R/T = 10<sup>{{ logRT.toFixed(0) }}</sup></span>
-        <input
-          v-model.number="logRT"
-          type="range"
-          min="1"
-          max="30"
-          step="1"
+        <span class="demo-label"
+          >resource ratio R/T = 10<sup>{{ logRT.toFixed(0) }}</sup></span
         >
+        <input v-model.number="logRT" type="range" min="1" max="30" step="1" />
       </label>
     </div>
 

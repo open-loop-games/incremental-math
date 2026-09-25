@@ -316,13 +316,7 @@ const readouts = computed(() => [
     <div class="demo-controls">
       <label>
         <span class="demo-label">blocker budget = {{ budget }}</span>
-        <input
-          v-model.number="budget"
-          type="range"
-          min="0"
-          :max="MAX_BUDGET"
-          step="1"
-        >
+        <input v-model.number="budget" type="range" min="0" :max="MAX_BUDGET" step="1" />
       </label>
       <div class="strategy-picker">
         <span class="demo-label">showing</span>
@@ -348,22 +342,11 @@ const readouts = computed(() => [
         aria-label="Grid with spawn, exit, terrain and player-placed blockers"
       >
         <defs>
-          <pattern
-            id="rock-hatch"
-            width="6"
-            height="6"
-            patternUnits="userSpaceOnUse"
-          >
-            <path
-              d="M -1 1 L 1 -1 M 0 6 L 6 0 M 5 7 L 7 5"
-              class="hatch"
-            />
+          <pattern id="rock-hatch" width="6" height="6" patternUnits="userSpaceOnUse">
+            <path d="M -1 1 L 1 -1 M 0 6 L 6 0 M 5 7 L 7 5" class="hatch" />
           </pattern>
         </defs>
-        <g
-          v-for="i in CELLS"
-          :key="i"
-        >
+        <g v-for="i in CELLS" :key="i">
           <rect
             :x="(i % W) * CELL + 1"
             :y="Math.floor(i / W) * CELL + 1"
@@ -383,22 +366,10 @@ const readouts = computed(() => [
           />
         </g>
 
-        <path
-          :d="pathLine"
-          class="follower-path"
-          fill="none"
-        />
+        <path :d="pathLine" class="follower-path" fill="none" />
 
-        <text
-          :x="cx(START)"
-          :y="cy(START) + 4"
-          class="endpoint-label"
-        >S</text>
-        <text
-          :x="cx(GOAL)"
-          :y="cy(GOAL) + 4"
-          class="endpoint-label"
-        >E</text>
+        <text :x="cx(START)" :y="cy(START) + 4" class="endpoint-label">S</text>
+        <text :x="cx(GOAL)" :y="cy(GOAL) + 4" class="endpoint-label">E</text>
         <g v-if="rejected !== null">
           <rect
             :x="rejectChip.x - 34"
@@ -408,11 +379,7 @@ const readouts = computed(() => [
             rx="3"
             class="reject-chip"
           />
-          <text
-            :x="rejectChip.x"
-            :y="rejectChip.y"
-            class="reject-label"
-          >would seal</text>
+          <text :x="rejectChip.x" :y="rejectChip.y" class="reject-label">would seal</text>
         </g>
       </svg>
 
@@ -442,31 +409,14 @@ const readouts = computed(() => [
           >
             {{ t.b }}
           </text>
-          <text
-            :x="PAD.l - 8"
-            :y="strip.yHi + 3"
-            class="strip-axis"
-            text-anchor="end"
-          >
+          <text :x="PAD.l - 8" :y="strip.yHi + 3" class="strip-axis" text-anchor="end">
             {{ strip.hi }}
           </text>
-          <text
-            :x="PAD.l - 8"
-            :y="strip.yLo + 3"
-            class="strip-axis"
-            text-anchor="end"
-          >
+          <text :x="PAD.l - 8" :y="strip.yLo + 3" class="strip-axis" text-anchor="end">
             {{ strip.lo }}
           </text>
-          <g
-            v-for="s in strip.series"
-            :key="s.key"
-          >
-            <path
-              :d="s.d"
-              :class="['strip-curve', s.key]"
-              fill="none"
-            />
+          <g v-for="s in strip.series" :key="s.key">
+            <path :d="s.d" :class="['strip-curve', s.key]" fill="none" />
             <circle
               v-for="dot in s.dots"
               :key="`${s.key}-${dot.b}`"
@@ -475,18 +425,12 @@ const readouts = computed(() => [
               :r="dot.b === budget ? 3.5 : 2"
               :class="['strip-dot', s.key]"
             />
-            <text
-              :x="STRIP_W - PAD.r + 8"
-              :y="s.labelY + 3"
-              :class="['strip-label', s.key]"
-            >
+            <text :x="STRIP_W - PAD.r + 8" :y="s.labelY + 3" :class="['strip-label', s.key]">
               {{ s.label }}
             </text>
           </g>
         </svg>
-        <p class="strip-caption">
-          path length (vertical) against blocker budget (horizontal)
-        </p>
+        <p class="strip-caption">path length (vertical) against blocker budget (horizontal)</p>
       </div>
     </div>
 
@@ -506,28 +450,20 @@ const readouts = computed(() => [
         >
           place these
         </button>
-        <span
-          v-else-if="overBudget"
-          class="warn"
-        >over budget</span>
+        <span v-else-if="overBudget" class="warn">over budget</span>
       </div>
     </div>
 
     <div class="demo-controls">
-      <button
-        type="button"
-        class="reset-btn"
-        @click="clearWalls"
-      >
-        clear walls
-      </button>
+      <button type="button" class="reset-btn" @click="clearWalls">clear walls</button>
     </div>
 
     <p class="demo-note">
       Click a cell to wall it; the follower re-solves its shortest path immediately. A placement
       that would leave no route at all is refused, the way a maze-builder refuses to let you seal
       the board &mdash; try boxing the spawn in. Base path is
-      <code>{{ baseLength }}</code>, and the leader's problem is to buy the longest path the budget affords. On this board
+      <code>{{ baseLength }}</code
+      >, and the leader's problem is to buy the longest path the budget affords. On this board
       <em>no single wall lengthens the path at all</em>: every wall you place alone gets bypassed at
       equal cost, so the greedy that stops when the best marginal gain hits zero never spends a
       coin. Pairs break the first plateau, which is why the lookahead patch moves at all &mdash; but

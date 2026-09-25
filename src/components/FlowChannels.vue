@@ -126,70 +126,37 @@ function setMultiplier(v: number) {
     <div class="fc-controls">
       <label>
         <span class="demo-label">cost multiplier m = {{ m.toFixed(2) }}</span>
-        <input
-          v-model.number="m"
-          type="range"
-          min="1.02"
-          max="3.0"
-          step="0.01"
-        >
+        <input v-model.number="m" type="range" min="1.02" max="3.0" step="0.01" />
         <span class="fc-ticks">
-          <button
-            type="button"
-            class="fc-tick"
-            @click="setMultiplier(1.07)"
-          >1.07</button>
-          <button
-            type="button"
-            class="fc-tick"
-            @click="setMultiplier(1.15)"
-          >1.15</button>
-          <button
-            type="button"
-            class="fc-tick"
-            @click="setMultiplier(1.4)"
-          >1.40</button>
-          <button
-            type="button"
-            class="fc-tick"
-            @click="setMultiplier(2.0)"
-          >2.00</button>
+          <button type="button" class="fc-tick" @click="setMultiplier(1.07)">1.07</button>
+          <button type="button" class="fc-tick" @click="setMultiplier(1.15)">1.15</button>
+          <button type="button" class="fc-tick" @click="setMultiplier(1.4)">1.40</button>
+          <button type="button" class="fc-tick" @click="setMultiplier(2.0)">2.00</button>
         </span>
       </label>
       <label>
         <span class="demo-label">base beat time T(1) = {{ baseBeat }}s</span>
-        <input
-          v-model.number="baseBeat"
-          type="range"
-          min="1"
-          max="60"
-          step="1"
-        >
+        <input v-model.number="baseBeat" type="range" min="1" max="60" step="1" />
       </label>
       <label>
         <span class="demo-label">target level n = {{ targetLevel }}</span>
-        <input
-          v-model.number="targetLevel"
-          type="range"
-          min="3"
-          max="50"
-          step="1"
-        >
+        <input v-model.number="targetLevel" type="range" min="3" max="50" step="1" />
       </label>
     </div>
 
     <div class="fc-readout">
-      <div
-        class="fc-cell fc-headline"
-        :style="{ borderColor: currentChannel.fill }"
-      >
+      <div class="fc-cell fc-headline" :style="{ borderColor: currentChannel.fill }">
         <span class="fc-cell-label">at level {{ targetLevel }}</span>
         <code>{{ formatSeconds(beatAtTarget) }} — {{ currentChannel.name }}</code>
       </div>
       <div class="fc-cell">
-        <span class="fc-cell-label">to keep level {{ targetLevel }} in {{ currentChannel.name }}</span>
-        <code>m ∈ [{{ fmtMultiplier(targetChannelRange.lower) }},
-          {{ fmtMultiplier(targetChannelRange.upper) }}]</code>
+        <span class="fc-cell-label"
+          >to keep level {{ targetLevel }} in {{ currentChannel.name }}</span
+        >
+        <code
+          >m ∈ [{{ fmtMultiplier(targetChannelRange.lower) }},
+          {{ fmtMultiplier(targetChannelRange.upper) }}]</code
+        >
       </div>
     </div>
 

@@ -29,60 +29,26 @@ const cDomain = computed<[number, number]>(() => [1, cMax.value]);
     <div class="demo-controls">
       <label>
         <span class="demo-label">a (base) = {{ a.toFixed(2) }}</span>
-        <input
-          v-model.number="a"
-          type="range"
-          min="0.5"
-          max="5"
-          step="0.05"
-        >
+        <input v-model.number="a" type="range" min="0.5" max="5" step="0.05" />
       </label>
       <label>
         <span class="demo-label">m (per-level multiplier) = {{ m.toFixed(3) }}</span>
-        <input
-          v-model.number="m"
-          type="range"
-          min="1.02"
-          max="1.5"
-          step="0.005"
-        >
+        <input v-model.number="m" type="range" min="1.02" max="1.5" step="0.005" />
       </label>
       <label>
         <span class="demo-label">⇨ continuous b = ln(m) = {{ b.toFixed(4) }}</span>
-        <input
-          type="range"
-          :value="b"
-          disabled
-          min="0"
-          max="0.5"
-          step="0.001"
-        >
+        <input type="range" :value="b" disabled min="0" max="0.5" step="0.001" />
       </label>
       <label>
         <span class="demo-label">x range = 0..{{ xMax.toFixed(0) }}</span>
-        <input
-          v-model.number="xMax"
-          type="range"
-          min="10"
-          max="200"
-          step="2"
-        >
+        <input v-model.number="xMax" type="range" min="10" max="200" step="2" />
       </label>
       <label>
         <span class="demo-label">C range = 0..{{ cMax.toFixed(0) }}</span>
-        <input
-          v-model.number="cMax"
-          type="range"
-          min="50"
-          max="50000"
-          step="50"
-        >
+        <input v-model.number="cMax" type="range" min="50" max="50000" step="50" />
       </label>
       <label class="demo-toggle">
-        <input
-          v-model="logY"
-          type="checkbox"
-        >
+        <input v-model="logY" type="checkbox" />
         log y-scale on rate
       </label>
     </div>
@@ -101,28 +67,17 @@ const cDomain = computed<[number, number]>(() => [1, cMax.value]);
       </div>
       <div class="triptych-panel">
         <span class="triptych-panel-label">R(x) = (a/ln m)·(m^x − 1)</span>
-        <RatePlot
-          :fn="R"
-          :domain="xDomain"
-          :deps="[a, m]"
-          x-label="x"
-          y-label="R"
-        />
+        <RatePlot :fn="R" :domain="xDomain" :deps="[a, m]" x-label="x" y-label="R" />
       </div>
       <div class="triptych-panel">
         <span class="triptych-panel-label">T(C) = log_m(1 + (C ln m)/a)</span>
-        <RatePlot
-          :fn="T"
-          :domain="cDomain"
-          :deps="[a, m]"
-          x-label="C"
-          y-label="T"
-        />
+        <RatePlot :fn="T" :domain="cDomain" :deps="[a, m]" x-label="C" y-label="T" />
       </div>
     </div>
 
     <p class="demo-note">
-      Doubling time in <code>x</code>: <code>(ln 2)/ln(m) ≈ {{ (Math.LN2 / b).toFixed(2) }}</code>. Past <code>x ≈</code> a few doubling times, <code>R(x)</code> is dominated by the last term
+      Doubling time in <code>x</code>: <code>(ln 2)/ln(m) ≈ {{ (Math.LN2 / b).toFixed(2) }}</code
+      >. Past <code>x ≈</code> a few doubling times, <code>R(x)</code> is dominated by the last term
       — about <code>1 − m⁻ᴷ</code> of the cumulative sits in the last <code>K</code> levels. For
       <code>m = 1.15</code>, the last 10 levels carry ≈ 75% of the integral; this is the exponential
       family's signature concentration of total work near the end.

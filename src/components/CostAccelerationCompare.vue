@@ -127,76 +127,40 @@ const accelSwatch = computed(() => `background: ${ACCEL_COLOR};`);
     <div class="cac-controls">
       <label>
         <span class="demo-label">base cost = {{ baseCost }}</span>
-        <input
-          v-model.number="baseCost"
-          type="range"
-          min="1"
-          max="1000"
-          step="1"
-        >
+        <input v-model.number="baseCost" type="range" min="1" max="1000" step="1" />
       </label>
       <label>
         <span class="demo-label">per-purchase multiplier = {{ mult }}×</span>
-        <input
-          v-model.number="mult"
-          type="range"
-          min="2"
-          max="10000"
-          step="1"
-        >
+        <input v-model.number="mult" type="range" min="2" max="10000" step="1" />
       </label>
       <label>
         <span class="demo-label">scaling factor = {{ costScale }}×</span>
-        <input
-          v-model.number="costScale"
-          type="range"
-          min="1.5"
-          max="100"
-          step="0.5"
-        >
+        <input v-model.number="costScale" type="range" min="1.5" max="100" step="0.5" />
       </label>
       <label>
         <span class="demo-label">threshold (purchases before scaling) = {{ threshold }}</span>
-        <input
-          v-model.number="threshold"
-          type="range"
-          min="0"
-          :max="N_MAX"
-          step="1"
-        >
+        <input v-model.number="threshold" type="range" min="0" :max="N_MAX" step="1" />
       </label>
       <label>
         <span class="demo-label">cursor at n = {{ cursorN }}</span>
-        <input
-          v-model.number="cursorN"
-          type="range"
-          min="0"
-          :max="N_MAX"
-          step="1"
-        >
+        <input v-model.number="cursorN" type="range" min="0" :max="N_MAX" step="1" />
       </label>
       <label class="cac-toggle">
-        <input
-          v-model="showAccel"
-          type="checkbox"
-        >
+        <input v-model="showAccel" type="checkbox" />
         show scaling curve
       </label>
     </div>
 
     <div class="cac-legend">
-      <span class="cac-legend-item"><span
-        class="cac-swatch"
-        :style="flatSwatch"
-      /> pure exponential (Pecorella)</span>
-      <span
-        v-if="showAccel"
-        class="cac-legend-item"
-      ><span
-        class="cac-swatch"
-        :style="accelSwatch"
-      /> scaling past threshold (AD)</span>
-      <span class="cac-legend-item cac-legend-threshold"><span class="cac-swatch cac-swatch-threshold" /> threshold</span>
+      <span class="cac-legend-item"
+        ><span class="cac-swatch" :style="flatSwatch" /> pure exponential (Pecorella)</span
+      >
+      <span v-if="showAccel" class="cac-legend-item"
+        ><span class="cac-swatch" :style="accelSwatch" /> scaling past threshold (AD)</span
+      >
+      <span class="cac-legend-item cac-legend-threshold"
+        ><span class="cac-swatch cac-swatch-threshold" /> threshold</span
+      >
     </div>
 
     <RatePlot
@@ -219,10 +183,7 @@ const accelSwatch = computed(() => `background: ${ACCEL_COLOR};`);
       <div v-if="showAccel">
         <span class="cac-readout-label">at n = {{ cursorN }}, with scaling:</span>
         <code>{{ fmtLog(cursorSample.logAccel) }}</code>
-        <span
-          v-if="cursorN > threshold"
-          class="cac-readout-ratio"
-        >
+        <span v-if="cursorN > threshold" class="cac-readout-ratio">
           ({{ fmtLog(cursorSample.logAccel - cursorSample.logFlat) }}× more)
         </span>
       </div>

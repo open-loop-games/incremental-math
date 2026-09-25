@@ -164,13 +164,7 @@ function fmtY(v: number): string {
         </div>
         <label>
           <span class="stage-mult">m = {{ mults[i].toFixed(2) }}</span>
-          <input
-            v-model.number="mults[i]"
-            type="range"
-            min="1.02"
-            max="15"
-            step="0.01"
-          >
+          <input v-model.number="mults[i]" type="range" min="1.02" max="15" step="0.01" />
         </label>
       </div>
     </div>
@@ -178,21 +172,9 @@ function fmtY(v: number): string {
     <div class="globals">
       <label>
         <span class="demo-label">purchases per stage = {{ perStage }}</span>
-        <input
-          v-model.number="perStage"
-          type="range"
-          min="4"
-          max="15"
-          step="1"
-        >
+        <input v-model.number="perStage" type="range" min="4" max="15" step="1" />
       </label>
-      <button
-        type="button"
-        class="reset"
-        @click="resetDefaults"
-      >
-        reset to Fundamental
-      </button>
+      <button type="button" class="reset" @click="resetDefaults">reset to Fundamental</button>
     </div>
 
     <RatePlot

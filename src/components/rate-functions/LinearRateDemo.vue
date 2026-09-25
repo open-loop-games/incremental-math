@@ -29,76 +29,34 @@ const cDomain = computed<[number, number]>(() => [0, cMax.value]);
     <div class="demo-controls">
       <label>
         <span class="demo-label">a (intercept) = {{ a.toFixed(2) }}</span>
-        <input
-          v-model.number="a"
-          type="range"
-          min="0"
-          max="5"
-          step="0.05"
-        >
+        <input v-model.number="a" type="range" min="0" max="5" step="0.05" />
       </label>
       <label>
         <span class="demo-label">b (slope) = {{ b.toFixed(3) }}</span>
-        <input
-          v-model.number="b"
-          type="range"
-          min="0"
-          max="0.5"
-          step="0.005"
-        >
+        <input v-model.number="b" type="range" min="0" max="0.5" step="0.005" />
       </label>
       <label>
         <span class="demo-label">x range = 0..{{ xMax.toFixed(0) }}</span>
-        <input
-          v-model.number="xMax"
-          type="range"
-          min="20"
-          max="500"
-          step="10"
-        >
+        <input v-model.number="xMax" type="range" min="20" max="500" step="10" />
       </label>
       <label>
         <span class="demo-label">C range (first-passage) = 0..{{ cMax.toFixed(0) }}</span>
-        <input
-          v-model.number="cMax"
-          type="range"
-          min="50"
-          max="5000"
-          step="50"
-        >
+        <input v-model.number="cMax" type="range" min="50" max="5000" step="50" />
       </label>
     </div>
 
     <div class="triptych">
       <div class="triptych-panel">
         <span class="triptych-panel-label">r(x) = a + b·x</span>
-        <RatePlot
-          :fn="r"
-          :domain="xDomain"
-          :deps="[a, b]"
-          x-label="x"
-          y-label="r"
-        />
+        <RatePlot :fn="r" :domain="xDomain" :deps="[a, b]" x-label="x" y-label="r" />
       </div>
       <div class="triptych-panel">
         <span class="triptych-panel-label">R(x) = a·x + b·x²/2</span>
-        <RatePlot
-          :fn="R"
-          :domain="xDomain"
-          :deps="[a, b]"
-          x-label="x"
-          y-label="R"
-        />
+        <RatePlot :fn="R" :domain="xDomain" :deps="[a, b]" x-label="x" y-label="R" />
       </div>
       <div class="triptych-panel">
         <span class="triptych-panel-label">T(C) = (−a + √(a² + 2bC)) / b</span>
-        <RatePlot
-          :fn="T"
-          :domain="cDomain"
-          :deps="[a, b]"
-          x-label="C"
-          y-label="T"
-        />
+        <RatePlot :fn="T" :domain="cDomain" :deps="[a, b]" x-label="C" y-label="T" />
       </div>
     </div>
   </div>

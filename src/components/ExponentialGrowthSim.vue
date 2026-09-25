@@ -132,53 +132,31 @@ function xTickPos(n: number): number {
     <div class="egs-controls">
       <label>
         <span class="demo-label">cost base = {{ costBase.toFixed(3) }}</span>
-        <input
-          v-model.number="costBase"
-          type="range"
-          min="1"
-          max="10"
-          step="0.001"
-        >
+        <input v-model.number="costBase" type="range" min="1" max="10" step="0.001" />
       </label>
       <label>
         <span class="demo-label">rate growth = {{ rateGrowth.toFixed(3) }}</span>
-        <input
-          v-model.number="rateGrowth"
-          type="range"
-          min="1.01"
-          max="1.20"
-          step="0.001"
-        >
+        <input v-model.number="rateGrowth" type="range" min="1.01" max="1.20" step="0.001" />
       </label>
       <label>
         <span class="demo-label">production base = {{ productionBase.toFixed(2) }} / sec</span>
-        <input
-          v-model.number="productionBase"
-          type="range"
-          min="0.1"
-          max="10"
-          step="0.01"
-        >
+        <input v-model.number="productionBase" type="range" min="0.1" max="10" step="0.01" />
       </label>
       <label class="egs-toggle">
-        <input
-          v-model="logScale"
-          type="checkbox"
-        >
+        <input v-model="logScale" type="checkbox" />
         log scale
       </label>
       <label class="egs-toggle">
-        <input
-          v-model="withMilestones"
-          type="checkbox"
-        >
+        <input v-model="withMilestones" type="checkbox" />
         milestone ×2 bumps (25, 50, 100, 200)
       </label>
     </div>
 
     <div class="egs-legend">
       <span class="egs-legend-item"><span class="egs-swatch egs-swatch-cost" /> cost of next</span>
-      <span class="egs-legend-item"><span class="egs-swatch egs-swatch-prod" /> production / sec</span>
+      <span class="egs-legend-item"
+        ><span class="egs-swatch egs-swatch-prod" /> production / sec</span
+      >
     </div>
 
     <svg
@@ -187,38 +165,12 @@ function xTickPos(n: number): number {
       role="img"
       aria-label="Cost and production curves"
     >
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t"
-        :x2="PAD.l"
-        :y2="PAD.t + PH"
-        class="egs-axis"
-      />
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t + PH"
-        :x2="W - PAD.r"
-        :y2="PAD.t + PH"
-        class="egs-axis"
-      />
+      <line :x1="PAD.l" :y1="PAD.t" :x2="PAD.l" :y2="PAD.t + PH" class="egs-axis" />
+      <line :x1="PAD.l" :y1="PAD.t + PH" :x2="W - PAD.r" :y2="PAD.t + PH" class="egs-axis" />
       <g>
-        <g
-          v-for="t in yScale.ticks"
-          :key="t.label"
-        >
-          <line
-            :x1="PAD.l"
-            :y1="t.y"
-            :x2="W - PAD.r"
-            :y2="t.y"
-            class="egs-grid"
-          />
-          <text
-            :x="PAD.l - 8"
-            :y="t.y + 3"
-            text-anchor="end"
-            class="egs-tick"
-          >{{ t.label }}</text>
+        <g v-for="t in yScale.ticks" :key="t.label">
+          <line :x1="PAD.l" :y1="t.y" :x2="W - PAD.r" :y2="t.y" class="egs-grid" />
+          <text :x="PAD.l - 8" :y="t.y + 3" text-anchor="end" class="egs-tick">{{ t.label }}</text>
         </g>
       </g>
       <g>
@@ -233,21 +185,10 @@ function xTickPos(n: number): number {
           {{ nx }}
         </text>
       </g>
-      <text
-        :x="PAD.l + PW / 2"
-        :y="H - 4"
-        text-anchor="middle"
-        class="egs-tick"
-      >N owned</text>
+      <text :x="PAD.l + PW / 2" :y="H - 4" text-anchor="middle" class="egs-tick">N owned</text>
 
-      <path
-        :d="costPath"
-        class="egs-line egs-line-cost"
-      />
-      <path
-        :d="prodPath"
-        class="egs-line egs-line-prod"
-      />
+      <path :d="costPath" class="egs-line egs-line-cost" />
+      <path :d="prodPath" class="egs-line egs-line-prod" />
     </svg>
   </div>
 </template>

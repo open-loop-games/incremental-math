@@ -196,33 +196,19 @@ function clearAll() {
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="b in buildings"
-          :key="b.id"
-          :class="{ 'syn-row-on': selected[b.id] }"
-        >
+        <tr v-for="b in buildings" :key="b.id" :class="{ 'syn-row-on': selected[b.id] }">
           <td class="syn-toggle">
-            <input
-              :id="`syn-${b.id}`"
-              v-model="selected[b.id]"
-              type="checkbox"
-            >
+            <input :id="`syn-${b.id}`" v-model="selected[b.id]" type="checkbox" />
           </td>
           <td>
             <label :for="`syn-${b.id}`">{{ b.name }}</label>
           </td>
           <td>{{ b.base }}</td>
           <td class="syn-marginal">
-            <template
-              v-for="m in marginals"
-              :key="m.id"
-            >
+            <template v-for="m in marginals" :key="m.id">
               <span v-if="m.id === b.id">
                 <span v-if="m.marginal !== null">+{{ m.marginal }}</span>
-                <span
-                  v-else
-                  class="syn-muted"
-                >— (selected)</span>
+                <span v-else class="syn-muted">— (selected)</span>
               </span>
             </template>
           </td>
@@ -255,10 +241,7 @@ function clearAll() {
             <td>+{{ p.bonus }}</td>
             <td class="syn-active">
               <span v-if="selectedSet.has(p.a) && selectedSet.has(p.b)">●</span>
-              <span
-                v-else
-                class="syn-muted"
-              >○</span>
+              <span v-else class="syn-muted">○</span>
             </td>
           </tr>
         </tbody>
@@ -277,9 +260,7 @@ function clearAll() {
           </tr>
           <tr>
             <td>+ pair bonuses ({{ activePairs.length }} active)</td>
-            <td class="syn-num">
-              +{{ totalWithSynergies - totalBaseOnly }}
-            </td>
+            <td class="syn-num">+{{ totalWithSynergies - totalBaseOnly }}</td>
           </tr>
           <tr class="syn-total-row">
             <td>total f(S)</td>
@@ -288,9 +269,7 @@ function clearAll() {
             </td>
           </tr>
           <tr>
-            <td class="syn-muted">
-              |S| = {{ selectedCount }}
-            </td>
+            <td class="syn-muted">|S| = {{ selectedCount }}</td>
             <td />
           </tr>
         </tbody>
@@ -301,12 +280,7 @@ function clearAll() {
       <h4>Greedy vs optimal</h4>
       <label class="syn-budget-label">
         Budget: pick at most
-        <input
-          v-model.number="budget"
-          type="range"
-          :min="1"
-          :max="5"
-        >
+        <input v-model.number="budget" type="range" :min="1" :max="5" />
         <strong>{{ budget }}</strong> buildings
       </label>
       <table class="syn-compare">
@@ -333,29 +307,18 @@ function clearAll() {
             </td>
           </tr>
           <tr>
-            <td class="syn-muted">
-              gap (optimal − greedy)
-            </td>
+            <td class="syn-muted">gap (optimal − greedy)</td>
             <td />
-            <td
-              class="syn-num"
-              :class="{ 'syn-gap-positive': greedyGap > 0 }"
-            >
+            <td class="syn-num" :class="{ 'syn-gap-positive': greedyGap > 0 }">
               {{ greedyGap > 0 ? '+' : '' }}{{ greedyGap }}
             </td>
           </tr>
         </tbody>
       </table>
       <div class="syn-buttons">
-        <button @click="applyGreedy">
-          Apply greedy
-        </button>
-        <button @click="applyOptimal">
-          Apply optimal
-        </button>
-        <button @click="clearAll">
-          Clear
-        </button>
+        <button @click="applyGreedy">Apply greedy</button>
+        <button @click="applyOptimal">Apply optimal</button>
+        <button @click="clearAll">Clear</button>
       </div>
       <p class="syn-caption">
         Greedy picks one item at a time by largest marginal value. With the Temple-related pair

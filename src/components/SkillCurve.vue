@@ -71,53 +71,23 @@ const annotations = computed<Annotation[]>(() => {
       </label>
       <label>
         <span class="demo-label">scale a = {{ a.toFixed(3) }}</span>
-        <input
-          v-model.number="a"
-          type="range"
-          min="0.005"
-          max="0.5"
-          step="0.005"
-        >
+        <input v-model.number="a" type="range" min="0.005" max="0.5" step="0.005" />
       </label>
       <label v-if="mode === 'polynomial'">
         <span class="demo-label">exponent p = {{ p.toFixed(2) }}</span>
-        <input
-          v-model.number="p"
-          type="range"
-          min="0.3"
-          max="1"
-          step="0.01"
-        >
+        <input v-model.number="p" type="range" min="0.3" max="1" step="0.01" />
       </label>
       <label v-else>
         <span class="demo-label">base b = {{ b.toFixed(1) }}</span>
-        <input
-          v-model.number="b"
-          type="range"
-          min="1.2"
-          max="4"
-          step="0.1"
-        >
+        <input v-model.number="b" type="range" min="1.2" max="4" step="0.1" />
       </label>
       <label>
         <span class="demo-label">per-level effect c = {{ c.toFixed(2) }}</span>
-        <input
-          v-model.number="c"
-          type="range"
-          min="0.01"
-          max="0.5"
-          step="0.01"
-        >
+        <input v-model.number="c" type="range" min="0.01" max="0.5" step="0.01" />
       </label>
       <label>
         <span class="demo-label">XP range = 0..{{ xMax.toFixed(0) }}</span>
-        <input
-          v-model.number="xMax"
-          type="range"
-          min="200"
-          max="20000"
-          step="100"
-        >
+        <input v-model.number="xMax" type="range" min="200" max="20000" step="100" />
       </label>
     </div>
 

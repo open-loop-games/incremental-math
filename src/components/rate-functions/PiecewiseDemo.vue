@@ -62,63 +62,27 @@ const cDomain = computed<[number, number]>(() => [1, cMax.value]);
     <div class="demo-controls">
       <label>
         <span class="demo-label">base = {{ base.toFixed(2) }}</span>
-        <input
-          v-model.number="base"
-          type="range"
-          min="0.5"
-          max="5"
-          step="0.05"
-        >
+        <input v-model.number="base" type="range" min="0.5" max="5" step="0.05" />
       </label>
       <label>
         <span class="demo-label">m₁ (pre-threshold) = {{ m1.toFixed(3) }}</span>
-        <input
-          v-model.number="m1"
-          type="range"
-          min="1.02"
-          max="1.5"
-          step="0.005"
-        >
+        <input v-model.number="m1" type="range" min="1.02" max="1.5" step="0.005" />
       </label>
       <label>
         <span class="demo-label">m₂ (post-threshold) = {{ m2.toFixed(3) }}</span>
-        <input
-          v-model.number="m2"
-          type="range"
-          min="1.001"
-          max="1.5"
-          step="0.001"
-        >
+        <input v-model.number="m2" type="range" min="1.001" max="1.5" step="0.001" />
       </label>
       <label>
         <span class="demo-label">threshold t = {{ t.toFixed(0) }}</span>
-        <input
-          v-model.number="t"
-          type="range"
-          min="5"
-          :max="xMax * 0.8"
-          step="1"
-        >
+        <input v-model.number="t" type="range" min="5" :max="xMax * 0.8" step="1" />
       </label>
       <label>
         <span class="demo-label">x range = 0..{{ xMax.toFixed(0) }}</span>
-        <input
-          v-model.number="xMax"
-          type="range"
-          min="20"
-          max="500"
-          step="10"
-        >
+        <input v-model.number="xMax" type="range" min="20" max="500" step="10" />
       </label>
       <label>
         <span class="demo-label">C range = 0..{{ (cMax / 1000).toFixed(0) }}k</span>
-        <input
-          v-model.number="cMax"
-          type="range"
-          min="1000"
-          max="1e7"
-          step="1000"
-        >
+        <input v-model.number="cMax" type="range" min="1000" max="1e7" step="1000" />
       </label>
     </div>
 
@@ -158,8 +122,10 @@ const cDomain = computed<[number, number]>(() => [1, cMax.value]);
 
     <p class="demo-note">
       Cumulative through threshold
-      <code>R(t) ≈
-        {{ cumulativeAtT < 1e6 ? cumulativeAtT.toFixed(0) : cumulativeAtT.toExponential(2) }}</code>. The rate panel is on log y-scale because the post-threshold geometric is still exponential
+      <code
+        >R(t) ≈
+        {{ cumulativeAtT < 1e6 ? cumulativeAtT.toFixed(0) : cumulativeAtT.toExponential(2) }}</code
+      >. The rate panel is on log y-scale because the post-threshold geometric is still exponential
       — the kink at <code>x = t</code> is the slope change in log space, which is the only place a
       piecewise composition of two geometrics is visually a "break" rather than a vanishingly small
       inflection.

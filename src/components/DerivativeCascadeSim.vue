@@ -183,66 +183,29 @@ const tierLabels = computed(() => {
     <div class="dcs-controls">
       <label>
         <span class="demo-label">depth = {{ depth }} tier{{ depth === 1 ? '' : 's' }}</span>
-        <input
-          v-model.number="depth"
-          type="range"
-          min="1"
-          max="5"
-          step="1"
-        >
+        <input v-model.number="depth" type="range" min="1" max="5" step="1" />
       </label>
       <label>
         <span class="demo-label">top-tier seed = {{ format(topSeed) }}</span>
-        <input
-          v-model.number="topSeedExp"
-          type="range"
-          min="-2"
-          max="6"
-          step="0.05"
-        >
+        <input v-model.number="topSeedExp" type="range" min="-2" max="6" step="0.05" />
       </label>
       <label>
         <span class="demo-label">rate scale = ×{{ rateScale.toFixed(rateScale < 1 ? 3 : 2) }}</span>
-        <input
-          v-model.number="rateScaleExp"
-          type="range"
-          min="-2"
-          max="2"
-          step="0.02"
-        >
+        <input v-model.number="rateScaleExp" type="range" min="-2" max="2" step="0.02" />
       </label>
       <label>
         <span class="demo-label">base income = {{ baseIncome.toFixed(2) }} / sec</span>
-        <input
-          v-model.number="baseIncome"
-          type="range"
-          min="0.5"
-          max="50"
-          step="0.5"
-        >
+        <input v-model.number="baseIncome" type="range" min="0.5" max="50" step="0.5" />
       </label>
       <label class="dcs-toggle">
-        <input
-          v-model="logScale"
-          type="checkbox"
-        >
+        <input v-model="logScale" type="checkbox" />
         log scale
       </label>
     </div>
 
     <div class="dcs-playback">
-      <button
-        type="button"
-        class="dcs-btn"
-        @click="rewind"
-      >
-        ⟲ rewind
-      </button>
-      <button
-        type="button"
-        class="dcs-btn dcs-btn-primary"
-        @click="playing ? pause() : play()"
-      >
+      <button type="button" class="dcs-btn" @click="rewind">⟲ rewind</button>
+      <button type="button" class="dcs-btn dcs-btn-primary" @click="playing ? pause() : play()">
         {{ playing ? '⏸ pause' : '▶ play' }}
       </button>
       <input
@@ -253,48 +216,17 @@ const tierLabels = computed(() => {
         :max="T_MAX"
         step="1"
         @input="pause"
-      >
+      />
       <span class="dcs-clock">t = {{ now }}</span>
     </div>
 
-    <svg
-      :viewBox="`0 0 ${W} ${H}`"
-      class="dcs-chart"
-      role="img"
-      aria-label="Currency over time"
-    >
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t"
-        :x2="PAD.l"
-        :y2="PAD.t + PH"
-        class="dcs-axis"
-      />
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t + PH"
-        :x2="W - PAD.r"
-        :y2="PAD.t + PH"
-        class="dcs-axis"
-      />
+    <svg :viewBox="`0 0 ${W} ${H}`" class="dcs-chart" role="img" aria-label="Currency over time">
+      <line :x1="PAD.l" :y1="PAD.t" :x2="PAD.l" :y2="PAD.t + PH" class="dcs-axis" />
+      <line :x1="PAD.l" :y1="PAD.t + PH" :x2="W - PAD.r" :y2="PAD.t + PH" class="dcs-axis" />
       <g>
-        <g
-          v-for="t in yScale.ticks"
-          :key="t.label"
-        >
-          <line
-            :x1="PAD.l"
-            :y1="t.y"
-            :x2="W - PAD.r"
-            :y2="t.y"
-            class="dcs-grid"
-          />
-          <text
-            :x="PAD.l - 8"
-            :y="t.y + 3"
-            text-anchor="end"
-            class="dcs-tick"
-          >{{ t.label }}</text>
+        <g v-for="t in yScale.ticks" :key="t.label">
+          <line :x1="PAD.l" :y1="t.y" :x2="W - PAD.r" :y2="t.y" class="dcs-grid" />
+          <text :x="PAD.l - 8" :y="t.y + 3" text-anchor="end" class="dcs-tick">{{ t.label }}</text>
         </g>
       </g>
       <g>
@@ -309,30 +241,11 @@ const tierLabels = computed(() => {
           {{ tx }}
         </text>
       </g>
-      <text
-        :x="PAD.l + PW / 2"
-        :y="H - 4"
-        text-anchor="middle"
-        class="dcs-tick"
-      >t (seconds)</text>
+      <text :x="PAD.l + PW / 2" :y="H - 4" text-anchor="middle" class="dcs-tick">t (seconds)</text>
 
-      <path
-        :d="fullPath"
-        class="dcs-line"
-      />
-      <line
-        :x1="nowX"
-        :y1="PAD.t"
-        :x2="nowX"
-        :y2="PAD.t + PH"
-        class="dcs-now-line"
-      />
-      <circle
-        :cx="nowX"
-        :cy="nowY"
-        r="4"
-        class="dcs-now-dot"
-      />
+      <path :d="fullPath" class="dcs-line" />
+      <line :x1="nowX" :y1="PAD.t" :x2="nowX" :y2="PAD.t + PH" class="dcs-now-line" />
+      <circle :cx="nowX" :cy="nowY" r="4" class="dcs-now-dot" />
     </svg>
 
     <div class="dcs-readout">
@@ -345,11 +258,7 @@ const tierLabels = computed(() => {
         <span class="dcs-readout-val">{{ format(nowSample.income) }}</span>
       </div>
       <div class="dcs-tier-grid">
-        <div
-          v-for="(label, i) in tierLabels"
-          :key="i"
-          class="dcs-tier-cell"
-        >
+        <div v-for="(label, i) in tierLabels" :key="i" class="dcs-tier-cell">
           <span class="dcs-tier-name">{{ label }}</span>
           <span class="dcs-tier-val">{{ format(nowSample.tiers[i]) }}</span>
         </div>

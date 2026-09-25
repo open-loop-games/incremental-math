@@ -195,32 +195,14 @@ function edgeActive(from: string, to: string): boolean {
     <div class="demo-controls">
       <label>
         <span class="demo-label">budget = {{ budget }}</span>
-        <input
-          v-model.number="budget"
-          type="range"
-          min="5"
-          max="40"
-          step="1"
-        >
+        <input v-model.number="budget" type="range" min="5" max="40" step="1" />
       </label>
-      <button
-        type="button"
-        class="reset-btn"
-        @click="reset"
-      >
-        reset selection
-      </button>
+      <button type="button" class="reset-btn" @click="reset">reset selection</button>
     </div>
 
     <div class="dag-wrap">
-      <svg
-        viewBox="0 0 460 320"
-        class="dag"
-      >
-        <g
-          v-for="e in EDGES"
-          :key="`${e.from}-${e.to}`"
-        >
+      <svg viewBox="0 0 460 320" class="dag">
+        <g v-for="e in EDGES" :key="`${e.from}-${e.to}`">
           <path
             :d="pathFor(e.from, e.to)"
             :stroke="edgeActive(e.from, e.to) ? colorPicked : 'var(--color-border)'"
@@ -228,30 +210,10 @@ function edgeActive(from: string, to: string): boolean {
             fill="none"
           />
         </g>
-        <g
-          v-for="n in NODES"
-          :key="n.id"
-          class="node-group"
-          @click="toggle(n.id)"
-        >
-          <circle
-            :cx="n.x"
-            :cy="n.y"
-            r="22"
-            :class="nodeClass(n)"
-          />
-          <text
-            :x="n.x"
-            :y="n.y - 1"
-            text-anchor="middle"
-            class="node-label"
-          >{{ n.label }}</text>
-          <text
-            :x="n.x"
-            :y="n.y + 12"
-            text-anchor="middle"
-            class="node-cost"
-          >
+        <g v-for="n in NODES" :key="n.id" class="node-group" @click="toggle(n.id)">
+          <circle :cx="n.x" :cy="n.y" r="22" :class="nodeClass(n)" />
+          <text :x="n.x" :y="n.y - 1" text-anchor="middle" class="node-label">{{ n.label }}</text>
+          <text :x="n.x" :y="n.y + 12" text-anchor="middle" class="node-cost">
             {{ n.cost }}c/{{ n.effect }}e
           </text>
         </g>
@@ -262,20 +224,21 @@ function edgeActive(from: string, to: string): boolean {
       <div :class="{ over: overBudget }">
         <span class="r-label">your selection</span>
         <code>cost {{ userScore.cost }} / budget {{ budget }} · effect {{ userScore.effect }}</code>
-        <span
-          v-if="overBudget"
-          class="warn"
-        >over budget</span>
+        <span v-if="overBudget" class="warn">over budget</span>
       </div>
       <div>
         <span class="r-label">greedy (effect / cost)</span>
-        <code>effect {{ greedy.effect }} ·
-          {{ greedy.ids.filter((x) => x !== 'A').join('') || '∅' }}</code>
+        <code
+          >effect {{ greedy.effect }} ·
+          {{ greedy.ids.filter((x) => x !== 'A').join('') || '∅' }}</code
+        >
       </div>
       <div class="optimal">
         <span class="r-label">exhaustive optimum</span>
-        <code>effect {{ optimal.effect }} ·
-          {{ optimal.ids.filter((x) => x !== 'A').join('') || '∅' }}</code>
+        <code
+          >effect {{ optimal.effect }} ·
+          {{ optimal.ids.filter((x) => x !== 'A').join('') || '∅' }}</code
+        >
       </div>
       <div>
         <span class="r-label">greedy matches optimum?</span>

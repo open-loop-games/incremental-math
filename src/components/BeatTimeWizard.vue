@@ -65,38 +65,24 @@ const channelLabel = computed(() => {
     <div class="btw-controls">
       <label>
         <span class="demo-label">target beat time = {{ targetBeat }}s</span>
-        <input
-          v-model.number="targetBeat"
-          type="range"
-          min="5"
-          max="600"
-          step="1"
-        >
+        <input v-model.number="targetBeat" type="range" min="5" max="600" step="1" />
       </label>
       <label>
         <span class="demo-label">base beat time T(1) = {{ baseBeat }}s</span>
-        <input
-          v-model.number="baseBeat"
-          type="range"
-          min="1"
-          max="60"
-          step="1"
-        >
+        <input v-model.number="baseBeat" type="range" min="1" max="60" step="1" />
       </label>
       <label>
         <span class="demo-label">target level n = {{ targetLevel }}</span>
-        <input
-          v-model.number="targetLevel"
-          type="range"
-          min="3"
-          max="50"
-          step="1"
-        >
+        <input v-model.number="targetLevel" type="range" min="3" max="50" step="1" />
       </label>
     </div>
 
     <p class="btw-formula">
-      <code>m = (T_target / T_base)^(1 / (n − 1)) = ({{ targetBeat }} / {{ baseBeat }})<sup>1/{{ targetLevel - 1 }}</sup></code>
+      <code
+        >m = (T_target / T_base)^(1 / (n − 1)) = ({{ targetBeat }} / {{ baseBeat }})<sup
+          >1/{{ targetLevel - 1 }}</sup
+        ></code
+      >
     </p>
 
     <div class="btw-readout">

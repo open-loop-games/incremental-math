@@ -156,12 +156,7 @@ const opSymbol = (s: Step): string => (s.type === 'add' ? '+' : s.type === 'mul'
     <div class="demo-controls">
       <label>
         <span class="demo-label">base = {{ base }}</span>
-        <input
-          v-model.number="base"
-          type="range"
-          :min="1"
-          :max="100"
-        >
+        <input v-model.number="base" type="range" :min="1" :max="100" />
       </label>
     </div>
 
@@ -175,17 +170,9 @@ const opSymbol = (s: Step): string => (s.type === 'add' ? '+' : s.type === 'mul'
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="s in steps"
-          :key="s.id"
-          :class="{ 'chain-row-off': !s.enabled }"
-        >
+        <tr v-for="s in steps" :key="s.id" :class="{ 'chain-row-off': !s.enabled }">
           <td class="chain-toggle">
-            <input
-              :id="`chain-${s.id}`"
-              v-model="s.enabled"
-              type="checkbox"
-            >
+            <input :id="`chain-${s.id}`" v-model="s.enabled" type="checkbox" />
           </td>
           <td class="chain-op">
             <label :for="`chain-${s.id}`">
@@ -205,7 +192,7 @@ const opSymbol = (s: Step): string => (s.type === 'add' ? '+' : s.type === 'mul'
                 :max="20"
                 class="chain-inline-range"
                 :disabled="!s.enabled"
-              >
+              />
               <span class="chain-formula"> = {{ 5 * upgrades }}</span>
             </template>
             <template v-else-if="s.id === 'softcap'">
@@ -217,7 +204,7 @@ const opSymbol = (s: Step): string => (s.type === 'add' ? '+' : s.type === 'mul'
                 :step="0.01"
                 class="chain-inline-range"
                 :disabled="!s.enabled"
-              >
+              />
               <span class="chain-formula"> = {{ softcapExp.toFixed(2) }}</span>
             </template>
             <template v-else>
@@ -240,10 +227,7 @@ const opSymbol = (s: Step): string => (s.type === 'add' ? '+' : s.type === 'mul'
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="r in trace"
-            :key="r.index"
-          >
+          <tr v-for="r in trace" :key="r.index">
             <td>{{ r.index }}</td>
             <td>{{ r.label }}</td>
             <td class="trace-op">
@@ -255,20 +239,17 @@ const opSymbol = (s: Step): string => (s.type === 'add' ? '+' : s.type === 'mul'
           </tr>
         </tbody>
       </table>
-      <p class="chain-final">
-        final = {{ finalValue }}
-      </p>
+      <p class="chain-final">final = {{ finalValue }}</p>
     </div>
 
     <div class="chain-section">
       <h4>Same chain as data</h4>
       <pre class="code-panel"><code>{{ codePanel }}</code></pre>
       <p class="chain-caption">
-        Toggle a row above and the array above gains or loses an entry —
-        the chain is what the engine evaluates. Each modifier carries its
-        own description and (in real code) a reactive
-        <code>enabled</code> predicate, so a UI panel can render the
-        breakdown without the calling code typing it out.
+        Toggle a row above and the array above gains or loses an entry — the chain is what the
+        engine evaluates. Each modifier carries its own description and (in real code) a reactive
+        <code>enabled</code> predicate, so a UI panel can render the breakdown without the calling
+        code typing it out.
       </p>
     </div>
   </div>

@@ -93,33 +93,14 @@ function renderCount(n: number): string {
     <div class="dst-controls">
       <div class="dst-depth">
         <span class="demo-label">depth</span>
-        <label
-          v-for="d in [1, 2, 3, 4] as const"
-          :key="d"
-        >
-          <input
-            type="radio"
-            :value="d"
-            :checked="depth === d"
-            @change="setDepth(d)"
-          >
+        <label v-for="d in [1, 2, 3, 4] as const" :key="d">
+          <input type="radio" :value="d" :checked="depth === d" @change="setDepth(d)" />
           {{ d }}
         </label>
       </div>
       <div class="dst-stepper">
-        <button
-          type="button"
-          class="dst-btn"
-          @click="reset"
-        >
-          reset
-        </button>
-        <button
-          type="button"
-          class="dst-btn dst-btn-primary"
-          :disabled="t >= T_MAX"
-          @click="step"
-        >
+        <button type="button" class="dst-btn" @click="reset">reset</button>
+        <button type="button" class="dst-btn dst-btn-primary" :disabled="t >= T_MAX" @click="step">
           step → t = {{ t + 1 }}
         </button>
       </div>
@@ -130,44 +111,30 @@ function renderCount(n: number): string {
     </div>
 
     <div class="dst-stack">
-      <div
-        v-for="i in depth + 1"
-        :key="depth + 1 - i"
-        class="dst-tier"
-      >
+      <div v-for="i in depth + 1" :key="depth + 1 - i" class="dst-tier">
         <div class="dst-tier-label">
           {{ tierLabel(depth + 1 - i) }}
-          <span
-            v-if="depth + 1 - i === depth"
-            class="dst-tier-fixed"
-          >(seed)</span>
+          <span v-if="depth + 1 - i === depth" class="dst-tier-fixed">(seed)</span>
         </div>
         <div class="dst-tier-count">
           <span class="dst-existing">
             {{ renderCount(current.tiers[depth + 1 - i] - current.newbornThisStep[depth + 1 - i]) }}
           </span>
-          <span
-            v-if="current.newbornThisStep[depth + 1 - i] > 0"
-            class="dst-newborn"
-          >
+          <span v-if="current.newbornThisStep[depth + 1 - i] > 0" class="dst-newborn">
             + {{ renderCount(current.newbornThisStep[depth + 1 - i]) }} new
           </span>
         </div>
       </div>
 
       <div class="dst-tier dst-tier-currency">
-        <div class="dst-tier-label">
-          currency
-        </div>
+        <div class="dst-tier-label">currency</div>
         <div class="dst-tier-count">
           <span class="dst-currency-val">{{ renderCount(current.currency) }}</span>
-          <span
-            v-if="current.currencyDelta > 0"
-            class="dst-currency-breakdown"
-          >
+          <span v-if="current.currencyDelta > 0" class="dst-currency-breakdown">
             (+{{ renderCount(current.fromExisting) }} from existing
             <span v-if="current.fromNewborn > 0">
-              + {{ renderCount(current.fromNewborn) }} from new ½ </span>)
+              + {{ renderCount(current.fromNewborn) }} from new ½ </span
+            >)
           </span>
         </div>
       </div>
@@ -181,30 +148,26 @@ function renderCount(n: number): string {
       <div class="dst-compare-row">
         <span class="dst-compare-label">
           theoretical
-          <span class="dst-formula">t<sup>{{ depth }}</sup> / {{ factorial(depth) }}</span>
+          <span class="dst-formula"
+            >t<sup>{{ depth }}</sup> / {{ factorial(depth) }}</span
+          >
         </span>
         <span class="dst-compare-val">{{ theoretical.toFixed(4).replace(/\.?0+$/, '') }}</span>
       </div>
-      <div
-        v-if="depth === 2"
-        class="dst-compare-note"
-      >
+      <div v-if="depth === 2" class="dst-compare-note">
         At depth 2 the half-on-creation rule lands the discrete simulation exactly on
         <code>t² / 2</code> at every integer t.
       </div>
-      <div
-        v-else-if="depth === 1"
-        class="dst-compare-note"
-      >
+      <div v-else-if="depth === 1" class="dst-compare-note">
         Linear growth — no newborn correction needed; the discrete and theoretical track exactly.
       </div>
-      <div
-        v-else
-        class="dst-compare-note"
-      >
+      <div v-else class="dst-compare-note">
         At depth ≥ 3 the half-on-creation rule is no longer exact (the layer above is no longer
         linear in t), so the discrete simulation drifts off
-        <code>t<sup>{{ depth }}</sup>/{{ factorial(depth) }}</code>
+        <code
+          >t<sup>{{ depth }}</sup
+          >/{{ factorial(depth) }}</code
+        >
         at integer t.
       </div>
     </div>

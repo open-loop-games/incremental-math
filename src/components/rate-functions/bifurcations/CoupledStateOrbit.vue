@@ -358,73 +358,31 @@ watch(
     <div class="demo-controls">
       <label>
         <span class="demo-label">α (prey growth) = {{ alpha.toFixed(2) }}</span>
-        <input
-          v-model.number="alpha"
-          type="range"
-          min="0.1"
-          max="2"
-          step="0.05"
-        >
+        <input v-model.number="alpha" type="range" min="0.1" max="2" step="0.05" />
       </label>
       <label>
         <span class="demo-label">β (predation) = {{ beta.toFixed(3) }}</span>
-        <input
-          v-model.number="beta"
-          type="range"
-          min="0.005"
-          max="0.2"
-          step="0.005"
-        >
+        <input v-model.number="beta" type="range" min="0.005" max="0.2" step="0.005" />
       </label>
       <label>
         <span class="demo-label">γ (predator decay) = {{ gamma.toFixed(2) }}</span>
-        <input
-          v-model.number="gamma"
-          type="range"
-          min="0.1"
-          max="2"
-          step="0.05"
-        >
+        <input v-model.number="gamma" type="range" min="0.1" max="2" step="0.05" />
       </label>
       <label>
         <span class="demo-label">δ (predator gain) = {{ delta.toFixed(3) }}</span>
-        <input
-          v-model.number="delta"
-          type="range"
-          min="0.005"
-          max="0.1"
-          step="0.001"
-        >
+        <input v-model.number="delta" type="range" min="0.005" max="0.1" step="0.001" />
       </label>
       <label>
         <span class="demo-label">x₀ (initial prey) = {{ x0.toFixed(0) }}</span>
-        <input
-          v-model.number="x0"
-          type="range"
-          min="1"
-          max="120"
-          step="1"
-        >
+        <input v-model.number="x0" type="range" min="1" max="120" step="1" />
       </label>
       <label>
         <span class="demo-label">y₀ (initial predator) = {{ y0.toFixed(0) }}</span>
-        <input
-          v-model.number="y0"
-          type="range"
-          min="1"
-          max="60"
-          step="1"
-        >
+        <input v-model.number="y0" type="range" min="1" max="60" step="1" />
       </label>
       <label>
         <span class="demo-label">t range = 0..{{ tMax.toFixed(0) }}</span>
-        <input
-          v-model.number="tMax"
-          type="range"
-          min="10"
-          max="120"
-          step="2"
-        >
+        <input v-model.number="tMax" type="range" min="10" max="120" step="2" />
       </label>
     </div>
 

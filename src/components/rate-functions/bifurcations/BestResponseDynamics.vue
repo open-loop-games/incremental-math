@@ -266,118 +266,54 @@ watch([epsilon, xR, xP, tMax], () => drawTimeSeries());
     <div class="demo-controls">
       <label>
         <span class="demo-label">ε (diagonal perturbation) = {{ epsilon.toFixed(2) }}</span>
-        <input
-          v-model.number="epsilon"
-          type="range"
-          min="-0.3"
-          max="0.3"
-          step="0.01"
-        >
+        <input v-model.number="epsilon" type="range" min="-0.3" max="0.3" step="0.01" />
       </label>
       <label>
         <span class="demo-label">x_R (initial Rock) = {{ xR.toFixed(2) }}</span>
-        <input
-          v-model.number="xR"
-          type="range"
-          min="0.05"
-          max="0.9"
-          step="0.01"
-        >
+        <input v-model.number="xR" type="range" min="0.05" max="0.9" step="0.01" />
       </label>
       <label>
-        <span class="demo-label">x_P (initial Paper) = {{ Math.min(xP, 1 - xR - 0.01).toFixed(2) }}</span>
+        <span class="demo-label"
+          >x_P (initial Paper) = {{ Math.min(xP, 1 - xR - 0.01).toFixed(2) }}</span
+        >
         <input
           v-model.number="xP"
           type="range"
           min="0.05"
           :max="(1 - xR - 0.01).toFixed(2)"
           step="0.01"
-        >
+        />
       </label>
       <label>
         <span class="demo-label">t range = 0..{{ tMax }}</span>
-        <input
-          v-model.number="tMax"
-          type="range"
-          min="20"
-          max="200"
-          step="5"
-        >
+        <input v-model.number="tMax" type="range" min="20" max="200" step="5" />
       </label>
     </div>
 
     <div class="dual">
       <div class="dual-panel">
         <span class="triptych-panel-label">trajectory on the 2-simplex</span>
-        <svg
-          :viewBox="`0 0 ${SIMPLEX_W} ${SIMPLEX_H}`"
-          class="simplex"
-        >
+        <svg :viewBox="`0 0 ${SIMPLEX_W} ${SIMPLEX_H}`" class="simplex">
           <polygon
             :points="`${V.R.x},${V.R.y} ${V.P.x},${V.P.y} ${V.S.x},${V.S.y}`"
             class="simplex-bg"
           />
-          <circle
-            :cx="centroid.x"
-            :cy="centroid.y"
-            r="3"
-            class="centroid"
-          />
-          <path
-            :d="trajectoryPath"
-            :stroke="colorTraj"
-          />
-          <circle
-            :cx="startPoint.x"
-            :cy="startPoint.y"
-            r="5"
-            :fill="colorStart"
-          />
-          <circle
-            :cx="endPoint.x"
-            :cy="endPoint.y"
-            r="5"
-            :fill="colorEnd"
-          />
-          <text
-            :x="V.R.x"
-            :y="V.R.y - 8"
-            text-anchor="middle"
-            class="vlabel"
-          >R</text>
-          <text
-            :x="V.P.x - 8"
-            :y="V.P.y + 12"
-            text-anchor="end"
-            class="vlabel"
-          >P</text>
-          <text
-            :x="V.S.x + 8"
-            :y="V.S.y + 12"
-            text-anchor="start"
-            class="vlabel"
-          >S</text>
+          <circle :cx="centroid.x" :cy="centroid.y" r="3" class="centroid" />
+          <path :d="trajectoryPath" :stroke="colorTraj" />
+          <circle :cx="startPoint.x" :cy="startPoint.y" r="5" :fill="colorStart" />
+          <circle :cx="endPoint.x" :cy="endPoint.y" r="5" :fill="colorEnd" />
+          <text :x="V.R.x" :y="V.R.y - 8" text-anchor="middle" class="vlabel">R</text>
+          <text :x="V.P.x - 8" :y="V.P.y + 12" text-anchor="end" class="vlabel">P</text>
+          <text :x="V.S.x + 8" :y="V.S.y + 12" text-anchor="start" class="vlabel">S</text>
         </svg>
       </div>
       <div class="dual-panel">
         <span class="triptych-panel-label">x_R(t), x_P(t), x_S(t) — frequencies</span>
-        <div
-          ref="tsRef"
-          class="ts-wrap"
-        />
+        <div ref="tsRef" class="ts-wrap" />
         <div class="legend">
-          <span><span
-            class="dot"
-            :style="{ background: seriesColor('amber') }"
-          />R</span>
-          <span><span
-            class="dot"
-            :style="{ background: seriesColor('sage') }"
-          />P</span>
-          <span><span
-            class="dot"
-            :style="{ background: seriesColor('teal') }"
-          />S</span>
+          <span><span class="dot" :style="{ background: seriesColor('amber') }" />R</span>
+          <span><span class="dot" :style="{ background: seriesColor('sage') }" />P</span>
+          <span><span class="dot" :style="{ background: seriesColor('teal') }" />S</span>
         </div>
       </div>
     </div>
@@ -407,7 +343,8 @@ watch([epsilon, xR, xP, tMax], () => drawTimeSeries());
         href="https://en.wikipedia.org/wiki/Best_response"
         target="_blank"
         rel="noopener noreferrer"
-      >best-response operator's</a>
+        >best-response operator's</a
+      >
       fixed point at the centroid stays put under any perturbation, but whether the dynamics
       <em>reach</em> it is a separate question — and is exactly the kind of "the equilibrium exists,
       the trajectory to it does not close" that the bifurcation row labels.

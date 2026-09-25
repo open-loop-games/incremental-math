@@ -26,16 +26,13 @@ const result = computed(() => format(new Decimal(props.base).pow(n.value)));
     <div class="demo-controls">
       <label>
         <span class="demo-label">n = {{ n }}</span>
-        <input
-          v-model.number="n"
-          type="range"
-          :min="minN"
-          :max="maxN"
-        >
+        <input v-model.number="n" type="range" :min="minN" :max="maxN" />
       </label>
     </div>
     <div class="demo-output">
-      <code>{{ base }}<sup>{{ n }}</sup> = {{ result }}</code>
+      <code
+        >{{ base }}<sup>{{ n }}</sup> = {{ result }}</code
+      >
     </div>
   </div>
 </template>

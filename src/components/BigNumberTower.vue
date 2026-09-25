@@ -110,16 +110,12 @@ const dyings = computed(() => {
     <div class="demo-controls">
       <label>
         <span class="demo-label">tower depth = {{ step }}</span>
-        <input
-          v-model.number="step"
-          type="range"
-          :min="0"
-          :max="maxStep"
-        >
+        <input v-model.number="step" type="range" :min="0" :max="maxStep" />
       </label>
       <p class="tower-caption">
         Each row applies <code>10<sup>x</sup></code> to the previous row, starting at
-        <code>x = {{ seed }}</code>. The three columns are the same arithmetic in three different number representations.
+        <code>x = {{ seed }}</code
+        >. The three columns are the same arithmetic in three different number representations.
       </p>
     </div>
     <table class="tower-table">

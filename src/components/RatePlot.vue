@@ -315,10 +315,7 @@ watch(
 </script>
 
 <template>
-  <div
-    ref="containerRef"
-    class="rate-plot"
-  />
+  <div ref="containerRef" class="rate-plot" />
 </template>
 
 <style scoped>

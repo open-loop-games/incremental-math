@@ -80,80 +80,41 @@ const yLabel = computed(() => (mode.value === 'cadence' ? 'stat value' : 'multip
       <template v-if="mode === 'cadence'">
         <label>
           <span class="demo-label">growth rate r = {{ r.toFixed(2) }}</span>
-          <input
-            v-model.number="r"
-            type="range"
-            min="0.1"
-            max="2"
-            step="0.05"
-          >
+          <input v-model.number="r" type="range" min="0.1" max="2" step="0.05" />
         </label>
         <label>
           <span class="demo-label">threshold spacing ρ = {{ ratio.toFixed(0) }}×</span>
-          <input
-            v-model.number="ratio"
-            type="range"
-            min="2"
-            max="100"
-            step="1"
-          >
+          <input v-model.number="ratio" type="range" min="2" max="100" step="1" />
         </label>
         <label>
           <span class="demo-label">milestones = {{ count }}</span>
-          <input
-            v-model.number="count"
-            type="range"
-            min="2"
-            max="20"
-            step="1"
-          >
+          <input v-model.number="count" type="range" min="2" max="20" step="1" />
         </label>
       </template>
 
       <template v-else>
         <label>
           <span class="demo-label">reward strength c = {{ c.toFixed(2) }}</span>
-          <input
-            v-model.number="c"
-            type="range"
-            min="0.01"
-            max="1"
-            step="0.01"
-          >
+          <input v-model.number="c" type="range" min="0.01" max="1" step="0.01" />
         </label>
         <label>
           <span class="demo-label">achievements = {{ count }}</span>
-          <input
-            v-model.number="count"
-            type="range"
-            min="2"
-            max="20"
-            step="1"
-          >
+          <input v-model.number="count" type="range" min="2" max="20" step="1" />
         </label>
       </template>
 
       <label class="ach-toggle">
-        <input
-          v-model="logScale"
-          type="checkbox"
-        >
+        <input v-model="logScale" type="checkbox" />
         log y-scale
       </label>
     </div>
 
-    <p
-      v-if="mode === 'cadence'"
-      class="ach-readout"
-    >
+    <p v-if="mode === 'cadence'" class="ach-readout">
       Geometric thresholds under exponential growth fire every
       <strong>Δt = ln(ρ)/r ≈ {{ dt.toFixed(2) }}</strong> — a constant real-time interval,
       regardless of how large the numbers get.
     </p>
-    <p
-      v-else
-      class="ach-readout"
-    >
+    <p v-else class="ach-readout">
       Additive coupling flattens: the {{ count }}th achievement adds the same
       <strong>c = {{ c.toFixed(2) }}</strong> it always did, a shrinking share of the total. Product
       coupling keeps every unlock proportional.

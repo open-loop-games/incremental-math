@@ -99,33 +99,15 @@ const asymptotePercent = computed(() => `${(asymptoticShare.value * 100).toFixed
     <div class="demo-controls">
       <label>
         <span class="demo-label">m (per-level multiplier) = {{ m.toFixed(3) }}</span>
-        <input
-          v-model.number="m"
-          type="range"
-          min="1.02"
-          max="1.50"
-          step="0.005"
-        >
+        <input v-model.number="m" type="range" min="1.02" max="1.50" step="0.005" />
       </label>
       <label>
         <span class="demo-label">N (total levels) = {{ N }}</span>
-        <input
-          v-model.number="N"
-          type="range"
-          min="10"
-          max="100"
-          step="1"
-        >
+        <input v-model.number="N" type="range" min="10" max="100" step="1" />
       </label>
       <label>
         <span class="demo-label">K (trailing levels shaded) = {{ K }}</span>
-        <input
-          v-model.number="K"
-          type="range"
-          min="1"
-          :max="N"
-          step="1"
-        >
+        <input v-model.number="K" type="range" min="1" :max="N" step="1" />
       </label>
     </div>
 

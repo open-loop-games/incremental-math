@@ -120,13 +120,7 @@ function fmtAlphaK(a: number): string {
     <div class="lpc-controls">
       <label>
         <span class="demo-label">layers shown = {{ layerCount }}</span>
-        <input
-          v-model.number="layerCount"
-          type="range"
-          min="1"
-          max="5"
-          step="1"
-        >
+        <input v-model.number="layerCount" type="range" min="1" max="5" step="1" />
       </label>
       <label>
         <span class="demo-label">
@@ -149,23 +143,11 @@ function fmtAlphaK(a: number): string {
       </label>
       <label>
         <span class="demo-label">total game time = 10^{{ tMaxExp }}</span>
-        <input
-          v-model.number="tMaxExp"
-          type="range"
-          min="6"
-          max="30"
-          step="1"
-        >
+        <input v-model.number="tMaxExp" type="range" min="6" max="30" step="1" />
       </label>
       <label>
         <span class="demo-label">slice at t = 10^{{ cursorExp.toFixed(0) }}</span>
-        <input
-          v-model.number="cursorExp"
-          type="range"
-          min="0"
-          :max="tMaxExp"
-          step="1"
-        >
+        <input v-model.number="cursorExp" type="range" min="0" :max="tMaxExp" step="1" />
       </label>
     </div>
 
@@ -175,73 +157,28 @@ function fmtAlphaK(a: number): string {
       role="img"
       aria-label="Layer-k currency vs total game time on log-log axes"
     >
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t"
-        :x2="PAD.l"
-        :y2="PAD.t + PH"
-        class="lpc-axis"
-      />
-      <line
-        :x1="PAD.l"
-        :y1="PAD.t + PH"
-        :x2="PAD.l + PW"
-        :y2="PAD.t + PH"
-        class="lpc-axis"
-      />
+      <line :x1="PAD.l" :y1="PAD.t" :x2="PAD.l" :y2="PAD.t + PH" class="lpc-axis" />
+      <line :x1="PAD.l" :y1="PAD.t + PH" :x2="PAD.l + PW" :y2="PAD.t + PH" class="lpc-axis" />
 
       <g>
-        <g
-          v-for="t in yTicks"
-          :key="`y-${t}`"
-        >
-          <line
-            :x1="PAD.l"
-            :y1="yToPx(t)"
-            :x2="PAD.l + PW"
-            :y2="yToPx(t)"
-            class="lpc-grid"
-          />
-          <text
-            :x="PAD.l - 8"
-            :y="yToPx(t) + 3"
-            text-anchor="end"
-            class="lpc-tick"
-          >
+        <g v-for="t in yTicks" :key="`y-${t}`">
+          <line :x1="PAD.l" :y1="yToPx(t)" :x2="PAD.l + PW" :y2="yToPx(t)" class="lpc-grid" />
+          <text :x="PAD.l - 8" :y="yToPx(t) + 3" text-anchor="end" class="lpc-tick">
             10^{{ t }}
           </text>
         </g>
       </g>
 
       <g>
-        <g
-          v-for="t in xTicks"
-          :key="`x-${t}`"
-        >
-          <line
-            :x1="xToPx(t)"
-            :y1="PAD.t"
-            :x2="xToPx(t)"
-            :y2="PAD.t + PH"
-            class="lpc-grid"
-          />
-          <text
-            :x="xToPx(t)"
-            :y="PAD.t + PH + 16"
-            text-anchor="middle"
-            class="lpc-tick"
-          >
+        <g v-for="t in xTicks" :key="`x-${t}`">
+          <line :x1="xToPx(t)" :y1="PAD.t" :x2="xToPx(t)" :y2="PAD.t + PH" class="lpc-grid" />
+          <text :x="xToPx(t)" :y="PAD.t + PH + 16" text-anchor="middle" class="lpc-tick">
             10^{{ t }}
           </text>
         </g>
       </g>
 
-      <text
-        :x="PAD.l + PW / 2"
-        :y="H - 6"
-        text-anchor="middle"
-        class="lpc-axis-label"
-      >
+      <text :x="PAD.l + PW / 2" :y="H - 6" text-anchor="middle" class="lpc-axis-label">
         total game time
       </text>
       <text
@@ -298,16 +235,8 @@ function fmtAlphaK(a: number): string {
             :stroke="COLORS[v.k % COLORS.length]"
             stroke-width="2.5"
           />
-          <text
-            x="20"
-            y="0"
-            class="lpc-legend-name"
-          >layer {{ v.k }}</text>
-          <text
-            x="20"
-            y="12"
-            class="lpc-legend-y"
-          >{{ fmtExp(v.vExp) }}</text>
+          <text x="20" y="0" class="lpc-legend-name">layer {{ v.k }}</text>
+          <text x="20" y="12" class="lpc-legend-y">{{ fmtExp(v.vExp) }}</text>
         </g>
       </g>
     </svg>

@@ -33,33 +33,15 @@ const annotations = computed<Annotation[]>(() => [
     <div class="lsd-controls">
       <label>
         <span class="demo-label">x range = 0..{{ xMax.toFixed(0) }}</span>
-        <input
-          v-model.number="xMax"
-          type="range"
-          min="1000"
-          max="1000000"
-          step="1000"
-        >
+        <input v-model.number="xMax" type="range" min="1000" max="1000000" step="1000" />
       </label>
       <label>
         <span class="demo-label">threshold = {{ threshold.toFixed(0) }}</span>
-        <input
-          v-model.number="threshold"
-          type="range"
-          :min="100"
-          :max="xMax"
-          step="10"
-        >
+        <input v-model.number="threshold" type="range" :min="100" :max="xMax" step="10" />
       </label>
       <label>
         <span class="demo-label">log strength k = {{ logK.toFixed(0) }}</span>
-        <input
-          v-model.number="logK"
-          type="range"
-          min="1"
-          max="500"
-          step="1"
-        >
+        <input v-model.number="logK" type="range" min="1" max="500" step="1" />
       </label>
     </div>
     <p class="lsd-formula">

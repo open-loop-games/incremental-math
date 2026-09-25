@@ -64,48 +64,18 @@ function fillEqual(level: number) {
 <template>
   <div class="demo cl">
     <div class="cl-sliders">
-      <label
-        v-for="c in CORRUPTIONS"
-        :key="c.key"
-        class="cl-row"
-      >
+      <label v-for="c in CORRUPTIONS" :key="c.key" class="cl-row">
         <span class="cl-name">{{ c.name }}</span>
-        <input
-          v-model.number="levels[c.key]"
-          type="range"
-          :min="0"
-          :max="MAX_LEVEL"
-          step="1"
-        >
+        <input v-model.number="levels[c.key]" type="range" :min="0" :max="MAX_LEVEL" step="1" />
         <span class="cl-level">{{ levels[c.key] }}</span>
         <span class="cl-mult">×{{ scoreMultPerLevel(levels[c.key]).toFixed(2) }}</span>
       </label>
     </div>
     <div class="cl-actions">
-      <button
-        class="cl-btn"
-        @click="reset"
-      >
-        reset
-      </button>
-      <button
-        class="cl-btn"
-        @click="fillEqual(5)"
-      >
-        all → 5
-      </button>
-      <button
-        class="cl-btn"
-        @click="fillEqual(10)"
-      >
-        all → 10
-      </button>
-      <button
-        class="cl-btn"
-        @click="fillEqual(MAX_LEVEL)"
-      >
-        all → {{ MAX_LEVEL }}
-      </button>
+      <button class="cl-btn" @click="reset">reset</button>
+      <button class="cl-btn" @click="fillEqual(5)">all → 5</button>
+      <button class="cl-btn" @click="fillEqual(10)">all → 10</button>
+      <button class="cl-btn" @click="fillEqual(MAX_LEVEL)">all → {{ MAX_LEVEL }}</button>
     </div>
     <div class="cl-readout">
       <p>
