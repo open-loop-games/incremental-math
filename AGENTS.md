@@ -29,6 +29,15 @@ This is a content site, not a game: demos are static curves and self-contained s
 - Prefer `client:visible` for demo hydration. `client:load` only if the demo must be interactive above the fold.
 - Paraphrase + cite — not verbatim reproduction of Pecorella's text. Each part page ends with a `<Sources>` block linking the original post and any backing spreadsheets.
 - **Link concepts, not games.** Named math/CS concepts (series, theorems, numerical methods, named curves) link to a canonical source (Wikipedia) on first mention only. Game names stay plain text — cited via `<Cite>` and listed in `<Sources>`, never hyperlinked.
+- **Prose ratchet.** When you edit a page, bring each paragraph you touch to these rules. Leave untouched paragraphs as they are.
+  - An instruction to the designer has at most 20 words.
+  - A description over 25 words is a review flag. Split it where a list, a topic break or a shorter sentence reads better.
+  - Complex text is a vertical list, and a paragraph has one topic.
+  - At most three nouns stand in a row.
+  - Known information comes first in a sentence, new information last.
+
+  The controlled-terms checker reports long sentences and idioms. It counts a formula as one word.
+
 - **Research is confidence, not citation.** Write as an informed author who knows the field; research tells you what's true and how strongly. No variation letters, corpus counts, or "validated across N games" phrasing in page prose.
 
 ## Terms
