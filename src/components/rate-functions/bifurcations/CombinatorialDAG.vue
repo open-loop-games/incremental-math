@@ -253,11 +253,11 @@ function edgeActive(from: string, to: string): boolean {
       becomes pickable when all its prereqs are taken. Click to toggle. The catalog's
       per-fixed-selection algebra closes — sum the costs, sum the effects — but the optimization
       across selections lives in the bifurcations row. At small <em>N</em> we just enumerate all
-      <code>2^N</code> subsets; in shipped games (Time Studies' 91-node DAG, action-queue plans) the
-      search space explodes and players reach for branch-and-bound, A*, or constraint propagation.
-      Notice the greedy heuristic doesn't always match the exhaustive optimum: the by-ratio rule can
-      lock the budget into a cheap-but-prereq-blocked path. Try budget 18 or 19 — greedy and optimum
-      diverge.
+      <code>2^N</code> subsets; in shipped games (Time Studies' prerequisite tree, loadouts with
+      exclusive slots) the search space explodes and players reach for branch-and-bound or
+      constraint propagation. Notice the greedy heuristic doesn't always match the exhaustive
+      optimum: the by-ratio rule can lock the budget into a cheap-but-prereq-blocked path. Try
+      budget 18 or 19 — greedy and optimum diverge.
     </p>
   </div>
 </template>

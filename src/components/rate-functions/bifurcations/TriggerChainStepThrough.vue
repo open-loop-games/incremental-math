@@ -2,18 +2,17 @@
 import { ref, computed } from 'vue';
 import { seriesColor } from '../../../lib/series-colors';
 
-// Four-card ability sequence against an inert dummy.  The cards are a
-// minimal set drawn from the Slay-the-Spire / Inscryption family — a
-// scaling buff, a flat-damage hit, a percentage-scaling hit, and a
-// next-attack rider.  Played in order, they mutate (ATK, mark, enemy_HP).
+// Five-card plan against an inert dummy: a scaling buff, an ATK-scaled hit,
+// a flat hit, a next-hit rider, and a finisher with a precondition.  Each card
+// reads and writes (ATK, mark, enemy HP); Execute fizzles unless an earlier
+// prefix has already brought HP to EXECUTE_THRESHOLD, the way a planner skips
+// an action whose precondition fails.
 //
-// The point: the catalog's algebra closes per fixed sequence (sum the
-// damage, in order); across sequences, the optimum lives in a search
-// over 4! = 24 orderings.  Greedy "strongest first" doesn't always win,
-// because Hone and Mark are zero-damage on their turn but multiply
-// damage on later turns when scheduled correctly.
+// Per fixed order the damage sums; across the 5! = 120 orders the optimum is a
+// search.  Greedy "hardest hit now" leaves HP one above the threshold, so its
+// Execute fizzles; the optimum opens with Hone, which is what makes Execute legal.
 
-type CardId = 'Bash' | 'Hone' | 'Smite' | 'Mark';
+type CardId = 'Bash' | 'Hone' | 'Smite' | 'Mark' | 'Execute';
 
 interface Card {
   id: CardId;
@@ -42,13 +41,19 @@ const CARDS: Record<CardId, Card> = {
     name: 'Mark',
     description: 'mark := 3 (overwrites any existing mark).',
   },
+  Execute: {
+    id: 'Execute',
+    name: 'Execute',
+    description: 'Requires enemy HP ≤ 28, else fizzles. Deal 2 × ATK + 3 × mark. Consume mark.',
+  },
 };
 
-const DEFAULT_ORDER: CardId[] = ['Bash', 'Hone', 'Smite', 'Mark'];
+const DEFAULT_ORDER: CardId[] = ['Bash', 'Hone', 'Smite', 'Mark', 'Execute'];
 const order = ref<CardId[]>([...DEFAULT_ORDER]);
 
 const INITIAL_ATK = 3;
-const INITIAL_HP = 20;
+const INITIAL_HP = 40;
+const EXECUTE_THRESHOLD = 28;
 
 interface Step {
   card: CardId;
@@ -58,6 +63,7 @@ interface Step {
   markAfter: number;
   damage: number;
   hpAfter: number;
+  fizzled: boolean;
 }
 
 interface RunResult {
@@ -66,43 +72,87 @@ interface RunResult {
   totalDamage: number;
 }
 
-function runSequence(seq: CardId[]): RunResult {
-  let atk = INITIAL_ATK;
-  let mark = 0;
-  let hp = INITIAL_HP;
-  const steps: Step[] = [];
-  for (const id of seq) {
-    const atkBefore = atk;
-    const markBefore = mark;
-    let dmg = 0;
-    if (id === 'Bash') {
-      dmg = 2 * atk + mark;
-      mark = 0;
-    } else if (id === 'Hone') {
-      atk += 2;
-    } else if (id === 'Smite') {
-      dmg = 5 + mark;
-      mark = 0;
-    } else {
-      mark = 3;
-    }
-    hp = Math.max(0, hp - dmg);
-    steps.push({
+interface State {
+  atk: number;
+  mark: number;
+  hp: number;
+}
+
+function playCard(st: State, id: CardId): { next: State; step: Step } {
+  let { atk, mark, hp } = st;
+  let dmg = 0;
+  let fizzled = false;
+  if (id === 'Bash') {
+    dmg = 2 * atk + mark;
+    mark = 0;
+  } else if (id === 'Hone') {
+    atk += 2;
+  } else if (id === 'Smite') {
+    dmg = 5 + mark;
+    mark = 0;
+  } else if (id === 'Mark') {
+    mark = 3;
+  } else if (hp <= EXECUTE_THRESHOLD) {
+    dmg = 2 * atk + 3 * mark;
+    mark = 0;
+  } else {
+    fizzled = true;
+  }
+  hp = Math.max(0, hp - dmg);
+  return {
+    next: { atk, mark, hp },
+    step: {
       card: id,
-      atkBefore,
+      atkBefore: st.atk,
       atkAfter: atk,
-      markBefore,
+      markBefore: st.mark,
       markAfter: mark,
       damage: dmg,
       hpAfter: hp,
-    });
-  }
-  return { steps, finalHp: hp, totalDamage: INITIAL_HP - hp };
+      fizzled,
+    },
+  };
 }
+
+const START: State = { atk: INITIAL_ATK, mark: 0, hp: INITIAL_HP };
+
+function runSequence(seq: CardId[]): RunResult {
+  let st = START;
+  const steps: Step[] = [];
+  for (const id of seq) {
+    const { next, step } = playCard(st, id);
+    steps.push(step);
+    st = next;
+  }
+  return { steps, finalHp: st.hp, totalDamage: INITIAL_HP - st.hp };
+}
+
+// Greedy "hardest hit now": each turn, play the remaining card that deals the most
+// damage this turn (ties to the earlier card in DEFAULT_ORDER).
+const greedy = computed(() => {
+  let st = START;
+  let left = [...DEFAULT_ORDER];
+  const seq: CardId[] = [];
+  while (left.length > 0) {
+    let best = left[0];
+    let bestDmg = -1;
+    for (const id of left) {
+      const dmg = playCard(st, id).step.damage;
+      if (dmg > bestDmg) {
+        best = id;
+        bestDmg = dmg;
+      }
+    }
+    seq.push(best);
+    st = playCard(st, best).next;
+    left = left.filter((id) => id !== best);
+  }
+  return { order: seq, damage: INITIAL_HP - st.hp };
+});
 
 const userRun = computed(() => runSequence(order.value));
 
-// Exhaustive search over 4! = 24 orderings.  Tiny — no need for memoization.
+// Exhaustive search over 5! = 120 orderings.  Tiny — no need for memoization.
 const optimal = computed(() => {
   let best: { order: CardId[]; damage: number } = { order: [...DEFAULT_ORDER], damage: 0 };
   const perms: CardId[][] = [];
@@ -171,9 +221,10 @@ function cardColor(id: CardId): string {
     <p class="setup-note">
       Initial state: <code>ATK = {{ INITIAL_ATK }}</code
       >, <code>mark = 0</code>, enemy <code>HP = {{ INITIAL_HP }}</code
-      >. Reorder the four cards. Each card runs in sequence and mutates
-      <code>(ATK, mark, HP)</code>; total damage is the sum across the four turns. Search space:
-      <code>4! = 24</code> orderings.
+      >. Reorder the five cards. Each card runs in sequence and mutates
+      <code>(ATK, mark, HP)</code>; <code>Execute</code> fizzles unless HP is already at
+      <code>{{ EXECUTE_THRESHOLD }}</code> or below. Total damage is the sum across the five turns.
+      Search space: <code>5! = 120</code> orderings.
     </p>
 
     <div class="dual">
@@ -198,28 +249,23 @@ function cardColor(id: CardId): string {
             <div class="card-header">
               <span class="card-pos">{{ i + 1 }}</span>
               <span class="card-name">{{ CARDS[id].name }}</span>
-              <div class="card-buttons">
-                <button
-                  type="button"
-                  :disabled="i === 0"
-                  aria-label="move left"
-                  @click="moveLeft(i)"
-                >
-                  ◀
-                </button>
-                <button
-                  type="button"
-                  :disabled="i === order.length - 1"
-                  aria-label="move right"
-                  @click="moveRight(i)"
-                >
-                  ▶
-                </button>
-              </div>
             </div>
             <p class="card-desc">
               {{ CARDS[id].description }}
             </p>
+            <div class="card-buttons">
+              <button type="button" :disabled="i === 0" aria-label="move left" @click="moveLeft(i)">
+                ◀
+              </button>
+              <button
+                type="button"
+                :disabled="i === order.length - 1"
+                aria-label="move right"
+                @click="moveRight(i)"
+              >
+                ▶
+              </button>
+            </div>
           </li>
         </ol>
       </div>
@@ -243,7 +289,12 @@ function cardColor(id: CardId): string {
             <span class="step-dmg">—</span>
             <span class="step-hp">{{ INITIAL_HP }}</span>
           </div>
-          <div v-for="(s, i) in userRun.steps" :key="i" class="step" :class="cardClass(s.card)">
+          <div
+            v-for="(s, i) in userRun.steps"
+            :key="i"
+            class="step"
+            :class="[cardClass(s.card), { fizzled: s.fizzled }]"
+          >
             <span class="step-i">{{ i + 1 }}</span>
             <span class="step-card">{{ s.card }}</span>
             <span class="step-atk">
@@ -258,7 +309,9 @@ function cardColor(id: CardId): string {
                 ({{ s.markAfter > s.markBefore ? '+' : '' }}{{ s.markAfter - s.markBefore }})
               </span>
             </span>
-            <span class="step-dmg">{{ s.damage > 0 ? s.damage : '—' }}</span>
+            <span class="step-dmg">{{
+              s.fizzled ? 'fizzles' : s.damage > 0 ? s.damage : '—'
+            }}</span>
             <span class="step-hp">{{ s.hpAfter }}</span>
           </div>
         </div>
@@ -274,26 +327,31 @@ function cardColor(id: CardId): string {
         <span class="r-label">enemy HP remaining</span>
         <code>{{ userRun.finalHp }}</code>
       </div>
-      <div class="opt-cell">
-        <span class="r-label">exhaustive optimum</span>
-        <code>{{ optimal.damage }} ({{ optimal.order.join(' → ') }})</code>
-      </div>
       <div :class="{ ok: isOptimal, bad: !isOptimal }">
         <span class="r-label">gap to optimum</span>
         <code>{{ isOptimal ? 'matches' : `−${damageGap}` }}</code>
+      </div>
+      <div class="opt-cell">
+        <span class="r-label">greedy, hardest hit now</span>
+        <code>{{ greedy.damage }} ({{ greedy.order.join(' → ') }})</code>
+      </div>
+      <div class="opt-cell">
+        <span class="r-label">exhaustive optimum</span>
+        <code>{{ optimal.damage }} ({{ optimal.order.join(' → ') }})</code>
       </div>
     </div>
 
     <p class="demo-note">
       The catalog's algebra is fine inside one ordering — sum the per-turn damage, no surprises.
       Across orderings, the optimum is a search over a permutation space. <code>Hone</code> and
-      <code>Mark</code> deal zero damage on their turn but multiply damage on a later turn
-      <em>if</em> they're scheduled before the right attack; played last they're wasted entirely.
-      Greedy "strongest first" doesn't find the optimum here because the strongest single hit
-      depends on the buffs, and the buffs depend on the schedule. Slay the Spire's intent system,
-      Super Auto Pets' attack queue, and Inscryption's sigil-resolution order are real-world
-      languages built around exactly this — plus multiple actors, conditional triggers, and chained
-      on-faint effects that combinatorially explode the search.
+      <code>Mark</code> deal zero damage on their turn but raise damage on a later turn
+      <em>if</em> they're scheduled before the right attack; played last they're wasted.
+      <code>Execute</code> adds a precondition: whether it fires at all depends on what the prefix
+      did to HP. Greedy plays <code>Bash</code> and <code>Smite</code> first for the biggest
+      immediate hits, stops one HP short of the threshold, and its <code>Execute</code> fizzles. The
+      optimum opens with <code>Hone</code>, which turns <code>Bash</code> into the hit that makes
+      <code>Execute</code> legal. Real action queues add repeat counts and many more actions, and
+      the search outgrows enumeration fast.
     </p>
   </div>
 </template>
@@ -363,7 +421,7 @@ function cardColor(id: CardId): string {
 .cards {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--gap-sm);
   margin: 0;
   padding: 0;
@@ -374,16 +432,21 @@ function cardColor(id: CardId): string {
   }
 }
 .card {
+  display: flex;
+  flex-direction: column;
   background: var(--color-surface);
   border-radius: var(--radius-sm);
-  padding: var(--gap-sm) var(--gap);
+  padding: var(--gap-sm) var(--gap-sm) var(--gap-sm) var(--gap);
   border-left: 3px solid var(--card-color);
 }
 .card-header {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   gap: var(--gap-sm);
   align-items: center;
+}
+.card .card-buttons {
+  margin-top: auto;
+  align-self: flex-end;
 }
 .card-pos {
   font-family: var(--font-mono);
@@ -442,7 +505,7 @@ function cardColor(id: CardId): string {
 }
 .step {
   display: grid;
-  grid-template-columns: 24px minmax(72px, 1fr) 80px 70px 50px 50px;
+  grid-template-columns: 24px minmax(72px, 1fr) 80px 70px 64px 50px;
   gap: var(--gap-sm);
   padding: 4px 6px;
   border-radius: var(--radius-sm);
@@ -465,6 +528,15 @@ function cardColor(id: CardId): string {
 }
 .step.buff {
   background: rgba(126, 192, 182, 0.06);
+}
+.step.fizzled {
+  background: none;
+  outline: 1px dashed var(--color-border);
+  outline-offset: -1px;
+}
+.step.fizzled .step-card,
+.step.fizzled .step-dmg {
+  color: var(--color-text-muted);
 }
 .delta {
   color: var(--color-primary);
@@ -517,7 +589,7 @@ function cardColor(id: CardId): string {
   padding: var(--gap-sm) var(--gap);
 }
 .readouts .opt-cell {
-  grid-column: span 2;
+  grid-column: 1 / -1;
 }
 .r-label {
   display: block;
@@ -556,8 +628,11 @@ function cardColor(id: CardId): string {
   .dual {
     grid-template-columns: minmax(0, 1fr);
   }
-  .readouts .opt-cell {
-    grid-column: span 1;
+}
+@media (max-width: 640px) {
+  .step {
+    grid-template-columns: 14px minmax(0, 1fr) 52px 52px 56px 28px;
+    gap: 4px;
   }
 }
 </style>

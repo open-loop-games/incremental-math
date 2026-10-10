@@ -176,7 +176,7 @@ export const sections: PageSection[] = [
         href: '/rate-functions/bifurcations',
         title: 'Bifurcations — where the algebra ends',
         description:
-          'Seven rows where the rate-function algebra stops and named adjacent math takes over: coupled-state, strategy-space, stochastic, discrete-event, network-topological, optimal stopping, combinatorial selection.',
+          'Eight rows where the rate-function algebra stops and named adjacent math takes over: coupled-state, strategy-space, stochastic, network-topological, bilevel interdiction, optimal stopping, combinatorial selection, discrete planning.',
       },
     ],
   },

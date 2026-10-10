@@ -17,11 +17,11 @@ import CombinatorialDAG from '../../components/rate-functions/bifurcations/Combi
 # Bifurcations: where the algebra ends
 
 The first six pages of this catalog walked shapes that close: power-law,
-exponential, logistic, log, and the four composition rules that keep them closed
-under sums, products, splices, and functional composition. This page walks the
-complement — the rate-function shapes that don't close, and what the spec layer
-reaches for instead. The catalog stops where the algebra stops; past that, the
-math doesn't disappear, it changes language.
+exponential, logistic, log, and the composition rules that keep them closed
+under sums, products, splices, functional composition, and quantization. This
+page walks the complement — the rate-function shapes that don't close, and what
+the spec layer reaches for instead. The catalog stops where the algebra stops;
+past that, the math doesn't disappear, it changes language.
 
 The first-passage frame survives every bifurcation. Each row below is still
 "time to reach a milestone" in some generalized sense — mean hitting time,
@@ -32,16 +32,31 @@ not "give up and simulate."
 
 ## The eight buckets
 
-| Bucket                       | Rate-function shape that fails to close                                    | Named adjacent math                          |
-| ---------------------------- | -------------------------------------------------------------------------- | -------------------------------------------- |
-| Coupled-state deterministic  | Multi-resource mutual feedback, not linear and not triangular              | Phase plane, Lyapunov, bifurcation theory    |
-| Strategy-space integration   | Adversarial multi-agent: equilibrium between strategies                    | Nash, replicator dynamics, best-response     |
-| Stochastic load-bearing      | Distribution shape carries design intent, not just the mean                | Markov chains, phase-type, first-passage     |
-| Discrete-event coupled       | Combinatorial trigger ordering across multiple subsystems                  | Combinatorial game theory, MDPs              |
-| Network-topological          | Throughput bounded by graph topology, not rates                            | Max-flow min-cut, LP duality, network flows  |
-| Bilevel interdiction         | Constraints chosen against an adversary who re-optimizes                   | Stackelberg/bilevel, interdiction, cutting planes |
-| Optimal stopping             | When to reset is itself the decision                                       | Bellman equation, Snell envelope, free-boundary |
-| Combinatorial selection      | Configuration choice from a discrete option space                          | Combinatorial optimization, search           |
+| Bucket                         | What fails to close                                                     | Named adjacent math                            |
+| ------------------------------ | ----------------------------------------------------------------------- | ---------------------------------------------- |
+| Coupled-state deterministic    | Multi-resource mutual feedback, neither linear nor triangular           | Phase plane, Lyapunov, bifurcation theory      |
+| Strategy-space integration     | An equilibrium between agents' strategies                               | Nash, replicator dynamics, combinatorial games |
+| Stochastic load-bearing        | The distribution shape carries the design intent, not the mean          | Markov chains, phase-type, first-passage       |
+| Network-topological            | Throughput bounded by graph topology, not rates                         | Max-flow min-cut, LP duality, network flows    |
+| Bilevel interdiction           | A placement chosen against a follower who re-optimizes                  | Stackelberg/bilevel programs, interdiction     |
+| Optimal stopping               | When to reset is itself the decision                                    | Bellman equation, Snell envelope, free-boundary |
+| Combinatorial selection        | A configuration chosen from a discrete option space                     | Combinatorial optimization, constraint satisfaction |
+| Discrete planning / scheduling | An ordered action sequence whose steps change the state later steps read | AI planning, scheduling, MDPs                  |
+
+A bucket earns its row three ways: named mathematics with its own spec form, a
+test against each neighboring bucket that can be checked in a game's source,
+and at least one shipped subsystem read at source. Each section below ends with
+those tests — its discriminators.
+
+A subsystem can land in two buckets. The common pair is coupled-state per fixed
+strategy and optimal stopping across strategies; name both, because they call
+for different tools.
+
+How the runtime resolves a subsystem is not a bucket. Tick-resolved combat,
+trigger chains, and auto-battler rounds say whether the game integrates its spec
+continuously or steps through events. The spec itself lands wherever its math
+does: usually closed-form, stochastic load-bearing when targets or rolls are
+random, planning when the player orders the chain.
 
 ## Coupled-state deterministic
 
@@ -52,6 +67,10 @@ multi-faction warfare — the rate-function algebra runs out. A closed-form
 trajectory often still exists implicitly through a
 [conserved quantity](https://en.wikipedia.org/wiki/Conservation_law), but the
 time-parametrization $t(R)$ — when the orbit reaches a given point — does not.
+
+Coupling needs two stocks. A rate that reads only its own stock is a scalar
+ODE, $dx/dt = f(x)$, and its first-passage $T = \int dx / f(x)$ closes whenever
+that integral does.
 
 The spec layer in this regime drops down to qualitative invariants:
 [matrix exponentials](https://en.wikipedia.org/wiki/Matrix_exponential) for the
@@ -64,12 +83,33 @@ them either restrict to linear dynamics or simplify the coupling to a
 triangular dependency that closes per the
 [composition rules](/rate-functions/composition#what-doesnt-compose-cleanly).
 
+DodecaDragons ships the coupling in its first two resources. Gold's rate is
+$\text{miners} \cdot (1 + 2\log_{10}(1 + \text{fire}/10))$, fire's rate
+multiplies by $1 + k\log_{10}(\text{gold} + 1)$, and both stocks accrue every
+tick:
+
+<Cite repo="DodecaDragons" path="scripts/script.js" line="1313" />
+<Cite repo="DodecaDragons" path="scripts/script.js" line="1387-1395" />
+
+Each rate is a log of the other stock, so neither closes without the other's
+trajectory.
+
 The textbook coupled-state system is Lotka-Volterra predator–prey. Slide the
 parameters to watch closed orbits trace around the equilibrium $(\gamma/\delta,
 \alpha/\beta)$ — the catalog's first-passage time still exists (return to
 $y_0$), but no elementary algebra delivers it.
 
 <CoupledStateOrbit client:visible />
+
+**Discriminators.**
+
+- _vs. closed-form_ — does any modifier read the state it modifies? No, and the
+  [composition rules](/rate-functions/composition) close it. One stock reading
+  itself is the scalar ODE above.
+- _vs. stochastic load-bearing_ — remove every random draw. If the design intent
+  survives, the subsystem is here.
+- _vs. network-topological_ — does a graph's capacity bound the throughput? Yes,
+  and it's network. Feedback through stocks with no capacity bound is here.
 
 ## Strategy-space integration
 
@@ -90,13 +130,32 @@ uniform start when not. The bucket is rare in the genre because most idle games
 are cooperative or single-player; it activates with adversarial multi-agent
 strategy spaces over shared resource draws.
 
+Turn-based two-player games sit here too. A perfect-information zero-sum game
+has a value by [minimax](https://en.wikipedia.org/wiki/Minimax) — in principle,
+at combinatorial cost, since the state space grows exponentially in units or
+cards. [Combinatorial game theory](https://en.wikipedia.org/wiki/Combinatorial_game_theory)
+supplies the equivalence classes, and the
+[Sprague-Grundy theorem](https://en.wikipedia.org/wiki/Sprague%E2%80%93Grundy_theorem)
+reduces a sum of impartial games to a single nim-value. The spec is the rule-set
+as a state graph, plus value bounds and any dominant strategy.
+
 Replicator dynamics on Rock-Paper-Scissors visualizes the regime split:
-zero-sum produces closed orbits around the centroid (the
-[Nash equilibrium](https://en.wikipedia.org/wiki/Nash_equilibrium) in the
-mixed game), and even small perturbations of the diagonal payoff flip the
+zero-sum produces closed orbits around the centroid (the Nash equilibrium of
+the mixed game), and even small perturbations of the diagonal payoff flip the
 centroid between attractor and repeller.
 
 <BestResponseDynamics client:visible />
+
+**Discriminators.**
+
+- _vs. bilevel interdiction_ — is the solution a fixed point where no agent
+  wants to deviate? Yes, and it's here. One side commits and the other answers,
+  with no fixed point sought, is interdiction.
+- _vs. combinatorial selection and planning_ — does another agent's choice enter
+  the payoff? Yes, and it's here. One agent against fixed rules is selection or
+  planning.
+- _vs. stochastic load-bearing_ — the uncertainty is another agent's choice,
+  not a draw from a fixed distribution.
 
 ## Stochastic load-bearing
 
@@ -120,11 +179,17 @@ Laplace transform. The dimensionless feel-knob is the
 [coefficient of variation](https://en.wikipedia.org/wiki/Coefficient_of_variation)
 $\sigma/\mu$.
 
-Universal Paperclips ships the wire market as sinusoidal drift around a base
-with random per-tick updates — the distribution shape (periodic bounded drift,
-not stationary) is the design knob, not a calibration of the mean:
+Universal Paperclips prices wire this way. On a random 1.5% of ticks the price
+takes one step along a sinusoid around a slowly decaying base, so the player
+times purchases against a noisy price — the shape of the noise, not its mean, is
+what they play against:
 
-<Cite repo="paperclips" path="main.js" line="32-35" />
+<Cite repo="paperclips" path="main.js" line="23-37" />
+
+Combat with random targeting lands here when its outcome distribution is the
+design intent. The spec is the outcome distribution per army composition — a
+vector-matrix product over a finite event lattice, which the combat loop
+samples at runtime.
 
 The headline is that mean and median diverge as CV grows. Geometric pulls
 without pity have a long tail; pity at $K$ collapses the tail and barely
@@ -133,45 +198,23 @@ $k=1$, near-Gaussian by $k=10$. Hyperexponential mixtures push CV past 1.
 
 <DistributionShapeSampler client:visible />
 
-## Discrete-event coupled
+**Discriminators.**
 
-When the state space is combinatorial in the count of units, cards, or
-resources, and multiple subsystems interact through event ordering — auto-battler
-combat with on-attack / on-hurt / on-faint / on-kill triggers chained across
-both sides, deck-builders with stacking status effects. The rule-set closes as
-a state graph; a closed form for the value function across the whole space is
-rare, and the trajectory of an actual play is rarer still because of branch
-contingencies.
-
-The spec layer reaches for the game structure rather than a closed-form value:
-[combinatorial game theory](https://en.wikipedia.org/wiki/Combinatorial_game_theory)
-with [Sprague-Grundy values](https://en.wikipedia.org/wiki/Sprague%E2%80%93Grundy_theorem)
-for impartial games, [Markov decision processes](https://en.wikipedia.org/wiki/Markov_decision_process)
-with value iteration for small state spaces, value bounds where exact values
-elude. A common spec-form for combat specifically is "expected damage per round
-given the army composition," computed by discrete-event simulation but
-expressible as a vector-matrix product over a finite event lattice.
-
-The bucket is structurally rare in the genre — most "discrete-event" runtimes
-in idle/incremental games are integrating closed specs (per-tower DPS,
-per-weapon DPS, per-faction creep rate) rather than combinatorially branching
-in their *outcome*.
-
-A four-card ability sequence — Bash, Hone, Smite, Mark — makes the
-ordering-dependence concrete. Per fixed sequence, total damage is a sum;
-across the <code>4! = 24</code> orderings, the optimum is a search. The
-zero-damage buff cards (<code>Hone</code>, <code>Mark</code>) are worthless
-when scheduled last and load-bearing when scheduled before the right
-attack. Greedy "play strongest first" doesn't find the optimum, because
-the strongest hit depends on which buffs precede it.
-
-<TriggerChainStepThrough client:visible />
+- _vs. coupled-state deterministic_ — replace each draw with its mean. If the
+  design intent survives, the subsystem is coupled-state or closed-form, not
+  here.
+- _vs. strategy-space integration_ — the randomness is nature's draw from a
+  fixed distribution, not an agent's choice.
+- _vs. discrete planning / scheduling_ — does the intent sit in the outcome
+  distribution, or in the order the player chooses? The order is planning, with
+  [Markov decision processes](https://en.wikipedia.org/wiki/Markov_decision_process)
+  for the random transitions.
 
 ## Network-topological
 
 When throughput is bounded by graph topology, not by per-rate formulas — supply
-chains, routing through a maze, RAM allocation across a server network. The
-linear case closes:
+chains, factory wiring, RAM allocation across a server network. The linear case
+closes:
 [max-flow equals min-cut](https://en.wikipedia.org/wiki/Max-flow_min-cut_theorem)
 by [linear programming duality](https://en.wikipedia.org/wiki/Duality_(optimization)),
 and [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
@@ -184,36 +227,50 @@ The spec layer is the graph and capacities (or capacity functions) plus the
 optimality criterion. The first-passage analog reads as "time to deliver $C$
 units from source to sink given throughput bound $\text{cap}_{\min}$" — for a
 saturated network, throughput is the min-cut value, and design knobs are the
-graph topology and per-edge capacities. Industry Idle is the corpus's clearest
-exemplar — buildings as nodes, input/output sets as edges, an explicit graph
-walk for reachability:
+graph topology and per-edge capacities.
 
-<Cite
-  repo="industry-idle"
-  path="assets/Script/CoreGame/Buildings/BuildingDefinitions.ts"
-  line="69-145"
-/>
+Upload Labs is the clearest exemplar. The player wires windows into a graph. A
+window's output rate is the minimum of its own rate and each input's production
+per unit it consumes, and a container splits its stock and production equally
+across its outgoing wires:
+
+<Cite repo="upload-labs" path="scenes/windows/window_single_file_process.gd" line="45-49" />
+<Cite repo="upload-labs" path="scenes/resource_container.gd" line="99-123" />
+
+That equal split is a routing rule, and the routing rule decides which flow the
+player gets. Max-flow is what an optimal router achieves; a rule that splits
+evenly delivers less whenever the branches differ in capacity. So the spec
+names the routing rule beside the graph.
 
 A small five-node graph makes the theorem felt: edge thickness shows flow
-share, the saturated min-cut is highlighted, and total throughput equals
-the cut's capacity. Bumping a non-cut edge does nothing; bumping a cut edge
-moves throughput one-for-one until the cut shifts elsewhere.
+share, the saturated min-cut is highlighted, and total throughput under an
+optimal router equals the cut's capacity. Bumping a non-cut edge does nothing;
+bumping a cut edge moves throughput one-for-one until the cut shifts elsewhere.
 
 <MaxFlowGraph client:visible />
+
+**Discriminators.**
+
+- _vs. bilevel interdiction_ — does anyone re-optimize against the graph the
+  player builds? No, and it's here. An enemy re-routing around the player's
+  blockers is interdiction.
+- _vs. coupled-state deterministic_ — is throughput capped by an edge or node
+  capacity? Yes, and it's here.
+- _vs. discrete planning / scheduling_ — a route the player walks step by step,
+  changing state as it goes, is a plan. A standing flow through a graph is here.
 
 ## Bilevel interdiction
 
 When the player's decision is not a route through the graph but a *constraint on
-someone else's* — place budget-bounded blockers, and an adversary re-solves its
-own shortest path against whatever you left open. Maze-building tower defense is
+someone else's* — place budget-bounded blockers, and a follower re-solves its
+own shortest path against whatever stays open. Maze-building tower defense is
 the genre's carrier: the enemy path is not authored, it is whatever survives the
 walls.
 
-Per fixed blocker set the inner problem closes and closes cheaply — a distance
-field over the open cells, polynomial, exact. What fails to close is the outer
-choice. The leader picks a blocker set $B$ within budget, the follower answers
-with $\min$ over paths, and the design objective is the
-[max-min](https://en.wikipedia.org/wiki/Minimax):
+Per fixed blocker set the inner problem closes cheaply — a distance field over
+the open cells, polynomial, exact. What fails to close is the outer choice. The
+leader picks a blocker set $B$ within budget, the follower answers with $\min$
+over paths, and the design objective is the max-min:
 
 $$\max_{B\,:\,c(B)\le b} \;\; \min_{p \in P(B)} \; \ell(p)$$
 
@@ -222,44 +279,31 @@ Two nested optimizations with opposed objectives is a
 particular one — shortest-path network interdiction, the $k$-most-vital-nodes
 problem — is NP-hard even though its inner problem is textbook.
 
-The bucket is adjacent to two others and belongs to neither. It is not
-network-topological: max-flow closes by LP duality, whereas interdiction's
-[linear relaxation](https://en.wikipedia.org/wiki/Linear_programming_relaxation)
-has an integrality gap wide enough to eat the certificate, so the bound it
-returns doesn't grade anything. It is not strategy-space integration either: a
-[Stackelberg](https://en.wikipedia.org/wiki/Stackelberg_competition) leader
-commits first and the follower answers, which resolves by decomposition rather
-than by equilibrium — nobody is looking for a fixed point.
+The spec layer is four statements: the blocker budget and its cost schedule;
+the follower's objective and what counts as passable to it; the feasibility
+constraint, usually that every spawn stays connected to the goal
+([Menger's theorem](https://en.wikipedia.org/wiki/Menger%27s_theorem) says a
+placement is illegal exactly when it separates them); and the acceptance
+criterion, in path length or in time to cross. That last reads as
+$T(b) = \ell^*(b)/v$, nondecreasing in the budget and saturating at the
+unbudgeted maximum $\ell^*(\infty)$ — a longest-simple-path ceiling on the open
+region, which grades a funded greedy against what unlimited money could buy.
 
-The spec layer is four statements: the blocker budget and its cost schedule, the
-follower's objective and what counts as passable to it, the feasibility
-constraint (usually that the route must survive — s–t connectivity, where
-[Menger's theorem](https://en.wikipedia.org/wiki/Menger%27s_theorem) says a
-placement is illegal exactly when it separates spawn from goal), and the
-acceptance criterion in path length. Write those down and the greedy that places
-one blocker at a time becomes the *fast solver* rather than the definition of
-the mechanic — which matters, because the literature says exactly where that
-greedy is blind. It is pair-blind: on boards with a plateau, no single blocker
-lengthens the path and two placed together do, so single-step marginal scoring
-reads the plateau as "nothing left to buy." Lookahead patches the plateaus
-someone noticed; the exact decomposition — generate a constraint per incumbent
-path, "block at least one cell of this one," and re-solve — handles plateaus of
-arbitrary width by construction. The restriction that only cells on the standing
-path are worth evaluating is not a shortcut, it is that method's separation
-oracle, and implementations reach it independently.
+With those written down, a greedy that places one blocker at a time is the
+*fast solver* rather than the definition of the mechanic, and the spec says
+where it is blind. On boards with a plateau, no single blocker lengthens the
+path and two placed together do, so marginal scoring reads "nothing left to
+buy." The exact method generates one constraint per incumbent path — "block at
+least one cell of this one" — and re-solves, which handles plateaus of any
+width. Its separation oracle evaluates only cells on the standing path, a
+restriction implementations reach independently.
 
-The first-passage analog reads as "time for the follower to cross given blocker
-budget $b$" — $T(b) = \ell^*(b)/v$, nondecreasing in $b$ and saturating at the
-unbudgeted maximum $\ell^*(\infty)$, which is a longest-simple-path ceiling on
-the open region. That saturation point is the useful artifact: it grades a
-funded greedy against what unlimited money could have bought.
-
-GemCraft is the corpus's clearest exemplar, and unusually explicit about it. A
-wall is a pure blocker — the class carries a grid position and an empty
-per-frame handler, no damage, no range — so the routing decision is separated
-from the coverage decision in the game's own type system.
+GemCraft is the clearest exemplar, and unusually explicit about it. A wall is a
+pure blocker — the class carries a grid position and an empty per-frame
+handler, no damage, no range — so the routing decision is separated from the
+coverage decision in the game's own type system.
 <Cite repo="gemcraft-chasing-shadows" path="scripts/com/giab/games/gccs/steam/entity/Wall.as" line="3-24" /> The follower's problem
-is a relaxation sweep to fixpoint over a matrix where every building is
+is a relaxation sweep to fixpoint over a grid where every building is
 impassable:
 
 <Cite
@@ -268,28 +312,30 @@ impassable:
   line="678-700"
 />
 
-And the feasibility constraint runs that same solve *speculatively*, on a copy
-of the board with the tentative placement marked impassable, rejecting the build
-if any spawn node is left unreachable:
+The feasibility check is a different computation. It floods reachability from
+the orb on a copy of the grid with the tentative footprint impassable, and
+refuses the build if any entry node, live nest, on-field monster, guardian, or
+dropped orblet is cut off:
 
 <Cite
   repo="gemcraft-chasing-shadows"
   path="scripts/com/giab/games/gccs/steam/ingame/IngameCalculator.as"
-  line="309-400"
+  line="309-477"
+/>
+
+Once a build commits, the game drops its cached distance fields and the
+follower re-solves against the new board:
+
+<Cite
+  repo="gemcraft-chasing-shadows"
+  path="scripts/com/giab/games/gccs/steam/ingame/IngameCore.as"
+  line="1883"
 />
 
 The budget is mana, and it is convex: each wall in a drag costs more than the
 last, and the per-wall price ratchets upward permanently across the run, so the
 cost schedule is itself a design knob rather than a flat count.
 <Cite repo="gemcraft-chasing-shadows" path="scripts/com/giab/games/gccs/steam/ingame/IngameInputHandler2.as" line="602-643" />
-Frostborn Wrath is reported to add the refinement the spec layer predicts — a
-second enemy class that treats walls as passable, carrying its own solver, so one
-blocker set faces two followers with different traversal costs. Desktop Tower
-Defense, the early maze-builder, is reported to be the same shape with the
-constraint dropped: it re-floods its cost field on every placement but has no
-legality gate, so sealing the board is a thing the game handles rather than a
-thing it forbids. Neither claim is confirmed against source; both games survive
-only as obfuscated decompiles.
 
 The demo makes the max-min felt. Move the budget and watch the follower re-route
 around each new wall; the greedy places one wall at a time by immediate gain,
@@ -298,6 +344,20 @@ opens exactly on the plateau boards where the greedy has nothing to buy and the
 pair has everything.
 
 <InterdictionGrid client:visible />
+
+**Discriminators.**
+
+- _vs. network-topological_ — a follower re-solves against the player's
+  structure. Max-flow closes by LP duality; interdiction's
+  [linear relaxation](https://en.wikipedia.org/wiki/Linear_programming_relaxation)
+  has an integrality gap wide enough that the bound it returns grades nothing.
+- _vs. strategy-space integration_ — a
+  [Stackelberg](https://en.wikipedia.org/wiki/Stackelberg_competition) leader
+  commits first and the follower answers. That resolves by decomposition;
+  nobody looks for a fixed point.
+- _vs. combinatorial selection_ — evaluating one configuration contains a second
+  optimizer, the follower's path solve. A selection's per-configuration
+  evaluation is a formula.
 
 ## Optimal stopping
 
@@ -343,40 +403,122 @@ needs to be.
 
 <OptimalStoppingThreshold client:visible />
 
+**Discriminators.**
+
+- _vs. combinatorial selection_ — is the decision a time on a process, or a
+  configuration? A time is here.
+- _vs. discrete planning / scheduling_ — one scalar decision, when, is here. A
+  sequence of distinct actions is planning.
+
 ## Combinatorial selection
 
-When the player chooses a subset, sequence, or arrangement from a discrete
-option space — Time Studies on a 91-node DAG, action queues over a prereq-gated
-action set, spatial inventory arrangements, faction-and-perk loadouts. Per
-fixed selection the system closes (modifier chains collapse to constant
-multipliers; action durations sum); across selections the optimization is a
+When the player commits a subset or arrangement from a discrete option space —
+an upgrade tree, a loadout, a slot fill, a spatial arrangement. Per fixed
+selection the system closes: modifier chains collapse to constant multipliers.
+Across selections the optimization is a
 [combinatorial optimization](https://en.wikipedia.org/wiki/Combinatorial_optimization)
 or constraint-satisfaction problem on the option space.
 
-This bucket sits adjacent to Optimal stopping — both are about strategic
-decisions — but the boundary is whether the decision is a *stopping time* or a
-*configuration*. Prestige timing is stopping; choosing which Time Studies to
-buy or which actions to queue is configuration. The named adjacent math is
-search and pruning ([branch-and-bound](https://en.wikipedia.org/wiki/Branch_and_bound),
-[A\*](https://en.wikipedia.org/wiki/A*_search_algorithm), constraint
-propagation) rather than the variational machinery of stopping.
+Greedy is sometimes exact. When the feasible sets form a
+[matroid](https://en.wikipedia.org/wiki/Matroid), picking by marginal value is
+optimal. Prerequisites, mutual exclusions, and budgets break that structure, and
+greedy by ratio stops matching the optimum — typically in budget windows where a
+cheap node sits behind an expensive prerequisite. The named adjacent math is
+knapsack with precedence constraints,
+[integer programming](https://en.wikipedia.org/wiki/Integer_programming), and
+search with pruning:
+[branch-and-bound](https://en.wikipedia.org/wiki/Branch_and_bound) and
+constraint propagation. The spec is the option space and its constraints —
+nodes, prerequisites, exclusions, budget, per-node effect — and its design claim
+is about the frontier: which selections are dominated, which are optimal at
+which budget, and where greedy diverges.
 
-Idle Loops is the corpus's clearest exemplar of configuration-as-rate-function.
-The player authors a plan over a prereq-gated action set; a cursor walks the
-plan repeatedly; per fixed plan total mana spend is a sum, but the *plan
-itself* is the design space:
+Antimatter Dimensions' Time Studies are the clean exemplar. The studies form a
+prerequisite tree whose paths exclude each other, the budget is Time Theorems,
+and a respec refunds every study — so the tree is a set the player commits and
+revises, with no order dynamics:
 
-<Cite repo="idle-loops-omsi" path="loops/actions.js" line="137-196" />
+<Cite repo="AntimatterDimensionsSourceCode" path="src/core/time-studies/normal-time-study.js" line="64-72" />
+<Cite repo="AntimatterDimensionsSourceCode" path="src/core/time-studies/time-studies.js" line="139-155" />
 
 An eight-node prereq DAG with per-node cost-and-effect makes the
 algebra-bifurcation visible: per fixed selection, cost and effect each sum
 trivially; across selections, the optimum is a search over $2^N$ subsets.
 The greedy by-ratio rule doesn't always match the exhaustive optimum —
 budget windows where the cheap-but-prereq-blocked path traps the heuristic
-are exactly the contour the named-adjacent-math (branch-and-bound, A*) has
-to track.
+are exactly the contour the search has to track.
 
 <CombinatorialDAG client:visible />
+
+**Discriminators.**
+
+- _vs. discrete planning / scheduling_ — does an option's availability or effect
+  read state that an earlier option in the same commitment wrote? No, and it's
+  here. Order and repeat counts that matter are planning.
+- _vs. optimal stopping_ — a configuration, not a time.
+- _vs. bilevel interdiction_ — evaluating a selection is a formula, with no
+  follower's optimization inside.
+
+## Discrete planning / scheduling
+
+When the player authors an ordered sequence of actions, and each action's
+preconditions and effects act on state that later actions read — a queue formed
+under finite slots, a build order under capacity, a route walked under a time
+budget. Per fixed plan, execution is deterministic and its cost and duration sum
+per the algebra. Across plans, the space is sequences with repeat counts, not
+subsets, and preconditions make a plan's validity depend on what came before it.
+Resource-constrained scheduling is NP-hard, and a closed form for the best
+plan's value is rare.
+
+The named adjacent math is
+[automated planning](https://en.wikipedia.org/wiki/Automated_planning_and_scheduling)
+— actions as precondition-and-effect schemas over state, in the
+[STRIPS](https://en.wikipedia.org/wiki/Stanford_Research_Institute_Problem_Solver)
+tradition — together with
+[job-shop scheduling](https://en.wikipedia.org/wiki/Job-shop_scheduling) and
+state-space search: [A\*](https://en.wikipedia.org/wiki/A*_search_algorithm)
+when an admissible heuristic is cheap, dynamic programming when the states
+decompose, [Monte Carlo tree search](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search)
+when branching defeats enumeration but rollouts are cheap, beam search when a
+good-enough plan is useful. Special structure closes outright: single-machine
+sequencing yields to an exchange argument. The spec is the action schema —
+preconditions, effects, cost and duration per action — plus the budget and the
+objective. "It's discrete and combinatorial, so there's no math" is the dodge
+this bucket exists to refuse.
+
+Idle Loops is the clearest exemplar. Each loop's actions read and write
+loop-local state: Haggle spends reputation to lower the price of supplies, Buy
+Supplies requires gold at that price, and Buy Mana converts all gold to mana.
+
+<Cite repo="idle-loops-omsi" path="loops/actionList.js" line="997" />
+<Cite repo="idle-loops-omsi" path="loops/actionList.js" line="941" />
+<Cite repo="idle-loops-omsi" path="loops/actionList.js" line="344-345" />
+
+The runner skips any action whose precondition fails at its turn, so the same
+actions in a different order execute a different plan:
+
+<Cite repo="idle-loops-omsi" path="loops/actions.js" line="103-117" />
+
+Five cards make the shape concrete. Hone raises ATK for the rest of the
+sequence, Mark sets a rider the next hit consumes, Bash and Smite read both, and
+Execute carries a precondition: it fizzles unless the enemy is already at 28 HP
+or below. Per fixed order, total damage is a sum; across the
+<code>5! = 120</code> orders, the optimum is a search. Greedy "hardest hit now"
+plays Bash and Smite first, leaves the enemy at 29, and Execute fizzles. The
+optimum plays Hone first, which is what makes Execute legal four turns later.
+
+<TriggerChainStepThrough client:visible />
+
+**Discriminators.**
+
+- _vs. combinatorial selection_ — does an action's availability or effect read
+  state an earlier action in the plan wrote? Yes, and it's here.
+- _vs. strategy-space integration_ — no other agent chooses; the rules are
+  fixed.
+- _vs. stochastic load-bearing_ — the design intent sits in the order the player
+  chooses, not in an outcome distribution.
+- _vs. optimal stopping_ — a sequence of distinct actions, not one decision
+  about when.
 
 ## What stays mathematical
 
@@ -401,34 +543,58 @@ boundary the design space turns at.
 <Sources
   cites={[
     {
-      repo: 'paperclips',
-      path: 'main.js',
-      line: '32-35',
-      note: 'Universal Paperclips wire market — sinusoidal drift on base price with per-tick stochastic updates. Stochastic load-bearing: distribution shape, not just mean.',
+      repo: 'DodecaDragons',
+      path: 'scripts/script.js',
+      line: '1313',
+      note: 'goldPerSecond = miners · (1 + 2·log₁₀(1 + fire/10)): gold’s rate reads the fire stock.',
     },
     {
-      repo: 'industry-idle',
-      path: 'assets/Script/CoreGame/Buildings/BuildingDefinitions.ts',
-      line: '69-145',
-      note: 'Industry Idle building input/output sets — supply graph as adjacency data; reachability is a graph walk. Network-topological: min-cut bounds throughput.',
+      repo: 'DodecaDragons',
+      path: 'scripts/script.js',
+      line: '1387-1395',
+      note: 'firePerSecond multiplies by 1 + k·log₁₀(gold + 1): fire’s rate reads the gold stock. Coupled-state deterministic.',
+    },
+    {
+      repo: 'paperclips',
+      path: 'main.js',
+      line: '23-37',
+      note: 'adjustWirePrice — with probability 0.015 per tick the wire price steps along a sinusoid around a slowly decaying base. Stochastic load-bearing: the noise shape, not the mean.',
+    },
+    {
+      repo: 'upload-labs',
+      path: 'scenes/windows/window_single_file_process.gd',
+      line: '45-49',
+      note: 'get_output_production — output is the minimum of the window’s own rate and each input’s production per unit consumed.',
+    },
+    {
+      repo: 'upload-labs',
+      path: 'scenes/resource_container.gd',
+      line: '99-123',
+      note: 'Container tick — stock and production split equally across outgoing wires. Network-topological: the routing rule is part of the spec.',
+    },
+    {
+      repo: 'gemcraft-chasing-shadows',
+      path: 'scripts/com/giab/games/gccs/steam/entity/Wall.as',
+      line: '3-24',
+      note: 'Wall — grid position fields and an empty doEnterFrame; a pure blocker with no combat surface.',
     },
     {
       repo: 'gemcraft-chasing-shadows',
       path: 'scripts/com/giab/games/gccs/steam/ingame/IngameCalculator.as',
-      line: '309-400',
-      note: 'GemCraft placement legality — the tentative build is flooded speculatively and rejected if it leaves a spawn node unreachable, with calculatePaths (:678) the follower’s own distance field. Bilevel interdiction: budget-bounded blockers against a re-optimizing path. Decompiled in-corpus source, no hosted upstream.',
+      line: '678-700',
+      note: 'calculatePaths — the follower’s distance field over a grid where every building is impassable.',
     },
     {
-      repo: 'AntimatterDimensionsSourceCode',
-      path: 'src/core/autobuyers/big-crunch-autobuyer.js',
-      line: '115-120',
-      note: 'Antimatter Dimensions Big Crunch autobuyer xHighest mode — concrete threshold heuristic for prestige timing. Optimal stopping: optimality under IP curve unproven.',
+      repo: 'gemcraft-chasing-shadows',
+      path: 'scripts/com/giab/games/gccs/steam/ingame/IngameCalculator.as',
+      line: '309-477',
+      note: 'isNew2x2BuildingBlocking — a reachability flood from the orb with the tentative footprint impassable; the build is refused if an entry node, live nest, on-field monster, guardian, or dropped orblet is cut off. Bilevel interdiction’s feasibility constraint. Decompiled in-corpus source, no hosted upstream.',
     },
     {
-      repo: 'idle-loops-omsi',
-      path: 'loops/actions.js',
-      line: '137-196',
-      note: 'Idle Loops action queue — prereq-gated action set the player composes plans over. Combinatorial selection: per-plan mana spend closes, plan-space optimization does not.',
+      repo: 'gemcraft-chasing-shadows',
+      path: 'scripts/com/giab/games/gccs/steam/ingame/IngameCore.as',
+      line: '1883',
+      note: 'resetAllPNNMatrices — cached distance fields dropped after a build, so the follower re-solves.',
     },
     {
       repo: 'gemcraft-chasing-shadows',
@@ -437,10 +603,46 @@ boundary the design space turns at.
       note: 'Wall drag: vCost += vIncrement per wall placed, then currentWallBuildingManaCost is set to the final vCost — the ratchet persists across the run.',
     },
     {
-      repo: 'gemcraft-chasing-shadows',
-      path: 'scripts/com/giab/games/gccs/steam/entity/Wall.as',
-      line: '3-24',
-      note: 'Wall — grid position fields and an empty doEnterFrame; a pure blocker with no combat surface.',
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/autobuyers/big-crunch-autobuyer.js',
+      line: '115-120',
+      note: 'Antimatter Dimensions Big Crunch autobuyer xHighest mode — concrete threshold heuristic for prestige timing. Optimal stopping: optimality under IP curve unproven.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/time-studies/normal-time-study.js',
+      line: '64-72',
+      note: 'checkSetRequirement — studies in exclusive path sets cannot be bought together. Combinatorial selection: a constrained subset of a prerequisite tree.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/time-studies/time-studies.js',
+      line: '139-155',
+      note: 'respecTimeStudies — refunds every study, so the tree is a set the player revises, with no order dynamics.',
+    },
+    {
+      repo: 'idle-loops-omsi',
+      path: 'loops/actionList.js',
+      line: '997',
+      note: 'Haggle — towns[0].suppliesCost -= 20: an effect on loop-local state a later action reads.',
+    },
+    {
+      repo: 'idle-loops-omsi',
+      path: 'loops/actionList.js',
+      line: '941',
+      note: 'Buy Supplies canStart — gold >= suppliesCost: a precondition on state earlier actions wrote.',
+    },
+    {
+      repo: 'idle-loops-omsi',
+      path: 'loops/actionList.js',
+      line: '344-345',
+      note: 'Buy Mana — converts all gold to mana and resets gold.',
+    },
+    {
+      repo: 'idle-loops-omsi',
+      path: 'loops/actions.js',
+      line: '103-117',
+      note: 'getNextValidAction — skips an action whose canStart fails or whose town is not current. Discrete planning: prefix order decides which plan executes.',
     },
   ]}
 />
