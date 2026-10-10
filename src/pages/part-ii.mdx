@@ -54,7 +54,7 @@ $$T_i(t+1) = T_i(t) + T_{i+1}(t) \cdot r_i$$
 
 — the sheet indexes tiers from 0, so its $T_i$ is Tier $i+1$, and $r_i$ is the rate at which one Tier $i+2$ generator produces Tier $i+1$. The sheet defaults: 5 tiers, top-tier seed of 1, base production at Tier 1 of 5/sec, and per-tier rates $r_0 = 0.1$, $r_1 = 10$, $r_2 = 3$, $r_3 = 1$. Currency accumulates as $\int T_0(t) \cdot \text{baseIncome} \, dt$.
 
-The demo below runs that simulation. Drag depth down to 1 and the curve is straight-linear; bump it up to 5 and the cascade shape kicks in. Rate scale uniformly multiplies all per-tier generation rates — useful for stretching or compressing the timeline without changing the shape.
+The demo below runs that simulation. Drag depth down to 1 and the curve is straight-linear; bump it up to 5 and the cascade shape appears. Rate scale uniformly multiplies all per-tier generation rates — useful for stretching or compressing the timeline without changing the shape.
 
 <DerivativeCascadeSim client:visible />
 

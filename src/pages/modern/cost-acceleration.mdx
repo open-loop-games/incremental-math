@@ -80,7 +80,7 @@ get costScale() {
 }
 ```
 
-The threshold-as-cost-not-purchases choice is its own small design decision: scaling kicks in at the same point where 2016-vintage games would have soft-failed. The infinity wall is positioned to fall where infinity used to be.
+The threshold-as-cost-not-purchases choice is its own small design decision: scaling starts at the same point where 2016-vintage games would have soft-failed. The infinity wall is positioned to fall where infinity used to be.
 
 ## Pure vs. accelerating
 
@@ -94,7 +94,7 @@ A few things to feel for:
 
 **The pure-exponential slope is irrelevant past the threshold.** Whatever `mult` you set, the parabolic term dominates within ten or twenty purchases of the threshold. The early-game knob and the late-game knob are decoupled — `mult` tunes the warmup, `scale` tunes the wall. Pecorella's single lever became two.
 
-**The threshold is itself a knob.** Drop it from 40 to 10 in the demo and the wall arrives almost immediately; push it to 100 and the curve looks Pecorella-shaped over the whole visible range. The threshold is what lets a designer say "this game has a free-feeling first hour, then the late-game pressure kicks in."
+**The threshold is itself a knob.** Drop it from 40 to 10 in the demo and the wall arrives almost immediately; push it to 100 and the curve looks Pecorella-shaped over the whole visible range. The threshold is what lets a designer say "this game has a free-feeling first hour, then the late-game pressure starts."
 
 **`scale` is leverage, not addition.** It's a multiplier *on the exponent*. Going from `scale = 2` to `scale = 10` doesn't make the wall ten times higher — it makes it `log10(10) / log10(2) ≈ 3.3` times steeper *as a slope on the log chart*. The wall in real cost is incomparably higher.
 
@@ -140,7 +140,7 @@ A parabola in log space — exponential in a quadratic — is one rung above pur
 
 The reason the genre converged here, rather than on a third or higher level, is mostly inversion. A quadratic-in-log inverts to a square root. A cubic-in-log inverts to a [cubic formula](https://en.wikipedia.org/wiki/Cubic_equation), which exists but is gnarly. A non-polynomial in log inverts to nothing closed-form at all, and "buy max" stops being a constant-time operation. The parabola is on a Pareto frontier: aggressive enough to be a real wall, simple enough to invert at native speed.
 
-The other consideration is felt-pacing. With pure exponentials, every purchase is roughly the same fraction of the player's bankroll — Pecorella's seesaw at constant tilt. With a parabolic wall, the *first* purchase past the threshold is a small step, the second is a larger step, the third is larger still, and so on. The wall doesn't slap; it tightens. That is the parabola's signature: sublinear acceleration in *purchase number*, which translates to a smooth visual deceleration in the buy rate.
+The other consideration is felt-pacing. With pure exponentials, every purchase is roughly the same fraction of the player's bankroll — Pecorella's seesaw at constant tilt. With a parabolic wall, the *first* purchase past the threshold is a small step, the second is a larger step, the third is larger still, and so on. The wall doesn't arrive at once; it tightens. That is the parabola's signature: sublinear acceleration in *purchase number*, which translates to a smooth visual deceleration in the buy rate.
 
 ## Other shapes in the wild
 

@@ -265,7 +265,7 @@ inserts a discrete latency between the producing tick and the consumed
 tick, so the eigenvalue picks up a $1/n$ factor and the growth slows.
 Softcap on the feedback edge — multiplying the rate by something that
 shrinks as the target grows — keeps $\rho(A) \le 1$ asymptotically and
-parks the system at a non-trivial steady state.
+holds the system at a non-trivial steady state.
 
 NGU Idle is the most
 overt cycle of the lot: its two base resources each buy upgrades that
@@ -273,7 +273,7 @@ feed the other, and a third resource downstream boosts both. The
 inner loop is genuinely circular and the only thing keeping it from
 running away is that each "buy" is a discrete one-time purchase whose
 cost climbs faster than the corresponding rate gain — a per-edge
-softcap baked into the cost curve rather than into the production
+softcap built into the cost curve rather than into the production
 rate. The shape is the
 [hard-then-soft pattern](/modern/softcaps#hard-then-soft--trimps-helium-and-fluffy-xp) reframed as feedback
 control.
@@ -391,7 +391,7 @@ and cycle presets are the modern surface area on top.
 The cascade produced the cleanest analytic result in the entire faithful
 section. $t^d/d!$ is the kind of formula that generations of designers
 will choose, because it contains its own rationale and its own
-factorial-anchored growth. Modern games walked away from it for the
+factorial-anchored growth. Modern games stopped using it for the
 straightforward reason that one shape is one shape — and a genre that
 runs for a decade needs a vocabulary, not a sentence.
 
