@@ -3,7 +3,7 @@ import { ref, computed, onUnmounted, watch } from 'vue';
 import { Decimal, format } from '../lib/decimal';
 
 // Defaults transcribed from sheet 2a (Idle Game Models GDC Talk).
-// Tier 0 is the currency generator; higher tiers produce the tier below.
+// tiers[0] is the currency generator (Tier 1); higher tiers produce the tier below.
 const SHEET_RATES_DEFAULT: ReadonlyArray<number> = [0.1, 10, 3, 1];
 const SHEET_BASE_INCOME = 5;
 
@@ -172,7 +172,7 @@ const tierLabels = computed(() => {
   const d = depth.value;
   const labels: string[] = [];
   for (let i = 0; i < d; i++) {
-    labels.push(`Tier ${i}`);
+    labels.push(`Tier ${i + 1}`);
   }
   return labels;
 });

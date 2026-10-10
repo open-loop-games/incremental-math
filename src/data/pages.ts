@@ -30,7 +30,7 @@ export const sections: PageSection[] = [
     pages: [
       {
         href: '/part-i',
-        title: 'Part I — Cost & Production',
+        title: 'Part I — Exponential Growth & The Seesaw',
         description:
           'Exponential cost vs. linear production: the seesaw that drives every clicker.',
       },
@@ -41,7 +41,7 @@ export const sections: PageSection[] = [
       },
       {
         href: '/part-iii',
-        title: 'Part III — Prestige Cycles',
+        title: 'Part III — Prestige',
         description: 'Resets, prestige currency, reset cadence, and the long-run reward curve.',
       },
     ],

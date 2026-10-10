@@ -61,7 +61,7 @@ A text that needs a term this list does not have stops, and the term goes to the
 
 | ID  | term        | meaning                                                                                                | not                                                                                                           |
 | --- | ----------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
-| TI1 | **tier**    | a generator's position in a production cascade. Tier 0 produces currency, and tier k produces tier k−1 | a prestige level (PR1), an upgrade level, an automation stage, a speed level, a faction rank, a softcap stage |
+| TI1 | **tier**    | a generator's position in a production cascade. Tier 1 produces currency, and tier k produces tier k−1 | a prestige level (PR1), an upgrade level, an automation stage, a speed level, a faction rank, a softcap stage |
 | TI2 | **depth**   | the number of tiers in a cascade                                                                       | the number of layers (PR12)                                                                                   |
 | TI3 | **cascade** | generators wired so each tier produces the tier below                                                  | chain, production line                                                                                        |
 

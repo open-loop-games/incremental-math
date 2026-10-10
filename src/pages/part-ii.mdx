@@ -16,7 +16,7 @@ Faithful walkthrough of Pecorella's [_The Math of Idle Games, Part II_](https://
 
 In the standard model, every generator pumps into the same pool: AdVenture Capitalist's investments all generate currency, Clicker Heroes' heroes all generate damage. Pecorella's question for Part II: drop that constraint. Wire the generators in a _cascade_ instead.
 
-A single Tier 0 generator produces currency. Tier 1 produces Tier 0. Tier 2 produces Tier 1. And so on. Each tier above the first is the **rate of change** of the tier below it. If you remember calculus, that's a [derivative](https://en.wikipedia.org/wiki/Derivative) — the cascade is a sequence of [integrals](https://en.wikipedia.org/wiki/Integral) from the top tier down to currency.
+A single Tier 1 generator produces currency. Tier 2 produces Tier 1. Tier 3 produces Tier 2. And so on. Each tier above the first is the **rate of change** of the tier below it. If you remember calculus, that's a [derivative](https://en.wikipedia.org/wiki/Derivative) — the cascade is a sequence of [integrals](https://en.wikipedia.org/wiki/Integral) from the top tier down to currency.
 
 The setup matters. With a single Tier 1 generator that produces 1 currency per second:
 
@@ -34,7 +34,7 @@ $$e^t = \sum_{n=0}^{\infty} \frac{t^n}{n!}$$
 
 A finite cascade is a _partial_ Taylor sum of $e^t$. Add infinite tiers and the cascade _becomes_ exponential growth.
 
-The same structure appears in the generators themselves. In a depth-4 cascade seeded by a single Gen4, the total count of all generators at time $t$ — the three tiers below the seed — is $1 + t + \frac{t^2}{2} + \frac{t^3}{6}$: the same partial sum, shifted one order down from the currency output. The cascade wears the Taylor sum at every tier simultaneously.
+The same structure appears in the generators themselves. In a depth-4 cascade seeded by a single Tier 4 generator, the total count of all generators at time $t$ — the three tiers below the seed — is $1 + t + \frac{t^2}{2} + \frac{t^3}{6}$: the same partial sum, shifted one order down from the currency output. The cascade wears the Taylor sum at every tier simultaneously.
 
 ## The half-existent rule
 
@@ -52,7 +52,7 @@ Pecorella's spreadsheet `2a` simulates the cascade with plain [forward Euler](ht
 
 $$T_i(t+1) = T_i(t) + T_{i+1}(t) \cdot r_i$$
 
-— $r_i$ is the rate at which one Tier-$(i+1)$ generator produces Tier-$i$. The sheet defaults: 5 tiers, top-tier seed of 1, base production at Tier 0 of 5/sec, and per-tier rates $r_0 = 0.1$, $r_1 = 10$, $r_2 = 3$, $r_3 = 1$. Currency accumulates as $\int T_0(t) \cdot \text{baseIncome} \, dt$.
+— the sheet indexes tiers from 0, so its $T_i$ is Tier $i+1$, and $r_i$ is the rate at which one Tier $i+2$ generator produces Tier $i+1$. The sheet defaults: 5 tiers, top-tier seed of 1, base production at Tier 1 of 5/sec, and per-tier rates $r_0 = 0.1$, $r_1 = 10$, $r_2 = 3$, $r_3 = 1$. Currency accumulates as $\int T_0(t) \cdot \text{baseIncome} \, dt$.
 
 The demo below runs that simulation. Drag depth down to 1 and the curve is straight-linear; bump it up to 5 and the cascade shape kicks in. Rate scale uniformly multiplies all per-tier generation rates — useful for stretching or compressing the timeline without changing the shape.
 
