@@ -1,0 +1,6 @@
+allowBuilds:
+  # The script only checks the platform binary, which ships as an optional dep.
+  esbuild: false
+  # Prebuilt @img/sharp-* binaries cover every platform we install on; the
+  # script only compiles from source when they're missing.
+  sharp: false
