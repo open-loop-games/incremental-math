@@ -11,7 +11,7 @@ import Sources from '../../components/Sources.astro';
 
 A single entry — the [logistic](https://en.wikipedia.org/wiki/Logistic_function) — but
 it's the only [sigmoid](https://en.wikipedia.org/wiki/Sigmoid_function) in the catalog
-whose first-passage is fully elementary, and that uniqueness earns it a page. The shape is
+whose first-passage is fully elementary, and that uniqueness qualifies it for a page. The shape is
 exponential growth limited by an explicit ceiling; the math is one of the older closed forms
 in the catalog (due to [Verhulst](https://en.wikipedia.org/wiki/Pierre_Fran%C3%A7ois_Verhulst)
 in 1838 for population modeling); and the design intent — "growth that asymptotes to a
@@ -43,7 +43,7 @@ The carrying capacity is approached but never reached. This is the entry's disti
 feature versus the [rational entry's $p > 1$ case](/rate-functions/power-law#rational--hyperbolic-rate),
 which also has a finite ceiling: the rational form's ceiling is reached _in the limit of
 infinite $x$_; the logistic's ceiling is reached _in the limit of infinite $t$_. The
-ceiling lives in different units in the two shapes.
+ceiling is in different units in the two shapes.
 
 <LogisticDemo client:visible />
 
@@ -53,7 +53,7 @@ The logistic is the natural specification for any progression value that has a
 _meaningful_ maximum — efficiency at saturation, a [population](https://en.wikipedia.org/wiki/Population_dynamics)
 constrained by resources, a fraction that should approach but not exceed 100%. In all
 three cases the design intent is "growth that knows where it's going," and the logistic
-trajectory carries that intent to completion: early, growth is essentially exponential;
+trajectory fulfills that intent: early, growth is essentially exponential;
 mid-curve, the inflection marks the change from acceleration to deceleration;
 late, the curve flattens visibly toward the ceiling without a hard discontinuity.
 
@@ -98,7 +98,7 @@ The places pure logistic does show up:
   represents a fraction" — the logistic is the right intent.
 
 For most other ceiling use cases, the [hyperbolic entry on the power-law page](/rate-functions/power-law#rational--hyperbolic-rate)
-is what shipped games actually compute. The logistic earns its catalog page on
+is what shipped games actually compute. The logistic qualifies for its catalog page on
 mathematical grounds, not on prevalence: it
 remains the cleanest sigmoid the catalog can offer, and its first-passage being elementary
 is what the algebra cares about.
@@ -111,7 +111,7 @@ and its variants — close in special cases (linear couplings, conserved quantit
 general are nonlinear coupled ODEs that don't admit a single closed-form trajectory. That's
 the boundary between this entry and the bifurcation rows: a single logistic is in the
 algebra; coupled logistics generally aren't. Game designs that want "two competing
-populations with carrying capacity" are reaching for math that doesn't close, which is why
+populations with carrying capacity" are choosing math that doesn't close, which is why
 those mechanics tend to be either simulated discretely or simplified to one of the
 linearized special cases.
 

@@ -20,10 +20,10 @@ The first six pages of this catalog walked shapes that close: power-law,
 exponential, logistic, log, and the composition rules that keep them closed
 under sums, products, splices, functional composition, and quantization. This
 page walks the complement — the rate-function shapes that don't close, and what
-the spec layer reaches for instead. The catalog stops where the algebra stops;
+the spec layer chooses instead. The catalog stops where the algebra stops;
 past that, the math doesn't disappear, it changes language.
 
-The first-passage frame survives every bifurcation. Each row below is still
+The first-passage frame still holds across every bifurcation. Each row below is still
 "first-passage time" in some generalized sense — mean hitting time,
 equilibrium, threshold policy, optimum over a discrete option space. What
 changes is the algebra of "rate" and the meaning of "cumulative." Each row
@@ -36,25 +36,25 @@ not "give up and simulate."
 | ------------------------------ | ----------------------------------------------------------------------- | ---------------------------------------------- |
 | Coupled-state deterministic    | Multi-resource mutual feedback, neither linear nor triangular           | Phase plane, Lyapunov, bifurcation theory      |
 | Strategy-space integration     | An equilibrium between agents' strategies                               | Nash, replicator dynamics, combinatorial games |
-| Stochastic load-bearing        | The distribution shape carries the design intent, not the mean          | Markov chains, phase-type, first-passage       |
+| Stochastic load-bearing        | The distribution shape contains the design intent, not the mean          | Markov chains, phase-type, first-passage       |
 | Network-topological            | Throughput bounded by graph topology, not rates                         | Max-flow min-cut, LP duality, network flows    |
 | Bilevel interdiction           | A placement chosen against a follower who re-optimizes                  | Stackelberg/bilevel programs, interdiction     |
 | Optimal stopping               | When to reset is itself the decision                                    | Bellman equation, Snell envelope, free-boundary |
 | Combinatorial selection        | A configuration chosen from a discrete option space                     | Combinatorial optimization, constraint satisfaction |
 | Discrete planning / scheduling | An ordered action sequence whose steps change the state later steps read | AI planning, scheduling, MDPs                  |
 
-A bucket earns its row three ways: named mathematics with its own spec form, a
+A bucket qualifies for its row three ways: named mathematics with its own spec form, a
 test against each neighboring bucket that can be checked in a game's source,
 and at least one shipped subsystem read at source. Each section below ends with
 those tests — its discriminators.
 
-A subsystem can land in two buckets. The common pair is coupled-state per fixed
+A subsystem can be in two buckets. The common pair is coupled-state per fixed
 strategy and optimal stopping across strategies; name both, because they call
 for different tools.
 
 How the runtime resolves a subsystem is not a bucket. Tick-resolved combat,
 trigger chains, and auto-battler rounds say whether the game integrates its spec
-continuously or steps through events. The spec itself lands wherever its math
+continuously or steps through events. The spec itself ends up wherever its math
 does: usually closed-form, stochastic load-bearing when targets or rolls are
 random, planning when the player orders the chain.
 
@@ -107,7 +107,7 @@ $y_0$), but no elementary algebra delivers it.
   [composition rules](/rate-functions/composition) close it. One state reading
   itself is the scalar ODE above.
 - _vs. stochastic load-bearing_ — remove every random draw. If the design intent
-  survives, the subsystem is here.
+  persists, the subsystem is here.
 - _vs. network-topological_ — does a graph's capacity bound the throughput? Yes,
   and it's network. Feedback through states with no capacity bound is here.
 
@@ -130,7 +130,7 @@ uniform start when not. The bucket is rare in the genre because most idle games
 are cooperative or single-player; it activates with adversarial multi-agent
 strategy spaces over shared resource draws.
 
-Turn-based two-player games sit here too. A perfect-information zero-sum game
+Turn-based two-player games belong here too. A perfect-information zero-sum game
 has a value by [minimax](https://en.wikipedia.org/wiki/Minimax) — in principle,
 at combinatorial cost, since the state space grows exponentially in units or
 cards. [Combinatorial game theory](https://en.wikipedia.org/wiki/Combinatorial_game_theory)
@@ -159,7 +159,7 @@ centroid between attractor and repeller.
 
 ## Stochastic load-bearing
 
-When a production mechanic's *distribution shape* — not just its mean — carries
+When a production mechanic's *distribution shape* — not just its mean — contains
 the design intent. Mean first-passage and stationary distribution close for
 finite [Markov chains](https://en.wikipedia.org/wiki/Markov_chain) (the linear
 system $Q \cdot m = -1$); the full distribution of first-passage times rarely
@@ -186,7 +186,7 @@ what they play against:
 
 <Cite repo="paperclips" path="main.js" line="23-37" />
 
-Combat with random targeting lands here when its outcome distribution is the
+Combat with random targeting belongs here when its outcome distribution is the
 design intent. The spec is the outcome distribution per army composition — a
 vector-matrix product over a finite event lattice, which the combat loop
 samples at runtime.
@@ -201,11 +201,11 @@ $k=1$, near-Gaussian by $k=10$. Hyperexponential mixtures push CV past 1.
 **Discriminators.**
 
 - _vs. coupled-state deterministic_ — replace each draw with its mean. If the
-  design intent survives, the subsystem is coupled-state or closed-form, not
+  design intent persists, the subsystem is coupled-state or closed-form, not
   here.
 - _vs. strategy-space integration_ — the randomness is nature's draw from a
   fixed distribution, not an agent's choice.
-- _vs. discrete planning / scheduling_ — does the intent sit in the outcome
+- _vs. discrete planning / scheduling_ — is the intent in the outcome
   distribution, or in the order the player chooses? The order is planning, with
   [Markov decision processes](https://en.wikipedia.org/wiki/Markov_decision_process)
   for the random transitions.
@@ -224,7 +224,7 @@ push the problem into NLP) and combinatorial constraints (integer-valued flows
 in NP-hard problems admit only approximations and bounds).
 
 The spec layer is the graph and capacities (or capacity functions) plus the
-optimality criterion. The first-passage analog reads as "time to deliver $C$
+optimality criterion. The first-passage analog appears as "time to deliver $C$
 units from source to sink given throughput bound $\text{cap}_{\min}$" — for a
 saturated network, throughput is the min-cut value, and design knobs are the
 graph topology and per-edge capacities.
@@ -264,8 +264,7 @@ bumping a cut edge moves throughput one-for-one until the cut shifts elsewhere.
 When the player's decision is not a route through the graph but a *constraint on
 someone else's* — place budget-bounded blockers, and a follower re-solves its
 own shortest path against whatever stays open. Maze-building tower defense is
-the genre's carrier: the enemy path is not authored, it is whatever survives the
-walls.
+the genre's carrier: the enemy path is not authored, it is whatever the walls leave open.
 
 Per fixed blocker set the inner problem closes cheaply — a distance field over
 the open cells, polynomial, exact. What fails to close is the outer choice. The
@@ -284,7 +283,7 @@ the follower's objective and what counts as passable to it; the feasibility
 constraint, usually that every spawn stays connected to the goal
 ([Menger's theorem](https://en.wikipedia.org/wiki/Menger%27s_theorem) says a
 placement is illegal exactly when it separates them); and the acceptance
-criterion, in path length or in time to cross. That last reads as
+criterion, in path length or in time to cross. That last appears as
 $T(b) = \ell^*(b)/v$, nondecreasing in the budget and saturating at the
 unbudgeted maximum $\ell^*(\infty)$ — a longest-simple-path ceiling on the open
 region, which grades a funded greedy against what unlimited money could buy.
@@ -299,7 +298,7 @@ width. Its separation oracle evaluates only cells on the standing path, a
 restriction implementations reach independently.
 
 GemCraft is the clearest exemplar, and unusually explicit about it. A wall is a
-pure blocker — the class carries a grid position and an empty per-frame
+pure blocker — the class contains a grid position and an empty per-frame
 handler, no damage, no range — so the routing decision is separated from the
 coverage decision in the game's own type system.
 <Cite repo="gemcraft-chasing-shadows" path="scripts/com/giab/games/gccs/steam/entity/Wall.as" line="3-24" /> The follower's problem
@@ -378,7 +377,7 @@ the optimal stopping time given by the
 [Snell envelope](https://en.wikipedia.org/wiki/Snell_envelope) — a smooth-pasting
 condition at the threshold separating "continue" from "stop."
 
-The threshold-policy spec reads as: "prestige when post-reset growth rate ×
+The threshold-policy spec appears as: "prestige when post-reset growth rate ×
 multiplier exceeds pre-reset rate by factor $X$," with $X$ computable from the
 rate function and discount. Antimatter Dimensions ships a concrete instance —
 the Big Crunch autobuyer's `xHighest` ratio mode triggers when the current
@@ -423,7 +422,7 @@ Greedy is sometimes exact. When the feasible sets form a
 [matroid](https://en.wikipedia.org/wiki/Matroid), picking by marginal value is
 optimal. Prerequisites, mutual exclusions, and budgets break that structure, and
 greedy by ratio stops matching the optimum — typically in budget windows where a
-cheap node sits behind an expensive prerequisite. The named adjacent math is
+cheap node is behind an expensive prerequisite. The named adjacent math is
 knapsack with precedence constraints,
 [integer programming](https://en.wikipedia.org/wiki/Integer_programming), and
 search with pruning:
@@ -501,7 +500,7 @@ actions in a different order execute a different plan:
 
 Five cards make the shape concrete. Hone raises ATK for the rest of the
 sequence, Mark sets a rider the next hit consumes, Bash and Smite read both, and
-Execute carries a precondition: it fizzles unless the enemy is already at 28 HP
+Execute has a precondition: it fizzles unless the enemy is already at 28 HP
 or below. Per fixed order, total damage is a sum; across the
 <code>5! = 120</code> orders, the optimum is a search. Greedy "hardest hit now"
 plays Bash and Smite first, leaves the enemy at 29, and Execute fizzles. The
@@ -515,7 +514,7 @@ optimum plays Hone first, which is what makes Execute legal four turns later.
   state an earlier action in the plan wrote? Yes, and it's here.
 - _vs. strategy-space integration_ — no other agent chooses; the rules are
   fixed.
-- _vs. stochastic load-bearing_ — the design intent sits in the order the player
+- _vs. stochastic load-bearing_ — the design intent is in the order the player
   chooses, not in an outcome distribution.
 - _vs. optimal stopping_ — a sequence of distinct actions, not one decision
   about when.

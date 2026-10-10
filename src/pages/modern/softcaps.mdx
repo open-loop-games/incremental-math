@@ -18,7 +18,7 @@ A 2026 incremental almost never ships those curves unmodified. Somewhere along t
 
 The point of a softcap is to bend a curve, not to stop it. Every shape covered here continues to grow forever; the rate of growth just falls. The reasons to do this — pacing, balance, breakthrough rhythm, monetization gates — are design concerns the page touches but doesn't try to settle.
 
-The shapes below all sit in the [rate-function catalog](/rate-functions): the sqrt-softcap family is the [polynomial entry](/rate-functions/power-law#polynomial-rate) at fractional exponents, the asymptotic shape is the [rational/hyperbolic entry](/rate-functions/power-law#rational--hyperbolic-rate) at $p > 1$, the log-softcap is the [logarithmic entry](/rate-functions/log-frontier#logarithmic-rate), and piecewise softcaps are exactly the [piecewise splice](/rate-functions/composition#piecewise-splice) rule. This page walks softcaps as a *design pattern*; the catalog walks the underlying math as math.
+The shapes below are all in the [rate-function catalog](/rate-functions): the sqrt-softcap family is the [polynomial entry](/rate-functions/power-law#polynomial-rate) at fractional exponents, the asymptotic shape is the [rational/hyperbolic entry](/rate-functions/power-law#rational--hyperbolic-rate) at $p > 1$, the log-softcap is the [logarithmic entry](/rate-functions/log-frontier#logarithmic-rate), and piecewise softcaps are exactly the [piecewise splice](/rate-functions/composition#piecewise-splice) rule. This page walks softcaps as a *design pattern*; the catalog walks the underlying math as math.
 
 ## What a softcap is, in one sentence
 
@@ -50,7 +50,7 @@ $$g(x, t) = t \cdot (x/t)^p, \quad 0 < p < 1$$
 
 The simplest shape and the easiest to read. Past the threshold, the input's ratio to the threshold gets a fractional exponent applied to it. With $p = 0.5$ this is the standard square-root softcap; smaller $p$ is harsher, larger $p$ is gentler.
 
-Realm Grinder's faction modifiers, as its community documents them, ride on this family: some raise a generator count to a fractional exponent, others raise the log of a count to a fractional exponent, all producing a similar curve in the relevant range. The genre name "sqrt softcap" is a slight misnomer for the whole family — these aren't all square roots, they're various sublinear exponents — but the shape and effect are the same: every additional generator still contributes, but at a falling marginal rate that keeps any one faction strategy from dominating the others.
+Realm Grinder's faction modifiers, as its community documents them, use this family: some raise a generator count to a fractional exponent, others raise the log of a count to a fractional exponent, all producing a similar curve in the relevant range. The genre name "sqrt softcap" is a slight misnomer for the whole family — these aren't all square roots, they're various sublinear exponents — but the shape and effect are the same: every additional generator still contributes, but at a falling marginal rate that keeps any one faction strategy from dominating the others.
 
 A clean general-purpose implementation, from a community-built game framework that exposes its softcap as a named utility:
 
@@ -129,7 +129,7 @@ Game.HowMuchPrestige = function (cookies) {
 };
 ```
 
-The cube root produces $\approx 10^{(\log_{10} c - 12)/3}$ Chips per $c$ cookies; doubling cookies adds a constant multiplier of $\sqrt[3]{2} \approx 1.26$ to chips. The _purpose_ is logarithmic — compress a many-orders-of-magnitude input into a few orders — even when the implementation reaches for a power instead. The two shapes are interchangeable in this regime; the choice between them is whether the designer wants a constant $k$ added per decade (log) or a constant multiplier per doubling (power).
+The cube root produces $\approx 10^{(\log_{10} c - 12)/3}$ Chips per $c$ cookies; doubling cookies adds a constant multiplier of $\sqrt[3]{2} \approx 1.26$ to chips. The _purpose_ is logarithmic — compress a many-orders-of-magnitude input into a few orders — even when the implementation uses a power instead. The two shapes are interchangeable in this regime; the choice between them is whether the designer wants a constant $k$ added per decade (log) or a constant multiplier per doubling (power).
 
 A true logarithmic softcap shows up more often in stat-scaling than in prestige formulas: prestige rewards are _meant_ to be felt as the headline progression of an entire run, so a hard log compression would cap the felt reward visibly. Stat softcaps are meant to be noticed only when a particular substat pulls away from the others, where a log flatten is the desired feel.
 
@@ -153,7 +153,7 @@ function softcap(value) {
 }
 ```
 
-The Realm Grinder pre/post-Ascension cost shift sits in the same family but uses two exponential bands rather than two log bands: a steeper ratio $m_1$ before the threshold, a shallower $m_2$ after. The function is continuous, the shape is two distinct exponential regimes glued at $n = t$, and the player feels the gear-shift as a moment in the run rather than a smooth taper:
+The Realm Grinder pre/post-Ascension cost shift is in the same family but uses two exponential bands rather than two log bands: a steeper ratio $m_1$ before the threshold, a shallower $m_2$ after. The function is continuous, the shape is two distinct exponential regimes glued at $n = t$, and the player feels the gear-shift as a moment in the run rather than a smooth taper:
 
 $$\text{cost}(n) = \begin{cases} c_0 \cdot m_1^{\,n}, & n \le t \\ c_0 \cdot m_1^{\,t} \cdot m_2^{\,n-t}, & n > t \end{cases} \qquad m_2 < m_1$$
 
@@ -184,7 +184,7 @@ The relevant arithmetic: zone is converted to a level offset by 19 (the `1900 / 
 
 Fluffy XP is the same shape with the threshold expressed as a level requirement: pet level is $\log_4(\text{XP} / 1000)$, so the pet doesn't exist (level zero) below $\text{XP} = 1000$. The logarithmic regime past the threshold is what the previous section covers; the floor at $\text{XP} = 1000$ is what makes it hard-then-soft rather than pure log.
 
-The point of the hard-then-soft shape is to make a resource _visible but inaccessible_ — the player sees they're approaching the threshold, sees the resource counter at zero, and gets a payoff moment when the first unit lands. A pure log or sqrt softcap below the threshold would deliver microscopic amounts that round to zero on the HUD; the hard floor turns that rounding into a feature.
+The point of the hard-then-soft shape is to make a resource _visible but inaccessible_ — the player sees they're approaching the threshold, sees the resource counter at zero, and gets a payoff moment when the first unit appears. A pure log or sqrt softcap below the threshold would deliver microscopic amounts that round to zero on the HUD; the hard floor turns that rounding into a feature.
 
 ## Specialty: math-motivated softcaps
 
@@ -208,7 +208,7 @@ Approaches a ceiling $L$ but never reaches it. Rarer in pure progression context
 // graveyard = ∞    → 1
 ```
 
-Civ Clicker's cleric efficiency: each graveyard built moves the multiplier toward (but never reaches) 1. This isn't really "softcapping a value" in the sense the four sections above use — it's `1 minus an asymptotic decay`, which expands to the same shape but reads more naturally as a saturation curve in efficiency contexts.
+Civ Clicker's cleric efficiency: each graveyard built moves the multiplier toward (but never reaches) 1. This isn't really "softcapping a value" in the sense the four sections above use — it's `1 minus an asymptotic decay`, which expands to the same shape but appears more naturally as a saturation curve in efficiency contexts.
 
 ## Comparing the shapes
 
@@ -258,9 +258,9 @@ The Prestige Tree code above does something else. It takes the _root of the expo
 
 $$\text{expRoot}(x, S, M) = 10^{\,\left(\log_{10} x\right)^{1/M}\;\cdot\;\left(\log_{10} S\right)^{1 - 1/M}}$$
 
-Compressing the _exponent_ rather than the base is strictly harsher than the ordinary root. That's why the genre reaches for `expRoot` when even a sublinear cap on the value isn't enough, and why a challenge that swaps a `log` cap for an `expRoot` cap at the same threshold lands as a difficulty spike rather than a re-skin.
+Compressing the _exponent_ rather than the base is strictly harsher than the ordinary root. That's why the genre chooses `expRoot` when even a sublinear cap on the value isn't enough, and why a challenge that swaps a `log` cap for an `expRoot` cap at the same threshold appears as a difficulty spike rather than a re-skin.
 
-In practice, every softcap in a game whose currencies cross break_infinity territory is written in the expRoot form rather than the direct-arithmetic form, because the latter silently produces `Infinity` past a certain scale and the bug only surfaces in the late game when no developer is testing.
+In practice, every softcap in a game whose currencies cross break_infinity territory is written in the expRoot form rather than the direct-arithmetic form, because the latter silently produces `Infinity` past a certain scale and the bug only shows in the late game when no developer is testing.
 
 ## Cascading softcaps
 
@@ -295,7 +295,7 @@ Naming makes per-cap upgrades possible. "Reduces the _p12_ softcap by 50%" is a 
 
 The pattern is content-side, not engine-side. The engine provides the formula primitives (`Decimal.pow`, `Decimal.log10`, `Decimal.root`); the game provides the registry, the named indexing, and the upgrade-interaction system.
 
-## Where softcaps actually live
+## Where softcaps are actually used
 
 Softcaps cluster on three surfaces:
 

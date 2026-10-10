@@ -30,13 +30,13 @@ $$\text{cost}_\text{next} = \text{cost}_\text{base} \times (\text{rate}_\text{gr
 
 $$\text{production}_\text{total} = (\text{production}_\text{base} \times \text{owned}) \times \text{multipliers}$$
 
-Both curves sit in the [rate-function catalog](/rate-functions): cost is the
+Both curves are in the [rate-function catalog](/rate-functions): cost is the
 [exponential family](/rate-functions/exponential)'s geometric ladder; production is the
 [power-law family](/rate-functions/power-law)'s linear rate. The catalog walks each shape
 in isolation — what its cumulative looks like, how its first-passage time scales — which
 is the math Pecorella derives by hand below from the seesaw of the two together.
 
-For AdVenture Capitalist's Lemonade Stand, Pecorella uses $\text{rate}_\text{growth} = 1.07$, $\text{cost}_\text{base} = 3.738$ (the first stand is free, so the *second* one is what costs about four currency), and $\text{production}_\text{base} = 1.67/\text{sec}$. With $N = 10$ owned the next stand costs $\approx 7.87$ while production already sits at $16.7/\text{sec}$ — well ahead. The whole point is what happens further out.
+For AdVenture Capitalist's Lemonade Stand, Pecorella uses $\text{rate}_\text{growth} = 1.07$, $\text{cost}_\text{base} = 3.738$ (the first stand is free, so the *second* one is what costs about four currency), and $\text{production}_\text{base} = 1.67/\text{sec}$. With $N = 10$ owned the next stand costs $\approx 7.87$ while production is already at $16.7/\text{sec}$ — well ahead. The whole point is what happens further out.
 
 The demo below plots both curves on a shared $N$ axis. Default values match Lemonade Stands. Drag the sliders to see how the crossover point — where cost first overtakes production per second — moves.
 
@@ -89,7 +89,7 @@ Pecorella defines two milestone variants in sheets 1d and 1e. Both schedule a mu
 - **Global (sheet 1d).** Every generator shares the same per-milestone multiplier table: ×5, ×5, ×2, ×2, ×3, ×4, ×2, ×3, ×4. Cross all nine and the running bonus is $5 \times 5 \times 2 \times 2 \times 3 \times 4 \times 2 \times 3 \times 4 = 28{,}800\times$.
 - **Individual (sheet 1e).** Each generator gets its own column. Pecorella's defaults push different generators forward at different points — generator 2 spikes hard at 50 (×10), generator 1 spikes at 100 (×10), generator 3 spikes early at 50 (×8). The priority order shuffles across the run.
 
-The same demo above carries both modes via the radio toggle next to "milestones". Watch the **bonus** column update as you raise an owned count past 25, 50, 100 — each crossing multiplies the column. With **global** the priority shifts but everyone shifts together. With **individual** the next-best-buy genuinely rotates between generators across the run — the decision stays interesting longer because no single generator dominates indefinitely.
+The same demo above contains both modes via the radio toggle next to "milestones". Watch the **bonus** column update as you raise an owned count past 25, 50, 100 — each crossing multiplies the column. With **global** the priority shifts but everyone shifts together. With **individual** the next-best-buy genuinely rotates between generators across the run — the decision stays interesting longer because no single generator dominates indefinitely.
 
 <Sources
   post={{

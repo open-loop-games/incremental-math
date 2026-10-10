@@ -34,13 +34,13 @@ $$e^t = \sum_{n=0}^{\infty} \frac{t^n}{n!}$$
 
 A finite cascade is a _partial_ Taylor sum of $e^t$. Add infinite tiers and the cascade _becomes_ exponential growth.
 
-The same structure appears in the generators themselves. In a depth-4 cascade seeded by a single Tier 4 generator, the total count of all generators at time $t$ — the three tiers below the seed — is $1 + t + \frac{t^2}{2} + \frac{t^3}{6}$: the same partial sum, shifted one order down from the currency output. The cascade wears the Taylor sum at every tier simultaneously.
+The same structure appears in the generators themselves. In a depth-4 cascade seeded by a single Tier 4 generator, the total count of all generators at time $t$ — the three tiers below the seed — is $1 + t + \frac{t^2}{2} + \frac{t^3}{6}$: the same partial sum, shifted one order down from the currency output. The cascade has the Taylor sum at every tier simultaneously.
 
 ## The half-existent rule
 
 Before plotting the parabola, Pecorella pauses on a discrete-time wrinkle. If a Tier 1 generator only fully exists at the end of the second it was created, but it's nominally producing currency continuously, what do we count for that partial second?
 
-His rule: a Tier 1 born during second $t$ contributes only $\frac{1}{2}$ currency that second. By the end of the second it's fully real, so the _next_ second it produces a full unit. This is the [trapezoidal rule](https://en.wikipedia.org/wiki/Trapezoidal_rule) by another name — and at depth 2 it lands the discrete simulation exactly on $t^2/2$ at every integer $t$. The stepper below walks through Pecorella's worked example.
+His rule: a Tier 1 born during second $t$ contributes only $\frac{1}{2}$ currency that second. By the end of the second it's fully real, so the _next_ second it produces a full unit. This is the [trapezoidal rule](https://en.wikipedia.org/wiki/Trapezoidal_rule) by another name — and at depth 2 it puts the discrete simulation exactly on $t^2/2$ at every integer $t$. The stepper below walks through Pecorella's worked example.
 
 <DiscreteStepThrough client:visible />
 

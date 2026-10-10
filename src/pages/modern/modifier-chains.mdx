@@ -21,7 +21,7 @@ sequence of additions, multiplications, and an occasional exponent —
 sometimes dozens of them. The genre's vocabulary for that sequence has
 matured from "a function with a lot of `if`s in it" into a typed pipeline
 with first-class introspection. This page is about how that happened, what
-the abstraction buys, and what it doesn't fix.
+the abstraction gives, and what it doesn't fix.
 
 The math underneath, when each step is state-independent, is exactly the
 [modifier-product rule](/rate-functions/composition#modifier-product-state-independent-multipliers) — modifiers are
@@ -131,7 +131,7 @@ re-derived for tooltips by hand.
 Profectus (thepaperpilot, ongoing — fork of TMT toward a TypeScript,
 Vue-based engine) flips the abstraction one more level. The chain isn't a
 function returning a number; it's an array of typed modifier objects,
-each carrying its own value, label, and toggle predicate:
+each with its own value, label, and toggle predicate:
 
 <Cite repo="Advent-Incremental" path="src/data/layers/cloth.tsx" line="418-459" />
 
@@ -165,7 +165,7 @@ Each entry is a plain object describing one contribution. The `enabled`
 predicate is reactive — bought an upgrade somewhere else, the chain
 recomposes. The order in the array is the order the chain applies them.
 
-What this buys, that the function form didn't:
+What this gives, that the function form didn't:
 
 - **Tooltip breakdown for free.** Walk the array, render
   `description + formattedValue` per row. Nothing in the chain has to be
@@ -261,7 +261,7 @@ function applyMultipliers(multipliers, stat) {
 ```
 
 Sixteen-plus entries for one stat. The same harness is used for trimp
-health, block, and gather rate. The keys carry the attribution; the
+health, block, and gather rate. The keys contain the attribution; the
 fold is one line. Heirlooms, perks, scientists, challenges, heliolith
 modifiers, and challenge-squared all flow through this shape.
 
@@ -278,7 +278,7 @@ most-consulted screens in the game.
 production runs through faction bonuses, alignment bonus, pact effects,
 spell effects, research, mercenary trades, abdication bonuses, and
 challenge-squared multipliers. Community documentation of the per-faction
-production chains reads as separate multipliers folding into a single
+production chains appears as separate multipliers folding into a single
 per-second rate.
 
 The unifying observation: every one of these games converged on the same
@@ -393,7 +393,7 @@ The Profectus engine ships a `createModifierSection` helper that takes a
 sequential modifier and renders the JSX breakdown. This is the same
 function the dev panel and the in-game tooltip use; the duplication that
 plagued Cookie Clicker's UI is not architectural here — there's only one
-place the chain lives.
+place the chain is.
 
 ## What this site uses
 
@@ -440,7 +440,7 @@ category either gets lost in noise (additive when it should multiply) or
 explodes (multiplicative when it should add). The chain shape doesn't
 say which.
 
-The abstraction earned its place because it solved a specific problem:
+The abstraction qualified for its place because it solved a specific problem:
 the function form's hidden contributions made tooltip rendering, balance
 debugging, and inversion each a separate hand-rolled effort, and the
 sum of those efforts cost more than the abstraction did to introduce.

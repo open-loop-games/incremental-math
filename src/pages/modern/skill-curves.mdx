@@ -25,9 +25,9 @@ that only rises, the [integral](https://en.wikipedia.org/wiki/Integral) of an XP
 rate over the time spent acting, $X(t) = \int_0^t r(\tau)\,d\tau$. Then a
 **level**, a discrete number derived from the accumulator by a monotonic curve
 $L = \text{xpToLevel}(X)$. Then an **output**: the level drives a multiplier, a
-cost divisor, a gate threshold, or a retention bonus that survives a reset.
+cost divisor, a gate threshold, or a retention bonus that persists through a reset.
 
-Splitting advancement this way buys two things wealth-based progression doesn't.
+Splitting advancement this way gives two things wealth-based progression doesn't.
 The accumulator is legible — it only ever goes up, and the player can see exactly
 how close the next level is — and the curve is a single, isolated tuning surface.
 Reshape the curve and you reshape pacing, softcapping, and compounding all at
@@ -59,14 +59,14 @@ level is an integer, so a continuous effect $\mu(L) = 1 + cL$ is delivered as a
 step function: nothing happens, nothing happens, then the bar fills and the whole
 effect jumps at once. The demo plots that delivered staircase against the smooth
 curve it discretizes — the gap between them is the "I just levelled up" moment,
-and it's why a floored level reads as a reward where a continuous multiplier reads
-as wallpaper.
+and it's why a floored level looks like a reward where a continuous multiplier looks
+like wallpaper.
 
 <SkillCurve client:visible />
 
 Notice how the level-up thresholds bunch up early and stretch out late under the
 polynomial curve: quadratic XP cost means each level is a longer haul than the
-last, the sublinear pacing tool the genre reaches for when raw exponential production
+last, the sublinear pacing tool the genre chooses when raw exponential production
 would otherwise trivialize a track.
 
 ## Checkpoints and persistence

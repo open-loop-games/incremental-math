@@ -53,7 +53,7 @@ The design call:
 What the math forbids: bidirectional coupling between rates that doesn't decouple
 into a triangular system. If currency A's rate depends on B and B's rate depends on
 A in a way that doesn't reduce to one-direction dependency, the system is a coupled
-ODE and lives in the [bifurcation rows](/rate-functions/composition#what-doesnt-compose-cleanly).
+ODE and is in the [bifurcation rows](/rate-functions/composition#what-doesnt-compose-cleanly).
 Most modern games avoid this for exactly the reason the math suggests: the system
 becomes hard to balance, hard to predict, and hard to ship without spreadsheet
 calibration the spec layer can't help with.
@@ -75,7 +75,7 @@ conversion that's _outside_ the catalog, and the math probably won't close, and
 shipping the conversion will involve solver code the algebra can't help with.
 
 The corpus's working defaults — cube root, square root, log of cumulative — are all
-catalog entries. Games that ship more exotic conversions usually carry the
+catalog entries. Games that ship more exotic conversions usually incur the
 calibration cost (named tables, hard-coded breakpoints, or numerical solvers in the
 upgrade-affordability calculation).
 
@@ -224,7 +224,7 @@ math takes over when it doesn't. It doesn't tell you:
   is also a catalog entry. The formula does not decide which exponent fits your game's
   pacing intent. That's a session-shape and prestige-feel call, downstream of the
   math.
-- **How to surface multi-resource state in the UI.** The mathematical fact of
+- **How to show multi-resource state in the UI.** The mathematical fact of
   triangular dependency doesn't dictate how to show it. Modifier-chain UIs,
   resource-bar layouts, multi-currency HUDs, prestige tree visualizations — all are
   design choices outside the math.

@@ -31,9 +31,9 @@ The post-Pecorella genre wanted bend.
 
 ## What the substrate enabled
 
-Pecorella's framing was implicitly bounded by the JavaScript Number limit. If the cost line passes `1e308` somewhere in the late game, your variable becomes `Infinity`, comparisons stop working, and the seesaw breaks. Any slope steeper than necessary just hits the wall sooner. The discipline was: pick a `mult` your game can survive for the duration you want, and accept that the *shape* is whatever it is.
+Pecorella's framing was implicitly bounded by the JavaScript Number limit. If the cost line passes `1e308` somewhere in the late game, your variable becomes `Infinity`, comparisons stop working, and the seesaw breaks. Any slope steeper than necessary just hits the wall sooner. The discipline was: pick a `mult` your game can sustain for the duration you want, and accept that the *shape* is whatever it is.
 
-The [big-numbers page](/modern/big-numbers) covers what changed. `break_infinity.js` lifted the limit from $10^{308}$ to roughly $10^{1.8 \times 10^{308}}$, and `break_eternity.js` removed it entirely as a practical constraint. The math available to a designer no longer ended at the JavaScript Number limit. With substrate that could carry the values, designers got a free hand to make cost curves whatever shape they wanted them to be.
+The [big-numbers page](/modern/big-numbers) covers what changed. `break_infinity.js` lifted the limit from $10^{308}$ to roughly $10^{1.8 \times 10^{308}}$, and `break_eternity.js` removed it entirely as a practical constraint. The math available to a designer no longer ended at the JavaScript Number limit. With substrate that could hold the values, designers got a free hand to make cost curves whatever shape they wanted them to be.
 
 The first thing many of them wanted was a parabola.
 
@@ -80,11 +80,11 @@ get costScale() {
 }
 ```
 
-The threshold-as-cost-not-purchases choice is its own small design decision: scaling kicks in at the same point where 2016-vintage games would have soft-failed. The infinity wall is positioned to land where infinity used to live.
+The threshold-as-cost-not-purchases choice is its own small design decision: scaling kicks in at the same point where 2016-vintage games would have soft-failed. The infinity wall is positioned to fall where infinity used to be.
 
 ## Pure vs. accelerating
 
-The two curves on one chart, with sliders for the four parameters that define them. Pure exponential is a straight line on this log scale by construction; the scaling curve coincides with it until the threshold, then bends upward as a parabola in `excess`.
+The two curves on one chart, with sliders for the four parameters that define them. Pure exponential is a straight line on this log scale necessarily; the scaling curve coincides with it until the threshold, then bends upward as a parabola in `excess`.
 
 <CostAccelerationCompare client:visible />
 
@@ -130,7 +130,7 @@ if (discrim < 0) return null;
 newPurchases = Math.floor(this._precalcCenter + Math.sqrt(discrim) / (2 * this._logCostScale));
 ```
 
-This is closed-form max-affordable, exact at any scale. The player clicks "Max All" at $10^{500{,}000}$ antimatter and gets the right answer in microseconds, because the inversion is a square root and an addition. There is no loop, no Decimal arithmetic, no upper bound. The substrate carries the *display*; the math runs on doubles operating on logs.
+This is closed-form max-affordable, exact at any scale. The player clicks "Max All" at $10^{500{,}000}$ antimatter and gets the right answer in microseconds, because the inversion is a square root and an addition. There is no loop, no Decimal arithmetic, no upper bound. The substrate holds the *display*; the math runs on doubles operating on logs.
 
 This is the move that made AD's late game playable. A purely numerical max-affordable would either round-trip through Decimal arithmetic on every "buy max" — slow at scale — or bisect over a Decimal range, which is worse. The closed-form inversion of the quadratic-in-log is what lets the wall *feel* like a wall instead of like a freeze.
 
@@ -138,7 +138,7 @@ This is the move that made AD's late game playable. A purely numerical max-affor
 
 A parabola in log space — exponential in a quadratic — is one rung above pure exponential on the [hyperoperation hierarchy](https://en.wikipedia.org/wiki/Hyperoperation). It isn't tetration, but it's the gentlest possible thing that's faster than exponential: it adds polynomial speed to the *exponent* itself.
 
-The reason the genre converged here, rather than on a third or higher level, is mostly inversion. A quadratic-in-log inverts to a square root. A cubic-in-log inverts to a [cubic formula](https://en.wikipedia.org/wiki/Cubic_equation), which exists but is gnarly. A non-polynomial in log inverts to nothing closed-form at all, and "buy max" stops being a constant-time operation. The parabola sits on a Pareto frontier: aggressive enough to be a real wall, simple enough to invert at native speed.
+The reason the genre converged here, rather than on a third or higher level, is mostly inversion. A quadratic-in-log inverts to a square root. A cubic-in-log inverts to a [cubic formula](https://en.wikipedia.org/wiki/Cubic_equation), which exists but is gnarly. A non-polynomial in log inverts to nothing closed-form at all, and "buy max" stops being a constant-time operation. The parabola is on a Pareto frontier: aggressive enough to be a real wall, simple enough to invert at native speed.
 
 The other consideration is felt-pacing. With pure exponentials, every purchase is roughly the same fraction of the player's bankroll — Pecorella's seesaw at constant tilt. With a parabolic wall, the *first* purchase past the threshold is a small step, the second is a larger step, the third is larger still, and so on. The wall doesn't slap; it tightens. That is the parabola's signature: sublinear acceleration in *purchase number*, which translates to a smooth visual deceleration in the buy rate.
 

@@ -53,7 +53,7 @@ is the slope (how fast production accelerates as $x$ grows). The first-passage s
 $\sqrt{C}$ when the linear term dominates the constant, and as $C/a$ when the constant
 term dominates — early-game and late-game read off the same formula.
 
-Where this shape lives in the corpus: it's the reading of any production formula where
+Where this shape appears in the corpus: it's the reading of any production formula where
 "rate is proportional to count owned." Antimatter Dimensions' production-per-second is
 exactly this — `amount × multiplier × tickspeed`, linear in `amount`:
 
@@ -75,7 +75,7 @@ the rate of tier-$k$ accumulation is linear in tier-$(k+1)$ count, which is itse
 in tier-$(k+2)$ count, and so on. That's the polynomial cascade Pecorella's Part II derives
 from the same single linear primitive applied at every tier.
 
-Pure linear rates ($b = 0$) underpace as a primary cost driver — most games reach for
+Pure linear rates ($b = 0$) underpace as a primary cost driver — most games choose
 exponentials to get the seesaw — but linear shows up everywhere as a building block:
 inside sums, as the early game of a curve that bends later, as the asymptotic
 behavior past a softcap, and as the per-tier rule that compounds into Part II's
@@ -97,7 +97,7 @@ intercept, $p = 0$ is the constant rate, $p > 1$ is power-law acceleration, and
 $p \in (-1, 0)$ is diminishing returns — the rate itself decreases in $x$, but the
 cumulative still grows, just sublinearly. The boundary case $p = -1$ integrates to
 $a \cdot \ln x$ instead of a polynomial; that's a [logarithm](https://en.wikipedia.org/wiki/Logarithm)
-in disguise and lives on the [log-frontier page](/rate-functions/log-frontier).
+in disguise and is on the [log-frontier page](/rate-functions/log-frontier).
 
 The corpus exemplar is Cookie Clicker's gain formula, which is a polynomial
 _transform_ — Heavenly Chips earned at cookie count $c$ is the cube root of $c / 10^{12}$:
@@ -111,7 +111,7 @@ Game.HowMuchPrestige = function (cookies) {
 };
 ```
 
-Read as a first-passage: chips $H$ at cookies $C$ is $H = (C / 10^{12})^{1/3}$, which
+Stated as a first-passage: chips $H$ at cookies $C$ is $H = (C / 10^{12})^{1/3}$, which
 inverts to $C = 10^{12} \cdot H^3$ — cookies needed to reach chip level $H$ scales as $H^3$.
 The chip-as-output side is the polynomial-rate inverse with $p = -2/3$ (a diminishing-returns
 rate, since each extra cookie contributes less to chips than the previous). Same shape, two
@@ -165,7 +165,7 @@ exponent $p$ controls how fast the rate falls. Three cases:
 
 The bounded case ($p > 1$) is the math behind any approach to a real ceiling. The
 [inverse-square law](https://en.wikipedia.org/wiki/Inverse-square_law) ($p = 2$) is the
-canonical case. Civ Clicker's cleric-efficiency multiplier sits in the same family, written
+canonical case. Civ Clicker's cleric-efficiency multiplier is in the same family, written
 as a saturation rather than a rate:
 
 <Cite repo="civ-clicker" path="scripts/civclicker.js" line="2400-2401" />
@@ -199,13 +199,13 @@ the resource is unbounded, asymptotically log, or bounded with a real ceiling.
 
 The power-law family is the genre's cost and production substrate. Linear, polynomial, and
 rational shapes compose with each other under sums and constant multipliers, and each
-keeps its closed-form first-passage. They're what designers reach for when they want the
+keeps its closed-form first-passage. They're what designers choose when they want the
 _shape_ of progression to be smooth and the _speed_ to be parameterized by one or two
 knobs that read off as derivatives, asymptotes, or ceilings.
 
 What this family doesn't do: rapid acceleration. A polynomial cumulative grows as
 $x^{p+1}$, which is fast but never as fast as exponentials. The genre's headline pacing
-patterns — geometric cost, exponential production, doubling-time milestones — sit in a
+patterns — geometric cost, exponential production, doubling-time milestones — are in a
 different family entirely. That's the [exponential page](/rate-functions/exponential).
 
 <Sources

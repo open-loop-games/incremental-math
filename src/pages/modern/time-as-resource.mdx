@@ -82,7 +82,7 @@ deserves all. The closed form is the floor on solver complexity, not the
 ceiling.
 
 What this resource is *not*: spendable currency in the Pecorella sense.
-Minutes don't compound. Minutes don't carry over. The run ends and the
+Minutes don't compound. Minutes don't persist. The run ends and the
 budget refills. The persistent thing is whatever the player produced *with*
 the budget — combat XP, faction reputation, a permanent skill point. Time
 is the input that keeps replenishing; the output is what stays. This
@@ -112,7 +112,7 @@ t_\text{eff}(T) = \int_0^T s(\tau)\, d\tau
 $$
 
 — the integral of speed over wall-clock. When `s` is constant, this
-collapses to `s · T` and reads as "time runs `s` times faster." When `s`
+collapses to `s · T` and appears as "time runs `s` times faster." When `s`
 itself depends on game state — and in AD it depends on galaxies, replicantis,
 infinity upgrades, eternity challenges — the integral is genuinely
 different from the constant case, because every tick the player buys more
@@ -204,7 +204,7 @@ fork) ship a planner that does the search.
 
 <Cite repo="idle-loops-dmchurch" path="predictor.js" line="344-373" />
 
-The math is real; the engineering choice is whether to surface it.
+The math is real; the engineering choice is whether to show it.
 
 ## Time as pressure inside an active queue
 
@@ -223,7 +223,7 @@ soften the exponent — that is what raises the queue-second budget on
 subsequent runs and makes harder action sequences reachable.
 
 The optimization target shifts from "maximize production at `t = ∞`"
-to "maximize meta-progression before the threshold trips." That is a
+to "maximize meta-progression before the threshold is crossed." That is a
 planning problem with a hard deadline measured in queue-seconds: which
 sequence of actions, queued in which order, produces the most
 permanent skill gain before the survival margin runs out. The genre's

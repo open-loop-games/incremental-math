@@ -11,7 +11,7 @@ import Sources from '../../components/Sources.astro';
 
 Prestige is the genre's longest-running design pattern after the geometric cost
 ladder, and it's the surface where the catalog's
-[functional composition rule](/rate-functions/composition#functional-composition) lives most concretely. Each
+[functional composition rule](/rate-functions/composition#functional-composition) appears most concretely. Each
 prestige run is one rate function integrated against time; the prestige conversion
 is a function applied at the layer boundary; the post-prestige run integrates against
 a new rate function modified by the prestige currency.
@@ -30,20 +30,20 @@ $$f(C/T) = (C/T)^e$$
 
 covers most of the corpus. The exponent $e$ is the design knob — pick a value in
 $(0, 1]$ and you've picked the conversion's whole shape. Below $e = 1$ the conversion
-is sublinear (compressed); the genre's named defaults sit at $e = 1/3$ (cube root,
+is sublinear (compressed); the genre's named defaults are at $e = 1/3$ (cube root,
 Cookie Clicker) and $e = 1/2$ (square root, AdVenture Capitalist).
 <Cite repo="adventure-capitalist" path="Assembly-CSharp/AngelInvestorService.cs" line="136" />
 The log family,
-$H \propto \log_b C$, sits at the polynomial family's limit — a separate rate-function
+$H \propto \log_b C$, is at the polynomial family's limit — a separate rate-function
 entry ([log frontier](/rate-functions/log-frontier#logarithmic-rate)) but the same design intent
 taken further: compress orders of magnitude into a constant per decade.
 
 <CompressionContinuum client:visible />
 
-The felt readings are positions on the slider. Cube root at $e \approx 1/3$ reads as
+The felt readings are positions on the slider. Cube root at $e \approx 1/3$ appears as
 "every $10\times$ in run gives $\approx 2.15\times$ in prestige" — a noticeable but
-proportional reward. Square root at $e = 1/2$ reads as "every $10\times$ in run gives
-$\approx 3.16\times$ in prestige" — clearer per-decade scaling. Log reads as "every
+proportional reward. Square root at $e = 1/2$ appears as "every $10\times$ in run gives
+$\approx 3.16\times$ in prestige" — clearer per-decade scaling. Log appears as "every
 $10\times$ in run adds a _fixed_ amount" regardless of where in the run the doubling
 happened, the strongest member of the standard family.
 
@@ -151,8 +151,8 @@ The design call is when to _add_ a new layer. The diagnosis the catalog runs:
   state-multiplied modifier) breaks the saturation.
 
 What the math doesn't say is the _narrative_ of the new layer. Each layer in modern
-games (transcendence, eternity, reality, infinity) carries a fiction the player
-reads as content. The catalog is silent about that — what it gates is the
+games (transcendence, eternity, reality, infinity) contains a fiction the player
+takes as content. The catalog is silent about that — what it gates is the
 mathematical _shape_ of the new layer, not the story it tells.
 
 ## Why do some prestige conversions feel earned and others grindy?
@@ -163,7 +163,7 @@ prestige currency reward. A conversion that's _too shallow_ (large $H$ for small
 makes runs feel trivial — the player can reset off a tiny accumulation and get a
 big jump.
 
-The cube-root default sits at a working middle: each $10\times$ in run produces
+The cube-root default is at a working middle: each $10\times$ in run produces
 $\approx 2.15\times$ in prestige, which feels proportional but not runaway. Square
 root is steeper-feeling, log is gentler-feeling.
 
@@ -196,7 +196,7 @@ The catalog closes for the per-run math in any prestige system whose layers are
 elementary. It stops at two specific places:
 
 - **Optimal stopping.** When should the player reset? Closed-form per-run, but
-  the _run-length decision_ is an optimal-stopping problem and lives on the
+  the _run-length decision_ is an optimal-stopping problem and is on the
   [bifurcations page](/rate-functions/bifurcations#optimal-stopping). If
   the game lets the player choose when to reset _and_ the player's strategy
   affects the long-run growth rate of prestige currency, the optimal stopping time
@@ -232,7 +232,7 @@ elementary. It stops at two specific places:
   a slider.
 - **The narrative.** Math has no opinion about whether the prestige layer is named
   "Heavenly Chips" or "Eternity Points" or "Soul Anchors," and no opinion about
-  what fiction the run carries. The same math powers Cookie Clicker's
+  what fiction the run contains. The same math powers Cookie Clicker's
   ascendance, Antimatter Dimensions' eternities, and Synergism's challenge runs;
   the difference is fiction, not curve.
 

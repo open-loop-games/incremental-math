@@ -11,13 +11,13 @@ import Sources from '../../components/Sources.astro';
 
 Pecorella's Part III models prestige as a single prestige loop. You play, you reset, the next run is faster, you reset again. The outermost variable is `prestige_count`; everything else is a function of it. The whole structure is one prestige loop, no matter how many times it repeats.
 
-The post-2016 genre, when it stops at one prestige loop, stops at one game. The cleaner statement of what the genre learned is structural rather than per-game: a *layer* is a reset boundary whose currency survives the reset of the layer below. Stack layers and each one's formula gets to operate on a different feature of the layer beneath it. The historical anchor for that move isn't a single game — it's Prestige Tree, Jacorb's 2020 project that generalized layered prestige into a build-your-own framework. Adding a layer became one configuration call; the cascade, the unlocks, the visual graph, all came for free. That's where layered prestige became a *pattern* rather than a single game's mechanic.
+The post-2016 genre, when it stops at one prestige loop, stops at one game. The cleaner statement of what the genre learned is structural rather than per-game: a *layer* is a reset boundary whose currency persists through the reset of the layer below. Stack layers and each one's formula gets to operate on a different feature of the layer beneath it. The historical anchor for that move isn't a single game — it's Prestige Tree, Jacorb's 2020 project that generalized layered prestige into a build-your-own framework. Adding a layer became one configuration call; the cascade, the unlocks, the visual graph, all came for free. That's where layered prestige became a *pattern* rather than a single game's mechanic.
 
 This page is about what changes when prestige stops being a prestige loop and becomes a stack — and about the framework that codified the stacking.
 
 ## A prestige loop is a layer with no outside
 
-Pecorella's model has two state variables that survive a reset:
+Pecorella's model has two state variables that persist through a reset:
 
 - A prestige *currency* $P$ that grows monotonically across runs.
 - A bonus shape $B(P)$ that the next run starts under.
@@ -30,9 +30,9 @@ A second layer is built by treating $P$ itself as the *in-run* currency of a lay
 - Its own prestige currency $Q$.
 - Its own bonus shape $B'(Q)$ that boosts layer-1's bonus shape.
 
-When the player triggers a layer-2 reset, $Q$ gains $\Delta Q = g(P_{\max})$, then $P$ is reset to zero along with everything *layer 1* used to build it — generators, multipliers, in-run currency, milestones. The reset cascades downward: layer-2's reset implies a layer-1 reset implies whatever layer-1's reset cascade implies. The thing that survives is $Q$, plus the rules of the game itself.
+When the player triggers a layer-2 reset, $Q$ gains $\Delta Q = g(P_{\max})$, then $P$ is reset to zero along with everything *layer 1* used to build it — generators, multipliers, in-run currency, milestones. The reset cascades downward: layer-2's reset implies a layer-1 reset implies whatever layer-1's reset cascade implies. The thing that persists is $Q$, plus the rules of the game itself.
 
-This is the structural definition: **a prestige currency is at layer $k$ if it survives the reset of layer $k-1$.** That's the whole criterion. Whether the game labels the layer "Eternity" or "Ascension" or "Singularity" is decoration — what makes it a layer is that its reset wipes the layer below.
+This is the structural definition: **a prestige currency is at layer $k$ if it persists through the reset of layer $k-1$.** That's the whole criterion. Whether the game labels the layer "Eternity" or "Ascension" or "Singularity" is decoration — what makes it a layer is that its reset wipes the layer below.
 
 ## The cascade rule, declared
 
@@ -72,7 +72,7 @@ for (let x = row; x >= 0; x--) rowReset(x, layer)
 rowReset("side", layer)
 ```
 
-The `rowReset` invocations are filtered by per-layer milestones — the framework's analogue to game-specific exemption flags — declared inline next to each `addLayer` definition. The cascade rule and the exemption rule live in the same configuration object.
+The `rowReset` invocations are filtered by per-layer milestones — the framework's analogue to game-specific exemption flags — declared inline next to each `addLayer` definition. The cascade rule and the exemption rule are in the same configuration object.
 
 The Modding Tree, Prestige Tree's successor by Acamaeda, generalizes this. The same `doReset` walks the row graph, but layer config can override `resetsNothing`, `onPrestige`, and per-layer `keep` lists, and side rows let layers branch off the main column without changing the cascade order:
 
@@ -163,7 +163,7 @@ Log-shape conversions are what comes next, and they have a different limiting be
 
 $$\lim_{n \to \infty} \log^n(x) = \mathrm{slog}(x)$$
 
-where $\mathrm{slog}$ is the [super-logarithm](https://en.wikipedia.org/wiki/Super-logarithm), the inverse of [tetration](https://en.wikipedia.org/wiki/Tetration). Deep prestige cascades that lean on log conversions don't approach a flat slope the way power-law stacks do; they approach tetration's compression rate.
+where $\mathrm{slog}$ is the [super-logarithm](https://en.wikipedia.org/wiki/Super-logarithm), the inverse of [tetration](https://en.wikipedia.org/wiki/Tetration). Deep prestige cascades that depend on log conversions don't approach a flat slope the way power-law stacks do; they approach tetration's compression rate.
 
 Shark Incremental walks the limit stepwise across its six layers, each one a deeper compression than the last:
 
@@ -220,14 +220,14 @@ Each corruption disables or twists a different game subsystem at the cost of mul
 
 ## Survey
 
-The same skeleton — currency that survives the reset below, cascade walking down, formula reshaped per layer — shows up in many shapes:
+The same skeleton — currency that persists through the reset below, cascade walking down, formula reshaped per layer — shows up in many shapes:
 
 - **NGU Idle** stacks five reset escalations: rebirths (the standard prestige loop), then meta upgrades, then evil mode, then sadistic mode, then the last few endgame layers. Each escalation re-runs the full game under harsher constants. The "layer thinning" effect is brutal — a single sadistic-mode run can outlast hundreds of evil-mode runs. NGU shows what the multi-decade ascent looks like in production.
 - **Antimatter Dimensions** ladders Infinity → Eternity → Reality → Pelle's Doomed reality. AD is the usual reference point, but as a structural example it's one ladder among many — a single chain with hand-rolled per-layer formulas. It's the canonical *single-spine* layered prestige; Prestige Tree generalizes it into the *DAG* case.
-- **Cell to Singularity** narrative-shapes its layers: the player walks a story-driven tree through Earth life, civilization, AI, the singularity itself. The currency-survives-reset structural rule still applies — Metabits earned at the singularity reset survive every prior layer's wipe — but the ascent isn't gated on a $10^{308}$ wall, it's gated on narrative beats. Layered prestige works as a narrative skeleton, not just a numerical one.
+- **Cell to Singularity** narrative-shapes its layers: the player walks a story-driven tree through Earth life, civilization, AI, the singularity itself. The currency-persists-through-reset structural rule still applies — Metabits earned at the singularity reset persist through every prior layer's wipe — but the ascent isn't gated on a $10^{308}$ wall, it's gated on narrative beats. Layered prestige works as a narrative skeleton, not just a numerical one.
 - **Universal Paperclips** is the limit case: phase transitions function as story-shaped layered prestige. Phase 1 (Earth) is a clip-production loop; phase 2 (space) reuses some currencies and discards others; phase 3 (cosmic) collapses the early game's UI entirely. The "reset" between phases isn't player-triggered — it's narrative-triggered when production crosses a threshold — but the structural pattern is identical to a layered-prestige cascade with a forced reset condition, and it's worth seeing the pattern stretch this far from its conventional shape.
 
-The visible spread — from Synergism's eight-axis corruption configuration to Paperclips' three forced phase transitions — is what "the framework codified the pattern" buys: many surface shapes, one underlying skeleton.
+The visible spread — from Synergism's eight-axis corruption configuration to Paperclips' three forced phase transitions — is what "the framework codified the pattern" gives: many surface shapes, one underlying skeleton.
 
 ## What this enabled
 
@@ -251,7 +251,7 @@ The visible spread — from Synergism's eight-axis corruption configuration to P
 
 Jacorb's Prestige Tree was the genre's first pass at making layered prestige a configuration declaration rather than a hand-rolled cascade. `addLayer` registers a layer with its id, row, base resource, prestige type, and gain formula; the row-walking reset (`doReset` calling `rowReset` for every row from the resetting layer down to 0) handles persistence and exemption automatically. The vocabulary maps onto the research: layer structure, reset scope, persistence type, formula family, timing mode — five orthogonal dimensions, each declarable per layer.
 
-The reason this shape pays off, rather than ad-hoc per-layer code, is the entanglement above. A game stacking five layers without shared substrate ends up with five hand-rolled cascade routines, five hand-rolled save-shape extensions, and five hand-rolled milestone-exemption checks. The cost compounds layer-by-layer. Prestige Tree proved this trade was worth making in 2020.
+The reason this shape is worthwhile, rather than ad-hoc per-layer code, is the entanglement above. A game stacking five layers without shared substrate ends up with five hand-rolled cascade routines, five hand-rolled save-shape extensions, and five hand-rolled milestone-exemption checks. The cost compounds layer-by-layer. Prestige Tree proved this trade was worth making in 2020.
 
 <Sources
   cites={[

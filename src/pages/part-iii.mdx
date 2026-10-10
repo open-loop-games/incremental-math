@@ -82,13 +82,13 @@ Sheet `3a` answers this with a tick-driven sim over a single generator. Each tic
 2. **Produce.** Production $= \text{baseIncome} \times \text{count} \times \text{milestone-bonus} \times (1 + p \cdot 0.01)$, where the last term is the running prestige multiplier.
 3. **Bank lifetime earnings.** $c_L \mathrel{+}= \text{income} \times \text{tickSec}$.
 4. **Compute pending.** Pecorella's prestige formula here is $\lfloor (c_L / 10^5)^{0.5} \rfloor - p$ — a Realm-Grinder-shaped square-root over lifetime.
-5. **Auto-reset** if pending $\geq$ first-reset target _and_ pending would multiply current prestige currency by at least the configured ratio (default $1.5\times$). On reset: count → 1, currency → 0, $p \mathrel{+}= \text{pending}$. Lifetime survives.
+5. **Auto-reset** if pending $\geq$ first-reset target _and_ pending would multiply current prestige currency by at least the configured ratio (default $1.5\times$). On reset: count → 1, currency → 0, $p \mathrel{+}= \text{pending}$. Lifetime persists.
 
 Milestone bumps stack: $\times 2$ at 25 owned, $\times 2$ at 50 (cumulative $\times 4$), $\times 4$ at 100 ($\times 16$), and so on through $\times 32$ at 700. Each crossing creates a fast section in the run; the gaps between them are the slow sections.
 
 <PrestigeLoop client:visible />
 
-The bumpiness is the design surface. A long flat stretch followed by a cascade of fast purchases is a pattern Pecorella explicitly calls out from his own runs: a milestone hits at 500 generators owned, the $\times 16$ multiplier at that crossing kicks production back over cost, and the next 200 generators happen in seconds. Real players in that situation typically _delay_ the reset to ride the boost — a behaviour the auto-reset model can't capture, which is why this sim is "rough feel for the dynamics," not a balance ground truth.
+The bumpiness is the design surface. A long flat stretch followed by a cascade of fast purchases is a pattern Pecorella explicitly calls out from his own runs: a milestone hits at 500 generators owned, the $\times 16$ multiplier at that crossing kicks production back over cost, and the next 200 generators happen in seconds. Real players in that situation typically _delay_ the reset to benefit from the boost — a behaviour the auto-reset model can't capture, which is why this sim is "rough feel for the dynamics," not a balance ground truth.
 
 ## Designing the rhythm
 

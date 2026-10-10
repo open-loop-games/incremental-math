@@ -25,7 +25,7 @@ The genre's first decade lived inside this limit, and its second decade started 
 
 ## break_infinity.js
 
-Patashu's `break_infinity.js` was written to keep Antimatter Dimensions running. AD was already public when Pecorella wrote Part I, and within a couple of years had pushed past what JS doubles could carry. AD's author needed a number type with the same arithmetic API as `Number` but a much larger limit, and Patashu built one.
+Patashu's `break_infinity.js` was written to keep Antimatter Dimensions running. AD was already public when Pecorella wrote Part I, and within a couple of years had pushed past what JS doubles could hold. AD's author needed a number type with the same arithmetic API as `Number` but a much larger limit, and Patashu built one.
 
 The storage trick is a pair: `{ mantissa, exponent }`, where the value is $\text{mantissa} \times 10^{\text{exponent}}$. The [mantissa](https://en.wikipedia.org/wiki/Significand) is a normal JS Number in the range $[1, 10)$; the exponent is also a normal JS Number, but interpreted as the base-10 exponent rather than as the value itself. The limit is now bounded by what a JS Number can hold *as an exponent*: roughly $10^{1.79 \times 10^{308}}$ — a [googolplex](https://en.wikipedia.org/wiki/Googolplex), then another googolplex's worth, then a few hundred more.
 
@@ -53,7 +53,7 @@ return DC.E1.pow(logCost);
 
 `DC.E1` is the constant `10`, so `DC.E1.pow(logCost)` is the only place the result becomes a Decimal. Everything before — the addition, the multiplication, the quadratic term that gives AD its "infinity wall" cost shape (covered next page) — is plain double arithmetic on the *log*. The big-number library's job in AD is to be a presentation layer for math that never needed it.
 
-That structure matters. Without it, every cost calculation would do tens of Decimal operations per call; with it, AD's cost code runs at native speed and pays the Decimal cost only when displaying or comparing against the player's wallet.
+That structure matters. Without it, every cost calculation would do tens of Decimal operations per call; with it, AD's cost code runs at native speed and incurs the Decimal cost only when displaying or comparing against the player's wallet.
 
 ## break_eternity.js
 
@@ -76,7 +76,7 @@ The cleanest way to feel the difference is to iterate $10^x$. Each step takes th
 
 <BigNumberTower client:visible />
 
-Native JavaScript dies at step 2 — the second iteration tries to compute $10^{10^{10}}$, whose exponent ($10^{10}$) is itself only ten billion, but the result requires storing an exponent of ten billion in a JS Number, which forces the operation into `Infinity`. break_infinity survives one more round. Its exponent field can hold ten billion comfortably, but at step 3 the *next* exponent — $10^{10^{10}}$ as a JS Number — overflows, and break_infinity inherits its substrate's ceiling.
+Native JavaScript fails at step 2 — the second iteration tries to compute $10^{10^{10}}$, whose exponent ($10^{10}$) is itself only ten billion, but the result requires storing an exponent of ten billion in a JS Number, which forces the operation into `Infinity`. break_infinity lasts one more round. Its exponent field can hold ten billion comfortably, but at step 3 the *next* exponent — $10^{10^{10}}$ as a JS Number — overflows, and break_infinity inherits its substrate's ceiling.
 
 break_eternity climbs another `layer` per step indefinitely.
 
@@ -88,7 +88,7 @@ The progression isn't pedagogical fluff. It mirrors actual escalation in layered
 
 **Cost acceleration past the seesaw.** Pure exponential cost is what Pecorella's limit was built around. Once the storage limit moves, cost curves can move with it — quadratic-in-exponent (AD), a steep ratio shifting to a shallower one past a prestige threshold (Realm Grinder), tetrational endgame walls. The `cost-acceleration` page covers the curves themselves; the substrate is what makes them implementable. AD's `getMaxBought` works in log space at <Cite repo="AntimatterDimensionsSourceCode" path="src/core/math.js" line="398-429" /> — it computes how many generators the player can afford by inverting a quadratic in log-of-money, so the user-facing answer is exact at any scale.
 
-**"Infinity" as a gameplay event, not a runtime accident.** AD's Big Crunch — the first reset — fires when antimatter reaches $2^{1024}$, the same value at which JS Numbers would overflow. <Cite repo="AntimatterDimensionsSourceCode" path="src/core/constants.js" line="68" /> It's a deliberate design echo. Underneath, the Decimal carrying antimatter never overflows; the target is a chosen number, and the moment is gameplay. The post-2016 genre treats "you've hit infinity" as a designed event the same way a 2016 RPG treats a level-up.
+**"Infinity" as a gameplay event, not a runtime accident.** AD's Big Crunch — the first reset — fires when antimatter reaches $2^{1024}$, the same value at which JS Numbers would overflow. <Cite repo="AntimatterDimensionsSourceCode" path="src/core/constants.js" line="68" /> It's a deliberate design echo. Underneath, the Decimal holding antimatter never overflows; the target is a chosen number, and the moment is gameplay. The post-2016 genre treats "you've hit infinity" as a designed event the same way a 2016 RPG treats a level-up.
 
 **Notation as its own design surface.** Once $10^{10^{10}}$ is an everyday number, the string `1e1e10` is unreadable. The genre developed a vocabulary, covered in its own section below.
 
@@ -109,9 +109,9 @@ Default scientific (`1e10000000`) loses the tower structure entirely — three s
 
 ## Saves, serialization, and equality
 
-Three implementation gotchas that bite every project once and never again:
+Three implementation gotchas that affect every project once and never again:
 
-**Saves don't roundtrip via `JSON.stringify`.** A `Decimal` instance is an object with `sign`, `mag`, and `layer` fields plus a prototype carrying `.plus`, `.times`, etc. `JSON.stringify(decimal)` serializes the fields fine, but `JSON.parse(savedString)` returns a plain object with no methods. The fix is convention: serialize via `.toString()` (which produces a parseable string like `"e1e10"`), and rehydrate via `new Decimal(savedString)`. Most game-shaped save layers handle this automatically; raw consumers of break_eternity have to remember.
+**Saves don't roundtrip via `JSON.stringify`.** A `Decimal` instance is an object with `sign`, `mag`, and `layer` fields plus a prototype with `.plus`, `.times`, etc. `JSON.stringify(decimal)` serializes the fields fine, but `JSON.parse(savedString)` returns a plain object with no methods. The fix is convention: serialize via `.toString()` (which produces a parseable string like `"e1e10"`), and rehydrate via `new Decimal(savedString)`. Most game-shaped save layers handle this automatically; raw consumers of break_eternity have to remember.
 
 **`==` and `===` are nonsense.** Two `Decimal` instances with the same value are different objects. `a.eq(b)` is the right answer. Sets and Maps keyed on Decimals will behave unexpectedly — keys are by reference, not by value. Use the string form as the key if you need set semantics on Decimal values.
 
@@ -129,7 +129,7 @@ Three implementation gotchas that bite every project once and never again:
 
 ## Adoption split
 
-Established games tend not to migrate. AD still depends on `break_infinity.js@^2.0.0`. <Cite repo="AntimatterDimensionsSourceCode" path="package.json" line="14" /> So does Synergism. <Cite repo="SynergismOfficial" path="package.json" line="12" /> Their design didn't push past break_infinity's limit, so the cost of a switch — risk to saved-game arithmetic, reaudit of every formula — never paid its way. Newer projects (Prestige Tree, Distance Incremental, Incremental Mass Rewritten) start on break_eternity because layered prestige assumes it. The split is real and looks likely to persist.
+Established games tend not to migrate. AD still depends on `break_infinity.js@^2.0.0`. <Cite repo="AntimatterDimensionsSourceCode" path="package.json" line="14" /> So does Synergism. <Cite repo="SynergismOfficial" path="package.json" line="12" /> Their design didn't push past break_infinity's limit, so the cost of a switch — risk to saved-game arithmetic, reaudit of every formula — never justified itself. Newer projects (Prestige Tree, Distance Incremental, Incremental Mass Rewritten) start on break_eternity because layered prestige assumes it. The split is real and looks likely to persist.
 
 <Sources
   cites={[

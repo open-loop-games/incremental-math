@@ -65,13 +65,13 @@ buy modes instead of a priority number. The two
 slider extremes produce qualitatively different cases:
 
 - **Low priority everywhere.** Every spare cent goes to G1, then G2,
-  then G3. All tiers grow together because cheap purchases land before
+  then G3. All tiers grow together because cheap purchases happen before
   the budget can build to expensive ones. The production curve is
   smooth and roughly polynomial.
 - **High priority everywhere.** The autobuyer holds out for the top
   tier. Lower tiers accumulate only as side-effects of producing the
   top-tier currency. The curve is staircased — flat between G3
-  purchases, jumps when one lands.
+  purchases, jumps when one completes.
 
 The real-game version of this is Antimatter Dimensions' per-tier dimension
 autobuyers. There is no priority number: each tier has an on/off switch, a
@@ -126,7 +126,7 @@ export const autoUpgrades = () => {
 
 `upgrades[90]` is whether the player has bought the *autobuy generators*
 upgrade. Inside that gate, the loop is the simplest possible:
-buy-when-affordable, low-tier first, no priority. The complexity lives
+buy-when-affordable, low-tier first, no priority. The complexity is
 in the unlock graph (what each `upgrades[i]` requires), not the policy.
 
 ## Does a dynamic autobuyer converge to the static optimum?
@@ -230,7 +230,7 @@ question of what kind of game an incremental can be — a small but
 durable corner of the genre where automation *is* the gameplay rather
 than a layer over it.
 
-## Survey: where automation lands in the genre
+## Survey: where automation appears in the genre
 
 Different games place automation at different points in the progression:
 
@@ -297,7 +297,7 @@ the policy itself becomes a thing the player buys.
       repo: 'AntimatterDimensionsSourceCode',
       path: 'src/core/autobuyers/autobuyer.js',
       line: '4-118',
-      note: 'AutobuyerState / IntervaledAutobuyerState / UpgradeableAutobuyerState — the three-layer base class hierarchy every AD autobuyer extends. Interval-upgrade pricing and reset-on-prestige behavior live here.',
+      note: 'AutobuyerState / IntervaledAutobuyerState / UpgradeableAutobuyerState — the three-layer base class hierarchy every AD autobuyer extends. Interval-upgrade pricing and reset-on-prestige behavior are here.',
     },
     {
       repo: 'SynergismOfficial',

@@ -30,7 +30,7 @@ _visible_. The math was always headed there.
 
 When a mechanic is its own [first-passage problem](/rate-functions/) — its own currency,
 its own target, its own rate function feeding back into nothing the rest of the game
-cares about — it lives in isolation from the main loop's rate function. The total
+cares about — it is in isolation from the main loop's rate function. The total
 production of the game decomposes as a sum: $r_{\text{total}}(t) = r_1(t) + r_2(t) + \dots$.
 Once the player has automated $r_1$, its rate is fixed at whatever the autobuyer
 produces. Meanwhile, the post-automation upgrade tree pushes some other rate $r_3$ into
@@ -130,7 +130,7 @@ down. Identical math to the multiplier case from the time perspective —
 $T(C / k) = T_{\text{multiplier}}(C)$ — but the framing is different: the _cost line_
 moves down rather than the _production line_ moving up. Players feel this as "the next
 thing is cheaper now," and the difference matters for which side of the seesaw the
-upgrade reads as belonging to.
+upgrade appears to belong to.
 
 **Multiply the state.** The state variable itself gets rescaled: $x \to k \cdot x$.
 On log-axis charts this is a horizontal shift; on linear axes it's a stretch. For
@@ -169,7 +169,7 @@ functions stay simple.
 
 Where prestige stops being closed-form is when the _run length_ itself becomes a
 decision variable. The question "when should the player reset?" is an
-[optimal-stopping problem](https://en.wikipedia.org/wiki/Optimal_stopping), which lives
+[optimal-stopping problem](https://en.wikipedia.org/wiki/Optimal_stopping), which is
 on the [bifurcations page](/rate-functions/bifurcations#optimal-stopping) of the
 catalog. Per-run math closes; run-length math doesn't. The right adjacent math
 there is dynamic programming or a Bellman-equation solver, not the catalog. Most modern
@@ -222,10 +222,10 @@ Two boundaries the catalog can't see across:
   deliberately keep all mechanics composing forever. Both are real design philosophies.
 
 What the catalog _does_ tell you, reliably, is whether your existing composition will
-hold up — whether the addition you're contemplating sits in additive position relative
+hold up — whether the addition you're contemplating is in additive position relative
 to existing rates (will go obsolete), in multiplicative position (will blend), or in
 some other composition the catalog has named. That diagnosis runs faster than tuning
-runs do, and it surfaces problems before the playtests would.
+runs do, and it raises problems before the playtests would.
 
 <Sources
   cites={[

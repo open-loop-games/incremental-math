@@ -73,7 +73,7 @@ The structural distinctions that matter are three:
   is positive the system grows exponentially, otherwise it converges to
   a fixed point.
 
-Every modern production system the corpus contains lands in one of
+Every modern production system the corpus contains is in one of
 these three.
 
 ## Universal Paperclips as a worked example
@@ -258,7 +258,7 @@ new. Once $A$ has a non-trivial loop, the dynamics matrix has a
 [spectral radius](https://en.wikipedia.org/wiki/Spectral_radius)
 $\rho(A)$, and the system grows like $\rho(A)^t$ — exponential, not
 polynomial. Without intervention the loop diverges; with intervention
-it lands on a fixed point.
+it ends up at a fixed point.
 
 The two intervention strategies are *delay* and *softcap*. Delay
 inserts a discrete latency between the producing tick and the consumed
@@ -291,7 +291,7 @@ demand = demand + ((demand/10)*prestigeU);
 ```
 
 `demand` is inversely proportional to `margin`, so raising margin
-shrinks demand and the loop self-regulates. The player can buy out of
+shrinks demand and the loop self-regulates. The player can leave
 this regime by raising marketing, which is the entire mid-game pacing
 mechanism — the cycle's softcap is a *progression resource*, not a
 constant. That move — making the dampener a player-purchasable
@@ -390,7 +390,7 @@ and cycle presets are the modern surface area on top.
 
 The cascade produced the cleanest analytic result in the entire faithful
 section. $t^d/d!$ is the kind of formula that generations of designers
-will reach for, because it carries its own rationale and its own
+will choose, because it contains its own rationale and its own
 factorial-anchored growth. Modern games walked away from it for the
 straightforward reason that one shape is one shape — and a genre that
 runs for a decade needs a vocabulary, not a sentence.

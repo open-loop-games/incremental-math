@@ -17,7 +17,7 @@ is one number, $(\ln 2)/\ln m$, and that one number sets nearly everything about
 feel of the late game.
 
 This page bundles the questions where doubling time, first-passage targeting, and
-asymptotic concentration combine into prescriptive answers. Most of the math lives on
+asymptotic concentration combine into prescriptive answers. Most of the math is on
 the [exponential family](/rate-functions/exponential) catalog page; what's here is the
 design-side reading.
 
@@ -90,8 +90,8 @@ to keep $T(n) \in [T_{\min}, T_{\max}]$:
 $$\left(\frac{T_{\min}}{T_1}\right)^{1/(n-1)} \le m \le \left(\frac{T_{\max}}{T_1}\right)^{1/(n-1)}$$
 
 For $T_1 = 10$s and $n = 10$, the Flow band $[30, 120]$ resolves to
-$m \in [1.13, 1.32]$. The genre default $1.15$ lands comfortably inside that range —
-Cookie Clicker and the games that copied its ratio sit there because their designers,
+$m \in [1.13, 1.32]$. The genre default $1.15$ is comfortably inside that range —
+Cookie Clicker and the games that copied its ratio are there because their designers,
 deliberately or otherwise, picked an $m$ that puts the tenth purchase's beat in Flow.
 
 <FlowChannels client:visible />
@@ -128,13 +128,12 @@ late game both. The doubling structure is uniform — pick $m$ and you've picked
 ratio of late-game pacing to early-game pacing. Games that want the early game to feel
 fast and the late game to feel deep need either a [piecewise splice](/rate-functions/composition#piecewise-splice)
 of two geometrics (different $m$ before and after a threshold) or a different rate
-function entirely. The Pecorella-style single-$m$ ladder is uniformly paced by
-construction.
+function entirely. The Pecorella-style single-$m$ ladder is necessarily paced uniformly.
 
 ## How do I prevent the late game from being a wall?
 
 Re-read [the asymptotic concentration lemma](/rate-functions/exponential#asymptotic-concentration): for a
-geometric cumulative, the last $K$ purchases carry approximately $1 - m^{-K}$ of the total
+geometric cumulative, the last $K$ purchases account for approximately $1 - m^{-K}$ of the total
 integral. For $m = 1.15$ and $K = 10$, that's 75%. The math is doing this, regardless
 of what the rest of the game does — the _feeling_ that the last few purchases of any
 generator are the whole grind is mathematically true.
@@ -153,7 +152,7 @@ The design-side problem is what to _do_ about it. Three working answers:
 - **Cap the purchase count entirely with a milestone gate.** A hard cap turns the runaway into
   a reachable endpoint. Players know when they're done. This changes the game's shape
   fundamentally — it's no longer a pacing decision, it's an end-of-content decision.
-  Most idle games avoid this for a reason; some lean into it.
+  Most idle games avoid this for a reason; some choose it.
 
 What the math says is that some response is _required_ if you want the late game to
 feel like progress and not like a wall. A pure $m = 1.15$ ladder with no modulation will

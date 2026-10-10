@@ -10,7 +10,7 @@ import Sources from '../../components/Sources.astro';
 # Bending the curve — softcaps and regime breaks
 
 Softcaps are how the genre patches the runaway tendency of unbounded geometric
-growth. They're also where the most common design mistake lives: the wrong shape, the
+growth. They're also where the most common design mistake is: the wrong shape, the
 wrong threshold, or the wrong stack of caps will trade a runaway problem for a wall
 problem. Math diagnoses both.
 
@@ -36,32 +36,32 @@ delivering value past a threshold, cap it there."
 
 A clean test the design call can run: does the player notice when one
 unit of the runaway value becomes available? If yes (still feels like progress), the
-rate function is doing its job; don't cap. If no (the marginal unit lands silently
+rate function is doing its job; don't cap. If no (the marginal unit arrives silently
 because the formatter rounds it to invisibility, or because the next target is
 priced past where the player can read), the rate has outgrown its UI, and capping it
 either changes the shape or changes the formatter — but something must change.
 
 ## Which shape — root, log, hyperbolic, piecewise?
 
-Each shape lives in the catalog at a specific entry. Picking among them is picking
+Each shape is in the catalog at a specific entry. Picking among them is picking
 which property matters most for the cap's role.
 
-**Root / fractional exponent**. $g(x, t) = t \cdot (x/t)^p$ for $0 < p < 1$. Lives at the
+**Root / fractional exponent**. $g(x, t) = t \cdot (x/t)^p$ for $0 < p < 1$. Is at the
 [polynomial entry](/rate-functions/power-law#polynomial-rate) with fractional exponent. The post-cap
 growth is sublinear but unbounded, with a smooth slope change at the threshold. Pick
 this when the cap's role is "slow down growth, don't ceiling it." The exponent $p$
 controls aggressiveness — $p = 0.5$ is the genre-default sqrt softcap, $p = 0.3$ is
 harsh, $p = 0.7$ is gentle.
 
-**Log**. $g(x, t) = t + k \cdot \log_{10}(x - t + 1)$. Lives near the
+**Log**. $g(x, t) = t + k \cdot \log_{10}(x - t + 1)$. Is near the
 [logarithmic entry](/rate-functions/log-frontier#logarithmic-rate). The post-cap growth is _very_
 sublinear — every $10\times$ in input adds a fixed $k$ to output. Pick this when the
 cap's role is "compress many orders of magnitude into a small number." Games that
 stack many log caps use this shape because their underlying values span dozens of
-orders of magnitude and need to land on a stat the player can read.
+orders of magnitude and need to end up on a stat the player can read.
 
-**Hyperbolic / asymptotic**. $g(x) = L \cdot x / (x + k)$. Lives at the
-[rational entry $p > 1$](/rate-functions/power-law#rational--hyperbolic-rate) when read as a cumulative. The
+**Hyperbolic / asymptotic**. $g(x) = L \cdot x / (x + k)$. Is at the
+[rational entry $p > 1$](/rate-functions/power-law#rational--hyperbolic-rate) when taken as a cumulative. The
 post-cap growth approaches a _finite ceiling_ $L$ that's never reached. Pick this when
 the cap's role is "this stat represents a fraction or efficiency that should saturate
 near 100%." Civ Clicker's cleric piety formula puts the Pyramid bonus through this
@@ -88,11 +88,11 @@ The hyperbolic modifier is `1 - 100 / (graveyard + 100)`, the canonical
 $1 - b/(b + x)$ shape with $b = 100$. At zero graveyards the bonus is zero;
 at 100 graveyards it's $0.5$; at infinity it's $1.0$. The other modifiers in the
 chain are state-independent multipliers — the page's
-[modifier-product rule](/rate-functions/composition#modifier-product-state-independent-multipliers) — so the saturation lives entirely
+[modifier-product rule](/rate-functions/composition#modifier-product-state-independent-multipliers) — so the saturation is entirely
 in this one parenthesized expression.
 
 **Piecewise / regime split**. Different rate or growth on each side of a threshold,
-glued continuously. Lives at the [piecewise splice](/rate-functions/composition#piecewise-splice)
+glued continuously. Is at the [piecewise splice](/rate-functions/composition#piecewise-splice)
 rule. Pick this when the cap's role is "change the regime visibly so the player feels
 the transition." A pre/post-prestige cost shift built as two geometrics spliced is
 the common instance: the player crosses a named threshold and the game's pacing
@@ -147,7 +147,7 @@ Working answers from the corpus:
 
 The catalog says nothing about which of these is right for a given game; it just says
 each is a piecewise splice that closes. The design call is content-shaped: how
-much does your late game lean on the caps as named features versus as background
+much does your late game depend on the caps as named features versus as background
 shape?
 
 ## Can the curve un-bend?
@@ -170,7 +170,7 @@ per-purchase cost ratio; the spread within a stage is what sets that stage's fee
 
 <Cite repo="fundamental" path="Source_TS/Player.ts" line="318-325" />
 
-The demo collapses each stage to one representative cost ratio so the shape reads as a
+The demo collapses each stage to one representative cost ratio so the shape looks like a
 single curve.
 
 <FundamentalStagesDemo client:visible />
@@ -179,7 +179,7 @@ Stage 3 is the climactic difficulty wall: per-purchase cost ratio jumps to $10\t
 which under the [doubling-time formula](/design-playbook/pacing#how-do-i-pick-a-doubling-time)
 means the beat time at purchase $n$ is $10^{n-1}$ times the beat time at purchase 1. Stage 5
 is the inverse — at $1.11$, per-purchase pacing visibly relaxes below the game's $1.40$
-default. The valley reads as a breather _because_ the peak existed. Three conditions
+default. The valley appears as a breather _because_ the peak existed. Three conditions
 seem to make non-monotonic work: a peak with strong prestige compression so the wall
 isn't experienced as a dead end, a valley that's meaningfully gentler than its
 neighbours (a 5% change in cost ratio isn't felt), and a legible stage structure so

@@ -31,7 +31,7 @@ total upgrades but a worse subset.
 
 ## Cookie Clicker: the canonical synergy graph
 
-Cookie Clicker has two distinct synergy mechanics that ride on top of its
+Cookie Clicker has two distinct synergy mechanics that apply on top of its
 hand-rolled modifier chain. Both have been shipped since the early years and
 are the genre's reference implementation.
 
@@ -125,7 +125,7 @@ for (var i in me.synergies) {
 The per-building tooltip is the *attribution view* of the synergy graph. Every
 mature game with synergies eventually builds one of these screens, because the
 information is otherwise invisible — a 12% multiplier from Time Machines doesn't
-appear on the Farm's row of the main UI; it lives in the graph.
+appear on the Farm's row of the main UI; it is in the graph.
 
 ## Realm Grinder: faction as set selector
 
@@ -142,7 +142,7 @@ selected.
 This is not a modifier chain that the player toggles. It's a one-shot choice
 that reshapes the function the chain optimizes. Choosing Fairy turns farms,
 inns, and blacksmiths into the high-leverage buildings; choosing Goblin makes
-the same buildings dead weight and the evil ones load-bearing. The player isn't
+the same buildings useless and the evil ones load-bearing. The player isn't
 buying more multipliers; they're choosing which subset of their build the
 synergy applies to.
 
@@ -224,7 +224,7 @@ score.
 
 ### Submodularity is the genre's friend
 
-Most shipped synergy systems land on a structural property called
+Most shipped synergy systems share a structural property called
 [submodularity](https://en.wikipedia.org/wiki/Submodular_set_function). A set
 function $f$ is submodular if for all $A \subseteq B \subseteq U$ and $i \notin
 B$:
@@ -324,8 +324,8 @@ piece of math.
 diminishing returns on individual contributions, no hard "needs both to do
 anything" gates. A designer who wants the game to feel *combinatorial*
 (planning required) inserts supermodular gates: pair upgrades that need both
-members, set-of-N achievements, faction-specific buildings that are dead
-weight without the faction. The mix determines the play feel. Cookie Clicker
+members, set-of-N achievements, faction-specific buildings that are useless
+without the faction. The mix determines the play feel. Cookie Clicker
 is mostly submodular with a few supermodular pockets — enough to reward
 planning without punishing intuition.
 

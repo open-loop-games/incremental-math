@@ -156,7 +156,7 @@ extrapolated estimate (mode 3) and skip the load-time wait.
 
 ## Bonus-time banking
 
-The first two families pay you on return. The third pays you *later* — and
+The first two families give you currency on return. The third gives you *later* — and
 only if you keep playing.
 
 KTL converts every millisecond of offline time into a reservoir called
@@ -192,15 +192,15 @@ if (data.gameSettings.bonusSpeed > 1) {
 }
 ```
 
-The mathematical content is conservation. Each offline second buys one
+The mathematical content is conservation. Each offline second gives one
 second of "the next active second runs at $1+s$" where the player picks
-$s$. If the player runs at $2\times$, one offline second buys one
-fast-forward second. If they run at $5\times$, one offline second buys
+$s$. If the player runs at $2\times$, one offline second gives one
+fast-forward second. If they run at $5\times$, one offline second gives
 one quarter of a fast-forward second. The bank is a budget for spending
 *time inside an active session*, not a deposit of currency.
 
 Trimps' fast-simulate mode is a distant relative — it processes the
-offline window in a tight loop, but it pays out as currency on return, not
+offline window in a tight loop, but it grants currency on return, not
 as a banked credit. KTL's pattern is the strict version: the player
 *never* gets offline time as currency. They get it as future speed.
 
@@ -235,8 +235,8 @@ if (SharkGame.flags.needOfflineProgress && SharkGame.Settings.current.offlineMod
 }
 ```
 
-The hybrid: some of the offline window lands as immediate progress
-(`updateMinuteHand`), the bonus-aspect portion *also* lands as banked
+The hybrid: some of the offline window is applied as immediate progress
+(`updateMinuteHand`), the bonus-aspect portion *also* is stored as banked
 time the player burns through later. The two channels coexist because the
 designer wanted both the satisfaction of return-payouts and the active-loop
 incentive that banking creates.
@@ -283,7 +283,7 @@ raising a constant.
 
 Sliders for the parameters every game tunes: cap, online-rate fraction,
 trickle slope past the cap, and a tick-sim growth rate that lets the
-simulated curve diverge upward from extrapolation. Banking sits as a
+simulated curve diverge upward from extrapolation. Banking is a
 dashed line at zero on this axis by design, with a footnote — its return
 on offline time is a balance, not a payout, and the rest of the chart is
 plotting payouts.
@@ -293,7 +293,7 @@ extrapolation-based curves collapse to zero and only banking accrues —
 which is what KTL does for any session shorter than five seconds.
 With trickle = 100% and cap = $\infty$, hard cap and uncapped converge
 and the genre's offline mechanic dissolves into "the game just ran for
-you while you were away." Most games sit deep in the interior of that
+you while you were away." Most games are deep in the interior of that
 parameter space because both endpoints break the design.
 
 ## What banking is really for
