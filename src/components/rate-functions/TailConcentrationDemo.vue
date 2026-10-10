@@ -2,33 +2,58 @@
 import { computed, ref } from 'vue';
 import { seriesColor } from '../../lib/series-colors';
 
-// Asymptotic concentration of a geometric cumulative.
-//   aₙ = a · mⁿ; the last K of N levels carry
-//     ratio(N, K) = (mᴺ − m^(N−K)) / (mᴺ − 1)  →  1 − m⁻ᴷ as N → ∞.
-// The bar chart makes this self-evident: at any sane m, the last few bars dwarf
-// everything left of them, regardless of N. The slider lets the reader choose
-// how many trailing bars to shade and watch the share update.
+// Asymptotic concentration of a cumulative cost ladder, in two shapes.
+//   geometric:          aₙ = mⁿ; the last K of N levels carry
+//                       (mᴺ − m^(N−K)) / (mᴺ − 1)  →  1 − m⁻ᴷ as N → ∞.
+//   super-exponential:  aₙ = mⁿ · s^(n(n−1)/2), Antimatter Dimensions' cost-scaling form —
+//                       the step ratio m·sⁿ grows without bound, so the share of the last
+//                       K levels climbs toward 1 as N grows instead of settling.
 
+type Shape = 'geometric' | 'super';
+
+const props = withDefaults(defineProps<{ initialShape?: Shape }>(), { initialShape: 'geometric' });
+
+const SHAPES: { value: Shape; label: string }[] = [
+  { value: 'geometric', label: 'geometric' },
+  { value: 'super', label: 'super-exponential' },
+];
+
+const shape = ref<Shape>(props.initialShape);
 const m = ref(1.15);
+const s = ref(1.02);
 const N = ref(50);
-const K = ref(5);
+const K = ref(props.initialShape === 'super' ? 1 : 5);
 
 const TAIL = seriesColor('amber');
 const HEAD = seriesColor('gray');
 const ASYMPTOTE_HUE = seriesColor('teal');
 
+// ln aₙ for the active shape; the super-exponential exponent overflows doubles fast.
+function logTerm(n: number): number {
+  const base = n * Math.log(m.value);
+  return shape.value === 'super' ? base + ((n * (n - 1)) / 2) * Math.log(s.value) : base;
+}
+
 const heights = computed(() => {
-  // Bar h_n = mⁿ, normalized to the tallest bar so the SVG stays in [0,1].
-  const ratio = m.value;
-  const top = Math.pow(ratio, N.value - 1);
+  // Bar hₙ = aₙ normalized to the last (tallest) bar, so the SVG stays in [0,1].
+  const top = logTerm(N.value - 1);
   const out: number[] = new Array(N.value);
   for (let n = 0; n < N.value; n++) {
-    out[n] = Math.pow(ratio, n) / top;
+    out[n] = Math.exp(logTerm(n) - top);
   }
   return out;
 });
 
-const exactShare = computed(() => {
+// Share of the cumulative carried by the last k bars, summed from the normalized heights.
+function tailShare(k: number): number {
+  const h = heights.value;
+  const total = h.reduce((acc, v) => acc + v, 0);
+  let tail = 0;
+  for (let n = Math.max(0, h.length - k); n < h.length; n++) tail += h[n];
+  return tail / total;
+}
+
+const geometricShare = computed(() => {
   // (mᴺ − m^(N−K)) / (mᴺ − 1).  Compute in log space to avoid overflow at large N.
   const ratio = m.value;
   const Nv = N.value;
@@ -44,7 +69,16 @@ const exactShare = computed(() => {
   return 1 - num / den;
 });
 
+const exactShare = computed(() =>
+  shape.value === 'super' ? tailShare(K.value) : geometricShare.value,
+);
+
 const asymptoticShare = computed(() => 1 - Math.pow(m.value, -K.value));
+
+const lastBarShare = computed(() => tailShare(1));
+
+// Step ratio between the last two bars: m·s^(N−2) for the super-exponential ladder.
+const lastRatio = computed(() => m.value * Math.pow(s.value, N.value - 2));
 
 const doublingTime = computed(() => Math.log(2) / Math.log(m.value));
 
@@ -80,7 +114,7 @@ const tickPositions = computed(() => {
   const slot = inner / N.value;
   const stride = N.value <= 20 ? 5 : N.value <= 60 ? 10 : 25;
   const labels: { x: number; label: string }[] = [];
-  for (let n = 0; n <= N.value; n += stride) {
+  for (let n = 0; n < N.value; n += stride) {
     labels.push({ x: PAD_LEFT + n * slot, label: String(n) });
   }
   // Always include final n = N − 1 marker if not on a stride.
@@ -92,14 +126,33 @@ const tickPositions = computed(() => {
 
 const sharePercent = computed(() => `${(exactShare.value * 100).toFixed(1)}%`);
 const asymptotePercent = computed(() => `${(asymptoticShare.value * 100).toFixed(1)}%`);
+const lastBarPercent = computed(() => `${(lastBarShare.value * 100).toFixed(1)}%`);
 </script>
 
 <template>
   <div class="demo">
     <div class="demo-controls">
+      <div class="shape-group" role="group" aria-label="cost shape">
+        <span class="demo-label">cost shape</span>
+        <div class="shape-toggle">
+          <button
+            v-for="opt in SHAPES"
+            :key="opt.value"
+            type="button"
+            :aria-pressed="shape === opt.value"
+            @click="shape = opt.value"
+          >
+            {{ opt.label }}
+          </button>
+        </div>
+      </div>
       <label>
         <span class="demo-label">m (per-level multiplier) = {{ m.toFixed(3) }}</span>
         <input v-model.number="m" type="range" min="1.02" max="1.50" step="0.005" />
+      </label>
+      <label v-if="shape === 'super'">
+        <span class="demo-label">s (ratio growth per level) = {{ s.toFixed(3) }}</span>
+        <input v-model.number="s" type="range" min="1.002" max="1.10" step="0.002" />
       </label>
       <label>
         <span class="demo-label">N (total levels) = {{ N }}</span>
@@ -156,25 +209,46 @@ const asymptotePercent = computed(() => `${(asymptoticShare.value * 100).toFixed
           {{ sharePercent }}
         </dd>
       </div>
-      <div>
-        <dt>asymptote 1 − m⁻ᴷ</dt>
-        <dd :style="{ color: ASYMPTOTE_HUE }">
-          {{ asymptotePercent }}
-        </dd>
-      </div>
-      <div>
-        <dt>doubling time</dt>
-        <dd>{{ doublingTime.toFixed(1) }} levels</dd>
-      </div>
+      <template v-if="shape === 'geometric'">
+        <div>
+          <dt>asymptote 1 − m⁻ᴷ</dt>
+          <dd :style="{ color: ASYMPTOTE_HUE }">
+            {{ asymptotePercent }}
+          </dd>
+        </div>
+        <div>
+          <dt>doubling time</dt>
+          <dd>{{ doublingTime.toFixed(1) }} levels</dd>
+        </div>
+      </template>
+      <template v-else>
+        <div>
+          <dt>last bar alone</dt>
+          <dd :style="{ color: ASYMPTOTE_HUE }">
+            {{ lastBarPercent }}
+          </dd>
+        </div>
+        <div>
+          <dt>last step ratio</dt>
+          <dd>×{{ lastRatio.toFixed(2) }}</dd>
+        </div>
+      </template>
     </dl>
 
-    <p class="demo-note">
+    <p v-if="shape === 'geometric'" class="demo-note">
       Bar height is per-level cost <code>aₙ = mⁿ</code> on a linear axis; the last
       <code>K = {{ K }}</code> bars are shaded. The exact share of the cumulative they carry is
       <code>(mᴺ − m^(N−K)) / (mᴺ − 1)</code>, which converges to
       <code>1 − m⁻ᴷ = {{ asymptotePercent }}</code> as <code>N</code> grows past a few doubling
       times. Slide <code>N</code> from 20 to 100 — the percentage barely moves once the sum is
       dominated by its tail.
+    </p>
+    <p v-else class="demo-note">
+      Bar height is per-level cost <code>aₙ = mⁿ·s^(n(n−1)/2)</code> on a linear axis: each step
+      multiplies the cost by <code>m·sⁿ</code>, a ratio that keeps growing. There is no fixed
+      asymptote here. Slide <code>N</code> from 20 to 100 and the last bar's share keeps climbing
+      toward 100% — the cumulative <em>is</em> its last term, so first-passage is the inverse of one
+      term.
     </p>
   </div>
 </template>
@@ -184,7 +258,34 @@ const asymptotePercent = computed(() => `${(asymptoticShare.value * 100).toFixed
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: var(--gap);
+  align-items: end;
   margin-bottom: var(--gap);
+}
+.shape-group {
+  grid-column: 1 / -1;
+}
+.shape-toggle {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+.shape-toggle button {
+  white-space: nowrap;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.shape-toggle button:hover {
+  color: var(--color-text);
+}
+.shape-toggle button[aria-pressed='true'] {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 .bars {
   width: 100%;

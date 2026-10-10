@@ -125,6 +125,19 @@ collapses the whole family of fractional-positive exponents into one name. The
 [softcaps page](/modern/softcaps) treats the design pattern; the math underneath is exactly
 this entry's polynomial $r(x) = a \cdot x^p$ for $p \in (0, 1)$.
 
+A log-compressed conversion is the same shape wearing a different formula:
+$10^{\log_{10} x / d} = x^{1/d}$, a power law with exponent $1/d$. Prestige-layer currencies
+are the usual carrier. Antimatter Dimensions converts antimatter to Infinity Points this
+way, and an achievement and a Time Study each lower the divisor $d$:
+
+<Cite repo="AntimatterDimensionsSourceCode" path="src/game.js" line="89-103" />
+
+An upgrade that shrinks $d$ is an _exponent knob_. The shape stays in this entry, but the
+upgrade doesn't rescale the threshold the way a
+[modifier-product](/rate-functions/composition#modifier-product-state-independent-multipliers)
+does — the payout moves by a power of $x$, not by a constant factor, so the same upgrade is
+worth more the further the run goes.
+
 <PolynomialRateDemo client:visible />
 
 What the demo makes visible: the panel for $T(C)$ flips orientation between regimes. With
@@ -208,6 +221,12 @@ different family entirely. That's the [exponential page](/rate-functions/exponen
       path: 'main.js',
       line: '3970-3975',
       note: 'Game.HowMuchPrestige: cube-root prestige conversion. Polynomial transform with p = 1/3.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/game.js',
+      line: '89-103',
+      note: 'gainedInfinityPoints: IP = 10^(log₁₀(antimatter) / div − 0.75), with div lowered by Achievement 103 and Time Study 111. A log-compressed conversion is a power law with exponent 1/div.',
     },
     {
       repo: 'civ-clicker',

@@ -52,9 +52,9 @@ through fifty purchases of a building has gone through ten doublings, $1024\time
 base cost. A run that climbs through a hundred has gone through twenty, $\approx 10^6\times$.
 The same formula holds at every scale; the _rate_ of difficulty escalation is constant.
 
-Antimatter Dimensions ships the engineered version of the same family — a parameterized
-cost-scaling class with both a max-quantity-affordable and a price-at-quantity, both
-closed-form because the underlying shape is geometric:
+Antimatter Dimensions ships an engineered version — a parameterized cost-scaling class
+with both a max-quantity-affordable and a price-at-quantity, closed-form below its
+threshold because the shape there is geometric:
 
 <Cite repo="AntimatterDimensionsSourceCode" path="src/core/math.js" line="320-352" />
 
@@ -67,10 +67,11 @@ window.ExponentialCostScaling = class ExponentialCostScaling {
 ```
 
 The doc-comment's price ladder is two regimes glued together: a pure geometric
-$B \cdot C^k$ before the scaling threshold, then a faster shape past it. That's a
-[piecewise composition](/rate-functions/composition) of two geometrics, not a separate family — same
-math, two different bases. AD's late-game cost climbs this way to give the player two
-distinct "speed" regimes.
+$B \cdot C^k$ before the scaling threshold, then a shape past it whose step ratio grows by
+$S$ with every purchase. That second regime has left this family — it is
+[super-exponential](#super-exponential), covered at the end of this page — and the glue
+between the two is a [piecewise composition](/rate-functions/composition). AD's late-game
+cost climbs this way to give the player two distinct "speed" regimes.
 
 <GeometricRateDemo client:visible />
 
@@ -154,6 +155,57 @@ pacing tweak, every "milestone bonus that activates at level 25" is operating ag
 concentration: the question is whether the late-game work is meaningful or whether it
 collapses into a single 75%-of-total wait.
 
+## Super-exponential
+
+$$a_n \;\text{ with }\; \rho(n) = \frac{a_{n+1}}{a_n} \to \infty$$
+
+Some cost ladders outgrow every geometric: the step ratio itself keeps rising. The shipped
+forms are $b^{n^p}$ with $p > 1$ (log-quadratic $b^{n^2}$ is the common one), $n^n$ and its
+relatives, [factorial](https://en.wikipedia.org/wiki/Factorial)-style products, and the
+double exponential $b^{b^n}$. None has an elementary partial sum. None needs one. If $\rho$
+is a ratio no larger than every step ratio up to $N$, the sum is bracketed by its last term:
+
+$$a_N \;\le\; S_N \;\le\; a_N \cdot \frac{\rho}{\rho - 1}$$
+
+For a geometric ladder $\rho = m$ is constant, so the total stays a fixed multiple of the
+last term — the concentration result above, read at $K = 1$. When the ratios grow, that
+multiple goes to 1: $S_N / a_N \to 1$. The cumulative _is_ its last term, so first-passage
+is the inverse of one term, accurate to within one purchase once the ratio passes 2.
+
+| Cost $a_n$         | Inverse of one term                                                                 |
+| ------------------ | ----------------------------------------------------------------------------------- |
+| $b^{n^p}$, $p > 1$ | $(\log_b C)^{1/p}$                                                                  |
+| $n^n$              | $\ln C \,/\, W(\ln C)$, through [Lambert W](/rate-functions/log-frontier)            |
+| $n!$               | the inverse gamma function; [Stirling](https://en.wikipedia.org/wiki/Stirling%27s_approximation) for an estimate |
+| $b^{b^n}$          | $\log_b \log_b C$                                                                   |
+
+There is no fixed doubling level: each doubling of cost arrives in fewer purchases than the
+last. That is the whole design appeal — a wall that steepens on its own — and the
+[cost-acceleration page](/modern/cost-acceleration) walks the history of games reaching for
+it.
+
+Dimensional Incremental Rewind prices dots at $2^{(x/\text{mult})^2}$, and its gain function
+is exactly the term inverse, $\sqrt{\log_2 y} \cdot \text{mult}$ — the game never sums the
+ladder, because it doesn't have to:
+
+<Cite repo="dimensional-incremental-rewind" path="src/data/dimensions.ts" line="45-63" />
+
+Antimatter Dimensions writes the same reasoning into a comment. Its bulk-buy solver assumes
+the player pays only for the most expensive purchase in the batch, and warns that the
+shortcut fails when the multiplier is small — the bracket above, stated in production code:
+
+<Cite repo="AntimatterDimensionsSourceCode" path="src/core/math.js" line="387-398" />
+
+The other side of geometric is the stretched exponential, $b^{n^p}$ with $p < 1$. Its ratio
+falls toward 1, the last term stops dominating, and the cumulative becomes an
+[incomplete gamma function](https://en.wikipedia.org/wiki/Incomplete_gamma_function) — bounded
+by comparison with the integral rather than inverted term by term.
+
+<TailConcentrationDemo client:visible initialShape="super" />
+
+Set $s$ near 1 and the ladder is almost geometric: the last bar holds a share close to
+$1 - 1/m$ and moves slowly with $N$. Raise $s$ and the share climbs with every level added.
+
 <Sources
   cites={[
     {
@@ -172,7 +224,19 @@ collapses into a single 75%-of-total wait.
       repo: 'AntimatterDimensionsSourceCode',
       path: 'src/core/math.js',
       line: '320-352',
-      note: 'ExponentialCostScaling: parameterized geometric-with-piecewise-acceleration cost class. Carries baseCost, baseIncrease, costScale, threshold parameters.',
+      note: 'ExponentialCostScaling: geometric below purchasesBeforeScaling, then a regime whose step ratio grows by costScale per purchase — a piecewise splice of geometric and super-exponential.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/math.js',
+      line: '387-398',
+      note: 'getMaxBought doc comment: bulk buys charge only the most expensive purchase, "not suitable" when the multiplier is small. Last-term dominance.',
+    },
+    {
+      repo: 'dimensional-incremental-rewind',
+      path: 'src/data/dimensions.ts',
+      line: '45-63',
+      note: 'Dot cost 2^((x/mult)²) and gain √(log₂ y)·mult: a super-exponential cost whose gain is the exact term inverse.',
     },
   ]}
 />

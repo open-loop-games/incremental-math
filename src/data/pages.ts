@@ -152,7 +152,7 @@ export const sections: PageSection[] = [
         href: '/rate-functions/exponential',
         title: 'Exponential family',
         description:
-          'Geometric (discrete) and exponential (continuous) — same family, two notations. Cookie Clicker’s 1.15ⁿ lives here.',
+          'Geometric (discrete) and exponential (continuous) — same family, two notations. Cookie Clicker’s 1.15ⁿ lives here, and super-exponential costs mark where the family ends.',
       },
       {
         href: '/rate-functions/bounded-growth',
@@ -170,7 +170,7 @@ export const sections: PageSection[] = [
         href: '/rate-functions/composition',
         title: 'Composition rules',
         description:
-          'Piecewise splice, modifier-product, and the sum/product/composition rules that determine when systems-of-shapes still close.',
+          'Piecewise splice, modifier-product, sum, functional composition, and quantization: the rules that decide when systems of shapes still close.',
       },
       {
         href: '/rate-functions/bifurcations',

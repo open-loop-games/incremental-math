@@ -88,7 +88,14 @@ W appears whenever a closed form mixes exponential and linear in the same equati
 - $a \cdot e^{bx} + cx = d$ — solving for $x$ produces a $W$ of a combination of
   $a, b, c, d$.
 - $x \cdot \ln x = c$ — the inverse of the logarithmic-cumulative entry above.
-- $x^a \cdot e^{bx} = c$ — closes via $W$ when $a = 1$.
+- $x^a \cdot e^{bx} = c$ — closes via $W$ for every $a$. Take the $a$-th root,
+  $x \cdot e^{bx/a} = c^{1/a}$, so $x = \tfrac{a}{b}\, W\!\left(\tfrac{b}{a}\, c^{1/a}\right)$.
+- $x^x = c$ — the term inverse of a [super-exponential](/rate-functions/exponential#super-exponential)
+  cost, $x = \ln c \,/\, W(\ln c)$.
+
+What $W$ does not invert is a _sum_ of a polynomial above degree one and an exponential.
+$W$ handles a product of $x$ and $e^x$ in any power; add $x^2$ to $e^x$ instead and the
+equation needs a numerical root-finder.
 
 The function was studied by [Lambert](https://en.wikipedia.org/wiki/Johann_Heinrich_Lambert)
 (1758) and [Euler](https://en.wikipedia.org/wiki/Leonhard_Euler) (1779), but its

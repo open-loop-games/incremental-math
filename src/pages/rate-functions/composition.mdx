@@ -14,13 +14,13 @@ The first four pages of this catalog walked single-shape rate functions: power-l
 exponential, logistic, log. Real systems compose. The question this page answers: which
 compositions of catalog entries stay closed-form, and which fall off the algebra?
 
-The answer breaks into four kinds of composition. The first two — piecewise splice and
+The answer breaks into five kinds of composition. The first two — piecewise splice and
 modifier-product — get their own demos
-because the genre's headline patterns sit on top of them. The other two —
-sum and
-[functional composition](https://en.wikipedia.org/wiki/Function_composition) — get
-formulas and notes; the spec layer's behavior under each is well-defined enough that a
-demo would only restate the math.
+because the genre's headline patterns sit on top of them. The other three —
+sum,
+[functional composition](https://en.wikipedia.org/wiki/Function_composition), and
+quantization — get formulas and notes; the spec layer's behavior under each is
+well-defined enough that a demo would only restate the math.
 
 ## Piecewise splice
 
@@ -37,8 +37,10 @@ intra-regime inversion.
 The genre's lead piecewise pattern is "two geometrics glued at a threshold": a normal-paced
 ratio before some level, a slower ratio past it — $c_0 \cdot m_1^{\,n}$ for $n \le t$,
 $c_0 \cdot m_1^{\,t} \cdot m_2^{\,n-t}$ for $n > t$, with $m_2 < m_1$. Realm Grinder's
-pre/post-Ascension cost shift is the familiar example; Antimatter Dimensions ships the
-same pattern as a parameterized class — pre-threshold is the geometric ladder, post-threshold the per-step ratio shifts:
+pre/post-Ascension cost shift is the familiar example. Antimatter Dimensions ships the
+splice as a parameterized class, with a steeper regime rather than a gentler one —
+pre-threshold is the geometric ladder, and post-threshold the ratio itself grows by a
+factor $S$ with every purchase:
 
 <Cite repo="AntimatterDimensionsSourceCode" path="src/core/math.js" line="320-352" />
 
@@ -51,9 +53,11 @@ window.ExponentialCostScaling = class ExponentialCostScaling {
 ```
 
 The threshold is `purchasesBeforeScaling`; one parameter selects which regime applies.
-The cumulative is the prefix sum of one of two geometric series — closed-form per
-regime, with regime detection on $n$ — exactly the piecewise structure formalized in
-code.
+Past it, the log of the cost is quadratic in the purchase count, which puts that regime in
+the [super-exponential](/rate-functions/exponential#super-exponential) family rather than
+the geometric one. Each regime still closes on its own — a geometric sum before the
+threshold, last-term dominance after it — so the splice is exactly the piecewise structure
+formalized in code.
 
 <PiecewiseDemo client:visible />
 
@@ -64,6 +68,12 @@ swamped by the exponential blowup; on log it's the visual headline. The first-pa
 panel shows the same kink in $T(C)$, at the cumulative threshold $R(t)$ rather than the
 input threshold $t$ — the regime change happens at a _budget_ level, not at a _level_
 level, which is what the player feels.
+
+A hand-authored table of costs or rates is this splice with one regime per row: it closes
+by summation and inverts by lookup. What the spec layer writes for a table is its
+_envelope_ — roughly geometric early and flatter later, say. The rows' departures from that
+envelope are calibration, not shape, so lock the table against the envelope rather than
+reading each row as a design decision.
 
 ## Modifier-product (state-independent multipliers)
 
@@ -87,9 +97,12 @@ mechanics do); the math underneath both is exactly this composition.
 
 The constraint is "state-independent." A modifier that depends on the _same state_ the rate
 depends on — say, a multiplier that grows as $x$ grows — is no longer a modifier-product;
-it's a different rate function. That case is the
-[coupled-state row](/rate-functions/bifurcations#coupled-state-deterministic) on
-the bifurcations page.
+it's a different rate function. With one stock, that function is a scalar
+[ODE](https://en.wikipedia.org/wiki/Ordinary_differential_equation), $dx/dt = f(x)$, and its
+first-passage $T = \int dx / f(x)$ closes whenever that integral does. Only when two or more
+stocks read each other does the system leave the algebra, onto the
+[coupled-state row](/rate-functions/bifurcations#coupled-state-deterministic) of the
+bifurcations page.
 
 <ModifierProductDemo client:visible />
 
@@ -110,7 +123,7 @@ functions is its own nontrivial algebra.
 The cleanest case is when one term [dominates](https://en.wikipedia.org/wiki/Asymptotic_analysis)
 in the regime of interest. The catalog's asymptotic ordering at infinity is
 
-$$\text{constant} \ll \log \ll \text{polynomial} \ll \text{exponential}$$
+$$\text{constant} \ll \log \ll \text{polynomial} \ll \text{exponential} \ll \text{super-exponential}$$
 
 and at the origin the order reverses. So a rate with a polynomial term plus a constant
 term is essentially the polynomial in the late game and essentially the constant in the
@@ -142,13 +155,38 @@ bifurcations page — the underlying cycle is an
 [optimal-stopping problem](https://en.wikipedia.org/wiki/Optimal_stopping) that
 doesn't close, even when each individual run does.
 
+## Quantization
+
+$$r(x) = r_1(\lfloor x/k \rfloor)$$
+
+The base shape advances once per batch of $k$ — the cost steps every tenth purchase
+rather than every purchase. Functional composition doesn't cover it, because
+[floor](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions) isn't invertible. It
+still closes. Index units from 0 and let $S_1(m) = \sum_{j=0}^{m} r_1(j)$; each full batch
+contributes $k$ copies of one term, so the first $N$ units cost
+
+$$R(N) = k \cdot S_1\!\left(\lfloor N/k \rfloor - 1\right) + (N \bmod k) \cdot r_1\!\left(\lfloor N/k \rfloor\right)$$
+
+First-passage inverts $S_1$ for the batch, then divides the remainder by that batch's
+term. The batch size is a knob of its own: it sets the cadence of price steps without
+changing the asymptotic shape. Antimatter Dimensions prices its dimensions this way, with
+the cost-scaling ladder read at $\lfloor \text{bought}/10 \rfloor$:
+
+<Cite
+  repo="AntimatterDimensionsSourceCode"
+  path="src/core/dimensions/antimatter-dimension.js"
+  line="363"
+/>
+
+Floor-stepped triangular and power costs are the same rule with a different $r_1$.
+
 ## What doesn't compose cleanly
 
 The catalog's main hand-wave: not every product of catalog entries closes. The
 named adjacent math takes over in eight rows — coupled-state deterministic,
-strategy-space integration, stochastic load-bearing, discrete-event coupled,
-network-topological, bilevel interdiction, optimal stopping, combinatorial
-selection — each with its own spec vocabulary. The full census, with corpus exemplars and the named
+strategy-space integration, stochastic load-bearing, network-topological, bilevel
+interdiction, optimal stopping, combinatorial selection, discrete planning /
+scheduling — each with its own spec vocabulary. The full census, with corpus exemplars and the named
 mathematics each row hands off to, lives on the
 [bifurcations page](/rate-functions/bifurcations).
 
@@ -160,9 +198,10 @@ mathematics each row hands off to, lives on the
 | Modifier-product (state-indep) | Always                                         | $T_{\text{base}}(C / \prod \mu_i)$    |
 | Sum                            | Cumulative always; inversion regime-wise       | $R_1 + R_2$, dominant-term per regime |
 | Functional composition         | $g$ monotone elementary, chain rule integrates | $T = g^{-1}(T_{\text{base}})$         |
+| Quantization                   | The base sum $S_1$ inverts                     | Batch from $S_1^{-1}$, then remainder |
 | Triangular multi-resource      | Each scalar closes in dependency order         | Solve in sequence                     |
 
-These five lines are the catalog's composition algebra. Where a system's shape
+These six lines are the catalog's composition algebra. Where a system's shape
 sits outside them, the spec layer hands off to the
 [bifurcations page](/rate-functions/bifurcations) and a different vocabulary —
 asymptotic envelopes,
@@ -178,7 +217,13 @@ just changes shape.
       repo: 'AntimatterDimensionsSourceCode',
       path: 'src/core/math.js',
       line: '320-352',
-      note: 'ExponentialCostScaling — piecewise composition formalized as a parameterized class with baseCost/baseIncrease/costScale/threshold.',
+      note: 'ExponentialCostScaling — piecewise splice as a parameterized class: geometric before purchasesBeforeScaling, a super-exponential regime (log-cost quadratic in the excess) after.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/dimensions/antimatter-dimension.js',
+      line: '363',
+      note: 'cost = costScale.calculateCost(floor(bought / 10) + costBumps): one price step per batch of ten. Quantization.',
     },
   ]}
 />
