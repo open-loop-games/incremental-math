@@ -34,10 +34,10 @@ const NODE_COLORS = [
 const topologies: Record<TopologyKey, Topology> = {
   chain: {
     key: 'chain',
-    label: 'chain  ·  A → B → C → D',
+    label: 'cascade  ·  A → B → C → D',
     description:
       'Pecorella Part II: each tier produces the one below at rate r. ' +
-      'D(t) ≈ baseSeed · r³ · t⁴ / 4! at the bottom — chain length d gives tᵈ/d!.',
+      'D(t) ≈ baseSeed · r³ · t⁴ / 4! at the bottom — depth d gives tᵈ/d!.',
     edges: [
       [0, 1, 0, 0],
       [0, 0, 1, 0],
@@ -51,7 +51,7 @@ const topologies: Record<TopologyKey, Topology> = {
     label: 'DAG  ·  A,B → C → D',
     description:
       'Two independent sources A and B both feed C, which feeds D. Same total ' +
-      'edge weight as the chain, but C grows from the sum of both feeds — D ends ' +
+      'edge weight as the cascade, but C grows from the sum of both feeds — D ends ' +
       'higher despite no longer rates being changed.',
     edges: [
       [0, 0, 1, 0],
@@ -65,9 +65,9 @@ const topologies: Record<TopologyKey, Topology> = {
     key: 'cycle',
     label: 'cycle  ·  A ↔ B → C → D',
     description:
-      'B feeds back into A. Without a damping term the loop diverges exponentially. ' +
+      'B feeds back into A. Without a damping term the cycle diverges exponentially. ' +
       'A softcap on the feedback edge bounds it to a fixed point and the downstream ' +
-      'chain settles into linear-in-t growth instead.',
+      'cascade settles into linear-in-t growth instead.',
     edges: [
       [0, 1, 0, 0],
       [0.4, 0, 1, 0],

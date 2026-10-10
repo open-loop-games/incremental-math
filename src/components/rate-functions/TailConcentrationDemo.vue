@@ -147,19 +147,19 @@ const lastBarPercent = computed(() => `${(lastBarShare.value * 100).toFixed(1)}%
         </div>
       </div>
       <label>
-        <span class="demo-label">m (per-level multiplier) = {{ m.toFixed(3) }}</span>
+        <span class="demo-label">m (cost ratio) = {{ m.toFixed(3) }}</span>
         <input v-model.number="m" type="range" min="1.02" max="1.50" step="0.005" />
       </label>
       <label v-if="shape === 'super'">
-        <span class="demo-label">s (ratio growth per level) = {{ s.toFixed(3) }}</span>
+        <span class="demo-label">s (ratio growth per purchase) = {{ s.toFixed(3) }}</span>
         <input v-model.number="s" type="range" min="1.002" max="1.10" step="0.002" />
       </label>
       <label>
-        <span class="demo-label">N (total levels) = {{ N }}</span>
+        <span class="demo-label">N (total purchases) = {{ N }}</span>
         <input v-model.number="N" type="range" min="10" max="100" step="1" />
       </label>
       <label>
-        <span class="demo-label">K (trailing levels shaded) = {{ K }}</span>
+        <span class="demo-label">K (trailing purchases shaded) = {{ K }}</span>
         <input v-model.number="K" type="range" min="1" :max="N" step="1" />
       </label>
     </div>
@@ -169,7 +169,7 @@ const lastBarPercent = computed(() => `${(lastBarShare.value * 100).toFixed(1)}%
       :viewBox="`0 0 ${VB_W} ${VB_H}`"
       preserveAspectRatio="none"
       role="img"
-      aria-label="Per-level cost bar chart with the last K bars shaded"
+      aria-label="Per-purchase cost bar chart with the last K bars shaded"
     >
       <!-- baseline -->
       <line
@@ -218,7 +218,7 @@ const lastBarPercent = computed(() => `${(lastBarShare.value * 100).toFixed(1)}%
         </div>
         <div>
           <dt>doubling time</dt>
-          <dd>{{ doublingTime.toFixed(1) }} levels</dd>
+          <dd>{{ doublingTime.toFixed(1) }} purchases</dd>
         </div>
       </template>
       <template v-else>
@@ -236,7 +236,7 @@ const lastBarPercent = computed(() => `${(lastBarShare.value * 100).toFixed(1)}%
     </dl>
 
     <p v-if="shape === 'geometric'" class="demo-note">
-      Bar height is per-level cost <code>aₙ = mⁿ</code> on a linear axis; the last
+      Bar height is per-purchase cost <code>aₙ = mⁿ</code> on a linear axis; the last
       <code>K = {{ K }}</code> bars are shaded. The exact share of the cumulative they carry is
       <code>(mᴺ − m^(N−K)) / (mᴺ − 1)</code>, which converges to
       <code>1 − m⁻ᴷ = {{ asymptotePercent }}</code> as <code>N</code> grows past a few doubling
@@ -244,7 +244,7 @@ const lastBarPercent = computed(() => `${(lastBarShare.value * 100).toFixed(1)}%
       dominated by its tail.
     </p>
     <p v-else class="demo-note">
-      Bar height is per-level cost <code>aₙ = mⁿ·s^(n(n−1)/2)</code> on a linear axis: each step
+      Bar height is per-purchase cost <code>aₙ = mⁿ·s^(n(n−1)/2)</code> on a linear axis: each step
       multiplies the cost by <code>m·sⁿ</code>, a ratio that keeps growing. There is no fixed
       asymptote here. Slide <code>N</code> from 20 to 100 and the last bar's share keeps climbing
       toward 100% — the cumulative <em>is</em> its last term, so first-passage is the inverse of one

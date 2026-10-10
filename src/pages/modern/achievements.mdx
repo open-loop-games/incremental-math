@@ -9,36 +9,36 @@ import Sources from '../../components/Sources.astro';
 
 # Achievements
 
-Pecorella's three parts model production, derivatives, and prestige cycles —
+Pecorella's three parts model production, derivatives, and prestige runs —
 things the player _drives_. Achievements are the opposite kind of system: they
 sit to the side of the loop and _watch_. The player never acts on an achievement
 directly; it fires on its own when the game state it monitors crosses a line. The
-mechanic was a garnish in 2016 and is now a load-bearing progression layer in most
+mechanic was a garnish in 2016 and is now a load-bearing progression system in most
 long-running idle games, sometimes carrying the largest permanent multipliers in
 the game.
 
 ## Achievements as observers
 
 An achievement is an [observer](https://en.wikipedia.org/wiki/Observer_pattern):
-a passive predicate over the game's state, evaluated every tick, latching the
+a passive predicate over the game state, evaluated every tick, latching the
 first time it reads true. The cleanest way to see this is to read one as code —
-the condition is literally a boolean expression over state:
+the condition is literally a boolean expression over game state:
 
-<Cite repo="derivative-clicker" path="js/data.js" line="85" note="Each achievement is a predicate string over player state, e.g. player.totalManualClicks > 0." />
+<Cite repo="derivative-clicker" path="js/data.js" line="85" note="Each achievement is a predicate string over game state, e.g. player.totalManualClicks > 0." />
 
-Two trigger shapes cover almost the entire corpus. A **milestone** fires when a
-single tracked quantity crosses a threshold — "bake one million cookies" is the
+Two trigger shapes cover almost the entire corpus. A **threshold achievement** fires once a
+single tracked quantity passes its threshold — "bake one million cookies" is the
 [indicator](https://en.wikipedia.org/wiki/Indicator_function) $\mathbb{1}(S \ge T)$
 on the stat $S$. A **collection** fires on a count of other unlocks — "earn fifty
-achievements" is $\mathbb{1}(N \ge C)$ where $N$ counts the milestones already
+achievements" is $\mathbb{1}(N \ge C)$ where $N$ counts the threshold achievements already
 latched. Collection achievements are observers of observers, which is why they
-tend to anchor the endgame: they can't complete until the milestones beneath them
+tend to anchor the endgame: they can't complete until the threshold achievements beneath them
 have.
 
-## Why milestones feel evenly paced
+## Why threshold achievements feel evenly paced
 
 The interesting math isn't the trigger — it's the _spacing_. Designers almost
-never place milestone thresholds linearly (one million, two million, three
+never place thresholds linearly (one million, two million, three
 million). They place them [geometrically](https://en.wikipedia.org/wiki/Geometric_progression):
 each threshold is a fixed multiple of the last, $T_i = \rho^{\,i}$, usually a
 power of ten. The reason is that the watched stat grows exponentially, and a
@@ -46,14 +46,14 @@ geometric ladder is the only spacing that turns exponential growth into a steady
 drumbeat.
 
 With a stat $S(t) = e^{rt}$ and thresholds $T_i = \rho^{\,i}$, the $i$-th
-milestone fires when $e^{rt_i} = \rho^{\,i}$, so
+threshold achievement fires when $e^{rt_i} = \rho^{\,i}$, so
 
 $$t_i = \frac{i \ln \rho}{r} \qquad\Longrightarrow\qquad \Delta t = \frac{\ln \rho}{r}.$$
 
 The gap between unlocks is a constant, independent of $i$. A player twelve orders
 of magnitude into the game gets the same achievement rhythm they got in the first
 hour, even though the numbers themselves are now incomprehensible. Drag the growth
-rate in the demo and watch the milestone lines breathe in and out together — they
+rate in the demo and watch the threshold lines breathe in and out together — they
 stay evenly spaced no matter where the curve goes.
 
 <AchievementCadence client:visible />
@@ -69,12 +69,12 @@ across".
 
 The **additive** coupling makes the multiplier linear in the count, $\mu = 1 + cN$.
 Cookie Clicker's milk is the canonical example: every achievement adds a flat
-slice of "milk", and milk feeds each tier of kitten upgrade linearly —
+slice of "milk", and milk feeds each kitten upgrade linearly —
 
 <Cite repo="cookie-clicker" path="main.js" line="5240" note="milkProgress = AchievementsOwned / 25 — milk is exactly linear in the achievement count." />
-<Cite repo="cookie-clicker" path="main.js" line="5256-5259" note="Each kitten tier multiplies production by (1 + milk · rate); the tiers compound as a product." />
+<Cite repo="cookie-clicker" path="main.js" line="5256-5259" note="Each kitten tier multiplies production by (1 + milk · rate); the upgrades compound as a product." />
 
-— so the milk pool is additive in the count, and the kitten tiers multiply across
+— so the milk pool is additive in the count, and the kitten upgrades multiply across
 it. The **product** coupling instead multiplies a factor per achievement,
 $\mu = \prod_i (1 + c_i)$, which compounds: a game that stacks even a handful of
 such rewards reaches multipliers that dwarf the rest of its bonuses.
@@ -88,16 +88,16 @@ $$\frac{c}{1 + cN} \xrightarrow{\;N \to \infty\;} 0,$$
 so a flat additive reward quietly becomes a rounding error exactly when the player
 has earned the most of them. This is the same asymptotic dilution that retires
 additive production upgrades — the fix is the same too: make the reward multiply,
-or make $c$ itself grow with the milestone.
+or make $c$ itself grow with the achievement's threshold.
 
 ## What achievements don't fix
 
-A reward multiplier glued to a milestone observer doesn't create a progression
+A reward multiplier glued to an observer doesn't create a progression
 loop; it decorates one. If the underlying stat has nothing driving it forward, an
 achievement that fires at $10^{50}$ just certifies that the player waited. The
 observer is honest — it reports what happened — but it can't manufacture a reason
 to keep playing. Achievements pace a loop that already works and reward a player
-already advancing; they are the genre's most reliable retention layer precisely
+already advancing; they are the genre's most reliable retention system precisely
 because they ride on top of progression rather than supplying it.
 
 <Sources
@@ -112,13 +112,13 @@ because they ride on top of progression rather than supplying it.
       repo: 'cookie-clicker',
       path: 'main.js',
       line: '5252-5259',
-      note: 'Kitten helper/worker/engineer/overseer tiers each multiply production by (1 + milkProgress · rate). Additive within the milk pool, multiplicative across the tiers.',
+      note: 'Kitten helper/worker/engineer/overseer upgrades each multiply production by (1 + milkProgress · rate). Additive within the milk pool, multiplicative across the upgrades.',
     },
     {
       repo: 'derivative-clicker',
       path: 'js/data.js',
       line: '85',
-      note: 'Achievements declared as condition strings over player state — the observer/indicator pattern in its plainest form, here purely cosmetic.',
+      note: 'Achievements declared as condition strings over game state — the observer/indicator pattern in its plainest form, here purely cosmetic.',
     },
   ]}
 />

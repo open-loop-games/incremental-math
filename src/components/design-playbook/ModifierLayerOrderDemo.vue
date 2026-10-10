@@ -94,8 +94,8 @@ const ratio = computed(() => finalRight.value / finalWrong.value);
     <p class="demo-note">
       Same set of modifier values; only the composition rule differs. The right form is exponential
       in <code>N</code> and reads as a straight line on log <code>y</code>. The wrong form — every
-      multiplier degraded to a flat additive contribution sharing the additive bucket — is linear in
-      <code>N</code> and curls flat. The gap is the late-game obsolescence problem: at
+      multiplier degraded to a flat additive contribution sharing the additive category — is linear
+      in <code>N</code> and curls flat. The gap is the late-game obsolescence problem: at
       <code>N = 15, m = 1.5</code> the correctly-composed pipeline outruns the additive-stack
       version by three orders of magnitude. Each individual <code>×1.5</code> still feels like
       "+50%" when you read the tooltip; the compounding is what the architecture either preserves or

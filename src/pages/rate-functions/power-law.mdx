@@ -16,7 +16,7 @@ relatives — constant ($p = 0$), linear ($p = 1$), polynomial ($p > 1$ or $p < 
 hyperbolic / inverse-power form $r(x) = a / (b + x)^p$. Together they cover almost
 every "rate is some power of state" pattern in the [corpus](https://en.wikipedia.org/wiki/Power_law).
 What changes from entry to entry is the exponent: positive integers give power-law
-acceleration, fractional positive give the fractional-power soft-cap family, negatives give
+acceleration, fractional positive give the fractional-exponent softcap family, negatives give
 diminishing returns, and the hyperbolic offset gives a finite-ceiling shape when the
 exponent passes one.
 
@@ -24,16 +24,16 @@ This page walks the family in order of increasing exponent variety: constant, li
 polynomial, then rational. Each entry pairs the rate $r(x)$ with its
 [cumulative](https://en.wikipedia.org/wiki/Antiderivative) $R(x) = \int_0^x r(s)\,ds$ and
 the [first-passage](https://en.wikipedia.org/wiki/First-hitting-time_model) inverse
-$T(C)$ — the time (or level) at which the cumulative crosses threshold $C$.
+$T(C)$ — the time (or purchase count) at which the cumulative crosses target $C$.
 
 ## Constant rate
 
 $$r(x) = c, \quad R(x) = c \cdot x, \quad T(C) = C / c$$
 
 The trivial baseline. Linear time per unit resource; no acceleration. This is what every
-game's level-1 production formula reduces to: a fixed flow, integrated against time, gives
+game's base production formula reduces to: a fixed flow, integrated against time, gives
 a linear cumulative, and the inverse is constant time per unit. It's also the limit case
-that anchors all the others: any rate function that flattens past a soft cap is becoming
+that anchors all the others: any rate function that flattens past a softcap is becoming
 constant in that regime, and the cumulative there is asymptotically linear.
 
 There's no demo for the constant case — three flat or linear panels would teach nothing the
@@ -73,20 +73,20 @@ $n \cdot r$, linear in $n$. Where the linear rate gets interesting in the modern
 the AD-style dimension cascade: each tier's count grows as the next tier produces it, so
 the rate of tier-$k$ accumulation is linear in tier-$(k+1)$ count, which is itself linear
 in tier-$(k+2)$ count, and so on. That's the polynomial cascade Pecorella's Part II derives
-from the same single linear primitive applied at every layer.
+from the same single linear primitive applied at every tier.
 
 Pure linear rates ($b = 0$) underpace as a primary cost driver — most games reach for
 exponentials to get the seesaw — but linear shows up everywhere as a building block:
-inside sums, as the early-game regime of a curve that bends later, as the asymptotic
-behavior past a soft cap, and as the per-tier rule that compounds into Part II's
+inside sums, as the early game of a curve that bends later, as the asymptotic
+behavior past a softcap, and as the per-tier rule that compounds into Part II's
 $t^k / k!$ shape when iterated.
 
 <LinearRateDemo client:visible />
 
-The first-passage panel makes the $\sqrt{C}$ asymptotic visible: as the threshold grows,
+The first-passage panel makes the $\sqrt{C}$ asymptotic visible: as the target grows,
 $T(C)$ keeps climbing but at a decreasing rate, because the cumulative is quadratic. This
 is the basic reason a "linear rate of growth" feels like progress: the integral grows
-faster than the rate, so the milestones come at slowing real-time intervals.
+faster than the rate, so the targets come at slowing real-time intervals.
 
 ## Polynomial rate
 
@@ -99,7 +99,7 @@ cumulative still grows, just sublinearly. The boundary case $p = -1$ integrates 
 $a \cdot \ln x$ instead of a polynomial; that's a [logarithm](https://en.wikipedia.org/wiki/Logarithm)
 in disguise and lives on the [log-frontier page](/rate-functions/log-frontier).
 
-The corpus exemplar is Cookie Clicker's prestige formula, which is a polynomial
+The corpus exemplar is Cookie Clicker's gain formula, which is a polynomial
 _transform_ — Heavenly Chips earned at cookie count $c$ is the cube root of $c / 10^{12}$:
 
 <Cite repo="cookie-clicker" path="main.js" line="3970-3975" />
@@ -116,7 +116,7 @@ inverts to $C = 10^{12} \cdot H^3$ — cookies needed to reach chip level $H$ sc
 The chip-as-output side is the polynomial-rate inverse with $p = -2/3$ (a diminishing-returns
 rate, since each extra cookie contributes less to chips than the previous). Same shape, two
 readings; Cookie Clicker's is the headline cite because it puts the polynomial directly on
-the prestige conversion. Faction and ability bonuses across the genre use the same family with various
+the prestige conversion. Faction and ability modifiers across the genre use the same family with various
 exponents — $p = 0.5$, the square root, is the default diminishing-returns shape —
 each tuned for how aggressively the contribution should diminish.
 
@@ -140,9 +140,9 @@ worth more the further the run goes.
 
 <PolynomialRateDemo client:visible />
 
-What the demo makes visible: the panel for $T(C)$ flips orientation between regimes. With
-$p > 0$, first-passage is concave — milestones come faster than the threshold suggests. With
-$p \in (-1, 0)$, first-passage is convex — milestones come slower as the threshold grows,
+What the demo makes visible: the panel for $T(C)$ flips orientation between cases. With
+$p > 0$, first-passage is concave — targets come faster than $C$ suggests. With
+$p \in (-1, 0)$, first-passage is convex — targets come slower as $C$ grows,
 because the rate is falling. The crossover at $p = 0$ is the constant-rate baseline where
 $T$ is linear in $C$.
 
@@ -152,7 +152,7 @@ $$r(x) = \frac{a}{(b + x)^p}, \quad R(x) = \frac{a}{1 - p}\Big[(b+x)^{1-p} - b^{
 
 The natural way to express "rate falls as state grows" with an explicit floor. The offset
 $b$ keeps the rate finite at $x = 0$ (avoiding the singular polynomial case), and the
-exponent $p$ controls how fast the rate falls. Three regimes:
+exponent $p$ controls how fast the rate falls. Three cases:
 
 - $p < 1$: cumulative is unbounded; sublinear growth. Soft taper without ceiling.
 - $p = 1$: cumulative is logarithmic — $R(x) = a \cdot \ln((b+x)/b)$ — and the
@@ -161,9 +161,9 @@ exponent $p$ controls how fast the rate falls. Three regimes:
 - $p > 1$: **cumulative is bounded**, with ceiling $R(\infty) = a \cdot b^{1-p} / (p - 1)$.
   Past that ceiling, no amount of $x$ produces more $R$. The first-passage diverges as
   $C$ approaches the ceiling — there is a finite $x$ for every reachable $C$, but
-  unreachable thresholds are real.
+  unreachable targets are real.
 
-The bounded regime ($p > 1$) is the math behind any soft cap with a real ceiling. The
+The bounded case ($p > 1$) is the math behind any approach to a real ceiling. The
 [inverse-square law](https://en.wikipedia.org/wiki/Inverse-square_law) ($p = 2$) is the
 canonical case. Civ Clicker's cleric-efficiency multiplier sits in the same family, written
 as a saturation rather than a rate:
@@ -181,7 +181,7 @@ That's $1 - b/(b + x)$ with $b = 100$, which expands to $x/(x + b)$ — a [Micha
 saturation curve. Reading it as a cumulative: the _increment_ from one extra graveyard is
 $d/dx[x/(x+b)] = b/(x+b)^2$, which is the rational rate with $p = 2$. The bounded ceiling
 is $1$ — efficiency saturates at 100%, never crosses it. Same math, different framing:
-"rate of marginal contribution" versus "cumulative efficiency."
+"marginal increment" versus "cumulative efficiency."
 
 Many gacha-style "next pull is harder" mechanics share the shape: the marginal value of
 each pull falls hyperbolically with the count of pulls, the cumulative climbs toward an
@@ -189,9 +189,9 @@ asymptote, and the design knob is where to set the ceiling.
 
 <RationalRateDemo client:visible />
 
-Toggle $p$ across 1 to see the regime change. Below $p = 1$ the cumulative panel keeps
+Toggle $p$ across 1 to see the case change. Below $p = 1$ the cumulative panel keeps
 climbing; at exactly $p = 1$ it climbs as $\ln$; above $p = 1$ it visibly approaches a
-horizontal asymptote and the first-passage panel pinches against an unreachable threshold.
+horizontal asymptote and the first-passage panel pinches against an unreachable target.
 The exponent is the cleanest single design knob in the catalog: one number says whether
 the resource is unbounded, asymptotically log, or bounded with a real ceiling.
 

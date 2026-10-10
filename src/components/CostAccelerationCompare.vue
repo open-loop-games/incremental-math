@@ -130,7 +130,7 @@ const accelSwatch = computed(() => `background: ${ACCEL_COLOR};`);
         <input v-model.number="baseCost" type="range" min="1" max="1000" step="1" />
       </label>
       <label>
-        <span class="demo-label">per-purchase multiplier = {{ mult }}×</span>
+        <span class="demo-label">cost ratio = {{ mult }}×</span>
         <input v-model.number="mult" type="range" min="2" max="10000" step="1" />
       </label>
       <label>

@@ -42,7 +42,7 @@ export const sections: PageSection[] = [
       {
         href: '/part-iii',
         title: 'Part III — Prestige Cycles',
-        description: 'Resets, prestige currency, cycle cadence, and the long-run reward curve.',
+        description: 'Resets, prestige currency, reset cadence, and the long-run reward curve.',
       },
     ],
   },
@@ -73,7 +73,7 @@ export const sections: PageSection[] = [
         href: '/modern/layered-prestige',
         title: 'Layered Prestige',
         description:
-          'Transcendence → Eternity → Reality: nested resets where each layer rewrites the prior loop.',
+          'Transcendence → Eternity → Reality: nested resets where each layer rewrites the prior prestige loop.',
       },
       {
         href: '/modern/modifier-chains',
@@ -91,7 +91,7 @@ export const sections: PageSection[] = [
         href: '/modern/offline-progress',
         title: 'Offline Progress',
         description:
-          'Delta-time extrapolation, tick simulation, bonus-time banking, and the cap: the math of being away.',
+          'Delta-time extrapolation, tick simulation, bonus-time banking, and the cap: the math of offline time.',
       },
       {
         href: '/modern/production-graphs',
@@ -115,7 +115,7 @@ export const sections: PageSection[] = [
         href: '/modern/challenges',
         title: 'Challenges',
         description:
-          'Hard-mode runs that change the curve’s shape, not just its speed. Prestige loops bigger; challenges loop different.',
+          'Hard-mode runs that change the curve’s shape, not just its speed. Prestige makes later runs bigger; challenges make them different.',
       },
       {
         href: '/modern/achievements',
@@ -134,7 +134,7 @@ export const sections: PageSection[] = [
   {
     label: 'Rate Functions',
     blurb:
-      'Progression as integration. Each idle/incremental subsystem has a rate function; the time to a milestone is the first-passage time of its cumulative. The catalog walks the small algebra of integrable building blocks one family at a time.',
+      'Progression as integration. Each idle/incremental subsystem has a rate function; the time to a target is the first-passage time of its cumulative. The catalog walks the small algebra of integrable building blocks one family at a time.',
     pages: [
       {
         href: '/rate-functions',
@@ -146,7 +146,7 @@ export const sections: PageSection[] = [
         href: '/rate-functions/power-law',
         title: 'Power-law shapes',
         description:
-          'Constant, linear, polynomial, rational/hyperbolic. The xᵖ family — including bounded-ceiling soft caps when p > 1.',
+          'Constant, linear, polynomial, rational/hyperbolic. The xᵖ family — including bounded ceilings when p > 1.',
       },
       {
         href: '/rate-functions/exponential',
@@ -164,7 +164,7 @@ export const sections: PageSection[] = [
         href: '/rate-functions/log-frontier',
         title: 'Log and the Lambert-W frontier',
         description:
-          'Logarithmic rate, x ln x first-passage, Lambert W as the boundary of elementary closed-form.',
+          'Logarithmic rate, x ln x first-passage, Lambert W as the boundary of the elementary functions.',
       },
       {
         href: '/rate-functions/composition',
@@ -193,7 +193,7 @@ export const sections: PageSection[] = [
       },
       {
         href: '/design-playbook/pacing',
-        title: 'Pacing — targeting milestones',
+        title: 'Pacing — hitting targets',
         description:
           'Doubling time as the design knob, first-passage targeting, last-K-levels concentration, when 1.15 is wrong.',
       },
@@ -205,9 +205,9 @@ export const sections: PageSection[] = [
       },
       {
         href: '/design-playbook/bending',
-        title: 'Bending the curve — soft caps and regime breaks',
+        title: 'Bending the curve — softcaps and regime breaks',
         description:
-          'When to soft cap (math diagnosis), which shape, how many to stack, hard vs soft as a derivative-discontinuity choice.',
+          'When to softcap (math diagnosis), which shape, how many to stack, hard cap vs softcap as a derivative-discontinuity choice.',
       },
       {
         href: '/design-playbook/modifier-chains',
@@ -217,9 +217,9 @@ export const sections: PageSection[] = [
       },
       {
         href: '/design-playbook/prestige',
-        title: 'Prestige cycles — cadence and conversion',
+        title: 'Prestige — cadence and conversion',
         description:
-          'Prestige formula choice, cycle length as optimal-stopping, layered prestige as iterated functional composition.',
+          'Prestige formula choice, run length as optimal-stopping, layered prestige as iterated functional composition.',
       },
       {
         href: '/design-playbook/multi-resource',

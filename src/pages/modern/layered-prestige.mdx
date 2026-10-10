@@ -9,13 +9,13 @@ import Sources from '../../components/Sources.astro';
 
 # Layered Prestige
 
-Pecorella's Part III models prestige as a single loop. You play, you reset, the next run is faster, you reset again. The outermost variable is `prestige_count`; everything else is a function of it. The whole structure is one cycle, no matter how many times it repeats.
+Pecorella's Part III models prestige as a single prestige loop. You play, you reset, the next run is faster, you reset again. The outermost variable is `prestige_count`; everything else is a function of it. The whole structure is one prestige loop, no matter how many times it repeats.
 
-The post-2016 genre, when it stops at one loop, stops at one game. The cleaner statement of what the genre learned is structural rather than per-game: a *layer* is a reset boundary whose currency survives the reset of the layer below. Stack layers and each one's formula gets to operate on a different feature of the layer beneath it. The historical anchor for that move isn't a single game — it's Prestige Tree, Jacorb's 2020 project that generalized layered prestige into a build-your-own framework. Adding a layer became one configuration call; the cascade, the unlocks, the visual graph, all came for free. That's where layered prestige became a *pattern* rather than a single game's mechanic.
+The post-2016 genre, when it stops at one prestige loop, stops at one game. The cleaner statement of what the genre learned is structural rather than per-game: a *layer* is a reset boundary whose currency survives the reset of the layer below. Stack layers and each one's formula gets to operate on a different feature of the layer beneath it. The historical anchor for that move isn't a single game — it's Prestige Tree, Jacorb's 2020 project that generalized layered prestige into a build-your-own framework. Adding a layer became one configuration call; the cascade, the unlocks, the visual graph, all came for free. That's where layered prestige became a *pattern* rather than a single game's mechanic.
 
-This page is about what changes when prestige stops being a loop and becomes a stack — and about the framework that codified the stacking.
+This page is about what changes when prestige stops being a prestige loop and becomes a stack — and about the framework that codified the stacking.
 
-## A loop is a layer with no outside
+## A prestige loop is a layer with no outside
 
 Pecorella's model has two state variables that survive a reset:
 
@@ -24,9 +24,9 @@ Pecorella's model has two state variables that survive a reset:
 
 Everything else — the in-run currency, the generators, the milestone counts — is reset to zero. The reset boundary is sharp: one moment you have $C(t)$ at its peak, the next moment $C = 0$ and $P$ is slightly larger. The point of the reset is to make $P$ go up.
 
-A second-tier prestige is built by treating $P$ itself as the *in-run* currency of a layer above it. The math is a recursion. If layer 1 is Pecorella's loop, then layer 2 has:
+A second layer is built by treating $P$ itself as the *in-run* currency of a layer above it. The math is a recursion. If layer 1 is Pecorella's prestige loop, then layer 2 has:
 
-- Its own in-run currency $P$ (that is, layer-1 prestige).
+- Its own in-run currency $P$ (that is, layer-1 prestige currency).
 - Its own prestige currency $Q$.
 - Its own bonus shape $B'(Q)$ that boosts layer-1's bonus shape.
 
@@ -36,7 +36,7 @@ This is the structural definition: **a prestige currency is at layer $k$ if it s
 
 ## The cascade rule, declared
 
-The reset cascade is the central implementation detail of every layered prestige system. It's the rule that says "when layer 2 resets, layer 1's stash goes too, but layer 2's stash doesn't." Skipping it produces save files where layer-1 currency drifts higher and higher across layer-2 resets and the layered structure silently collapses into one fat single-tier loop.
+The reset cascade is the central implementation detail of every layered prestige system. It's the rule that says "when layer 2 resets, layer 1's stash goes too, but layer 2's stash doesn't." Skipping it produces save files where layer-1 currency drifts higher and higher across layer-2 resets and the layered structure silently collapses into one fat single-layer prestige loop.
 
 Prestige Tree's contribution is to make the cascade *declarative*. A layer is one `addLayer` call: an id, a row, a base resource, a formula type, an exponent, a list of branches:
 
@@ -94,11 +94,11 @@ Same skeleton, more knobs on each layer. The TMT lineage — games built on The 
 
 Game-specific implementations look messier. Antimatter Dimensions, written before Prestige Tree existed, hand-rolls every cascade as a long sequence inside the per-layer reset function. `finishProcessReality` explicitly zeroes Infinity Points (layer 1), Eternity Points (layer 2), and almost every per-Eternity counter the game tracks, with exemption flags (`PelleUpgrade.eternitiesNoReset`, `keepEternityUpgrades`, `keepEternityChallenges`) carved out one by one for late-game upgrades whose explicit purpose is to stop a downstream resource from being wiped. <Cite repo="AntimatterDimensionsSourceCode" path="src/core/reality.js" line="623-650" /> The framework view of those flags: they're a vocabulary of cascade-exemption knobs that Prestige Tree exposes as `keep` lists per layer.
 
-## Each layer rewrites the prior loop's math
+## Each layer rewrites the prior layer's math
 
-The deeper move — and the thing that distinguishes layered prestige from a stack of identical loops — is that *each layer's formula operates on a different feature of the layer below*.
+The deeper move — and the thing that distinguishes layered prestige from a stack of identical prestige loops — is that *each layer's formula operates on a different feature of the layer below*.
 
-Pecorella's prestige currency at time $t$ is some $\sqrt{C_L(t) / D}$ — square root of lifetime production. That formula could be reused at layer 2 (square root of layer-1 lifetime), and some games do exactly that. But the canonical post-2016 move is to use a *qualitatively different* formula at each layer, so the math the player optimizes against changes shape every time they ascend.
+Pecorella's prestige currency at time $t$ is some $\sqrt{C_L(t) / D}$ — square root of lifetime production. That formula could be reused at layer 2 (square root of layer-1 lifetime), and some games do exactly that. But the canonical post-2016 move is to use a *qualitatively different* formula at each layer, so the math the player optimizes against changes shape every time they reset.
 
 Prestige Tree exposes this directly as the `type` + `exponent` + `gainMult` + `gainExp` triple. Each layer picks `type: "normal"` (cost depends on amount gained, so gain is $\propto \text{base}^{1/\text{exponent}}$) or `type: "static"` (cost depends on amount already owned, step-by-step), then names an `exponent`, then layers on a `gainMult` (extra multiplier from upgrades) and `gainExp` (extra exponent from upgrades). Different layer = different `(type, exponent)` pair = different curve shape:
 
@@ -117,7 +117,7 @@ addLayer("t", {
 
 The Time layer's `exponent: 1.85` is supra-linear — gain it faster than you spend the base resource — while the early prestige layer's `exponent: 0.5` is the classic Pecorella square-root. The framework lets every layer pick its own shape, and the design problem at each layer becomes "what kind of curve do I want the player to climb here."
 
-Hand-rolled games make the same choice without the declarative scaffolding. Antimatter Dimensions stacks three power-law conversions with deliberately mismatched constants. Infinity Points: $\text{IP} = 10^{\log_{10}(\text{maxAM})/308 - 0.75}$ — a power law of antimatter with exponent $\approx 1/308$, where the divisor 308 echoes the JavaScript Number ceiling of $\sim 10^{308}$ on purpose. <Cite repo="AntimatterDimensionsSourceCode" path="src/game.js" line="89-103" /> Eternity Points: $\text{EP} = 5^{\log_{10}(\text{maxIP})/308 - 0.7}$ — same divisor, but base 5 instead of 10, so EP grows more slowly in IP than IP grows in antimatter: the second layer compresses harder. <Cite repo="AntimatterDimensionsSourceCode" path="src/game.js" line="138-140" /> Reality Machines: $\text{RM} = 1000^{\log_{10}(\text{maxEP})/4000 - 1}$ — base 1000, divisor 4000, plus a discontinuous softcap below the 8000-decade threshold. <Cite repo="AntimatterDimensionsSourceCode" path="src/core/machines.js" line="19-29" /> None of the formulas is a copy of the one below it; each is a different design problem — different breakeven, different prestige cadence, different optimal-reset math. The Prestige Tree way says the same thing more compactly: three layers, three `(type, exponent, gainMult, gainExp)` quadruples.
+Hand-rolled games make the same choice without the declarative scaffolding. Antimatter Dimensions stacks three power-law conversions with deliberately mismatched constants. Infinity Points: $\text{IP} = 10^{\log_{10}(\text{maxAM})/308 - 0.75}$ — a power law of antimatter with exponent $\approx 1/308$, where the divisor 308 echoes the JavaScript Number limit of $\sim 10^{308}$ on purpose. <Cite repo="AntimatterDimensionsSourceCode" path="src/game.js" line="89-103" /> Eternity Points: $\text{EP} = 5^{\log_{10}(\text{maxIP})/308 - 0.7}$ — same divisor, but base 5 instead of 10, so EP grows more slowly in IP than IP grows in antimatter: the second layer compresses harder. <Cite repo="AntimatterDimensionsSourceCode" path="src/game.js" line="138-140" /> Reality Machines: $\text{RM} = 1000^{\log_{10}(\text{maxEP})/4000 - 1}$ — base 1000, divisor 4000, plus a discontinuous softcap below the 8000-decade threshold. <Cite repo="AntimatterDimensionsSourceCode" path="src/core/machines.js" line="19-29" /> None of the formulas is a copy of the one below it; each is a different design problem — different breakeven, different prestige cadence, different optimal-reset math. The Prestige Tree way says the same thing more compactly: three layers, three `(type, exponent, gainMult, gainExp)` quadruples.
 
 ## Closed form, by API requirement
 
@@ -153,13 +153,13 @@ The square-root preset reproduces Pecorella's classic: layer 1 is $\sqrt{t}$, sl
 
 The AD-style preset (α = 1/308) is a different story. The first layer is so flat that after $10^{20}$ in-run currency you've gained roughly $10^{20/308} \approx 10^{0.065}$ of layer-1 currency — a hair more than 1. The second layer flattens that *again*. Real games soften this with multiplicative bonuses, milestone multipliers, and per-layer prestige-multiplier upgrades that act on the layer's gain rate without changing its shape — they shift the curve up, but they don't change the slope. The slope is the design-locked compression. The bonuses are the dial the designer turns to make ascent times feel right.
 
-The shape this enables is what the post-2016 genre actually wanted from prestige: a pacing tool where each layer takes *more total real-world time* than the one below, regardless of player skill. With single-tier prestige you can't make a player spend longer at the wall — they get better, the wall doesn't move. With layered prestige, the wall is built into the formula. The number of times you can fit "$\log_{10}$ followed by divide-by-308" into a layer cap *is* how many layers the game has.
+The shape this enables is what the post-2016 genre actually wanted from prestige: a pacing tool where each layer takes *more total real-world time* than the one below, regardless of player skill. With single-layer prestige you can't make a player spend longer at the wall — they get better, the wall doesn't move. With layered prestige, the wall is built into the formula. The number of times you can fit "$\log_{10}$ followed by divide-by-308" into a layer cap *is* how many layers the game has.
 
 ## Why deep stacks reach tetration
 
 Power-law cascades have a hard limit. Even in the punishingly compressed AD-style $\alpha = 1/308$ shape, stacking five layers leaves a slope of $1/308^5$ — a number with no useful meaning at any tractable game scale. Past three or four layers of polynomial conversion, the slope flattens enough that the design problem becomes "how does the upper layer's currency move at all," not "how do we pace it."
 
-Log-shape conversions are what comes next, and they have a different limiting behavior. Stack one log on another and you get $\log(\log(x))$: every $10^{10}\times$ in input adds $1$ to the output. Stack three and the input has to grow like $10^{10^{10}}$ to move the output by $1$ — the input scales tetrationally in the depth of the stack. In the limit:
+Log-shape conversions are what comes next, and they have a different limiting behavior. Stack one log on another and you get $\log(\log(x))$: every $10^{10}\times$ in input adds $1$ to the output. Stack three and the input has to grow like $10^{10^{10}}$ to move the output by $1$ — the input scales tetrationally in the number of layers in the stack. In the limit:
 
 $$\lim_{n \to \infty} \log^n(x) = \mathrm{slog}(x)$$
 
@@ -178,11 +178,11 @@ Shark Incremental walks the limit stepwise across its six layers, each one a dee
 
 <Cite repo="shark-incremental" path="js/modules/currency.js" line="69-198" />
 
-The progression isn't decoration. Each step compresses orders of magnitude that the layer below couldn't keep readable. Layer 2 turns a $10^{50}$ Layer-1 currency into $50$; Layer 3 turns that $50$ into $\log 50 \approx 1.7$. Without the deepening compression, the displayed numbers at the upper layers would saturate the [bignum substrate](/modern/big-numbers) under any reasonable run length. The structural reading: a layered prestige game whose top-layer currency is meant to grow without bound and stay legible *will* drift toward log-shape conversions, and a deep enough stack of log-shapes is tetration in the limit. The substrate has to support tetration not because the designer chose it but because the depth pressure of the layer stack produces it.
+The progression isn't decoration. Each step compresses orders of magnitude that the layer below couldn't keep readable. Layer 2 turns a $10^{50}$ Layer-1 currency into $50$; Layer 3 turns that $50$ into $\log 50 \approx 1.7$. Without the deepening compression, the displayed numbers at the upper layers would saturate the [bignum substrate](/modern/big-numbers) under any reasonable run length. The structural reading: a layered prestige game whose top-layer currency is meant to grow without bound and stay legible *will* drift toward log-shape conversions, and a deep enough stack of log-shapes is tetration in the limit. The substrate has to support tetration not because the designer chose it but because the growing number of layers in the stack produces it.
 
-## Depth case: Synergism
+## Largest stack: Synergism
 
-Synergism is the deepest live example by a clear margin. Five reset tiers ship as an explicit ordered enum:
+Synergism has the largest stack of any live example, by a clear margin. Five reset layers ship as an explicit ordered enum:
 
 <Cite repo="SynergismOfficial" path="src/Reset.ts" line="78-85" />
 
@@ -197,7 +197,7 @@ export enum resetTiers {
 }
 ```
 
-Each tier wipes everything below it. Prestige resets coins for diamonds. Transcension wipes diamonds and prestige bonuses for mythos. Reincarnation wipes mythos for particles. Ascension wipes particles, runes, talismans, anthills, and most upgrades for cubes. Singularity is the outermost reset, wiping nearly the entire save for golden quarks plus a small set of permanent perks. Beyond the five tiers, the game also has octeract upgrades and ambrosia loadouts (`octeractsInvested`, `ambrosiaUpgrades`, `ambrosiaTimer` in `types/Synergism.ts` <Cite repo="SynergismOfficial" path="src/types/Synergism.ts" line="594" />) that act as further sub-layers gated behind singularity progress, extending the practical layer count past the enum's five.
+Each layer wipes everything below it. Prestige resets coins for diamonds. Transcension wipes diamonds and prestige bonuses for mythos. Reincarnation wipes mythos for particles. Ascension wipes particles, runes, talismans, anthills, and most upgrades for cubes. Singularity is the outermost reset, wiping nearly the entire save for golden quarks plus a small set of permanent perks. Beyond the five layers, the game also has octeract upgrades and ambrosia loadouts (`octeractsInvested`, `ambrosiaUpgrades`, `ambrosiaTimer` in `types/Synergism.ts` <Cite repo="SynergismOfficial" path="src/types/Synergism.ts" line="594" />) that act as further sub-layers gated behind singularity progress, extending the practical layer count past the enum's five.
 
 The interesting move is *corruptions* — a sideways modifier that mutates run shape per ascension rather than adding another layer. Each ascension run, the player picks a corruption loadout from eight axes:
 
@@ -224,18 +224,18 @@ The same skeleton — currency that survives the reset below, cascade walking do
 
 - **NGU Idle** stacks five reset escalations: rebirths (the standard prestige loop), then meta upgrades, then evil mode, then sadistic mode, then the last few endgame layers. Each escalation re-runs the full game under harsher constants. The "layer thinning" effect is brutal — a single sadistic-mode run can outlast hundreds of evil-mode runs. NGU shows what the multi-decade ascent looks like in production.
 - **Antimatter Dimensions** ladders Infinity → Eternity → Reality → Pelle's Doomed reality. AD is the usual reference point, but as a structural example it's one ladder among many — a single chain with hand-rolled per-layer formulas. It's the canonical *single-spine* layered prestige; Prestige Tree generalizes it into the *DAG* case.
-- **Cell to Singularity** narrative-shapes its layers: the player walks a story-driven tree through Earth life, civilization, AI, the singularity itself. The currency-survives-reset structural rule still applies — Metabits earned at the singularity reset survive every prior tier's wipe — but the ascent isn't gated on a $10^{308}$ wall, it's gated on narrative beats. Layered prestige works as a narrative skeleton, not just a numerical one.
+- **Cell to Singularity** narrative-shapes its layers: the player walks a story-driven tree through Earth life, civilization, AI, the singularity itself. The currency-survives-reset structural rule still applies — Metabits earned at the singularity reset survive every prior layer's wipe — but the ascent isn't gated on a $10^{308}$ wall, it's gated on narrative beats. Layered prestige works as a narrative skeleton, not just a numerical one.
 - **Universal Paperclips** is the limit case: phase transitions function as story-shaped layered prestige. Phase 1 (Earth) is a clip-production loop; phase 2 (space) reuses some currencies and discards others; phase 3 (cosmic) collapses the early game's UI entirely. The "reset" between phases isn't player-triggered — it's narrative-triggered when production crosses a threshold — but the structural pattern is identical to a layered-prestige cascade with a forced reset condition, and it's worth seeing the pattern stretch this far from its conventional shape.
 
 The visible spread — from Synergism's eight-axis corruption configuration to Paperclips' three forced phase transitions — is what "the framework codified the pattern" buys: many surface shapes, one underlying skeleton.
 
 ## What this enabled
 
-**Late-game content as layers, not levels.** A single-tier prestige game has one mid-game and one late-game; once the player saturates the prestige multiplier, there's nowhere to go. A layered prestige game can introduce content with each layer — Antimatter Dimensions's Time Studies (layer 2), Glyphs (layer 3), Imaginary Machines (layer 3+); Synergism's runes (layer 3), corruptions (layer 4), golden-quark upgrades (layer 5). The layer boundary is a content boundary in the same way a level boundary is in an RPG. Players cite "the new mechanics behind prestige tier 4" the way RPG players cite "the spells you unlock at level 30."
+**Late-game content as layers, not levels.** A single-layer prestige game has one mid-game and one late-game; once the player saturates the prestige multiplier, there's nowhere to go. A layered prestige game can introduce content with each layer — Antimatter Dimensions's Time Studies (layer 2), Glyphs (layer 3), Imaginary Machines (layer 3+); Synergism's runes (layer 3), corruptions (layer 4), golden-quark upgrades (layer 5). The layer boundary is a content boundary in the same way a level boundary is in an RPG. Players cite "the new mechanics behind layer 4" the way RPG players cite "the spells you unlock at level 30."
 
-**Optimization as a cross-layer portfolio.** Single-tier prestige asks one question: when do I prestige? Layered prestige asks a portfolio of questions — when do I prestige *at this layer*, when do I let layer-2 currency accumulate before triggering layer 3, which layer's upgrade tree do I push first. Synergism players trade strategies for the mythos (layer 2) versus particles (layer 3) tradeoff that are far more elaborate than any single-tier optimization. The optimization surface is itself a content surface.
+**Optimization as a cross-layer portfolio.** Single-layer prestige asks one question: when do I reset? Layered prestige asks a portfolio of questions — when do I reset *at this layer*, when do I let layer-2 currency accumulate before triggering layer 3, which layer's upgrade tree do I push first. Synergism players trade strategies for the mythos (layer 2) versus particles (layer 3) tradeoff that are far more elaborate than any single-layer optimization. The optimization surface is itself a content surface.
 
-**A hard ceiling on the in-run scale.** Antimatter Dimensions's first prestige (the Big Crunch) fires when antimatter reaches $2^{1024}$ — exactly the JavaScript Number ceiling. <Cite repo="AntimatterDimensionsSourceCode" path="src/core/player.js" line="942-946" /> The game keeps running on `Decimal` (covered on the Big Numbers page), but the *in-run* currency stays bounded by design at every layer. Antimatter never goes past $\sim 10^{308}$ in a single Infinity. IP never goes past whatever the layer-2 cap is in a single Eternity. The number on the screen at any layer below the topmost is bounded; only the topmost layer's currency is allowed to grow without bound. This is the genre's working answer to "how do you keep a game legible when the math is unbounded": you bound every layer except one, and you only show the unbounded layer in its top position.
+**A hard limit on the in-run scale.** Antimatter Dimensions's first reset (the Big Crunch) fires when antimatter reaches $2^{1024}$ — exactly the JavaScript Number limit. <Cite repo="AntimatterDimensionsSourceCode" path="src/core/player.js" line="942-946" /> The game keeps running on `Decimal` (covered on the Big Numbers page), but the *in-run* currency stays bounded by design at every layer. Antimatter never goes past $\sim 10^{308}$ in a single Infinity. IP never goes past whatever the layer-2 cap is in a single Eternity. The number on the screen at any layer below the topmost is bounded; only the topmost layer's currency is allowed to grow without bound. This is the genre's working answer to "how do you keep a game legible when the math is unbounded": you bound every layer except one, and you only show the unbounded layer in its top position.
 
 ## What this costs
 
@@ -245,11 +245,11 @@ The visible spread — from Synergism's eight-axis corruption configuration to P
 
 **Balance entanglement.** Each layer's formula has constants the designer chose to set its tempo. Those constants interact: making the IP formula 10% steeper makes the EP formula effectively 10% steeper too, since EP runs on the integral of IP. AD's `308`s and `0.75`s and `4000`s are all hand-tuned numbers that produce the current ascent times under the current set of upgrade trees, glyph effects, and challenge multipliers. Touching one in isolation is a respec across every layer above it. This is why layered-prestige games tend to ship constants and never change them — the maintenance cost of rebalancing across layers is far worse than living with a slightly off-target formula. AD's `308` and `0.75` have stayed put for years. They are load-bearing constants.
 
-**No reverse gear.** A single-tier prestige system can be tuned by adjusting the prestige formula. A layered prestige system can be tuned, but the layers are nested: changing layer 2's formula reshapes layer 3's input, which reshapes layer 3's output. Designers learn to draft new content as *new layers* rather than as adjustments to existing layers. AD's expansions — Reality, Imaginary, Pelle — are all *upward*. Once a layer ships, its math is frozen, because every layer above it has been tuned against the version that shipped.
+**No reverse gear.** A single-layer prestige system can be tuned by adjusting the prestige formula. A layered prestige system can be tuned, but the layers are nested: changing layer 2's formula reshapes layer 3's input, which reshapes layer 3's output. Designers learn to draft new content as *new layers* rather than as adjustments to existing layers. AD's expansions — Reality, Imaginary, Pelle — are all *upward*. Once a layer ships, its math is frozen, because every layer above it has been tuned against the version that shipped.
 
 ## Prestige Tree's `addLayer`
 
-Jacorb's Prestige Tree was the genre's first pass at making layered prestige a configuration declaration rather than a hand-rolled cascade. `addLayer` registers a tier with its id, row, base resource, prestige type, and gain formula; the row-walking reset (`doReset` calling `rowReset` for every row from the resetting layer down to 0) handles persistence and exemption automatically. The vocabulary maps onto the research: tier structure, reset scope, persistence type, formula family, timing mode — five orthogonal dimensions, each declarable per layer.
+Jacorb's Prestige Tree was the genre's first pass at making layered prestige a configuration declaration rather than a hand-rolled cascade. `addLayer` registers a layer with its id, row, base resource, prestige type, and gain formula; the row-walking reset (`doReset` calling `rowReset` for every row from the resetting layer down to 0) handles persistence and exemption automatically. The vocabulary maps onto the research: layer structure, reset scope, persistence type, formula family, timing mode — five orthogonal dimensions, each declarable per layer.
 
 The reason this shape pays off, rather than ad-hoc per-layer code, is the entanglement above. A game stacking five layers without shared substrate ends up with five hand-rolled cascade routines, five hand-rolled save-shape extensions, and five hand-rolled milestone-exemption checks. The cost compounds layer-by-layer. Prestige Tree proved this trade was worth making in 2020.
 
@@ -283,7 +283,7 @@ The reason this shape pays off, rather than ad-hoc per-layer code, is the entang
       repo: 'SynergismOfficial',
       path: 'src/Reset.ts',
       line: '78-85',
-      note: 'resetTiers enum — five layers (prestige, transcension, reincarnation, ascension, singularity) declared as ordered tiers.',
+      note: 'resetTiers enum — five layers (prestige, transcension, reincarnation, ascension, singularity) declared as ordered layers.',
     },
     {
       repo: 'SynergismOfficial',
@@ -307,7 +307,7 @@ The reason this shape pays off, rather than ad-hoc per-layer code, is the entang
       repo: 'AntimatterDimensionsSourceCode',
       path: 'src/core/machines.js',
       line: '19-30',
-      note: 'MachineHandler.uncappedRM — the layer-3 formula, with the soft-cap discontinuity at 6000-8000 decades of EP.',
+      note: 'MachineHandler.uncappedRM — the layer-3 formula, with the softcap discontinuity at 6000-8000 decades of EP.',
     },
     {
       repo: 'AntimatterDimensionsSourceCode',
@@ -331,7 +331,7 @@ The reason this shape pays off, rather than ad-hoc per-layer code, is the entang
       repo: 'AntimatterDimensionsSourceCode',
       path: 'src/core/player.js',
       line: '942-946',
-      note: 'canCrunch — outside a challenge the Big Crunch goal defaults to Decimal.NUMBER_MAX_VALUE, the double ceiling.',
+      note: 'canCrunch — outside a challenge the Big Crunch goal defaults to Decimal.NUMBER_MAX_VALUE, the JavaScript Number limit.',
     },
   ]}
 />

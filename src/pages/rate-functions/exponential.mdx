@@ -21,7 +21,7 @@ discrete and continuous, point at the same family.
 $$a_n = a \cdot m^n, \quad S_n = a \cdot \frac{m^{n+1} - 1}{m - 1}, \quad N(C) = \log_m\!\left(\frac{C(m-1)}{a} + 1\right) - 1$$
 
 The per-purchase cost ladder. $a$ is the cost of the zeroth purchase; $m$ is the
-multiplicative ratio between consecutive purchases. The
+cost ratio between consecutive purchases. The
 [partial sum](https://en.wikipedia.org/wiki/Geometric_series) $S_n$ is a closed form known
 since [Archimedes](https://en.wikipedia.org/wiki/Archimedes); what makes the geometric
 shape the genre's default cost primitive is that the inverse — "how many can I afford with
@@ -45,12 +45,12 @@ this.getPrice = function (n) {
 };
 ```
 
-That ratio — $1.15$ — became the genre default, adopted by later games with little
+That cost ratio — $1.15$ — became the genre default, adopted by later games with little
 renegotiation. The reason the choice stuck is the doubling time:
 $(\log_2 1.15)^{-1} \approx 4.96$, so each five purchases double the cost. A run that climbs
 through fifty purchases of a building has gone through ten doublings, $1024\times$ over the
 base cost. A run that climbs through a hundred has gone through twenty, $\approx 10^6\times$.
-The same formula holds at every scale; the _rate_ of difficulty escalation is constant.
+The same formula holds at every scale; the _cost ratio_ behind the difficulty escalation is constant.
 
 Antimatter Dimensions ships an engineered version — a parameterized cost-scaling class
 with both a max-quantity-affordable and a price-at-quantity, closed-form below its
@@ -70,14 +70,14 @@ The doc-comment's price ladder is two regimes glued together: a pure geometric
 $B \cdot C^k$ before the scaling threshold, then a shape past it whose step ratio grows by
 $S$ with every purchase. That second regime has left this family — it is
 [super-exponential](#super-exponential), covered at the end of this page — and the glue
-between the two is a [piecewise composition](/rate-functions/composition). AD's late-game
+between the two is a [piecewise splice](/rate-functions/composition#piecewise-splice). AD's late-game
 cost climbs this way to give the player two distinct "speed" regimes.
 
 <GeometricRateDemo client:visible />
 
 The doubling-time readout updates as you slide $m$. At $m = 1.15$ the doubling time is
-about $5$, the genre default. At $m = 1.05$ doubling takes ~14 purchases, a markedly slower regime. At $m = 1.30$ the regime is harsh:
-each three purchases double the cost. Designers who pick a multiplier are picking the
+about $5$ purchases, the genre default. At $m = 1.05$ doubling takes ~14 purchases, a markedly slower case. At $m = 1.30$ the case is harsh:
+each three purchases double the cost. Designers who pick a cost ratio are picking the
 slope of the late-game wall.
 
 ## Continuous (exponential)
@@ -109,7 +109,7 @@ hood; the per-purchase reading lines up exactly with $m = e^b$.
 
 The genre uses exponential cost paired with linear (or polynomial) production — Pecorella's
 Part I seesaw — because the _ratio_ of cost to production grows exponentially while the
-production itself only grows polynomially. That ratio is the per-purchase wait time, and
+production itself only grows polynomially. That ratio is the beat time, and
 its growth is what makes early progress feel fast and late progress feel slow without any
 explicit pacing rule. The math is doing the pacing.
 
@@ -119,15 +119,15 @@ late-game runs that the genre's late-2010s production substrate (`break_infinity
 `break_eternity`) had to be engineered to handle — past $1e308$ the naïve `Math.pow` form
 overflows, and the exponential family's natural endpoint is somewhere past that. Big-number
 arithmetic (covered on the [big numbers page](/modern/big-numbers)) is what made the
-exponential family practical past the double ceiling; before then, the late-game regime hit a wall not
+exponential family practical past the JavaScript Number limit; before then, the late game hit a wall not
 because the math broke but because the floats did.
 
 The other direction the genre went is _softening_ the exponential past a threshold —
-[piecewise](/rate-functions/composition) compositions of geometric with a slower geometric, geometric
+[piecewise splices](/rate-functions/composition#piecewise-splice) of geometric with a slower geometric, geometric
 with a polynomial, geometric with a logarithmic shape. Each is a way to reach the
 post-doubling regime without committing to the exponential's full late-game blowup. The
 [softcaps page](/modern/softcaps) catalogs the design patterns; the math underneath is
-piecewise composition of this entry's family with the others.
+piecewise splice of this entry's family with the others.
 
 ## Asymptotic concentration
 
@@ -135,9 +135,9 @@ A clean fact about the geometric cumulative that's worth stating explicitly:
 
 $$\frac{\sum_{n=N-K+1}^{N} a_n}{\sum_{n=1}^{N} a_n} = \frac{m^N - m^{N-K}}{m^N - 1} \;\xrightarrow{N \to \infty}\; 1 - m^{-K}$$
 
-The last $K$ levels of any geometric cumulative carry approximately $1 - m^{-K}$ of the total,
+The last $K$ purchases of any geometric cumulative carry approximately $1 - m^{-K}$ of the total,
 independent of $N$ once $N$ is large. For $m = 1.15$ and $K = 10$, that's $\approx 0.753$ —
-the last 10 levels carry 75% of the integral. For $K = 5$, $\approx 0.503$ — the last 5
+the last 10 purchases carry 75% of the integral. For $K = 5$, $\approx 0.503$ — the last 5
 carry half.
 
 <TailConcentrationDemo client:visible />
@@ -149,9 +149,9 @@ saturated by its tail. The closed form $(m^N - m^{N-K})/(m^N - 1)$ converges to
 $1 - m^{-K}$ at a rate set by the doubling time — past three or four doublings of the
 range, the exact share and the asymptote are visually indistinguishable.
 
-This is the math behind the genre's "the last few levels are everything" feeling. It's not
-a perception artifact; it's the underlying rate-function shape. Every soft cap, every
-pacing tweak, every "milestone bonus that activates at level 25" is operating against this
+This is the math behind the genre's "the last few purchases are everything" feeling. It's not
+a perception artifact; it's the underlying rate-function shape. Every softcap, every
+pacing tweak, every "milestone bonus that activates at purchase 25" is operating against this
 concentration: the question is whether the late-game work is meaningful or whether it
 collapses into a single 75%-of-total wait.
 
@@ -179,7 +179,7 @@ is the inverse of one term, accurate to within one purchase once the ratio passe
 | $n!$               | the inverse gamma function; [Stirling](https://en.wikipedia.org/wiki/Stirling%27s_approximation) for an estimate |
 | $b^{b^n}$          | $\log_b \log_b C$                                                                   |
 
-There is no fixed doubling level: each doubling of cost arrives in fewer purchases than the
+There is no fixed purchase count per doubling: each doubling of cost arrives in fewer purchases than the
 last. That is the whole design appeal — a wall that steepens on its own — and the
 [cost-acceleration page](/modern/cost-acceleration) walks the history of games reaching for
 it.
@@ -204,7 +204,7 @@ by comparison with the integral rather than inverted term by term.
 <TailConcentrationDemo client:visible initialShape="super" />
 
 Set $s$ near 1 and the ladder is almost geometric: the last bar holds a share close to
-$1 - 1/m$ and moves slowly with $N$. Raise $s$ and the share climbs with every level added.
+$1 - 1/m$ and moves slowly with $N$. Raise $s$ and the share climbs with every purchase added.
 
 <Sources
   cites={[
@@ -212,7 +212,7 @@ $1 - 1/m$ and moves slowly with $N$. Raise $s$ and the share climbs with every l
       repo: 'cookie-clicker',
       path: 'main.js',
       line: '7972',
-      note: 'Game.priceIncrease = 1.15: the genre-default geometric ratio, set as a single named constant.',
+      note: 'Game.priceIncrease = 1.15: the genre-default cost ratio, set as a single named constant.',
     },
     {
       repo: 'cookie-clicker',

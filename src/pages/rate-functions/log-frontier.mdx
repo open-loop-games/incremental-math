@@ -9,11 +9,11 @@ import Sources from '../../components/Sources.astro';
 
 # Log and the Lambert-W frontier
 
-This page covers the boundary of elementary closed-form. The
+This page covers the boundary of the elementary functions. The
 [logarithmic](https://en.wikipedia.org/wiki/Logarithm) rate has a clean cumulative but its
 first-passage requires a non-elementary function — the
 [Lambert W function](https://en.wikipedia.org/wiki/Lambert_W_function), defined by
-$W(x) \cdot e^{W(x)} = x$. W is closed-form in the formal sense; it has known
+$W(x) \cdot e^{W(x)} = x$. W is closed-form; it has known
 [asymptotics](https://en.wikipedia.org/wiki/Asymptotic_analysis), it evaluates fast, it
 composes with the rest of the algebra. But it isn't part of the elementary toolkit most
 designers carry, and its appearance in a first-passage formula is the sign that the
@@ -44,7 +44,7 @@ four or five iterations from a coarse seed.
 ## Where logarithmic rate appears in the corpus
 
 Pure logarithmic rate — $r(x) = a \ln(b \cdot x)$ as the production rate of a primary
-quantity — is rare. What's common is logarithmic _cumulative_ applied as a soft cap on a
+quantity — is rare. What's common is logarithmic _cumulative_ applied as a softcap on a
 quantity that's already accumulated. The two readings often produce the same shape on the
 output side, but the role in the system is different: rate-shaped log lives in the
 production chain, cumulative-shaped log is a transformation applied at the boundary.
@@ -63,7 +63,7 @@ var fluffLvl = Math.log(fluffXP) / Math.log(4);
 ```
 
 Each quadrupling of XP adds one level — a fixed $\log_4$ compression of the cumulative.
-Reading this as a rate-function entry: the _rate of level gain per XP_ is
+Reading this as a rate-function entry: the _increment of level per XP_ is
 $1/(\text{XP} \cdot \ln 4)$, which is the [polynomial rate](/rate-functions/power-law) with $p = -1$ —
 the boundary case of the polynomial entry where the integral becomes $\ln$. So Trimps'
 log-pet-level is sitting on the same boundary this page covers, just from the other side:
@@ -79,7 +79,7 @@ principal branch $W_0$ is real-valued and monotone. The asymptotic for large $x$
 
 $$W_0(x) \sim \ln x - \ln \ln x + \frac{\ln \ln x}{\ln x}$$
 
-— a logarithm of a logarithm, slow-growing past the regime of interest. For practical
+— a logarithm of a logarithm, slow-growing past the range of interest. For practical
 evaluation, [Newton](https://en.wikipedia.org/wiki/Newton%27s_method) or
 Halley iteration converges to machine precision in a handful of steps.
 
@@ -94,15 +94,14 @@ W appears whenever a closed form mixes exponential and linear in the same equati
   cost, $x = \ln c \,/\, W(\ln c)$.
 
 What $W$ does not invert is a _sum_ of a polynomial above degree one and an exponential.
-$W$ handles a product of $x$ and $e^x$ in any power; add $x^2$ to $e^x$ instead and the
+$W$ handles a product of $x$ and $e^x$ at any exponent; add $x^2$ to $e^x$ instead and the
 equation needs a numerical root-finder.
 
 The function was studied by [Lambert](https://en.wikipedia.org/wiki/Johann_Heinrich_Lambert)
 (1758) and [Euler](https://en.wikipedia.org/wiki/Leonhard_Euler) (1779), but its
 [formalization](https://en.wikipedia.org/wiki/Lambert_W_function#History) as a named
 function with stable name and notation traces to a 1996 paper by Corless, Gonnet, Hare,
-Jeffrey, and Knuth. For the catalog's purposes it's the natural endpoint of "elementary
-closed-form": a result expressible in $W$ is closed-form in the formal sense, but reading
+Jeffrey, and Knuth. For the catalog's purposes it's the natural endpoint of the elementary functions. A result expressible in $W$ is closed-form, but reading
 the formula like a designer reads a doubling time requires an extra translation step.
 
 ## Practical implications
@@ -129,7 +128,7 @@ Past W there's a family of named functions that handle further boundaries —
 [exponential integral](https://en.wikipedia.org/wiki/Exponential_integral), [polylogarithm](https://en.wikipedia.org/wiki/Polylogarithm) —
 each of which arises when the integrand mixes more shapes than W's product of $x$ and
 $e^x$ can capture. The catalog stops at W because it's where the genre's actual specs
-stop. Past W, the rate-function is in a regime that ships in a research artifact, not in
+stop. Past W, the rate-function is the kind that ships in a research artifact, not in
 an idle game.
 
 That said: an absence on the catalog's curve doesn't mean "impossible to write." A

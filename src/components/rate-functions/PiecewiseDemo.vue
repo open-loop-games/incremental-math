@@ -127,7 +127,7 @@ const cDomain = computed<[number, number]>(() => [1, cMax.value]);
         {{ cumulativeAtT < 1e6 ? cumulativeAtT.toFixed(0) : cumulativeAtT.toExponential(2) }}</code
       >. The rate panel is on log y-scale because the post-threshold geometric is still exponential
       — the kink at <code>x = t</code> is the slope change in log space, which is the only place a
-      piecewise composition of two geometrics is visually a "break" rather than a vanishingly small
+      piecewise splice of two geometrics is visually a "break" rather than a vanishingly small
       inflection.
     </p>
   </div>

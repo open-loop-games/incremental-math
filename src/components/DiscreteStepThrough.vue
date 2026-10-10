@@ -79,7 +79,7 @@ function setDepth(d: Depth) {
 }
 
 function tierLabel(i: number): string {
-  return i === 0 ? 'currency' : `Gen ${i}`;
+  return i === 0 ? 'currency' : `Tier ${i}`;
 }
 
 function renderCount(n: number): string {
@@ -162,7 +162,7 @@ function renderCount(n: number): string {
         Linear growth — no newborn correction needed; the discrete and theoretical track exactly.
       </div>
       <div v-else class="dst-compare-note">
-        At depth ≥ 3 the half-on-creation rule is no longer exact (the layer above is no longer
+        At depth ≥ 3 the half-on-creation rule is no longer exact (the tier above is no longer
         linear in t), so the discrete simulation drifts off
         <code
           >t<sup>{{ depth }}</sup

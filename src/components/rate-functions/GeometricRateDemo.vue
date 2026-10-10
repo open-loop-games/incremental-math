@@ -32,7 +32,7 @@ const cDomain = computed<[number, number]>(() => [1, cMax.value]);
         <input v-model.number="a" type="range" min="0.5" max="5" step="0.05" />
       </label>
       <label>
-        <span class="demo-label">m (per-level multiplier) = {{ m.toFixed(3) }}</span>
+        <span class="demo-label">m (cost ratio) = {{ m.toFixed(3) }}</span>
         <input v-model.number="m" type="range" min="1.02" max="1.5" step="0.005" />
       </label>
       <label>
@@ -78,9 +78,9 @@ const cDomain = computed<[number, number]>(() => [1, cMax.value]);
     <p class="demo-note">
       Doubling time in <code>x</code>: <code>(ln 2)/ln(m) ≈ {{ (Math.LN2 / b).toFixed(2) }}</code
       >. Past <code>x ≈</code> a few doubling times, <code>R(x)</code> is dominated by the last term
-      — about <code>1 − m⁻ᴷ</code> of the cumulative sits in the last <code>K</code> levels. For
-      <code>m = 1.15</code>, the last 10 levels carry ≈ 75% of the integral; this is the exponential
-      family's signature concentration of total work near the end.
+      — about <code>1 − m⁻ᴷ</code> of the cumulative sits in the last <code>K</code> purchases. For
+      <code>m = 1.15</code>, the last 10 purchases carry ≈ 75% of the integral; this is the
+      exponential family's signature concentration of total work near the end.
     </p>
   </div>
 </template>

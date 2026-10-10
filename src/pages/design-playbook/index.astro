@@ -31,8 +31,8 @@ const familyPages = (family?.pages ?? []).filter((p) => p.href !== '/design-play
           <a href={base + '/rate-functions'}>Rate Functions</a> catalog walks the math underneath both.
           This section is different in posture: it doesn't describe, it
           <em>diagnoses</em>. The questions a working designer asks — "why does this mechanic become
-          obsolete?", "where should I soft cap?", "how long should a prestige cycle be?" — turn out
-          to be math problems most of the time, and the rest of this section is the conversion:
+          obsolete?", "where should I use a softcap?", "how long should a prestige run be?" — turn
+          out to be math problems most of the time, and the rest of this section is the conversion:
           question, math, prescription, and where the math runs out.
         </p>
 
@@ -44,9 +44,9 @@ const familyPages = (family?.pages ?? []).filter((p) => p.href !== '/design-play
           feel is wrong — taste is what decides whether a design is fun, and no formula computes
           that — but because feel without math has no idea which constants are independent, where
           the regimes split, or what the curve is asymptotically doing. A designer who reads the
-          doubling time off a geometric cost ladder and a designer who tunes the cost multiplier
-          until "it feels about right" are picking the same number; one of them knows what they
-          picked and one doesn't.
+          doubling time off a geometric cost ladder and a designer who tunes the cost ratio until
+          "it feels about right" are picking the same number; one of them knows what they picked and
+          one doesn't.
         </p>
 
         <p>
@@ -69,7 +69,7 @@ const familyPages = (family?.pages ?? []).filter((p) => p.href !== '/design-play
           <li>
             <strong>The math problem the question secretly is.</strong> Most questions in this section
             have a clean translation: "make this mechanic stay relevant" is a composition-rule choice;
-            "where does the early game end" is a regime-boundary calculation; "what soft cap shape" is
+            "where does the early game end" is a regime-boundary calculation; "what softcap shape" is
             a curvature-of-cumulative choice.
           </li>
           <li>
@@ -83,7 +83,7 @@ const familyPages = (family?.pages ?? []).filter((p) => p.href !== '/design-play
           </li>
           <li>
             <strong>Where the math runs out.</strong> Every prescription has a boundary past which it
-            stops applying, and the playbook is honest about where that is. A regime where the algebra
+            stops applying, and the playbook is honest about where that is. A situation where the algebra
             doesn't close, a parameter the algebra is silent on, a question that's actually about feel
             and was never really a math question.
           </li>
@@ -115,9 +115,10 @@ const familyPages = (family?.pages ?? []).filter((p) => p.href !== '/design-play
             it you want.
           </li>
           <li>
-            <strong>Whether to soft cap at all.</strong> The catalog tells you what soft caps do and what
-            shapes are available. It doesn't tell you whether your game wants the post-threshold slowdown
-            — that's a pacing call about the rhythm you're aiming at, and the math is downstream of it.
+            <strong>Whether to use a softcap at all.</strong> The catalog tells you what softcaps do and
+            what shapes are available. It doesn't tell you whether your game wants the post-threshold
+            slowdown — that's a pacing call about the rhythm you're aiming at, and the math is downstream
+            of it.
           </li>
           <li>
             <strong>When to stop.</strong> Every closed form in the catalog runs to infinity. Real games

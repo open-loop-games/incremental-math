@@ -114,7 +114,7 @@ function toggle(key: string): void {
         <input v-model.number="rootN" type="range" min="1.5" max="6" step="0.1" />
       </label>
       <label>
-        <span class="demo-label">power p = {{ powerP.toFixed(2) }}</span>
+        <span class="demo-label">exponent p = {{ powerP.toFixed(2) }}</span>
         <input v-model.number="powerP" type="range" min="0.1" max="0.95" step="0.01" />
       </label>
       <label>

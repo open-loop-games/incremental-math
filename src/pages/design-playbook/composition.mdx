@@ -29,10 +29,10 @@ The honest version: it isn't the automation. The automation just makes the obsol
 _visible_. The math was always headed there.
 
 When a mechanic is its own [first-passage problem](/rate-functions/) — its own currency,
-its own milestone, its own rate function feeding back into nothing the rest of the game
+its own target, its own rate function feeding back into nothing the rest of the game
 cares about — it lives in isolation from the main loop's rate function. The total
 production of the game decomposes as a sum: $r_{\text{total}}(t) = r_1(t) + r_2(t) + \dots$.
-Once the player has automated $r_1$, its growth rate is fixed at whatever the autobuyer
+Once the player has automated $r_1$, its rate is fixed at whatever the autobuyer
 produces. Meanwhile, the post-automation upgrade tree pushes some other rate $r_3$ into
 exponential growth, and the catalog's [asymptotic ordering](/rate-functions/composition#sum)
 takes over. After enough time, the share $r_1 / r_{\text{total}}$ collapses to ~0%. The
@@ -55,7 +55,7 @@ it. Eternity upgrades feed it. Time studies feed it. Every one of those mechanic
 adding to the _same_ state variable, which is then multiplying production downstream.
 
 The "many sources sum into one count" half is one function in the source — five
-contributors, one return value:
+sources, one return value:
 
 <Cite repo="AntimatterDimensionsSourceCode" path="src/core/tickspeed.js" line="3-20" />
 
@@ -85,15 +85,15 @@ let production = amount.times(this.multiplier).times(Tickspeed.perSecond);
 ```
 
 `Tickspeed.perSecond` is the galaxy count's downstream effect — every dimension's
-output rate runs through it. The multiplicative composition is the line; whatever fed
+production rate runs through it. The multiplicative composition is the line; whatever fed
 the galaxy count flows through this multiplication into every dimension's production
 permanently.
 
 The architectural difference: galaxies aren't a separate first-passage problem with their
-own milestone the player is racing toward. They're a _modifier_ on the main loop's rate
+own target the player is racing toward. They're a _modifier_ on the main loop's rate
 function. Once a mechanic feeds the galaxy count, that mechanic's contribution
 permanently boosts everything downstream — not as an additive term that gets dominated
-by something faster, but as a multiplicative factor that scales the entire downstream
+by something faster, but as a multiplier that scales the entire downstream
 rate. Multiplicative contributions don't get dominated. They compose.
 
 <ObsoleteVsBlendedDemo client:visible />
@@ -104,7 +104,7 @@ toward ~100% and the others collapse. On the right, contributions are multiplied
 as log-share so the stacked-area visual lines up); each mechanic's share is _exactly_
 $g_i / \sum g_j$, fixed forever, independent of how long the run goes. The mechanics
 keep mattering because the math is structurally different — there's no asymptotic
-ordering on multiplicative factors, only on additive ones.
+ordering on multipliers, only on additive ones.
 
 The galaxy count itself is the sum of contributions from many sources, and that sum
 _does_ have an asymptotic ordering — the fastest-growing source dominates the galaxy
@@ -121,34 +121,34 @@ first-passage time.
 
 **Multiplier on the rate.** $r(x) \to \mu \cdot r(x)$. The
 [modifier-product](/rate-functions/composition#modifier-product-state-independent-multipliers) rule. Rescales the timescale: doubles
-the rate, halves the time-to-threshold, identical curve shape on log-y. Every "+50% to X"
+the rate, halves the first-passage time, identical curve shape on log-y. Every "+50% to X"
 upgrade is this. The math is clean: $T_{\text{new}}(C) = T_{\text{old}}(C / \mu)$. Players
 feel this as "everything's faster now."
 
-**Lower the threshold.** $C \to C / k$. The cost the player has to reach is rescaled
+**Lower the target.** $C \to C / k$. The cost the player has to reach is rescaled
 down. Identical math to the multiplier case from the time perspective —
 $T(C / k) = T_{\text{multiplier}}(C)$ — but the framing is different: the _cost line_
 moves down rather than the _production line_ moving up. Players feel this as "the next
 thing is cheaper now," and the difference matters for which side of the seesaw the
 upgrade reads as belonging to.
 
-**Multiply the state amount.** The state variable itself gets rescaled: $x \to k \cdot x$.
+**Multiply the state.** The state variable itself gets rescaled: $x \to k \cdot x$.
 On log-axis charts this is a horizontal shift; on linear axes it's a stretch. For
-geometric rate ladders, multiplying the state by $k$ means starting $\log_m k$ levels
+geometric rate ladders, multiplying the state by $k$ means starting $\log_m k$ purchases
 ahead. Players feel this as "I jumped forward in the curve" — qualitatively different
 from speeding it up, because the _position_ on the curve changed.
 
 **New source.** The state is fed by an additional [sum](/rate-functions/composition#sum)
-term. The mechanic that produces the state now has another contributor. This addition
+term. The mechanic that produces the state now has another source. This addition
 is at the _state_ level only; the state is then multiplied into rates downstream,
 so the new source's contribution still blends multiplicatively into the loop. The trick
 of AD's galaxies is exactly this two-level structure: many sources sum into the shared
 state, the shared state multiplies the rate.
 
-The four are interchangeable in their effect on first-passage time _for a single milestone_
+The four are interchangeable in their effect on first-passage time _for a single target_
 — each one shortens it — but they're not interchangeable in how they read to the player or
-how they compose with each other. Multipliers stack with multipliers; thresholds stack
-with thresholds; new sources stack with each other and with everything else. Designing
+how they compose with each other. Multipliers stack with multipliers; targets stack
+with targets; new sources stack with each other and with everything else. Designing
 upgrades means picking which lever each upgrade pulls, and the picks compound into the
 texture of the late game.
 
@@ -167,14 +167,14 @@ This is what makes modern incrementals tractable — the _layer_ is the unit of 
 the run, and runs nested arbitrarily deep stay in the algebra as long as the gluing
 functions stay simple.
 
-Where prestige stops being closed-form is when the _cycle length_ itself becomes a
-decision variable. The question "when should the player prestige?" is an
+Where prestige stops being closed-form is when the _run length_ itself becomes a
+decision variable. The question "when should the player reset?" is an
 [optimal-stopping problem](https://en.wikipedia.org/wiki/Optimal_stopping), which lives
 on the [bifurcations page](/rate-functions/bifurcations#optimal-stopping) of the
-catalog. Per-run math closes; cycle-length math doesn't. The right adjacent math
+catalog. Per-run math closes; run-length math doesn't. The right adjacent math
 there is dynamic programming or a Bellman-equation solver, not the catalog. Most modern
-games avoid this by _not_ leaving the cycle length up to the player — autobuyer-driven
-prestige with a fixed trigger, or guided by milestone unlocks, both convert the
+games avoid this by _not_ leaving the run length up to the player — autobuyer-driven
+reset with a fixed trigger, or guided by milestone unlocks, both convert the
 optimal-stopping problem into a deterministic schedule that closes again.
 
 ## How do I add a new layer without making the old one feel pointless?
@@ -190,10 +190,10 @@ Three concrete versions of "yes":
 
 - **The new layer's currency is a multiplier on the old layer's rate.** Cookie Clicker's
   Heavenly Chips multiply CPS; you keep upgrading buildings post-prestige because the
-  Chips multiplier and the building output are _multiplicatively_ composed.
+  Chips multiplier and the building production are _multiplicatively_ composed.
   <Cite repo="cookie-clicker" path="main.js" line="4284" />
 - **The new layer's currency unlocks new sources for the old layer's state.** A new
-  prestige tier opens additional ways to produce the primary currency. The old loops
+  layer opens additional ways to produce the primary currency. The old loops
   matter because the new sources flow through them.
 - **The new layer's currency lets you crank a knob on the old layer.** A challenge
   mode rebalances the old loop's parameters. The old loop is what's being challenged;
@@ -201,9 +201,8 @@ Three concrete versions of "yes":
 
 The version of "no" is the one that produces the obsolete-mechanic feeling: a new layer
 whose currency does its own thing, has its own upgrades, and never composes with the old
-layer's rate function. This is what the [layered prestige](/modern/layered-prestige) page
-calls "loosely-coupled tiers," and it's the loosest of the bad design patterns the
-catalog can diagnose: tiers that share a screen but not a rate function are tiers
+layer's rate function. Call these loosely-coupled layers. They're the loosest of the bad design patterns the
+catalog can diagnose: layers that share a screen but not a rate function are layers
 running their own first-passage problems in the same UI.
 
 ## Where the math stops
@@ -211,8 +210,8 @@ running their own first-passage problems in the same UI.
 Two boundaries the catalog can't see across:
 
 - **It doesn't tell you which lever a specific upgrade should pull.** The four canonical
-  boosts are all valid; the math says nothing about whether a particular upgrade should
-  be a multiplier or a threshold drop or a new source. That's a feel call, and feel
+  levers are all valid; the math says nothing about whether a particular upgrade should
+  be a multiplier or a target drop or a new source. That's a feel call, and feel
   calls are what designers are paid for. The math just maps the space the call is being
   made in.
 - **It doesn't tell you whether to add the new layer at all.** The math diagnoses
@@ -234,7 +233,7 @@ runs do, and it surfaces problems before the playtests would.
       repo: 'AntimatterDimensionsSourceCode',
       path: 'src/core/tickspeed.js',
       line: '3-20',
-      note: 'effectiveBaseGalaxies — five additive contributors (player galaxies, GalaxyGenerator, replicanti, dilation tachyons, plus sub-multipliers) sum into one shared count.',
+      note: 'effectiveBaseGalaxies — five additive sources (player galaxies, GalaxyGenerator, replicanti, dilation tachyons, plus sub-multipliers) sum into one shared count.',
     },
     {
       repo: 'AntimatterDimensionsSourceCode',
@@ -246,7 +245,7 @@ runs do, and it surfaces problems before the playtests would.
       repo: 'cookie-clicker',
       path: 'main.js',
       line: '4284',
-      note: 'Ascend tooltip: each prestige level grants a permanent +1% CpS — the cross-run currency composes multiplicatively with in-run building output.',
+      note: 'Ascend tooltip: each prestige level grants a permanent +1% CpS — the cross-run currency composes multiplicatively with in-run building production.',
     },
   ]}
 />

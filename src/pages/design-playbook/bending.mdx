@@ -1,15 +1,15 @@
 ---
 layout: ../../layouts/Article.astro
-title: Bending the curve — soft caps and regime breaks
+title: Bending the curve — softcaps and regime breaks
 ---
 
 import FundamentalStagesDemo from '../../components/design-playbook/FundamentalStagesDemo.vue';
 import Cite from '../../components/Cite.astro';
 import Sources from '../../components/Sources.astro';
 
-# Bending the curve — soft caps and regime breaks
+# Bending the curve — softcaps and regime breaks
 
-Soft caps are how the genre patches the runaway tendency of unbounded geometric
+Softcaps are how the genre patches the runaway tendency of unbounded geometric
 growth. They're also where the most common design mistake lives: the wrong shape, the
 wrong threshold, or the wrong stack of caps will trade a runaway problem for a wall
 problem. Math diagnoses both.
@@ -19,25 +19,25 @@ meets the [power-law](/rate-functions/power-law) and [log-frontier](/rate-functi
 catalog entries. The Modern section's softcaps page walks the patterns the genre uses;
 this page walks the design call that picks among them.
 
-## When should I soft cap?
+## When should I softcap?
 
 The math diagnosis: when an unbounded rate function is producing a cumulative that
 _nothing downstream consumes meaningfully_. If the cumulative stops corresponding to
 a meaningful progression value past some threshold — because the player can't spend
 it, or because spending it has [diminishing returns](/rate-functions/power-law#polynomial-rate) the
-designer didn't intend — the rate function has outgrown its purpose, and a soft cap
+designer didn't intend — the rate function has outgrown its purpose, and a softcap
 is the answer.
 
 The negative diagnosis is just as important: if the rate's runaway _is_ the meaningful
 progression — a late-game cookie count climbing past anything the player can read is
-the _point_ of the late game, not a bug — soft capping is the wrong move. The math
+the _point_ of the late game, not a bug — softcapping is the wrong move. The math
 doesn't say "all unbounded progression must be capped." It says "if the cumulative isn't
 delivering value past a threshold, cap it there."
 
 A clean test the design call can run: does the player notice when one
 unit of the runaway value becomes available? If yes (still feels like progress), the
 rate function is doing its job; don't cap. If no (the marginal unit lands silently
-because the formatter rounds it to invisibility, or because the next milestone is
+because the formatter rounds it to invisibility, or because the next target is
 priced past where the player can read), the rate has outgrown its UI, and capping it
 either changes the shape or changes the formatter — but something must change.
 
@@ -46,7 +46,7 @@ either changes the shape or changes the formatter — but something must change.
 Each shape lives in the catalog at a specific entry. Picking among them is picking
 which property matters most for the cap's role.
 
-**Root / fractional power**. $g(x, t) = t \cdot (x/t)^p$ for $0 < p < 1$. Lives at the
+**Root / fractional exponent**. $g(x, t) = t \cdot (x/t)^p$ for $0 < p < 1$. Lives at the
 [polynomial entry](/rate-functions/power-law#polynomial-rate) with fractional exponent. The post-cap
 growth is sublinear but unbounded, with a smooth slope change at the threshold. Pick
 this when the cap's role is "slow down growth, don't ceiling it." The exponent $p$
@@ -84,15 +84,15 @@ function doClerics() {
 }
 ```
 
-The hyperbolic factor is `1 - 100 / (graveyard + 100)`, the canonical
+The hyperbolic modifier is `1 - 100 / (graveyard + 100)`, the canonical
 $1 - b/(b + x)$ shape with $b = 100$. At zero graveyards the bonus is zero;
-at 100 graveyards it's $0.5$; at infinity it's $1.0$. The other factors in the
+at 100 graveyards it's $0.5$; at infinity it's $1.0$. The other modifiers in the
 chain are state-independent multipliers — the page's
 [modifier-product rule](/rate-functions/composition#modifier-product-state-independent-multipliers) — so the saturation lives entirely
 in this one parenthesized expression.
 
 **Piecewise / regime split**. Different rate or growth on each side of a threshold,
-glued continuously. Lives at the [piecewise composition](/rate-functions/composition#piecewise-splice)
+glued continuously. Lives at the [piecewise splice](/rate-functions/composition#piecewise-splice)
 rule. Pick this when the cap's role is "change the regime visibly so the player feels
 the transition." A pre/post-prestige cost shift built as two geometrics spliced is
 the common instance: the player crosses a named threshold and the game's pacing
@@ -122,8 +122,8 @@ the visual.
 
 ## How many caps should stack?
 
-The math: cascading soft caps with successively harsher exponents at successively
-higher thresholds is a piecewise composition where each regime applies a more aggressive
+The math: cascading softcaps with successively harsher exponents at successively
+higher thresholds is a piecewise splice where each regime applies a more aggressive
 shape than the last. Closure is automatic per regime; inversion still works as long as
 each cap closes individually.
 
@@ -137,7 +137,7 @@ Working answers from the corpus:
 - **One cap, one threshold.** Most early softcap implementations. Late-game has one
   obvious "wall" the player aims at and breaks through. Simple, legible, but the
   late-late-game often runs out of structure.
-- **Two-tier.** Early cap for "first slowdown," late cap for "the real wall."
+- **Two softcaps.** Early cap for "first slowdown," late cap for "the real wall."
   Common when the game has one major prestige layer.
 - **Many caps, named individually.** Prestige Tree, Synergism. Each cap is
   addressable by name; upgrades target specific caps; challenges swap cap shapes.
@@ -146,54 +146,54 @@ Working answers from the corpus:
   starts to require this kind of UI scaffolding.
 
 The catalog says nothing about which of these is right for a given game; it just says
-each is a piecewise composition that closes. The design call is content-shaped: how
+each is a piecewise splice that closes. The design call is content-shaped: how
 much does your late game lean on the caps as named features versus as background
 shape?
 
 ## Can the curve un-bend?
 
-The piecewise composition rule is symmetric — nothing in the math forbids the
+The piecewise splice rule is symmetric — nothing in the math forbids the
 post-threshold regime from being _gentler_ than the pre-threshold regime. The genre
 default is that softcaps make later progress harder, but that's a convention, not a rule.
 
-Fundamental ships a clean non-monotonic curve. Six stages, each building with its own
-per-purchase cost multiplier; the spread within a stage is what sets that stage's feel:
+Fundamental ships a clean non-monotonic curve. Six stages, each generator with its own
+per-purchase cost ratio; the spread within a stage is what sets that stage's feel:
 
-| Stage | Multipliers per building        | Feel                          |
+| Stage | Cost ratios per generator       | Feel                          |
 | ----- | ------------------------------- | ----------------------------- |
 | 1     | $1.40$ throughout               | moderate                      |
-| 2     | $1.15$–$1.40$, last building $4$ | moderate, one aggressive outlier |
+| 2     | $1.15$–$1.40$, last generator $4$ | moderate, one aggressive outlier |
 | 3     | $1.15$–$1.35$, last two $10$     | harsh — peak wall             |
 | 4     | $1.40$–$2$                      | moderate-high                 |
-| 5     | $2$, $2$, then $1.11$           | gentle — valley on the final building |
+| 5     | $2$, $2$, then $1.11$           | gentle — valley on the final generator |
 | 6     | $1.40$                          | moderate                      |
 
 <Cite repo="fundamental" path="Source_TS/Player.ts" line="318-325" />
 
-The demo collapses each stage to one representative multiplier so the shape reads as a
+The demo collapses each stage to one representative cost ratio so the shape reads as a
 single curve.
 
 <FundamentalStagesDemo client:visible />
 
-Stage 3 is the climactic difficulty wall: per-purchase cost growth jumps to $10\times$,
+Stage 3 is the climactic difficulty wall: per-purchase cost ratio jumps to $10\times$,
 which under the [doubling-time formula](/design-playbook/pacing#how-do-i-pick-a-doubling-time)
-means the beat time at level $n$ is $10^{n-1}$ times the beat time at level 1. Stage 5
+means the beat time at purchase $n$ is $10^{n-1}$ times the beat time at purchase 1. Stage 5
 is the inverse — at $1.11$, per-purchase pacing visibly relaxes below the game's $1.40$
 default. The valley reads as a breather _because_ the peak existed. Three conditions
 seem to make non-monotonic work: a peak with strong prestige compression so the wall
 isn't experienced as a dead end, a valley that's meaningfully gentler than its
-neighbours (a 5% change in multiplier isn't felt), and a legible stage structure so
+neighbours (a 5% change in cost ratio isn't felt), and a legible stage structure so
 the player knows the curve changed shape. The math says nothing about which side of a
 threshold is steeper; the convention exists because gentle-after-harsh is rare enough
 that most designers don't think to author it.
 
-## Hard cap versus soft cap
+## Hard cap versus softcap
 
 Mathematically: a hard cap has a discontinuous derivative at the cap (slope drops
-from positive to zero); a soft cap keeps a positive marginal return everywhere. The
+from positive to zero); a softcap keeps a positive marginal return everywhere. The
 catalog's vocabulary makes this concrete — both are functions, both are integrable,
 but the hard cap's first-passage time goes from finite-and-keeps-growing to
-infinite-past-the-cap, and the soft cap's keeps growing finitely.
+infinite-past-the-cap, and the softcap's keeps growing finitely.
 
 Design-side, the discontinuity is the central question. A hard cap _ends_ the
 relevant progression — past the cap, the value stops responding to player action. The
@@ -211,13 +211,13 @@ cap when they hit it. If yes (cap as wall), the discontinuity is felt as the wal
 is. If no (cap as gate), the discontinuity is invisible — the player isn't pushing
 against it.
 
-When soft caps work better than hard caps: any case where the player is actively
-pushing against the cap as a milestone. The soft cap's positive-marginal-return
+When softcaps work better than hard caps: any case where the player is actively
+pushing against the cap as a target. The softcap's positive-marginal-return
 preserves the rhythm of "click, see number rise" that idle games are built around;
 the hard cap's zero-marginal-return breaks the rhythm. Modern incrementals overwhelmingly
 ship soft for this reason.
 
-## How do I make a soft cap feel fair?
+## How do I make a softcap feel fair?
 
 Three patterns the corpus uses, each one math-diagnosable:
 
@@ -231,22 +231,22 @@ Three patterns the corpus uses, each one math-diagnosable:
   prestige) becomes a target. Most modern games offer "reduces softcap by X%"
   upgrades for exactly this reason. The math is just a parameter slide on the cap's
   threshold or strength; the felt experience is "the wall is moveable."
-- **Make sure there's something to do past it.** A soft cap regulates the _rate_ of
+- **Make sure there's something to do past it.** A softcap regulates the _rate_ of
   progression past the threshold; it doesn't provide _content_ past the threshold.
   If the post-cap regime has nothing to do but watch a number tick up at a sublinear
   rate, the cap turns into the wall it was meant to avoid. Modern incrementals usually
   pair caps with side-systems that activate past the threshold — a milestone hunt, a
-  new prestige tier, a separate mechanic. The cap is the regulator; the engagement is
+  new layer, a separate mechanic. The cap is the regulator; the engagement is
   a separate design surface.
 
-The fairness call is downstream of all three. A soft cap that's invisible, immovable,
+The fairness call is downstream of all three. A softcap that's invisible, immovable,
 and gates an empty post-cap regime will feel unfair regardless of which catalog shape
-it uses. A soft cap that's named, breakable, and gates real content will feel fair
+it uses. A softcap that's named, breakable, and gates real content will feel fair
 even if the underlying shape is harsh.
 
 ## Where the math stops
 
-The catalog tells you what each soft cap shape does to the curve. It doesn't tell you:
+The catalog tells you what each softcap shape does to the curve. It doesn't tell you:
 
 - **Whether to cap at all.** As above — "is the post-cap regime serving the design?"
   is a content question, not a curve question.
@@ -283,7 +283,7 @@ how it feels.
       repo: 'fundamental',
       path: 'Source_TS/Player.ts',
       line: '318-325',
-      note: 'buildingsInfo.increase — per-building cost multipliers by stage; the non-monotonic stage feel comes from the spread and outliers within each row.',
+      note: 'buildingsInfo.increase — per-generator cost ratios by stage; the non-monotonic stage feel comes from the spread and outliers within each row.',
     },
     {
       repo: 'Trimps',

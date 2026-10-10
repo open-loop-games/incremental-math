@@ -293,7 +293,7 @@ function fmtY(y: number): string {
 
     <div class="pp-readout">
       <div class="pp-readout-row">
-        <span class="pp-readout-label">y = 1 means this run doubles your prestige stash</span>
+        <span class="pp-readout-label">y = 1 means this run doubles your prestige currency</span>
       </div>
     </div>
   </div>

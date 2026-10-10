@@ -11,11 +11,11 @@ interface GenConfig {
 }
 
 const GENERATORS: ReadonlyArray<GenConfig> = [
-  { name: 'Gen 1', baseIncome: 1.67, startingCost: 4.0, rateGrowth: 1.07 },
-  { name: 'Gen 2', baseIncome: 20, startingCost: 60, rateGrowth: 1.15 },
-  { name: 'Gen 3', baseIncome: 90, startingCost: 720, rateGrowth: 1.14 },
-  { name: 'Gen 4', baseIncome: 360, startingCost: 8640, rateGrowth: 1.13 },
-  { name: 'Gen 5', baseIncome: 2160, startingCost: 103680, rateGrowth: 1.12 },
+  { name: 'Generator 1', baseIncome: 1.67, startingCost: 4.0, rateGrowth: 1.07 },
+  { name: 'Generator 2', baseIncome: 20, startingCost: 60, rateGrowth: 1.15 },
+  { name: 'Generator 3', baseIncome: 90, startingCost: 720, rateGrowth: 1.14 },
+  { name: 'Generator 4', baseIncome: 360, startingCost: 8640, rateGrowth: 1.13 },
+  { name: 'Generator 5', baseIncome: 2160, startingCost: 103680, rateGrowth: 1.12 },
 ];
 
 type MilestoneMode = 'none' | 'global' | 'individual';
@@ -122,7 +122,7 @@ const rows = computed<GenRow[]>(() => {
   <div class="demo oct">
     <div class="oct-controls">
       <label>
-        <span class="demo-label">cash = {{ format(cash) }}</span>
+        <span class="demo-label">currency = {{ format(cash) }}</span>
         <input v-model.number="cashExp" type="range" min="0" max="12" step="0.05" />
       </label>
       <div class="oct-owned-grid">
@@ -141,7 +141,7 @@ const rows = computed<GenRow[]>(() => {
         ><input v-model="milestoneMode" type="radio" value="individual" /> individual (1e)</label
       >
       <span class="oct-summary-spacer">·</span>
-      total income = <strong>{{ format(totalIncome) }}</strong> / sec
+      total production = <strong>{{ format(totalIncome) }}</strong> / sec
     </div>
 
     <table class="oct-table">
@@ -150,7 +150,7 @@ const rows = computed<GenRow[]>(() => {
           <th>generator</th>
           <th>owned</th>
           <th>bonus</th>
-          <th>contributes / sec</th>
+          <th>production / sec</th>
           <th>next cost</th>
           <th>score (lower = better)</th>
           <th />

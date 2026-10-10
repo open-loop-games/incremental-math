@@ -91,9 +91,9 @@ const cDomain = computed<[number, number]>(() => {
     <p v-if="ceiling !== null" class="demo-note">
       With <code>p &gt; 1</code> the cumulative is bounded —
       <code>R(∞) = a · b^(1−p) / (p − 1) ≈ {{ ceiling.toFixed(3) }}</code
-      >. Any threshold <code>C ≥ R(∞)</code> is unreachable; <code>T(C) → ∞</code> as
-      <code>C → R(∞)</code>. This is the cleanest math for a soft cap with a real ceiling: the rate
-      never hits zero, but the integral does.
+      >. Any target <code>C ≥ R(∞)</code> is unreachable; <code>T(C) → ∞</code> as
+      <code>C → R(∞)</code>. This is the cleanest math for a ceiling: the rate never hits zero, but
+      the integral does.
     </p>
     <p v-else class="demo-note">
       With <code>p ≤ 1</code> the cumulative is unbounded but grows sublinearly. The boundary case

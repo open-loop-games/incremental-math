@@ -50,7 +50,7 @@ const TSeries = computed(() => [
         <input v-model.number="a" type="range" min="0.5" max="3" step="0.05" />
       </label>
       <label>
-        <span class="demo-label">m (per-level) = {{ m.toFixed(3) }}</span>
+        <span class="demo-label">m (per purchase) = {{ m.toFixed(3) }}</span>
         <input v-model.number="m" type="range" min="1.05" max="1.4" step="0.005" />
       </label>
       <label>
@@ -89,7 +89,7 @@ const TSeries = computed(() => [
         <RatePlot :series="RSeries" :domain="xDomain" :deps="[a, m, mod]" x-label="x" y-label="R" />
       </div>
       <div class="triptych-panel">
-        <span class="triptych-panel-label">T(C) — modifier rescales the threshold</span>
+        <span class="triptych-panel-label">T(C) — modifier rescales the target</span>
         <RatePlot :series="TSeries" :domain="cDomain" :deps="[a, m, mod]" x-label="C" y-label="T" />
       </div>
     </div>

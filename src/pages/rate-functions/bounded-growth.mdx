@@ -37,7 +37,7 @@ $$x(t) = \frac{K}{1 + \left(\frac{K - x_0}{x_0}\right) e^{-rt}}, \quad T(C) = \f
 
 The trajectory is the logistic curve proper — sigmoid in $t$, with the inflection point at $x = K/2$. The first-passage is the
 [logit](https://en.wikipedia.org/wiki/Logit) of $C/K$ adjusted by $\ln((K-x_0)/x_0)$;
-elementary, well-defined for any reachable threshold $C \in (0, K)$, divergent as $C \to K$.
+elementary, well-defined for any reachable target $C \in (0, K)$, divergent as $C \to K$.
 
 The carrying capacity is approached but never reached. This is the entry's distinguishing
 feature versus the [rational entry's $p > 1$ case](/rate-functions/power-law#rational--hyperbolic-rate),
@@ -54,7 +54,7 @@ _meaningful_ maximum — efficiency at saturation, a [population](https://en.wik
 constrained by resources, a fraction that should approach but not exceed 100%. In all
 three cases the design intent is "growth that knows where it's going," and the logistic
 trajectory carries that intent to completion: early, growth is essentially exponential;
-mid-curve, the inflection marks the regime change from acceleration to deceleration;
+mid-curve, the inflection marks the change from acceleration to deceleration;
 late, the curve flattens visibly toward the ceiling without a hard discontinuity.
 
 The mid-curve inflection is the design feature most often singled out. A linear cumulative
@@ -76,10 +76,10 @@ $1 - b/(b + x)$ shape — because that shape:
 - Has the same "approaches a ceiling" qualitative behavior at first glance.
 
 The qualitative behavior past the inflection is genuinely different — the hyperbolic shape
-slows monotonically from the start, with no inflection point — but in the regimes most
+slows monotonically from the start, with no inflection point — but in the cases most
 games operate in, the player can't distinguish them from feel alone, and the hyperbolic
-form is cheaper to compute on `Decimal` quantities. So the genre's "soft cap with a
-ceiling" is overwhelmingly hyperbolic, while the design _intent_ is often closer to
+form is cheaper to compute on `Decimal` quantities. So the genre's approach to a
+ceiling is overwhelmingly hyperbolic, while the design _intent_ is often closer to
 logistic.
 
 The places pure logistic does show up:
@@ -97,7 +97,7 @@ The places pure logistic does show up:
   caps, multiplicative ceilings). When the cap is _narrative_ — "a statistic that
   represents a fraction" — the logistic is the right intent.
 
-For most other "soft cap" use cases, the [hyperbolic entry on the power-law page](/rate-functions/power-law#rational--hyperbolic-rate)
+For most other ceiling use cases, the [hyperbolic entry on the power-law page](/rate-functions/power-law#rational--hyperbolic-rate)
 is what shipped games actually compute. The logistic earns its catalog page on
 mathematical grounds, not on prevalence: it
 remains the cleanest sigmoid the catalog can offer, and its first-passage being elementary

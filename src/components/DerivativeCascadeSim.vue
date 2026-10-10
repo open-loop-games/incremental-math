@@ -194,7 +194,7 @@ const tierLabels = computed(() => {
         <input v-model.number="rateScaleExp" type="range" min="-2" max="2" step="0.02" />
       </label>
       <label>
-        <span class="demo-label">base income = {{ baseIncome.toFixed(2) }} / sec</span>
+        <span class="demo-label">base production = {{ baseIncome.toFixed(2) }} / sec</span>
         <input v-model.number="baseIncome" type="range" min="0.5" max="50" step="0.5" />
       </label>
       <label class="dcs-toggle">
@@ -254,7 +254,7 @@ const tierLabels = computed(() => {
         <span class="dcs-readout-val">{{ format(nowSample.totalCurrency) }}</span>
       </div>
       <div class="dcs-readout-row">
-        <span class="dcs-readout-label">income / sec</span>
+        <span class="dcs-readout-label">production / sec</span>
         <span class="dcs-readout-val">{{ format(nowSample.income) }}</span>
       </div>
       <div class="dcs-tier-grid">

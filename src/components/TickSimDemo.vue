@@ -100,7 +100,7 @@ const ratioAtBudget = computed(() => {
         <input v-model.number="ratePerHour" type="range" min="100" max="100000" step="100" />
       </label>
       <label>
-        <span class="demo-label">rate growth = {{ (tickRateGrowth * 100).toFixed(1) }} %/h</span>
+        <span class="demo-label">growth rate = {{ (tickRateGrowth * 100).toFixed(1) }} %/h</span>
         <input v-model.number="tickRateGrowth" type="range" min="0" max="0.5" step="0.005" />
       </label>
       <label>
@@ -111,7 +111,7 @@ const ratioAtBudget = computed(() => {
     <p class="tsd-readout">
       At the budget mark, the sim has accrued
       <strong>{{ ratioAtBudget.toFixed(2) }}×</strong> what flat-extrapolation gives — that's the
-      rate growth the simulator caught and the naive estimate didn't. Past the budget, the sim line
+      growth rate the simulator caught and the naive estimate didn't. Past the budget, the sim line
       goes flat: the simulator stopped running.
     </p>
     <svg
@@ -136,7 +136,9 @@ const ratioAtBudget = computed(() => {
       >
         {{ nx }}
       </text>
-      <text :x="PAD.l + PW / 2" :y="H - 4" text-anchor="middle" class="tsd-tick">hours away</text>
+      <text :x="PAD.l + PW / 2" :y="H - 4" text-anchor="middle" class="tsd-tick">
+        hours offline
+      </text>
       <line
         v-if="simBudget < hoursMax"
         :x1="budgetX"

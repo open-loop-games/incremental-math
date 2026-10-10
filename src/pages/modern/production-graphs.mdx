@@ -12,23 +12,23 @@ import Sources from '../../components/Sources.astro';
 Pecorella's Part II writes one shape: tier $i$ produces tier $i+1$ at
 some rate, and the bottom tier turns into currency. The picture is a
 straight line of nodes with arrows pointing one way down it.
-A chain. From that one shape comes the whole $t^d/d!$ family — at
-chain-length $d$, the population of the deepest tier grows as a $d$-th
+A cascade. From that one shape comes the whole $t^d/d!$ family — at
+depth $d$, the population of the deepest tier grows as a $d$-th
 order polynomial in time, just like differentiating $\cos(t)$ four times
 recovers $\cos(t)$.
 
 Modern games rarely write that shape. They write a graph. Multiple
-currencies, edges in more than one direction, sometimes loops. The cost
+currencies, edges in more than one direction, sometimes cycles. The cost
 of doing that is the production curve loses its tidy
 [closed form](https://en.wikipedia.org/wiki/Closed-form_expression) — you
 trade the analytic Part II answer for something you have to integrate
-numerically. The benefit is regimes you cannot make a chain do: a
+numerically. The benefit is behaviors you cannot make a cascade show: a
 deepening DAG so the player feels several levers compounding, or a cycle
 that runs away unless something explicitly tames it.
 
 ## The adjacency matrix
 
-Pecorella's chain at length 4 has an
+Pecorella's cascade at depth 4 has an
 [adjacency matrix](https://en.wikipedia.org/wiki/Adjacency_matrix) that
 looks like:
 
@@ -43,7 +43,7 @@ $$
 
 Read it as "row $i$ produces column $j$ at rate $A_{ij}$ per unit
 time." All the non-zero entries sit on the superdiagonal because the
-chain only produces forward. The dynamics are
+cascade only produces forward. The dynamics are
 $\dot N = A^\top N + s$, where $s$ is a seed flux into the top tier;
 [forward Euler](https://en.wikipedia.org/wiki/Euler_method) on this
 recurrence is exactly the longhand transcribed from sheet `2a` in
@@ -58,7 +58,7 @@ structure, not on how many entries it has.
 
 The structural distinctions that matter are three:
 
-- **Acyclic and chain-shaped.** The matrix is strictly upper-triangular
+- **Acyclic and cascade-shaped.** The matrix is strictly upper-triangular
   *and* each row has at most one non-zero entry. Pecorella's case.
   Closed-form $t^d/d!$ via the Cauchy formula for repeated integration.
 - **Acyclic but branching.** Strictly upper-triangular but rows can have
@@ -67,7 +67,7 @@ The structural distinctions that matter are three:
   [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph). The
   sink's growth is a sum of polynomials, one per path from a source.
 - **Has a cycle.** Some entry strictly below the diagonal, or a
-  reachable closed loop. The dynamics matrix has a non-trivial
+  reachable cycle. The dynamics matrix has a non-trivial
   spectrum; if the
   [dominant eigenvalue](https://en.wikipedia.org/wiki/Power_iteration)
   is positive the system grows exponentially, otherwise it converges to
@@ -152,7 +152,7 @@ The whole stage 1 graph is:
 | edge                                  | rate                                                                                            |
 |---------------------------------------|-------------------------------------------------------------------------------------------------|
 | autoclippers → clips                  | $\text{clipperBoost} \cdot \text{clipmakerLevel} / 100$                                         |
-| clips → trust                         | sparse, Fibonacci-spaced thresholds                                                             |
+| clips → trust                         | sparse, Fibonacci-spaced thresholds                                                               |
 | trust → processors\|memory            | player-allocated                                                                                |
 | processors → creativity               | $(\log_{10} p) \cdot p^{1.1} + p - 1$ per tick                                                  |
 | processors → ops                      | continuous, bounded by $\text{memory} \cdot 1000$                                               |
@@ -173,7 +173,7 @@ gets edges added and removed as the player progresses. Most of the
 modern genre's deeper currency systems are doing some version of the
 same thing.
 
-## Linear chains: Part II as a special case
+## Linear cascades: Part II as a special case
 
 Set the matrix to strictly upper-triangular with one entry per row and
 the dynamics fall out of `2a` exactly. With $A_{i,i+1} = r$ for all $i$
@@ -183,19 +183,19 @@ $$
 N_d(t) \;=\; s \cdot r^{d-1} \cdot \frac{t^d}{d!}
 $$
 
-which is the chain-length-$d$ instance of the
+which is the depth-$d$ instance of the
 [Cauchy formula for repeated integration](https://en.wikipedia.org/wiki/Cauchy_formula_for_repeated_integration).
 Each tier integrates the one above; $d$ integrations of a constant
 gives $t^d/d!$. The factorial in the denominator is the only reason
-deep chains do not run away — every additional tier adds a power of
+deep cascades do not run away — every additional tier adds a power of
 $t$ and divides by another integer, so the curve grows polynomially
 but the polynomial is anchored.
 
 The first preset in the demo at the bottom of the page reproduces this
-exactly. The chain dynamics produce $A,B,C,D$ curves whose log-log
+exactly. The cascade dynamics produce $A,B,C,D$ curves whose log-log
 slopes are $1, 2, 3, 4$ at small times, with each lower tier crossing
 the one above as $t$ grows. The same picture appears in Antimatter Dimensions and in Derivative
-Clicker, both of which run the chain several tiers deep, with more tiers unlocking as
+Clicker, both of which run the cascade several tiers deep, with more tiers unlocking as
 the game progresses.
 
 ## DAGs: superposition of polynomials
@@ -204,11 +204,11 @@ Acyclic but branching. Either a node has multiple feeds, or one feed
 splits to multiple targets. The matrix is still upper-triangular under
 some node ordering — a
 [topological sort](https://en.wikipedia.org/wiki/Topological_sorting)
-exists — but the integral identity from the chain case has to be
+exists — but the integral identity from the cascade case has to be
 applied per path.
 
 If two source nodes both feed a sink along paths of the same length,
-the sink's population is the sum of the two chain solutions. Same shape,
+the sink's population is the sum of the two cascade solutions. Same shape,
 different leading coefficient. If the paths have different lengths, the
 longer-path contribution dominates at large $t$ but the shorter-path
 contribution dominates initially — the curve has a knee where the
@@ -247,8 +247,8 @@ diagonal-plus-tributary structure. The TMT-derivative lineage —
 Distance Incremental, Incremental Mass Rewritten, Dimensional
 Incremental Rewind — all
 do something similar: each layer's currency produces a small basket of
-boosts that feed back into earlier layers as multipliers, never as
-direct production. The matrix stays acyclic because the boosts touch
+modifiers that feed back into earlier layers as multipliers, never as
+direct production. The matrix stays acyclic because the modifiers touch
 cost coefficients, not state.
 
 ## Cycles and feedback
@@ -300,9 +300,9 @@ parameter — is the modern flourish.
 The cycle preset in the demo below shows the bare math. Without the
 softcap toggle, the feedback edge $B \to A$ produces an exponential
 runaway across all four nodes. With the softcap on, $A$ settles to a
-fixed point near $k$ and the downstream chain $B \to C \to D$ recovers
+fixed point near $k$ and the downstream cascade $B \to C \to D$ recovers
 its polynomial-in-$t$ shape — the cycle produces an effective seed at
-$A$, and from there the rest of the graph is just a chain again. The
+$A$, and from there the rest of the graph is just a cascade again. The
 softcap turns the cycle into a steady source.
 
 ## Density and topology shifts
@@ -318,8 +318,8 @@ edge entirely while doubling the particle → upgrade edge weight. Two
 runs with different corruption settings are dynamics on different
 graphs.
 
-Games built on rebirth tiers do the same
-thing more crudely — each rebirth layer adds a new
+Games built on layers do the same
+thing more crudely — each layer adds a new
 node and a new set of edges into and out of the existing graph,
 preserving the lower layers but quietly retiring some of their edges
 as the player ramps the new layer.
@@ -328,7 +328,7 @@ matrix after a faction switch shares few edges with the one before it. The dynam
 the matrix you plug in is not.
 
 The progression a long-running game offers is, in this view, a sequence
-of production graphs, where each prestige or unlock either adds nodes,
+of production graphs, where each reset or unlock either adds nodes,
 adds edges, or — in the most aggressive cases — replaces the matrix
 wholesale. Pecorella's Part II treats $A$ as fixed; the modern register
 treats $A$ as the thing that itself evolves.
@@ -372,23 +372,23 @@ the throughput is the min-cut value.
 
 <ProductionGraphSim client:visible />
 
-Three preset topologies on the same four nodes. The chain reproduces
+Three preset topologies on the same four nodes. The cascade reproduces
 Pecorella's $t^d/d!$. The DAG-converge case routes two source feeds
 into the same intermediate node, lifting the sink curve above the
-chain's despite using the same total edge weight — the matrix entries
+cascade's despite using the same total edge weight — the matrix entries
 sum into one column. The cycle preset has $B \to A$ as a feedback
 edge; with no softcap the system runs away exponentially, and the
 softcap toggle turns on a $1/(1 + N_A/k)$ damping that pins $A$ at
 $\sim k$ and recovers polynomial growth downstream.
 
-The chain preset is here as the sanity check on Part II — the same
+The cascade preset is here as the sanity check on Part II — the same
 forward-Euler integration that produced sheet `2a`'s curves
 reproduces the polynomial slopes when laid out as a graph. The DAG
 and cycle presets are the modern surface area on top.
 
 ## Closing
 
-The chain produced the cleanest analytic result in the entire faithful
+The cascade produced the cleanest analytic result in the entire faithful
 section. $t^d/d!$ is the kind of formula that generations of designers
 will reach for, because it carries its own rationale and its own
 factorial-anchored growth. Modern games walked away from it for the
@@ -396,10 +396,10 @@ straightforward reason that one shape is one shape — and a genre that
 runs for a decade needs a vocabulary, not a sentence.
 
 The vocabulary is the matrix. Every multi-currency system, every
-cycle, every cross-tier bonus is just a different choice of $A$. The
+cycle, every cross-tier modifier is just a different choice of $A$. The
 math has not changed. The art is choosing edges that compose into
-regimes the
-player can read — a chain that feels like depth, a DAG that feels like
+behaviors the
+player can read — a cascade that feels like depth, a DAG that feels like
 acceleration, a cycle that feels alive — without writing a graph the
 player cannot hold in their head.
 
@@ -439,7 +439,7 @@ player cannot hold in their head.
       repo: 'SynergismOfficial',
       path: 'src/Statistics.ts',
       line: '392-426',
-      note: 'allWowCubeStats: 14-entry stat-line array enumerating the contributors to the cube-multiplier column of the production matrix.',
+      note: 'allWowCubeStats: 14-entry modifier array listing the modifiers in the cube-multiplier column of the production matrix.',
     },
     {
       repo: 'industry-idle',

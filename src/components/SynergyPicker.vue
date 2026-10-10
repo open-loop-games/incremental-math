@@ -181,7 +181,7 @@ function clearAll() {
   <div class="demo">
     <div class="demo-controls">
       <p class="demo-help">
-        Pick any subset of buildings. Pair bonuses fire when both members of a pair are selected —
+        Pick any subset of buildings. Pair modifiers fire when both members of a pair are selected —
         that's the synergy.
       </p>
     </div>
@@ -222,7 +222,7 @@ function clearAll() {
         <thead>
           <tr>
             <th>pair</th>
-            <th>bonus</th>
+            <th>modifier</th>
             <th>active?</th>
           </tr>
         </thead>
@@ -259,7 +259,7 @@ function clearAll() {
             </td>
           </tr>
           <tr>
-            <td>+ pair bonuses ({{ activePairs.length }} active)</td>
+            <td>+ pair modifiers ({{ activePairs.length }} active)</td>
             <td class="syn-num">+{{ totalWithSynergies - totalBaseOnly }}</td>
           </tr>
           <tr class="syn-total-row">
@@ -322,7 +322,7 @@ function clearAll() {
       </div>
       <p class="syn-caption">
         Greedy picks one item at a time by largest marginal value. With the Temple-related pair
-        bonuses, the largest single-item marginals can send greedy down a path that misses an
+        modifiers, the largest single-item marginals can send greedy down a path that misses an
         unlocked synergy further along — the gap row shows when that happens. With purely additive
         items (no pairs), greedy and optimal would always tie.
       </p>

@@ -123,11 +123,11 @@ const cyclesPerHour = computed(() => 3600 / tauUser.value);
           <dd>{{ uOpt.toFixed(2) }}</dd>
         </div>
         <div>
-          <dt>cycle length τ</dt>
+          <dt>run length τ</dt>
           <dd>{{ tauUser.toFixed(1) }}</dd>
         </div>
         <div>
-          <dt>reward / cycle</dt>
+          <dt>reward / run</dt>
           <dd>{{ rewardUser < 1e6 ? rewardUser.toFixed(1) : rewardUser.toExponential(2) }}</dd>
         </div>
         <div class="rate-cell">
@@ -143,7 +143,7 @@ const cyclesPerHour = computed(() => 3600 / tauUser.value);
           <dd>{{ (efficiency * 100).toFixed(0) }}%</dd>
         </div>
         <div>
-          <dt>cycles / hour</dt>
+          <dt>runs / hour</dt>
           <dd>{{ cyclesPerHour < 1 ? cyclesPerHour.toFixed(2) : cyclesPerHour.toFixed(0) }}</dd>
         </div>
       </dl>

@@ -49,7 +49,7 @@ const maxAffordableCost = computed(() => {
         <input v-model.number="baseCost" type="range" min="5" max="100" step="1" />
       </label>
       <label>
-        <span class="demo-label">rate growth = {{ rateGrowth.toFixed(3) }}</span>
+        <span class="demo-label">cost ratio = {{ rateGrowth.toFixed(3) }}</span>
         <input v-model.number="rateGrowth" type="range" min="1.01" max="1.20" step="0.001" />
       </label>
       <label>
@@ -57,7 +57,7 @@ const maxAffordableCost = computed(() => {
         <input v-model.number="currentlyOwned" type="range" min="0" max="500" step="1" />
       </label>
       <label>
-        <span class="demo-label">current cash = {{ format(currentCash) }}</span>
+        <span class="demo-label">current currency = {{ format(currentCash) }}</span>
         <input v-model.number="cashExp" type="range" min="0" max="9" step="0.05" />
       </label>
     </div>

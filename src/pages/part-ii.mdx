@@ -14,9 +14,9 @@ Faithful walkthrough of Pecorella's [_The Math of Idle Games, Part II_](https://
 
 ## Generators producing generators
 
-In the standard model, every generator pumps into the same pool: AdVenture Capitalist's investments all generate cash, Clicker Heroes' heroes all generate damage. Pecorella's question for Part II: drop that constraint. Wire the generators in a _cascade_ instead.
+In the standard model, every generator pumps into the same pool: AdVenture Capitalist's investments all generate currency, Clicker Heroes' heroes all generate damage. Pecorella's question for Part II: drop that constraint. Wire the generators in a _cascade_ instead.
 
-A single Tier 0 generator produces currency. Tier 1 produces Tier 0. Tier 2 produces Tier 1. And so on. Each tier above the first is the **rate of change** of the tier below it. If you remember calculus, that's a [derivative](https://en.wikipedia.org/wiki/Derivative) — the cascade is a chain of [integrals](https://en.wikipedia.org/wiki/Integral) from the top tier down to currency.
+A single Tier 0 generator produces currency. Tier 1 produces Tier 0. Tier 2 produces Tier 1. And so on. Each tier above the first is the **rate of change** of the tier below it. If you remember calculus, that's a [derivative](https://en.wikipedia.org/wiki/Derivative) — the cascade is a sequence of [integrals](https://en.wikipedia.org/wiki/Integral) from the top tier down to currency.
 
 The setup matters. With a single Tier 1 generator that produces 1 currency per second:
 
@@ -34,7 +34,7 @@ $$e^t = \sum_{n=0}^{\infty} \frac{t^n}{n!}$$
 
 A finite cascade is a _partial_ Taylor sum of $e^t$. Add infinite tiers and the cascade _becomes_ exponential growth.
 
-The same structure appears in the generators themselves. In a depth-4 cascade seeded by a single Gen4, the total count of all generators at time $t$ — the three tiers below the seed — is $1 + t + \frac{t^2}{2} + \frac{t^3}{6}$: the same partial sum, shifted one order down from the currency output. The cascade wears the Taylor sum at every level simultaneously.
+The same structure appears in the generators themselves. In a depth-4 cascade seeded by a single Gen4, the total count of all generators at time $t$ — the three tiers below the seed — is $1 + t + \frac{t^2}{2} + \frac{t^3}{6}$: the same partial sum, shifted one order down from the currency output. The cascade wears the Taylor sum at every tier simultaneously.
 
 ## The half-existent rule
 
@@ -44,7 +44,7 @@ His rule: a Tier 1 born during second $t$ contributes only $\frac{1}{2}$ currenc
 
 <DiscreteStepThrough client:visible />
 
-The depth selector lets you push past Pecorella's depth-2 example into deeper cascades. The half-on-creation rule is unique at depth 2 — there, the layer above (Tier 1) is linear in $t$, and trapezoid integration of a linear function is exact. From depth 3 onward the layer above is quadratic or higher, so the rule loses its exactness and the discrete simulation drifts off the theoretical $t^n/n!$. Pecorella keeps the prose at depth 2 for exactly this reason.
+The depth selector lets you push past Pecorella's depth-2 example into deeper cascades. The half-on-creation rule is unique at depth 2 — there, the tier above (Tier 1) is linear in $t$, and trapezoid integration of a linear function is exact. From depth 3 onward the tier above is quadratic or higher, so the rule loses its exactness and the discrete simulation drifts off the theoretical $t^n/n!$. Pecorella keeps the prose at depth 2 for exactly this reason.
 
 ## A continuous cascade
 
@@ -52,7 +52,7 @@ Pecorella's spreadsheet `2a` simulates the cascade with plain [forward Euler](ht
 
 $$T_i(t+1) = T_i(t) + T_{i+1}(t) \cdot r_i$$
 
-— $r_i$ is the rate at which one Tier-$(i+1)$ generator produces Tier-$i$. The sheet defaults: 5 tiers, top-tier seed of 1, base income at Tier 0 of 5/sec, and per-tier rates $r_0 = 0.1$, $r_1 = 10$, $r_2 = 3$, $r_3 = 1$. Currency accumulates as $\int T_0(t) \cdot \text{baseIncome} \, dt$.
+— $r_i$ is the rate at which one Tier-$(i+1)$ generator produces Tier-$i$. The sheet defaults: 5 tiers, top-tier seed of 1, base production at Tier 0 of 5/sec, and per-tier rates $r_0 = 0.1$, $r_1 = 10$, $r_2 = 3$, $r_3 = 1$. Currency accumulates as $\int T_0(t) \cdot \text{baseIncome} \, dt$.
 
 The demo below runs that simulation. Drag depth down to 1 and the curve is straight-linear; bump it up to 5 and the cascade shape kicks in. Rate scale uniformly multiplies all per-tier generation rates — useful for stretching or compressing the timeline without changing the shape.
 
@@ -69,12 +69,12 @@ The chart below overlays $t^n/n!$ for depths 1 through 5 against a Cookie-Clicke
 A few patterns the chart makes legible:
 
 - **Higher depth wins early, exponential wins late.** A 5-tier cascade outpaces a 1.07-per-tick exponential for a long stretch, then loses. The crossover depends only on the exponential's growth rate.
-- **Cost is still exponential.** The trick of the cascade is that _production_ grows polynomially while costs stay exponential — same seesaw as Part I, just with a slower production line. So the run still ends naturally; it just takes longer to get there per added tier.
+- **Cost is still exponential.** The trick of the cascade is that _production_ grows polynomially while costs stay exponential — same seesaw as Part I, just with a slower cascade. So the run still ends naturally; it just takes longer to get there per added tier.
 - **Each tier feels qualitatively different.** Pecorella's pitch from the original post: it "feels" like multiple AdVenture Capitalist games stacked. The lower tiers go enormous because they're integrating something that itself was integrating something. _Derivative Clicker_ (gzgreg) is the canonical example.
 
 ## Designing past the simplest case
 
-The simplest cascade — one chain, one currency, no cross-tier upgrades — is what the demos above visualize. Real games rarely ship that pure. _Derivative Clicker_ verifies the Part I seesaw still holds: its High Schoolers cost $5 \times 1.1^n$, still exponential — sub-exponential cascade production against exponential costs, balanced as expected. The harder problem is keeping lower-tier purchases relevant when the cascade is handing you billions of them free per second. gzgreg's solution: each manually purchased generator boosts all same-tier generators by 0.05%, and the UI shows both the free-plus-bought total and the purchased-only count in parentheses — the boost makes buying by hand feel meaningful at any scale. _Shark Game_ (Cirrial) takes a different angle: Nurse Sharks create Sharks that harvest fish, generators spanning multiple currencies rather than a single chain. The derivative cascade is a primitive — make generators, draw lines between them, see what happens.
+The simplest cascade — one cascade, one currency, no cross-tier upgrades — is what the demos above visualize. Real games rarely ship that pure. _Derivative Clicker_ verifies the Part I seesaw still holds: its High Schoolers cost $5 \times 1.1^n$, still exponential — sub-exponential cascade production against exponential costs, balanced as expected. The harder problem is keeping lower-tier purchases relevant when the cascade is handing you billions of them free per second. gzgreg's solution: each manually purchased generator boosts all same-tier generators by 0.05%, and the UI shows both the free-plus-bought total and the purchased-only count in parentheses — the modifier makes buying by hand feel meaningful at any scale. _Shark Game_ (Cirrial) takes a different angle: Nurse Sharks create Sharks that harvest fish, generators spanning multiple currencies rather than a single cascade. The derivative cascade is a primitive — make generators, draw lines between them, see what happens.
 
 <Sources
   post={{

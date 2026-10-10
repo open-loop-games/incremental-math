@@ -9,11 +9,11 @@ import Sources from '../../components/Sources.astro';
 
 # Modifier Chains
 
-Pecorella's framework treats production-side bonuses as a single number.
+Pecorella's framework treats production-side modifiers as a single number.
 Part I introduces "global multipliers" that arrive from milestones; Part I's
 "individual multipliers" upgrade specific generators; together they shift the
 cost-vs-production seesaw without changing its shape. The math, abstractly,
-is one base value multiplied by one bonus.
+is one base value times one multiplier.
 
 Practice didn't stay there. Open the source of any production-incremental
 shipped after about 2018 and the per-tick rate is the output of a long
@@ -33,7 +33,7 @@ patterns and the catalog's "what doesn't compose cleanly" notes meet.
 ## The hand-rolled chain
 
 The earliest shipped form is a single function that walks through every
-possible bonus and applies each one if its condition holds. Cookie Clicker
+possible modifier and applies each one if its condition holds. Cookie Clicker
 is the canonical example. `Game.CalculateGains` runs a couple of hundred
 lines and contains dozens of `mult *= ...` assignments, each gated on a
 specific upgrade, achievement, or building purchase:
@@ -113,7 +113,7 @@ addLayer('c', {
 The bodies of `gainMult` and `gainExp` are still hand-rolled `if`-chains,
 but the *outer pipeline* — base → multiplier → exponent → softcap — is no
 longer per-layer code. The engine knows where each piece plugs in, and the
-prestige formula `gain = (base × current^exp)^outerExp × mult`, capped by
+gain formula `gain = (base × current^exp)^outerExp × mult`, capped by
 `softcap`, runs once for every layer.
 
 This formalization is small but consequential. It's the first version of
@@ -174,7 +174,7 @@ What this buys, that the function form didn't:
   `apply` and `invert`; running the chain backwards reduces in
   `reduceRight` order with `invert` on each step. "How much base do I
   need to reach X?" is one call, no bespoke code.
-- **Composition without conditionals.** Adding a bonus is one new entry
+- **Composition without conditionals.** Adding a modifier is one new entry
   in the array. The chain doesn't grow an `if` statement; it grows a
   row.
 - **Attribution.** The engine's modifier registry can ask "where did
@@ -186,11 +186,11 @@ What this buys, that the function form didn't:
 Engine archaeology is half the story. The other half is what happens when a
 game grows past one or two prestige layers and the chain stops being a
 toy. Once a player is mid-game in any of the post-Pecorella heavyweights,
-their per-tick rate is the product of six to a dozen named contributors,
+their per-tick rate is the product of six to a dozen named modifiers,
 each with its own UI surface, source, and rebalance history.
 
 **Synergism** ships the most explicit version of this. Every cube currency
-is computed as a single reduce over a typed array of stat lines. The Wow
+is computed as a single reduce over a typed array of modifiers. The Wow
 Cubes chain is literally:
 
 <Cite repo="SynergismOfficial" path="src/Statistics.ts" line="392-476" />
@@ -218,7 +218,7 @@ export const calculateCubeMultiplier = () =>
   allWowCubeStats.reduce((a, b) => a * b.stat(), 1);
 ```
 
-Fourteen contributors, each with its own i18n key for the UI, each
+Fourteen modifiers, each with its own i18n key for the UI, each
 expressible as a one-line closure. Tesseracts, Hypercubes, Platonics,
 Hepteracts, and Octeracts each get their own `allXStats` array of similar
 depth — twelve in total. Offerings, obtainium, ascension speed, global
@@ -230,7 +230,7 @@ one of these arrays.
 
 **Trimps** has the same shape with different vocabulary. Trimp damage is
 computed by `applyMultipliers(multipliers, stat)`, where `multipliers` is
-an object whose keys are named contributors and whose values are
+an object whose keys are named modifiers and whose values are
 zero-arg functions:
 
 <Cite repo="Trimps" path="main.js" line="12249-12290" />
@@ -263,14 +263,14 @@ function applyMultipliers(multipliers, stat) {
 Sixteen-plus entries for one stat. The same harness is used for trimp
 health, block, and gather rate. The keys carry the attribution; the
 fold is one line. Heirlooms, perks, scientists, challenges, heliolith
-bonuses, and challenge-squared all flow through this shape.
+modifiers, and challenge-squared all flow through this shape.
 
 **NGU Idle** doesn't ship readable source — the canonical engagement is
 through automation tools and the wiki — but the in-game stat breakdowns
 spell out the same structure for energy power: a base rate multiplied
 through an explicit ladder of `power`, `cap`, `bar`, `speed`, per-zone
-boosts, adventure stat boosts, NGU bonuses, hack bonuses, wish bonuses,
-beard bonuses, and (post-Evil) titan-tier multipliers. Players who
+modifiers, adventure stat modifiers, NGU modifiers, hack modifiers, wish modifiers,
+beard modifiers, and (post-Evil) titan-tier multipliers. Players who
 optimize NGU memorize this ladder; the breakdown panel is one of the
 most-consulted screens in the game.
 
@@ -282,7 +282,7 @@ production chains reads as separate multipliers folding into a single
 per-second rate.
 
 The unifying observation: every one of these games converged on the same
-shape — a list of named contributors, each one-line evaluable, folded
+shape — a list of named modifiers, each one-line evaluable, folded
 through an associative operator (sum or product) into a single
 displayable number with a per-line breakdown. Engine archaeology says
 the abstraction matured from `if`-chain to typed array; production
@@ -308,14 +308,14 @@ the breakdown above directly from it without any extra wiring.
 
 Most production-incrementals built since about 2017 follow the same design
 rule, sometimes stated explicitly in design docs and sometimes just
-inherited: bonuses *within* a category add, bonuses *across* categories
+inherited: modifiers *within* a category add, modifiers *across* categories
 multiply. The shape comes out of two pressures.
 
 Pure additive stacking — `base × (1 + sum(bonuses))` — flattens at scale.
 Once `sum(bonuses)` is in the hundreds, a +1% upgrade is a rounding error,
 and the player stops feeling each new contribution. Pure multiplicative
 stacking — `base × prod(bonuses)` — explodes too fast at scale, because
-two `1.5×` bonuses compound to `2.25×` and twenty of them to about `3,300×`
+two `1.5×` multipliers compound to `2.25×` and twenty of them to about `3,300×`
 without anything stopping them. The mixed form gives small upgrades a
 visible home (additive within their category) and lets cross-category
 unlocks feel like step changes (multiplicative outside).
@@ -345,7 +345,7 @@ Order does matter at the boundaries:
 
 - **Exponentiation isn't commutative with multiplication.** `(x · m)^e` and
   `(x^e) · m` differ — a [softcap](https://en.wikipedia.org/wiki/Compression_(geology))-style exponent applied *after*
-  multipliers caps the post-bonus value (the usual choice); applied
+  multipliers caps the post-multiplier value (the usual choice); applied
   before, it caps only the base. A 0.9 exponent applied last on a value
   of 1e6 produces about 2.5e5; the same 0.9 applied first to a base of
   10, then multiplied by 1e5, produces about 8.0e5. Different curves,
@@ -405,7 +405,7 @@ API.
 
 A real game built on a Profectus-lineage stack would use
 `createSequentialModifier` directly for any production rate with more
-than two contributions, with the chain itself as the single source of
+than two modifiers, with the chain itself as the single source of
 truth that powers both the tick math and the dev-panel breakdown.
 
 ## What it didn't fix
@@ -414,7 +414,7 @@ The structured form moves the complexity around. It doesn't reduce it.
 
 **Designer discipline.** A chain of fifty modifiers is still a chain of
 fifty modifiers. Profectus makes the chain *visible*; the designer is
-still on the hook for whether the chain is *good*. Late-game stalls and
+still on the hook for whether the chain is *good*. Late-game walls and
 runaway multipliers happen with structured chains too — the abstraction
 hands you a cleaner inventory of the problem.
 
@@ -430,13 +430,13 @@ method dispatches per recompute. With Vue's reactivity, each modifier's
 inputs are tracked individually, so a single upgrade purchase triggers
 recomputes only on the chains that actually depend on it — but the
 constant factor is real. Per-tick chains that drive a busy production
-loop get cached at the recompute layer; the chain re-evaluates only when
+loop get cached per recompute; the chain re-evaluates only when
 its bindings invalidate, not every tick.
 
 **The decision of additive vs. multiplicative is still on the designer.**
 The genre's "add within, multiply across" rule is a heuristic, not a
 property the abstraction can check. A new modifier added at the wrong
-layer either gets lost in noise (additive when it should multiply) or
+category either gets lost in noise (additive when it should multiply) or
 explodes (multiplicative when it should add). The chain shape doesn't
 say which.
 
@@ -483,7 +483,7 @@ one-page-of-code problem instead of a re-implementation.
       repo: 'SynergismOfficial',
       path: 'src/Statistics.ts',
       line: '392-476',
-      note: 'allWowCubeStats — fourteen typed contributors folded by reduce. Tesseracts/Hypercubes/Platonics/Hepteracts/Octeracts follow the same shape.',
+      note: 'allWowCubeStats — fourteen typed modifiers folded by reduce. Tesseracts/Hypercubes/Platonics/Hepteracts/Octeracts follow the same shape.',
     },
     {
       repo: 'SynergismOfficial',
@@ -495,7 +495,7 @@ one-page-of-code problem instead of a re-implementation.
       repo: 'Trimps',
       path: 'main.js',
       line: '12215-12290',
-      note: 'applyMultipliers + the trimp damage multipliers map — sixteen-plus named contributors as zero-arg closures, folded by Object.keys forEach.',
+      note: 'applyMultipliers + the trimp damage multipliers map — sixteen-plus named modifiers as zero-arg closures, folded by Object.keys forEach.',
     },
   ]}
 />

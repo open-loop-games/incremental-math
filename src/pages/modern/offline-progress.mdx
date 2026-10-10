@@ -20,12 +20,12 @@ walked away."
 The genre had to invent that math. *How much* the game gives you for being
 gone, *how* it computes the gift, and *what* counts as gone all turned out
 to be design choices with non-trivial mathematical content. Four families
-emerged. The first three differ in what they integrate over the away
+emerged. The first three differ in what they integrate over the offline
 window; the fourth is a constraint they all share.
 
 ## Delta-time extrapolation
 
-The cheapest strategy treats absence as a single arithmetic operation:
+The cheapest strategy treats offline time as a single arithmetic operation:
 
 $$
 \text{gain} = R \cdot \min(\Delta t,\ T_\text{cap}) \cdot \alpha
@@ -55,7 +55,7 @@ var amount = (timeOfflineOptimal + timeOfflineReduced * 0.1)
            * Game.cookiesPs * (percent / 100);
 ```
 
-The `timeOfflineReduced * 0.1` term is the soft-cap variant of the family:
+The `timeOfflineReduced * 0.1` term is the trickle variant of the family:
 past the cap, ten percent of the rate keeps trickling. Without that term
 the curve has a hard knee at $T_\text{cap}$ and is flat after; with it the
 curve continues to rise, just at a much shallower slope. Both shapes are
@@ -66,7 +66,7 @@ during the offline window the player's production *would have* compounded
 — autobuyers triggering, generators producing the prestige currency that
 buys the next generator — extrapolation misses it. The offline player
 gets the rate from the moment they closed the tab, frozen, and multiplied
-out across the cap. The longer the away window or the steeper the
+out across the cap. The longer the offline window or the steeper the
 production curve, the larger the gap between extrapolation and what a
 genuine simulation would have produced.
 
@@ -83,14 +83,14 @@ the gap past five seconds; the in-tab catch-up handles the small one.
 ## Tick simulation
 
 The second strategy actually runs the game forward. On load, the simulator
-allocates a budget of ticks, advances state through each, and reports the
+allocates a budget of ticks, advances game state through each, and reports the
 total. Production rate evolves with state, so a player who left an
 autobuyer running comes back to a meaningfully different number than
 extrapolation would predict.
 
 The implementation question is the budget. Antimatter Dimensions clamps
 ticks to a minimum width of 33 milliseconds and a maximum count of one
-million; a 24-hour absence at the default options runs whatever ticks fit
+million; a 24-hour offline window at the default options runs whatever ticks fit
 inside that envelope:
 
 <Cite repo="AntimatterDimensionsSourceCode" path="src/core/storage/storage.js" line="83-89" />
@@ -104,7 +104,7 @@ maxOfflineTicks(simulatedMs, defaultTicks = this.offlineTicks) {
 
 Synergism takes the opposite tack: 200 ticks, no matter the offline
 window. The tick width $\Delta t = T / 200$ stretches as $T$ grows, so a
-72-hour absence runs the same number of update cycles as a 30-second one
+72-hour offline window runs the same number of update cycles as a 30-second one
 — each just simulates a longer slice of game time:
 
 <Cite repo="SynergismOfficial" path="src/Calculate.ts" line="583-712" />
@@ -119,9 +119,9 @@ let resourceTicks = 200;
 ```
 
 The two strategies trade off accuracy against load time. Fixed-width ticks
-preserve the simulator's resolution but make a long absence run for a
+preserve the simulator's resolution but make a long offline window run for a
 long time on the device. Fixed-count ticks finish in bounded wall-clock
-but lose fidelity for state that flips inside a single coarse slice — a
+but lose fidelity for game state that flips inside a single coarse slice — a
 prestige reset that should fire mid-window doesn't, because the tick
 straddles the threshold. Mature games hide this with auto-prestige
 triggers that fire more than once per tick or with explicit "fast simulate"
@@ -130,7 +130,7 @@ buttons that warn about reduced accuracy.
 Trimps exposes both choices to the player explicitly. The
 `offlineProgress.enabled` setting branches between full simulation and a
 delta-time variant called *Trustworthy Trimps* that extrapolates from
-last-online state without running the full loop:
+last-online game state without running the full loop:
 
 <Cite repo="Trimps" path="main.js" line="3124-3132" />
 
@@ -148,7 +148,7 @@ function checkOfflineProgress(noTip){
 ```
 
 The five-minute floor is the universal "don't bother simulating short
-absences" rule: tab-flip latency isn't offline. Beyond it, the player
+offline windows" rule: tab-flip latency isn't offline. Beyond it, the player
 picks: fully simulate the run forward (modes 1–2), or take the
 extrapolated estimate (mode 3) and skip the load-time wait.
 
@@ -159,7 +159,7 @@ extrapolated estimate (mode 3) and skip the load-time wait.
 The first two families pay you on return. The third pays you *later* — and
 only if you keep playing.
 
-KTL converts every millisecond of absence into a reservoir called
+KTL converts every millisecond of offline time into a reservoir called
 `bonusTime`:
 
 <Cite repo="stopsign-games" path="KTL/driver.js" line="14-23" />
@@ -192,7 +192,7 @@ if (data.gameSettings.bonusSpeed > 1) {
 }
 ```
 
-The mathematical content is conservation. Each second of absence buys one
+The mathematical content is conservation. Each offline second buys one
 second of "the next active second runs at $1+s$" where the player picks
 $s$. If the player runs at $2\times$, one offline second buys one
 fast-forward second. If they run at $5\times$, one offline second buys
@@ -202,7 +202,7 @@ one quarter of a fast-forward second. The bank is a budget for spending
 Trimps' fast-simulate mode is a distant relative — it processes the
 offline window in a tight loop, but it pays out as currency on return, not
 as a banked credit. KTL's pattern is the strict version: the player
-*never* gets the absence as currency. They get it as future speed.
+*never* gets offline time as currency. They get it as future speed.
 
 The reframe is the spicy part. The first two families turn the player
 into a returning spectator: log in, look at numbers, decide whether to
@@ -210,7 +210,7 @@ keep playing today. Banking inverts that — coming back is the *cheap*
 moment, and the rewarding moment is whatever active session burns the
 bank later. Active play stays primary. Idle play accumulates fuel for
 active play. The Pecorella loop where the player buys generators that
-produce currency that buys generators is intact; absence just refills the
+produce currency that buys generators is intact; being offline just refills the
 fuel tank.
 
 A softer variant shows up in Shark Incremental's *Overtime* aspect, which
@@ -263,7 +263,7 @@ much as the value. Three patterns appear:
   flows into the bank.
 
 The cap exists because uncapped offline progress trivializes active play.
-A 30-day absence at full rate would dump enough resource to skip
+A 30-day offline window at full rate would dump enough resource to skip
 content the active player needed weeks for. Caps draw a line: idle time
 counts up to here, after that we want you back at the keyboard. The
 trickle and banking variants soften the line without removing it — the
@@ -285,13 +285,13 @@ Sliders for the parameters every game tunes: cap, online-rate fraction,
 trickle slope past the cap, and a tick-sim growth rate that lets the
 simulated curve diverge upward from extrapolation. Banking sits as a
 dashed line at zero on this axis by design, with a footnote — its return
-on absence is a balance, not a payout, and the rest of the chart is
+on offline time is a balance, not a payout, and the rest of the chart is
 plotting payouts.
 
 The four curves cross at exactly two configurations. With cap = 0, all
 extrapolation-based curves collapse to zero and only banking accrues —
 which is what KTL does for any session shorter than five seconds.
-With trickle = 100% and cap = $\infty$, hard-cap and uncapped converge
+With trickle = 100% and cap = $\infty$, hard cap and uncapped converge
 and the genre's offline mechanic dissolves into "the game just ran for
 you while you were away." Most games sit deep in the interior of that
 parameter space because both endpoints break the design.
@@ -301,11 +301,11 @@ parameter space because both endpoints break the design.
 Pecorella's three parts make `t` an axis. Modern *time as a resource*
 makes `t` a quantity the player owns inside an active session. Offline
 progress is the bridge between the two: a way to convert wall-clock
-absence — which the player doesn't experience as gameplay — into something
+offline time — which the player doesn't experience as gameplay — into something
 the gameplay loop can use.
 
-The three return-payout families convert absence into currency. The
-banking family converts absence into more *gameplay-time-as-resource*.
+The three return-payout families convert offline time into currency. The
+banking family converts offline time into more *gameplay-time-as-resource*.
 That's the move that makes idle and active feel like the same game
 instead of two parallel ones. The Pecorella seesaw of cost versus
 production keeps running while the player is gone, and the modern
@@ -324,7 +324,7 @@ seesaw-time, not just more numbers.
       repo: 'AntimatterDimensionsSourceCode',
       path: 'src/core/storage/storage.js',
       line: '83-89',
-      note: 'maxOfflineTicks: 33 ms minimum tick width, 1e6 maximum tick count. Tick budget shrinks the longer the absence relative to the configured count.',
+      note: 'maxOfflineTicks: 33 ms minimum tick width, 1e6 maximum tick count. Tick budget shrinks the longer the offline window relative to the configured count.',
     },
     {
       repo: 'AntimatterDimensionsSourceCode',

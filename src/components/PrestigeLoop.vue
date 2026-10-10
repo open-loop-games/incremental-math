@@ -243,7 +243,7 @@ const X_TICKS = computed(() => {
   <div class="demo pl">
     <div class="pl-controls">
       <label>
-        <span class="demo-label">cost mult = {{ costMult.toFixed(3) }}</span>
+        <span class="demo-label">cost ratio = {{ costMult.toFixed(3) }}</span>
         <input v-model.number="costMult" type="range" min="1.03" max="1.10" step="0.001" />
       </label>
       <label>
@@ -252,12 +252,12 @@ const X_TICKS = computed(() => {
       </label>
       <label>
         <span class="demo-label"
-          >prestige when gaining ≥ {{ (prestigeRatio * 100).toFixed(0) }}% more</span
+          >reset when gaining ≥ {{ (prestigeRatio * 100).toFixed(0) }}% more</span
         >
         <input v-model.number="prestigeRatio" type="range" min="0.1" max="2" step="0.05" />
       </label>
       <label>
-        <span class="demo-label">first-prestige threshold = {{ firstPrestige }}</span>
+        <span class="demo-label">first-reset target = {{ firstPrestige }}</span>
         <input v-model.number="firstPrestige" type="range" min="5" max="200" step="5" />
       </label>
       <label class="pl-toggle">
@@ -347,7 +347,7 @@ const X_TICKS = computed(() => {
         <span class="pl-cell-val">{{ cursorSample.count }}</span>
       </div>
       <div class="pl-cell">
-        <span class="pl-cell-label">income / sec</span>
+        <span class="pl-cell-label">production / sec</span>
         <span class="pl-cell-val">{{ format(cursorSample.income) }}</span>
       </div>
       <div class="pl-cell">
@@ -366,10 +366,10 @@ const X_TICKS = computed(() => {
 
     <div class="pl-summary">
       <span
-        >{{ resetCount }} prestige reset{{ resetCount === 1 ? '' : 's' }} over
+        >{{ resetCount }} reset{{ resetCount === 1 ? '' : 's' }} over
         {{ T_MAX_MIN.toFixed(0) }} simulated minutes</span
       >
-      <span>final: {{ finalCount }} gens, {{ format(finalPrestige) }} prestige</span>
+      <span>final: {{ finalCount }} generators, {{ format(finalPrestige) }} prestige currency</span>
     </div>
   </div>
 </template>

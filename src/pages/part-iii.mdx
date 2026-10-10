@@ -9,16 +9,16 @@ import Sources from '../components/Sources.astro';
 
 # Part III — Prestige Loops
 
-Faithful walkthrough of Pecorella's [_The Math of Idle Games, Part III_](https://www.sirpinski.com/the-math-of-idle-games-part-iii/) (originally published January 2017). Part I balanced exponential cost against linear-with-multipliers production. Part II asked what happens when generators feed _other generators_ instead of currency directly. Part III closes the trilogy on the mechanic that turned the genre from a stunt into a long-form pattern: the **prestige reset**.
+Faithful walkthrough of Pecorella's [_The Math of Idle Games, Part III_](https://www.sirpinski.com/the-math-of-idle-games-part-iii/) (originally published January 2017). Part I balanced exponential cost against linear-with-multipliers production. Part II asked what happens when generators feed _other generators_ instead of currency directly. Part III closes the trilogy on the mechanic that turned the genre from a stunt into a long-form pattern: **prestige**.
 
 ## Why prestige
 
-A prestige (variously: ascension, transcendence, rebirth, reincarnation, ladder, _Reincarnation_ in Realm Grinder, _Mega Bucks_ in AdVenture Capitalist) wipes most of the run in exchange for a permanent multiplier on the next one. Cookie Clicker shipped this in 2013 and Pecorella credits Orteil with both the popularization and likely the invention. Two design jobs the mechanic does:
+Prestige (variously: ascension, transcendence, rebirth, reincarnation, ladder, _Reincarnation_ in Realm Grinder, _Mega Bucks_ in AdVenture Capitalist) is a reset that wipes most of the run in exchange for a permanent multiplier on the next one. Cookie Clicker shipped this in 2013 and Pecorella credits Orteil with both the popularization and likely the invention. Two design jobs the mechanic does:
 
 1. **Ladder feel.** Going hard, hitting a wall, resetting with a stronger boost is the genre's headline pleasure — seeing the new run blow past where the old one struggled. Prestige is the "ladder" in idle.
-2. **Number control.** Without a reset, a long-running idle inevitably runs into either the limits of `Number` or the limits of player legibility — neither curve recovers. A prestige reset trades the run's headline number for a permanent multiplier, then restarts the cost/production seesaw at small absolute values. The designer keys progression off the multiplier (a small, slow-growing number) instead of the headline (a number tearing through the [hyperoperation hierarchy](https://en.wikipedia.org/wiki/Hyperoperation)).
+2. **Number control.** Without a reset, a long-running idle inevitably runs into either the limits of `Number` or the limits of player legibility — neither curve recovers. A reset trades the run's headline number for a permanent multiplier, then restarts the cost/production seesaw at small absolute values. The designer keys progression off the multiplier (a small, slow-growing number) instead of the headline (a number tearing through the [hyperoperation hierarchy](https://en.wikipedia.org/wiki/Hyperoperation)).
 
-Pecorella corrects an old framing of his own: most prestiges are not "taking a [logarithm](https://en.wikipedia.org/wiki/Logarithm)" — they're a **fractional exponent**, usually a square or cube root. Growth across runs stays large. Clicker Heroes is the exception that genuinely is log-shaped, because its prestige currency comes from upgrade _count_ and upgrades cost exponentially, so count tracks $\log(\text{spent})$.
+Pecorella corrects an old framing of his own: most prestige formulas are not "taking a [logarithm](https://en.wikipedia.org/wiki/Logarithm)" — they're a **fractional exponent**, usually a square or cube root. Growth across runs stays large. Clicker Heroes is the exception that genuinely is log-shaped, because its prestige currency comes from upgrade _count_ and upgrades cost exponentially, so count tracks $\log(\text{spent})$.
 
 ## What the prestige currency is calculated from
 
@@ -29,9 +29,9 @@ Real games key off four broad sources, and each one shapes the run:
 - **Earnings since last reset.** Egg, Inc.: $c_R$, this run only.
 - **Upgrade count since last reset.** Clicker Heroes: number of hero levels purchased.
 
-These split cleanly into two camps. **Lifetime / max-based** formulas remember history — to gain more next run, you must beat what you did before. **Since-reset** formulas don't remember — every run starts fresh, and resetting at the same wall pays the same currency.
+These split cleanly into two camps. **Lifetime / max-based** formulas remember history — to gain more next run, you must beat what you did before. **Since-reset** formulas don't remember — every run starts fresh, and resetting at the same wall pays the same prestige currency.
 
-For the formulas below, $\Delta p$ is prestige currency gained this reset, $p$ is total prestige currency owned, $c_M$/$c_L$/$c_R$ are as above:
+For the formulas below, $\Delta p$ is the gain from this reset, $p$ is total prestige currency owned, $c_M$/$c_L$/$c_R$ are as above:
 
 **Realm Grinder** (max-based, square-root). Owned currency satisfies the [summation formula](https://en.wikipedia.org/wiki/Triangular_number) $c_M = 10^{12} \cdot \frac{p(p+1)}{2}$. Solving for $p$ via the [quadratic formula](https://en.wikipedia.org/wiki/Quadratic_formula):
 
@@ -61,7 +61,7 @@ Independent of history. Resetting at the same point yields the same $\Delta p$ e
 
 ## Comparing the curves
 
-The chart below normalizes all five to the same axes. The $x$-axis is _earnings this run as a multiple of the previous run_; the $y$-axis is _prestige currency gain divided by prestige currency currently owned_ — so $y=1$ means "this run doubles your prestige stash." Lifetime calculations need an assumption about prior history; following Pecorella, the slider defaults to the previous run being $\frac{3}{4}$ of total lifetime so far (i.e., lifetime_now = $\frac{4}{3} \times$ prev_run). Since-reset and log curves assume one prior run at the reference scale, so they pass through $(1, 1)$ — that's Pecorella's "you can keep resetting at the same point and gain the same currency."
+The chart below normalizes all five to the same axes. The $x$-axis is _earnings this run as a multiple of the previous run_; the $y$-axis is _prestige currency gain divided by prestige currency currently owned_ — so $y=1$ means "this run doubles your prestige currency." Lifetime calculations need an assumption about prior history; following Pecorella, the slider defaults to the previous run being $\frac{3}{4}$ of total lifetime so far (i.e., lifetime_now = $\frac{4}{3} \times$ prev_run). Since-reset and log curves assume one prior run at the reference scale, so they pass through $(1, 1)$ — that's Pecorella's "you can keep resetting at the same point and gain the same currency."
 
 <PrestigePatterns client:visible />
 
@@ -69,36 +69,36 @@ Four design choices separate cleanly on the chart:
 
 - **The two camps cross.** At $x=1$, Egg, Inc. and Clicker Heroes already give a doubling — the lifetime/max curves give nothing. By $x=4$ or so the lifetime curves overtake. The choice of formula encodes whether the designer wants players _to reset more often_ (independent) or _to push further each run_ (history-aware).
 - **The square-roots are sisters.** Realm Grinder (max) and AdVenture Capitalist (lifetime) both go as $\sqrt{\cdot}$. The shapes are nearly identical for a player who reliably beats their previous max — RG only "punishes" the player who resets early. The asymptote is Pecorella's "$4\times$ for double" rule for both.
-- **Cookie Clicker's cube root is the slowest doubler.** Players need much bigger leaps to feel meaningful prestige gains — which is why Cookie Clicker's _heavenly chips_ progression naturally settles into long, milestone-driven runs rather than rapid resets.
+- **Cookie Clicker's cube root is the slowest doubler.** Players need much bigger leaps to feel meaningful gains in prestige currency — which is why Cookie Clicker's _heavenly chips_ progression naturally settles into long, milestone-driven runs rather than rapid resets.
 - **Egg, Inc.'s curve is brutally flat.** $x^{0.14}$ flattens fast. For a game that explicitly bounds offline time, that's the point: idle progress can't dominate, so the per-reset payoff has to push players back into active play.
 
-## Modelling a reset loop end-to-end
+## Modelling resets end-to-end
 
-The five curves above describe the _payoff_ of a reset. They don't describe the _rhythm_ — when do players actually push the button? How does the loop interact with milestone bumps and the cost/production seesaw from Part I?
+The five curves above describe the _payoff_ of a reset. They don't describe the _rhythm_ — when do players actually push the button? How does the reset cadence interact with milestone bumps and the cost/production seesaw from Part I?
 
 Sheet `3a` answers this with a tick-driven sim over a single generator. Each tick (default: 30 seconds of game time):
 
 1. **Spend everything affordable** on the generator. Closed-form max-affordable from Part I's geometric series.
-2. **Produce.** Income $= \text{baseIncome} \times \text{count} \times \text{milestone-bonus} \times (1 + p \cdot 0.01)$, where the last term is the running prestige multiplier.
+2. **Produce.** Production $= \text{baseIncome} \times \text{count} \times \text{milestone-bonus} \times (1 + p \cdot 0.01)$, where the last term is the running prestige multiplier.
 3. **Bank lifetime earnings.** $c_L \mathrel{+}= \text{income} \times \text{tickSec}$.
 4. **Compute pending.** Pecorella's prestige formula here is $\lfloor (c_L / 10^5)^{0.5} \rfloor - p$ — a Realm-Grinder-shaped square-root over lifetime.
-5. **Auto-prestige** if pending $\geq$ first-prestige threshold _and_ pending would multiply current prestige currency by at least the configured ratio (default $1.5\times$). On reset: count → 1, currency → 0, $p \mathrel{+}= \text{pending}$. Lifetime survives.
+5. **Auto-reset** if pending $\geq$ first-reset target _and_ pending would multiply current prestige currency by at least the configured ratio (default $1.5\times$). On reset: count → 1, currency → 0, $p \mathrel{+}= \text{pending}$. Lifetime survives.
 
 Milestone bumps stack: $\times 2$ at 25 owned, $\times 2$ at 50 (cumulative $\times 4$), $\times 4$ at 100 ($\times 16$), and so on through $\times 32$ at 700. Each crossing creates a fast section in the run; the gaps between them are the slow sections.
 
 <PrestigeLoop client:visible />
 
-The bumpiness is the design surface. A long flat stretch followed by a cascade of fast purchases is a pattern Pecorella explicitly calls out from his own runs: a milestone hits at 500 generators owned, the $\times 16$ multiplier at that crossing kicks production back over cost, and the next 200 generators happen in seconds. Real players in that situation typically _delay_ prestige to ride the boost — a behaviour the auto-reset model can't capture, which is why this sim is "rough feel for the dynamics," not a balance ground truth.
+The bumpiness is the design surface. A long flat stretch followed by a cascade of fast purchases is a pattern Pecorella explicitly calls out from his own runs: a milestone hits at 500 generators owned, the $\times 16$ multiplier at that crossing kicks production back over cost, and the next 200 generators happen in seconds. Real players in that situation typically _delay_ the reset to ride the boost — a behaviour the auto-reset model can't capture, which is why this sim is "rough feel for the dynamics," not a balance ground truth.
 
 ## Designing the rhythm
 
-Pecorella's closing point on the loop: you almost never want a player whose runs all feel the same. The strongest prestige progressions interleave fast and slow stretches, and most of that variation comes from the same milestone-multiplier tooling Part I introduced — milestone _x_ at count 200 turns a slow grind into a spike, and the spacing of milestones across a run sets the run's emotional cadence.
+Pecorella's closing point on resets: you almost never want a player whose runs all feel the same. The strongest prestige progressions interleave fast and slow stretches, and most of that variation comes from the same milestone-multiplier tooling Part I introduced — milestone _x_ at count 200 turns a slow grind into a spike, and the spacing of milestones across a run sets the run's emotional cadence.
 
 A few patterns that recur in post-2017 games and are visible in the sim above:
 
-- **Milestone-as-pacing.** Tighter milestone spacing in early runs (say, $\times 2$ at every 25 up to 200) creates a fast-feeling early game; sparser milestones in late runs (one big spike at 500 or 1000) creates anticipation.
-- **Soft prestige thresholds.** The "prestige when gaining at least $X$ more" rule is a model of optimal play, not actual play. Real games either show a forecasted gain so the player decides, or set a hard "you should prestige now" UI signal at some ratio above 1×. Both shape player behaviour without forcing it.
-- **The first-prestige hurdle.** The model defaults to refusing to prestige until pending exceeds 50 — small enough that the first reset feels meaningful, large enough that the player has time to learn the loop before being told to throw it away. That number is one of the most sensitive design knobs in the whole formula.
+- **Milestone-as-pacing.** Tighter milestone spacing in early runs (say, $\times 2$ at every 25 up to 200) creates fast-feeling early runs; sparser milestones in late runs (one big spike at 500 or 1000) creates anticipation.
+- **Soft prestige targets.** The "reset when gaining at least $X$ more" rule is a model of optimal play, not actual play. Real games either show a forecasted gain so the player decides, or set a hard "you should reset now" UI signal at some ratio above 1×. Both shape player behaviour without forcing it.
+- **The first-reset target.** The model defaults to refusing to reset until pending exceeds 50 — small enough that the first reset feels meaningful, large enough that the player has time to learn the loop before being told to throw it away. That number is one of the most sensitive design knobs in the whole formula.
 
 Beyond the single-generator world the sheet models, the rhythm gets richer: layered prestige (Antimatter Dimensions' Eternity-then-Reality), [softcaps](/modern/softcaps) that bend the cost/production seesaw before a hard reset, currency-of-currency systems, and active/idle hybrids that give the player something to _do_ during a run. Those are the Modern section's territory.
 

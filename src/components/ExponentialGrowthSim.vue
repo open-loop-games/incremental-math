@@ -131,11 +131,11 @@ function xTickPos(n: number): number {
   <div class="demo egs">
     <div class="egs-controls">
       <label>
-        <span class="demo-label">cost base = {{ costBase.toFixed(3) }}</span>
+        <span class="demo-label">base cost = {{ costBase.toFixed(3) }}</span>
         <input v-model.number="costBase" type="range" min="1" max="10" step="0.001" />
       </label>
       <label>
-        <span class="demo-label">rate growth = {{ rateGrowth.toFixed(3) }}</span>
+        <span class="demo-label">cost ratio = {{ rateGrowth.toFixed(3) }}</span>
         <input v-model.number="rateGrowth" type="range" min="1.01" max="1.20" step="0.001" />
       </label>
       <label>

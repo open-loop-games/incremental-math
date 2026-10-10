@@ -35,11 +35,11 @@ precomputed, the global first-passage is a regime lookup followed by an
 intra-regime inversion.
 
 The genre's lead piecewise pattern is "two geometrics glued at a threshold": a normal-paced
-ratio before some level, a slower ratio past it — $c_0 \cdot m_1^{\,n}$ for $n \le t$,
+cost ratio before some purchase count, a slower cost ratio past it — $c_0 \cdot m_1^{\,n}$ for $n \le t$,
 $c_0 \cdot m_1^{\,t} \cdot m_2^{\,n-t}$ for $n > t$, with $m_2 < m_1$. Realm Grinder's
 pre/post-Ascension cost shift is the familiar example. Antimatter Dimensions ships the
 splice as a parameterized class, with a steeper regime rather than a gentler one —
-pre-threshold is the geometric ladder, and post-threshold the ratio itself grows by a
+pre-threshold is the geometric ladder, and post-threshold the cost ratio itself grows by a
 factor $S$ with every purchase:
 
 <Cite repo="AntimatterDimensionsSourceCode" path="src/core/math.js" line="320-352" />
@@ -66,8 +66,8 @@ What the rate panel makes visible (on log y-axis): the kink at $x = t$ is a slop
 regimes are straight lines, just at different angles. On linear y-axis the kink would be
 swamped by the exponential blowup; on log it's the visual headline. The first-passage
 panel shows the same kink in $T(C)$, at the cumulative threshold $R(t)$ rather than the
-input threshold $t$ — the regime change happens at a _budget_ level, not at a _level_
-level, which is what the player feels.
+input threshold $t$ — the regime change happens at a _budget_ value, not at a _state_
+value, which is what the player feels.
 
 A hand-authored table of costs or rates is this splice with one regime per row: it closes
 by summation and inverts by lookup. What the spec layer writes for a table is its
@@ -97,10 +97,10 @@ mechanics do); the math underneath both is exactly this composition.
 
 The constraint is "state-independent." A modifier that depends on the _same state_ the rate
 depends on — say, a multiplier that grows as $x$ grows — is no longer a modifier-product;
-it's a different rate function. With one stock, that function is a scalar
+it's a different rate function. With one state, that function is a scalar
 [ODE](https://en.wikipedia.org/wiki/Ordinary_differential_equation), $dx/dt = f(x)$, and its
 first-passage $T = \int dx / f(x)$ closes whenever that integral does. Only when two or more
-stocks read each other does the system leave the algebra, onto the
+states read each other does the system leave the algebra, onto the
 [coupled-state row](/rate-functions/bifurcations#coupled-state-deterministic) of the
 bifurcations page.
 
@@ -109,7 +109,7 @@ bifurcations page.
 What the demo makes visible: the rate and cumulative panels show two parallel curves on
 log y-scale, separated by exactly $\ln \mu$ on the log axis. The first-passage panel shows
 the modifier as a horizontal rescaling — same shape, time axis stretched by $\mu$. Triple
-the modifier, divide the time-to-threshold by three.
+the modifier, divide the first-passage time by three.
 
 ## Sum
 
@@ -121,7 +121,7 @@ have an elementary solution even when each $R_i$ does, because solving a sum of 
 functions is its own nontrivial algebra.
 
 The cleanest case is when one term [dominates](https://en.wikipedia.org/wiki/Asymptotic_analysis)
-in the regime of interest. The catalog's asymptotic ordering at infinity is
+on the interval of interest. The catalog's asymptotic ordering at infinity is
 
 $$\text{constant} \ll \log \ll \text{polynomial} \ll \text{exponential} \ll \text{super-exponential}$$
 
@@ -151,7 +151,7 @@ against the modified rate. The whole stack is closed-form if each layer is one o
 catalog's entries and each layer's $g$ is monotone elementary. When it isn't, the
 prestige math falls into the
 [optimal-stopping row](/rate-functions/bifurcations#optimal-stopping) of the
-bifurcations page — the underlying cycle is an
+bifurcations page — the underlying prestige loop is an
 [optimal-stopping problem](https://en.wikipedia.org/wiki/Optimal_stopping) that
 doesn't close, even when each individual run does.
 

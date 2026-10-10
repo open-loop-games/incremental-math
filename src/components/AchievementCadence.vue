@@ -13,7 +13,7 @@ import { seriesColor } from '../lib/series-colors';
 
 const mode = ref<'cadence' | 'reward'>('cadence');
 const r = ref(0.5); // exponential growth rate of the watched stat
-const ratio = ref(10); // threshold spacing ρ: each milestone is ρ× the last
+const ratio = ref(10); // threshold spacing ρ: each threshold is ρ× the last
 const count = ref(8); // number of milestones / achievements
 const c = ref(0.15); // reward strength per achievement
 const logScale = ref(true);
@@ -72,7 +72,7 @@ const yLabel = computed(() => (mode.value === 'cadence' ? 'stat value' : 'multip
       <label class="ach-mode">
         <span class="demo-label">view</span>
         <select v-model="mode">
-          <option value="cadence">cadence — milestones in real time</option>
+          <option value="cadence">cadence — achievements in real time</option>
           <option value="reward">reward — multiplier vs count</option>
         </select>
       </label>
@@ -87,7 +87,7 @@ const yLabel = computed(() => (mode.value === 'cadence' ? 'stat value' : 'multip
           <input v-model.number="ratio" type="range" min="2" max="100" step="1" />
         </label>
         <label>
-          <span class="demo-label">milestones = {{ count }}</span>
+          <span class="demo-label">thresholds = {{ count }}</span>
           <input v-model.number="count" type="range" min="2" max="20" step="1" />
         </label>
       </template>

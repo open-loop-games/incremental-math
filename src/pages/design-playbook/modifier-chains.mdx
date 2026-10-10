@@ -29,7 +29,7 @@ The math first. With a base rate $r_0$:
   rate at the moment of application — but as $r_0$ grows past $\mu_a$, the additive
   modifier becomes a vanishing share.
 - **Multiplicative modifier**. $r = r_0 \cdot \mu_m$. Scales the rate by a constant
-  factor. The cumulative is scaled by $\mu_m$; the first-passage threshold rescales
+  factor. The cumulative is scaled by $\mu_m$; the first-passage target rescales
   inversely. The contribution is a _fixed factor_ — independent of how big $r_0$ is.
 
 This is the same math as the [composition page](/design-playbook/composition)'s "obsolete vs blended"
@@ -55,7 +55,7 @@ The design call:
   the rest of the game. The additivity at the source level is what makes
   multi-source flexibility work; the multiplicativity at the consumption level is
   what keeps the sources from going obsolete. The shape lives in one return
-  expression — five additive contributors, summed, then handed downstream as the
+  expression — five additive sources, summed, then handed downstream as the
   tickspeed multiplier:
 
   <Cite repo="AntimatterDimensionsSourceCode" path="src/core/tickspeed.js" line="3-20" />
@@ -75,8 +75,8 @@ The design call:
   going obsolete as the run progresses).
 
 The genre default in modifier-chain UIs — visible add-then-multiply pipelines — encodes
-exactly this discipline: the additive layer is where mechanics sum into shared state,
-the multiplicative layer is where that state acts on production. Putting the
+exactly this discipline: the additive category is where mechanics sum into shared state,
+the multiplicative category is where that state acts on production. Putting the
 add-and-multiply order _backwards_ (multipliers that just add to other multipliers)
 is the failure mode that produces "this whole upgrade tree feels useless past tier 3"
 — if the modifiers are stacking additively where they should compose multiplicatively,
@@ -85,7 +85,7 @@ the late game is back to the [obsolete-mechanic problem](/design-playbook/compos
 <ModifierLayerOrderDemo client:visible />
 
 The two curves are the same modifier values composed two different ways. The additive
-stack flattens into a single bonus the player can read on a tooltip; the multiplicative
+stack flattens into a single modifier the player can read on a tooltip; the multiplicative
 stack compounds into a number that grows with each new source the same way prestige
 multipliers grow with each new layer. The architectural choice is which axis the
 upgrades stack along, and the gap widens with every additional source.
@@ -104,7 +104,7 @@ on the rate it's modifying. The math's diagnosis is that this composition usuall
 falls outside the algebra. The design-side consequences:
 
 - **First-passage no longer closes.** The math can't tell the player when they'll
-  hit the next milestone in closed form; the calculation has to be done numerically.
+  hit the next target in closed form; the calculation has to be done numerically.
   Practically this means the game can't ship a max-affordable-buy calculator that
   works in the late game; calibration tables or solvers replace closed-form lookups.
 - **Modifier behaviors get weird at scale.** A multiplier that compounds with the
@@ -118,7 +118,7 @@ falls outside the algebra. The design-side consequences:
   state-dependence produces, often something the designer didn't specifically intend.
 
 When state-dependence is the right call: when the _transformation_ is the design
-goal. Power-modifiers on rates ("triple the exponent of your production formula")
+goal. Exponent modifiers on rates ("triple the exponent of your production formula")
 are explicitly state-dependent; they're producing a [polynomial transform](/rate-functions/power-law#polynomial-rate)
 of the rate, and the late-game shape that emerges is the shape the designer chose.
 The math just has to be acknowledged: the spec layer has shifted to a different
@@ -134,18 +134,18 @@ matters most because they can't see what each upgrade does.
 
 Working answers from the corpus:
 
-- **Up to ~5 steps with no UI scaffolding.** A pipeline like "base × (1 + boost) ×
+- **Up to ~5 steps with no UI scaffolding.** A pipeline like "base × (1 + modifier) ×
   prestige × tickspeed × milestone" can be presented as a single formula and players
-  read it. Cookie Clicker's per-building output sits in this regime.
+  read it. Cookie Clicker's per-building production sits in this case.
 - **5–20 steps with a typed pipeline UI.** Profectus / Prestige Tree-style
   modifier-chain displays — each step named, each contribution visible, each step's
   effect on the running total shown. Players can hover and see the chain. The
   [modifier chains modern page](/modern/modifier-chains) walks the design pattern.
 - **Past 20 steps, organized by category.** Synergism-scale stacks group modifiers
-  by category (additive multipliers, multiplicative multipliers, exponent
-  multipliers, achievement bonuses, prestige bonuses…) and present them as
+  by category (additive modifiers, multiplicative modifiers, exponent
+  modifiers, achievement modifiers, prestige modifiers…) and present them as
   collapsible sections. The chain is still inspectable, but only at a higher level
-  of organization. Each Synergism currency owns a typed array of named contributors
+  of organization. Each Synergism currency owns a typed array of named modifiers
   reduced into one number — the array _is_ the chain, and the UI renders the same
   array directly:
 
@@ -167,7 +167,7 @@ Working answers from the corpus:
   Hypercubes, Platonics, Hepteracts, and Octeracts each get their own array of
   similar depth, and the same shape extends to offerings,
   obtainium, ascension speed, and quark gain. The category split lives in
-  _which array_ a contributor goes into; within each array the order is the chain.
+  _which array_ a modifier goes into; within each array the order is the chain.
 
 The break-points aren't sharp; they're observations from the corpus. What's
 mathematically real is that each step is a coordinate change on the rate, and a
@@ -175,10 +175,10 @@ designer who builds a 50-step chain has to decide what _unit_ of inspection to s
 Step-by-step inspection at 50 steps is unreadable; collapsed inspection by category
 is readable but loses per-upgrade visibility. The trade-off is the design call.
 
-## When does a modifier become a soft cap?
+## When does a modifier become a softcap?
 
 A specific case worth flagging: a modifier that's nominally state-independent can
-_effectively_ soft cap a rate when its value grows slower than the rate it's modifying.
+_effectively_ act as a softcap on a rate when its value grows slower than the rate it's modifying.
 If $\mu_m$ is a multiplier that grows as $x^{0.5}$ while the rate grows as $x^2$, the
 _effective_ rate the player sees is $x^{2.5}$ — which is fine — but the _contribution_
 of the multiplier shrinks as a fraction of total. From the player's perspective, the
@@ -209,7 +209,7 @@ diagnoses where state-dependent ones go. It doesn't decide:
   mathematical requirement. Some games hide the chain entirely and present only the
   final rate; the math doesn't care, the player experience does.
 - **How "impactful" a modifier feels.** A modifier's _math contribution_ (its
-  multiplicative factor) and its _felt impact_ (the visible jump in production
+  multiplier) and its _felt impact_ (the visible jump in production
   numbers) are not the same thing. A 1.5× multiplier that takes the player from
   10/sec to 15/sec feels enormous; the same 1.5× taking them from 1e50 to 1.5e50
   feels invisible. The math is the same; the felt impact is downstream of how the
@@ -232,7 +232,7 @@ be designed; only one of them has closed-form answers.
       repo: 'SynergismOfficial',
       path: 'src/Statistics.ts',
       line: '392-476',
-      note: 'allWowCubeStats — categorized stack with 14 named contributors reduced by one-line product. The same shape repeats per cube tier and per side currency.',
+      note: 'allWowCubeStats — categorized stack with 14 named modifiers reduced by one-line product. The same shape repeats per cube tier and per side currency.',
     },
   ]}
 />

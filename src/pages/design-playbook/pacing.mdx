@@ -1,6 +1,6 @@
 ---
 layout: ../../layouts/Article.astro
-title: Pacing — targeting milestones
+title: Pacing — hitting targets
 ---
 
 import BeatTimeWizard from '../../components/BeatTimeWizard.vue';
@@ -8,11 +8,11 @@ import FlowChannels from '../../components/FlowChannels.vue';
 import Cite from '../../components/Cite.astro';
 import Sources from '../../components/Sources.astro';
 
-# Pacing — targeting milestones
+# Pacing — hitting targets
 
 The most universal designer question: how fast should the game move? Pacing is what
 turns a clean rate function into a felt experience, and it has more closed-form math
-behind it than almost any other design surface. The doubling time on a geometric ladder
+behind it than almost any other design surface. The doubling time on a geometric ladder, in purchases,
 is one number, $(\ln 2)/\ln m$, and that one number sets nearly everything about the
 feel of the late game.
 
@@ -35,10 +35,10 @@ having to read formulas.
 
 The design-side question is "how many doublings do I want a session of my game to
 include?" Pick that number — call it $K$. A typical session involves the player
-purchasing some target count $N$ of a building. The doubling count is $N/d$. So
+purchasing some target count $N$ of a generator. The doubling count is $N/d$. So
 $d = N/K$, and $m = 2^{1/d} = 2^{K/N}$.
 
-Concrete: if a session has the player buy 30 of a building and you want them to feel
+Concrete: if a session has the player buy 30 of a generator and you want them to feel
 ~6 doublings of cost in that session, $d = 5$ and $m \approx 2^{1/5} \approx 1.149$ —
 which is exactly why $1.15$ feels right for sessions of that shape. The genre default
 isn't arbitrary; it's the answer to a specific session-length question. A different
@@ -52,11 +52,11 @@ production curves update together.
 
 The doubling-time question — "$K$ doublings across $N$ purchases" — assumes the
 designer already thinks in doublings. A different framing: "I want a $60$-second
-beat at level $10$, with the first purchase taking $10$ seconds." Both produce the
+beat at purchase $10$, with the first purchase taking $10$ seconds." Both produce the
 same $m$ in the end; the math just runs in the other direction.
 
 The closed form is the inverse of the geometric ladder. With base beat time $T_1$,
-target beat time $T_n$, and target level $n$:
+target beat time $T_n$, and target purchase count $n$:
 
 $$T_n = T_1 \cdot m^{n-1} \implies m = \left(\frac{T_n}{T_1}\right)^{1/(n-1)}$$
 
@@ -64,8 +64,8 @@ $$T_n = T_1 \cdot m^{n-1} \implies m = \left(\frac{T_n}{T_1}\right)^{1/(n-1)}$$
 
 This is the same number as the doubling-time formula gives. The advantage of the
 inverted form is that it accepts inputs designers already know how to specify — "I
-want my level-10 purchases to take a minute" is a more intuitive starting point than
-"I want six doublings across thirty levels." The result is the same multiplier,
+want my tenth purchase to take a minute" is a more intuitive starting point than
+"I want six doublings across thirty purchases." The result is the same cost ratio,
 named differently. Use whichever framing matches the way the design conversation
 actually goes.
 
@@ -83,8 +83,8 @@ The named bands map to incremental beat times as follows:
 - **Frustration** ($15$ min – $1$ hr): the wait stops feeling like progress.
 - **Breakdown** (over $1$ hr): pure idle territory.
 
-The closed form for the multiplier range that keeps a given level in a given channel
-is the inverse of the geometric ladder. With base beat $T_1$ and target level $n$,
+The closed form for the cost ratio range that keeps a given purchase count in a given channel
+is the inverse of the geometric ladder. With base beat $T_1$ and target purchase count $n$,
 to keep $T(n) \in [T_{\min}, T_{\max}]$:
 
 $$\left(\frac{T_{\min}}{T_1}\right)^{1/(n-1)} \le m \le \left(\frac{T_{\max}}{T_1}\right)^{1/(n-1)}$$
@@ -92,7 +92,7 @@ $$\left(\frac{T_{\min}}{T_1}\right)^{1/(n-1)} \le m \le \left(\frac{T_{\max}}{T_
 For $T_1 = 10$s and $n = 10$, the Flow band $[30, 120]$ resolves to
 $m \in [1.13, 1.32]$. The genre default $1.15$ lands comfortably inside that range —
 Cookie Clicker and the games that copied its ratio sit there because their designers,
-deliberately or otherwise, picked an $m$ that puts level-10 beats in Flow.
+deliberately or otherwise, picked an $m$ that puts the tenth purchase's beat in Flow.
 
 <FlowChannels client:visible />
 
@@ -100,25 +100,25 @@ The bands aren't binding constraints. Plenty of games target Arousal (the gentle
 ratios of mobile idle, like the $1.07$ Pecorella records for AdVenture Capitalist's
 first business) or push into Boredom on purpose (deep-prestige walls
 designed to force a reset). What the channel mapping does is _name_ what a given $m$
-is doing to the beat curve, and which level the curve crosses each channel boundary.
-"We're in Flow at level 10 but Boredom by level 20" is a more useful design
+is doing to the beat curve, and at which purchase count the curve crosses each channel boundary.
+"We're in Flow at purchase 10 but Boredom by purchase 20" is a more useful design
 conversation than "the curve gets steep around there."
 
 ## How long should the early game be?
 
 This is two questions stacked. "What's the duration of the early game?" is a
-first-passage problem: time to threshold $C_{\text{early-end}}$. "Where do I put
+first-passage problem: the first-passage time to target $C_{\text{early-end}}$. "Where do I put
 $C_{\text{early-end}}$?" is the design call the formula cannot choose. Pacing math
-answers the first; the threshold is a tuning decision.
+answers the first; the target is a tuning decision.
 
-The first part: with rate $r$ and cumulative $R(t)$, the time to threshold $C$ is
+The first part: with rate $r$ and cumulative $R(t)$, the first-passage time to target $C$ is
 $T(C) = R^{-1}(C)$, which the catalog gives in closed form for every entry. For a
-geometric ladder, $T$ is logarithmic in $C$ — the time to a milestone $K$ levels in is
+geometric ladder, $T$ is logarithmic in $C$ — the first-passage time to a target $K$ purchases in is
 proportional to $K$, not to $m^K$. The early game's _duration_ in real time scales
-linearly with how many levels you call "early."
+linearly with how many purchases you call "early."
 
 The second part is taste. The genre's working answer for clickers is that the early
-game ends when the first major upgrade unlocks ("first prestige" or "first major
+game ends when the first major upgrade unlocks ("first reset" or "first major
 multiplier"), and that upgrade typically arrives 5–15 minutes in. A doubling-time
 calculation backs into the right $m$ given that target. For session-paced games the
 early game is shorter; for slow-burn idle the early game can be hours.
@@ -126,7 +126,7 @@ early game is shorter; for slow-burn idle the early game can be hours.
 What the math forbids: a geometric ladder can't have a _short_ early game and a _short_
 late game both. The doubling structure is uniform — pick $m$ and you've picked the
 ratio of late-game pacing to early-game pacing. Games that want the early game to feel
-fast and the late game to feel deep need either a [piecewise composition](/rate-functions/composition#piecewise-splice)
+fast and the late game to feel deep need either a [piecewise splice](/rate-functions/composition#piecewise-splice)
 of two geometrics (different $m$ before and after a threshold) or a different rate
 function entirely. The Pecorella-style single-$m$ ladder is uniformly paced by
 construction.
@@ -134,55 +134,55 @@ construction.
 ## How do I prevent the late game from being a wall?
 
 Re-read [the asymptotic concentration lemma](/rate-functions/exponential#asymptotic-concentration): for a
-geometric cumulative, the last $K$ levels carry approximately $1 - m^{-K}$ of the total
+geometric cumulative, the last $K$ purchases carry approximately $1 - m^{-K}$ of the total
 integral. For $m = 1.15$ and $K = 10$, that's 75%. The math is doing this, regardless
-of what the rest of the game does — the _feeling_ that the last few levels of any
-building are the whole grind is mathematically true.
+of what the rest of the game does — the _feeling_ that the last few purchases of any
+generator are the whole grind is mathematically true.
 
 The design-side problem is what to _do_ about it. Three working answers:
 
-- **Soft cap the cost growth.** Replace the geometric ladder with a piecewise
-  composition: $m = 1.15$ early, $m = 1.05$ past threshold $t$. The post-threshold
+- **Softcap the cost ratio.** Replace the geometric ladder with a piecewise
+  splice: $m = 1.15$ early, $m = 1.05$ past threshold $t$. The post-threshold
   doubling time is now $\approx 14$ purchases instead of $\approx 5$, and the
   late-game "wall" gets a slope change rather than a slope continuation. The
   [bending the curve](/design-playbook/bending) page covers the design choices.
 - **Add a multiplicative modifier that grows with progress.** A multiplier on the
   rate doesn't change the _shape_ of the cost cumulative but it _rescales the
-  threshold_ — players reach the same level for less effective cost. Each prestige
+  target_ — players reach the same purchase count for less effective cost. Each prestige
   layer in modern games does this; it's why prestige is the genre's main pacing lever.
-- **Cap the level entirely with a milestone gate.** A hard cap turns the runaway into
+- **Cap the purchase count entirely with a milestone gate.** A hard cap turns the runaway into
   a reachable endpoint. Players know when they're done. This changes the game's shape
   fundamentally — it's no longer a pacing decision, it's an end-of-content decision.
   Most idle games avoid this for a reason; some lean into it.
 
 What the math says is that some response is _required_ if you want the late game to
 feel like progress and not like a wall. A pure $m = 1.15$ ladder with no modulation will
-end at "you waited 75% of total time for the last 10 levels of one building." Whether
-that's a wall or a feature depends on what the game wants those 10 levels to _be_; if
+end at "you waited 75% of total time for the last 10 purchases of one generator." Whether
+that's a wall or a feature depends on what the game wants those 10 purchases to _be_; if
 the answer is "the climactic moment of the run," it's a feature, and if it's "another
 20-minute grind," it's a wall.
 
 ## When is m = 1.15 wrong?
 
-The genre default is right for sessions involving roughly 30 purchases of a building
+The genre default is right for sessions involving roughly 30 purchases of a generator
 across a 5–15 minute play window. It's wrong (or at least, suboptimal) for any session
 shape outside that range:
 
-- **Long-form idle (multi-hour sessions).** If a session spans 100+ levels of a
-  building, $m = 1.15$ produces a runaway that hits float-overflow in the late game.
+- **Long-form idle (multi-hour sessions).** If a session spans 100+ purchases of a
+  generator, $m = 1.15$ produces a runaway that hits float-overflow in the late game.
   Either drop $m$ (1.05–1.10 is more common for idle-heavy games) or
-  [piecewise it](/rate-functions/composition#piecewise-splice) past a threshold.
+  [splice it](/rate-functions/composition#piecewise-splice) past a threshold.
 - **Short bursts (sub-5-minute sessions).** Players don't see enough doublings to feel
   the cadence; the mechanic feels static. Crank $m$ — 1.25–1.35 — so a short session
   contains 2–3 doublings.
-- **Games where buildings aren't the main loop.** If the headline progression is
-  prestige currency or an idle multiplier rather than building purchases, the
+- **Games where generators aren't the main loop.** If the headline progression is
+  prestige currency or an idle multiplier rather than generator purchases, the
   doubling time of the _displayed currency_ is what matters. The cost ladder of a
   side-system can be picked independently to fit _its_ role in the loop.
 - **Games that ship a heavy tickspeed system.** If tickspeed is itself a major
   multiplier on the rate, then the _effective_ doubling time the player feels is
   shortened by the tickspeed compounding. AD's tickspeed upgrade uses a per-purchase
-  ratio of about 10, and because tickspeed compounds into every dimension's output,
+  ratio of about 10, and because tickspeed compounds into every dimension's production,
   the effective doubling time the player feels is far shorter than the dimensions'
   own cost ratios suggest.
   <Cite repo="AntimatterDimensionsSourceCode" path="src/core/tickspeed.js" line="157" />
@@ -193,8 +193,8 @@ default as a universal best practice is taking someone else's answer to your pro
 
 ## Where the math stops
 
-Pacing math diagnoses _cadence_ — how fast the curve climbs and how long milestones
-take. Pacing math doesn't decide:
+Pacing math diagnoses _cadence_ — how fast the curve climbs and how long reaching a target
+takes. Pacing math doesn't decide:
 
 - **Whether the cadence is fun.** Some audiences love five-minute doublings; some
   want hour-long ones. The math quantifies the cadence; the audience decides whether
@@ -202,7 +202,7 @@ take. Pacing math doesn't decide:
 - **What the player does between purchases.** The first-passage time is a duration in
   real time; what _fills_ that duration — clicks, automation, mini-games, narrative —
   is content shape, not curve shape. Pacing math does not choose it.
-- **How to telegraph the next milestone.** Players need to _see_ the next milestone
+- **How to telegraph the next target.** Players need to _see_ the next target
   approaching for the cadence to feel like progress. The HUD design, the progression
   bars, the unlock animations are all about making the math _legible_. Legibility is
   a UI problem.
@@ -217,7 +217,7 @@ you to a defensible starting point, and playtesting tells you if that point is f
       repo: 'cookie-clicker',
       path: 'main.js',
       line: '7972',
-      note: 'Game.priceIncrease = 1.15 — the genre-default geometric ratio, doubling cost about every five purchases.',
+      note: 'Game.priceIncrease = 1.15 — the genre-default cost ratio, doubling cost about every five purchases.',
     },
     {
       repo: 'AntimatterDimensionsSourceCode',

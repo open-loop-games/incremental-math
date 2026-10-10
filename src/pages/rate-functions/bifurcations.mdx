@@ -24,7 +24,7 @@ the spec layer reaches for instead. The catalog stops where the algebra stops;
 past that, the math doesn't disappear, it changes language.
 
 The first-passage frame survives every bifurcation. Each row below is still
-"time to reach a milestone" in some generalized sense — mean hitting time,
+"first-passage time" in some generalized sense — mean hitting time,
 equilibrium, threshold policy, optimum over a discrete option space. What
 changes is the algebra of "rate" and the meaning of "cumulative." Each row
 also has a body of named mathematics that gives a different shape of spec —
@@ -68,11 +68,11 @@ trajectory often still exists implicitly through a
 [conserved quantity](https://en.wikipedia.org/wiki/Conservation_law), but the
 time-parametrization $t(R)$ — when the orbit reaches a given point — does not.
 
-Coupling needs two stocks. A rate that reads only its own stock is a scalar
+Coupling needs two states. A rate that reads only its own state is a scalar
 ODE, $dx/dt = f(x)$, and its first-passage $T = \int dx / f(x)$ closes whenever
 that integral does.
 
-The spec layer in this regime drops down to qualitative invariants:
+The spec layer in this bucket drops down to qualitative invariants:
 [matrix exponentials](https://en.wikipedia.org/wiki/Matrix_exponential) for the
 linear case, [phase portraits](https://en.wikipedia.org/wiki/Phase_portrait) and
 [Lyapunov functions](https://en.wikipedia.org/wiki/Lyapunov_function) for stable
@@ -85,13 +85,13 @@ triangular dependency that closes per the
 
 DodecaDragons ships the coupling in its first two resources. Gold's rate is
 $\text{miners} \cdot (1 + 2\log_{10}(1 + \text{fire}/10))$, fire's rate
-multiplies by $1 + k\log_{10}(\text{gold} + 1)$, and both stocks accrue every
+multiplies by $1 + k\log_{10}(\text{gold} + 1)$, and both states grow every
 tick:
 
 <Cite repo="DodecaDragons" path="scripts/script.js" line="1313" />
 <Cite repo="DodecaDragons" path="scripts/script.js" line="1387-1395" />
 
-Each rate is a log of the other stock, so neither closes without the other's
+Each rate is a log of the other state, so neither closes without the other's
 trajectory.
 
 The textbook coupled-state system is Lotka-Volterra predator–prey. Slide the
@@ -104,12 +104,12 @@ $y_0$), but no elementary algebra delivers it.
 **Discriminators.**
 
 - _vs. closed-form_ — does any modifier read the state it modifies? No, and the
-  [composition rules](/rate-functions/composition) close it. One stock reading
+  [composition rules](/rate-functions/composition) close it. One state reading
   itself is the scalar ODE above.
 - _vs. stochastic load-bearing_ — remove every random draw. If the design intent
   survives, the subsystem is here.
 - _vs. network-topological_ — does a graph's capacity bound the throughput? Yes,
-  and it's network. Feedback through stocks with no capacity bound is here.
+  and it's network. Feedback through states with no capacity bound is here.
 
 ## Strategy-space integration
 
@@ -139,7 +139,7 @@ supplies the equivalence classes, and the
 reduces a sum of impartial games to a single nim-value. The spec is the rule-set
 as a state graph, plus value bounds and any dominant strategy.
 
-Replicator dynamics on Rock-Paper-Scissors visualizes the regime split:
+Replicator dynamics on Rock-Paper-Scissors visualizes the case split:
 zero-sum produces closed orbits around the centroid (the Nash equilibrium of
 the mixed game), and even small perturbations of the diagonal payoff flip the
 centroid between attractor and repeller.
@@ -230,8 +230,8 @@ saturated network, throughput is the min-cut value, and design knobs are the
 graph topology and per-edge capacities.
 
 Upload Labs is the clearest exemplar. The player wires windows into a graph. A
-window's output rate is the minimum of its own rate and each input's production
-per unit it consumes, and a container splits its stock and production equally
+window's production rate is the minimum of its own rate and each input's production
+per unit it consumes, and a container splits its contents and production equally
 across its outgoing wires:
 
 <Cite repo="upload-labs" path="scenes/windows/window_single_file_process.gd" line="45-49" />
@@ -394,7 +394,7 @@ The threshold formula is concrete; whether it is provably optimal under the IP
 geometric-compression growth curve is unproven. That gap is what the bucket
 covers.
 
-A stylised reset-cycle model with exponential within-run growth and prestige
+A stylised prestige-loop model with exponential within-run growth and prestige
 reward $C^\beta$ has long-run rate $\rho(u) = r e^{\beta u}/u$, peaked at the
 closed-form optimum $u^* = 1/\beta$. The curve does the teaching the algebra
 can't — shallow on the early-reset side, steep on the late-reset side, and
@@ -534,7 +534,7 @@ The failure mode this page exists to prevent isn't "the math runs out" — it's
 at a stochastic subsystem is calibration, not spec; the spec is the
 distribution family. Throwing brute-force tree search at an adversarial
 subsystem is calibration; the spec is the equilibrium concept. The distinction
-matters for the same reason it matters in the closed-form regime: the spec
+matters for the same reason it matters when the algebra closes: the spec
 compresses the design space and tells you which knobs are independent.
 
 The catalog stops where the algebra stops, and the eight rows above are the
@@ -546,13 +546,13 @@ boundary the design space turns at.
       repo: 'DodecaDragons',
       path: 'scripts/script.js',
       line: '1313',
-      note: 'goldPerSecond = miners · (1 + 2·log₁₀(1 + fire/10)): gold’s rate reads the fire stock.',
+      note: 'goldPerSecond = miners · (1 + 2·log₁₀(1 + fire/10)): gold’s rate reads the fire state.',
     },
     {
       repo: 'DodecaDragons',
       path: 'scripts/script.js',
       line: '1387-1395',
-      note: 'firePerSecond multiplies by 1 + k·log₁₀(gold + 1): fire’s rate reads the gold stock. Coupled-state deterministic.',
+      note: 'firePerSecond multiplies by 1 + k·log₁₀(gold + 1): fire’s rate reads the gold state. Coupled-state deterministic.',
     },
     {
       repo: 'paperclips',
@@ -564,13 +564,13 @@ boundary the design space turns at.
       repo: 'upload-labs',
       path: 'scenes/windows/window_single_file_process.gd',
       line: '45-49',
-      note: 'get_output_production — output is the minimum of the window’s own rate and each input’s production per unit consumed.',
+      note: 'get_output_production — production is the minimum of the window’s own rate and each input’s production per unit consumed.',
     },
     {
       repo: 'upload-labs',
       path: 'scenes/resource_container.gd',
       line: '99-123',
-      note: 'Container tick — stock and production split equally across outgoing wires. Network-topological: the routing rule is part of the spec.',
+      note: 'Container tick — contents and production split equally across outgoing wires. Network-topological: the routing rule is part of the spec.',
     },
     {
       repo: 'gemcraft-chasing-shadows',

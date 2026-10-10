@@ -9,8 +9,8 @@ import Sources from '../../components/Sources.astro';
 
 # Automation
 
-Pecorella's Part I closed with the *Optimal Choice* spreadsheet: given your
-current cash and owned counts, score each generator by `cost / income`
+Pecorella's Part I closed with the *Optimal Choice* spreadsheet: given the
+currency you hold and your owned counts, score each generator by `cost / income`
 plus `cost / itemIncome` and buy the lowest. It's a static answer to a
 static question — *which one next?* — that the player executes by hand.
 
@@ -55,14 +55,14 @@ purchase clears, and overtake. The buy-max curve climbs fast early,
 because every cent is spent on whatever's cheapest, but it spends those
 cents on G1 long after G2 would be the better marginal buy.
 
-## Priority and the regime collapse
+## Priority and the two extremes
 
 The *priority slider* in the demo is the simplification of every
 priority autobuyer in the genre. At priority = 0 the policy walks
 generators low-to-high; at priority = 1 it walks them high-to-low. Real
 games mostly fix the walk order in code and expose per-tier toggles and
 buy modes instead of a priority number. The two
-slider extremes produce qualitatively different regimes:
+slider extremes produce qualitatively different cases:
 
 - **Low priority everywhere.** Every spare cent goes to G1, then G2,
   then G3. All tiers grow together because cheap purchases land before
@@ -105,7 +105,7 @@ toggle, per-tier mode, interval upgrade, reset behavior on prestige.
 The policy is a config struct.
 
 Synergism takes the same shape and folds the predicate into the toggle
-itself. Each tier of generators has its own auto-buy upgrade, and the
+itself. Each tier of generators has its own autobuyer upgrade, and the
 auto-loop walks tiers in fixed order:
 
 <Cite repo="SynergismOfficial" path="src/Automation.ts" line="50-72" />
@@ -129,10 +129,10 @@ upgrade. Inside that gate, the loop is the simplest possible:
 buy-when-affordable, low-tier first, no priority. The complexity lives
 in the unlock graph (what each `upgrades[i]` requires), not the policy.
 
-## Does dynamic autobuy converge to the static optimum?
+## Does a dynamic autobuyer converge to the static optimum?
 
 Pecorella's Optimal Choice is a *greedy* answer to a static problem:
-given current state, which single purchase maximizes
+given current game state, which single purchase maximizes
 `income / cost`? Run the autobuyer on the same scoring function and you
 get a sequence of greedy moves that, naively, should approximate the
 static optimum.
@@ -141,7 +141,7 @@ It systematically doesn't. Two reasons.
 
 The first is *temporal*. Optimal Choice scores a single step. The
 autobuyer makes hundreds of single-step decisions in a row, and each
-decision changes the state the next decision is scored against. A greedy
+decision changes the game state the next decision is scored against. A greedy
 sequence is only optimal in the global sense when the scoring function
 is [submodular](https://en.wikipedia.org/wiki/Submodular_set_function)
 and the constraint is matroid-shaped — which is rarely true once
@@ -248,8 +248,8 @@ Different games place automation at different points in the progression:
   games picks one of several spells per tick by a player-set order. Spells
   are different effects with different costs, so the policy is a small
   scheduler picking from a queue.
-- **Tiered auto-everything.** Synergism's automation unlocks tier by
-  tier through ascensions and singularities — auto-research, auto-buy
+- **Staged auto-everything.** Synergism's automation unlocks stage by
+  stage through ascensions and singularities — auto-research, an autobuyer
   per tier, auto-runes, auto-cubes, auto-corruption-loadout.
   Late-singularity play is configuring the automation graph and
   watching it run.
@@ -257,7 +257,7 @@ Different games place automation at different points in the progression:
   game: every skill action loops automatically once configured, and
   offline progress simulates the loop forward. The active gesture is
   setting up the next loop, not executing the current one.
-- **Stat- and reward-gated unlock.** NGU Idle's tiered automation
+- **Stat- and reward-gated unlock.** NGU Idle's staged automation
   unlocks, Clicker Heroes' auto-clickers as a rationed resource —
   automation is rationed and upgraded across runs. The unlock curve
   is a content surface in its own right.

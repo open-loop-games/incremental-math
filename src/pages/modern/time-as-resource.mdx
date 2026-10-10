@@ -10,8 +10,8 @@ import Sources from '../../components/Sources.astro';
 # Time as a Resource
 
 In Pecorella's three parts, `t` is an axis on the chart. Production grows in
-`t`. Cost is independent of `t`. Prestige cycles are a way of folding the
-`t` axis into discrete laps. Time, in that frame, is the dimension along
+`t`. Cost is independent of `t`. Prestige is a way of folding the
+`t` axis into discrete runs. Time, in that frame, is the dimension along
 which everything else moves; nothing in the math is *about* time.
 
 A wave of games released after about 2017 changed that. Time stopped being
@@ -22,11 +22,11 @@ mechanics that all reframe `t` from a coordinate to a quantity.
 ## Zero-sum time budgets
 
 The cleanest reframe is the time loop. Groundhog Life gives the player a
-fixed number of minutes per loop — 1440, the minutes in a day — and a list
+fixed number of minutes per run — 1440, the minutes in a day — and a list
 of activities competing for them.
 <Cite repo="groundhog-life" path="app-unminified.js" line="4183" /> Whatever you don't spend, you lose at the
-end of the loop. Whatever you do spend produces persistent meta-progress
-the next loop inherits. The math at allocation time is a continuous
+end of the run. Whatever you do spend produces persistent meta-progression
+the next run inherits. The math at allocation time is a continuous
 [knapsack problem](https://en.wikipedia.org/wiki/Continuous_knapsack_problem):
 
 $$
@@ -37,7 +37,7 @@ where `m_i` is minutes given to activity `i` and `y_i` is its yield function.
 If yields were linear (`y_i = a_i · m_i`), the optimum would dump everything
 into the highest `a_i` and the game would be uninteresting. They aren't.
 Time-loop games consistently use *concave* yields — diminishing returns
-within a single loop — because the design goal is to make every activity
+within a single run — because the design goal is to make every activity
 worth *some* attention, never *all* of it. The minute marginal returns
 equalize across activities, you have the optimum.
 
@@ -54,13 +54,13 @@ curAction.manaUsed++;
 curAction.timeSpent += 1 / baseManaPerSecond / getActualGameSpeed();
 ```
 
-A loop has a fixed mana pool. Burning the pool is the loop ending. Mana
+A run has a fixed mana pool. Burning the pool is the run ending. Mana
 *is* the time budget, named differently because the game doesn't want to
 admit that the player's optimization problem is "spend 250 minutes
 optimally." Cavernous II takes the same shape and makes the queue
 explicit: actions go into an ordered list, the list runs deterministically,
-the list ends when its summed durations exceed the loop budget. The player
-is editing a program whose runtime budget is the loop length.
+the list ends when its summed durations exceed the run budget. The player
+is editing a program whose runtime budget is the run length.
 
 <Cite repo="Nucaranlaeg.github.io" path="incremental/CavernousII/src/script/main.ts" line="429-439" />
 
@@ -82,14 +82,14 @@ deserves all. The closed form is the floor on solver complexity, not the
 ceiling.
 
 What this resource is *not*: spendable currency in the Pecorella sense.
-Minutes don't compound. Minutes don't carry over. The loop ends and the
+Minutes don't compound. Minutes don't carry over. The run ends and the
 budget refills. The persistent thing is whatever the player produced *with*
 the budget — combat XP, faction reputation, a permanent skill point. Time
 is the input that keeps replenishing; the output is what stays. This
 inverts the Pecorella loop, where the resource (gold, antimatter)
 accumulates and gets spent on permanent things called generators that
-output more resource. In the time-loop game, the resource resets and the
-*generators* — your skill levels, your unlocks — are the persistent layer.
+produce more resource. In the time-loop game, the resource resets and the
+*generators* — your skill levels, your unlocks — are the meta-progression.
 
 ## Speed multipliers as effective time
 
@@ -102,7 +102,7 @@ a multiplier on the per-galaxy decay:
 
 <Cite repo="AntimatterDimensionsSourceCode" path="src/core/tickspeed.js" line="22-67" />
 
-The full function pulls in twelve different effect sources before
+The full function pulls in twelve different modifiers before
 returning a `Decimal`, but the structural claim is small: the player has a
 running multiplier `s` on game time, and effective elapsed time during a
 window is
@@ -129,9 +129,9 @@ identical — `effectiveDelta = realDelta · speedMultiplier` — and so is the
 balancing problem. If `s` is bought from production and production scales
 exponentially in `t_eff`, then `s` scales exponentially in `t_eff`, and
 without intervention the system runs away. The fix is universal: the cost
-of `s` itself scales faster than `s`'s payoff, so each new tier of speed
-takes longer (in `t_eff`!) than the previous tier delivered. The runaway
-becomes a controlled climb where each speed tier delivers a finite amount
+of `s` itself scales faster than `s`'s payoff, so each new level of speed
+takes longer (in `t_eff`!) than the previous level delivered. The runaway
+becomes a controlled climb where each speed level delivers a finite amount
 of effective time before the next one becomes the obvious purchase.
 
 The mathematical content here is small relative to its impact on the play
@@ -148,7 +148,7 @@ order of magnitude `s` produces."
 
 The previous two reframings made `t` a budget and a rescalable clock. The
 next move makes the *cost* of each action — its time spend — itself a mutable
-quantity that the player reduces over many loops.
+quantity that the player reduces over many runs.
 
 Cavernous II and Omsi-Loops both use the pattern. An action's duration is
 
@@ -182,16 +182,16 @@ The Chronomancy line is exactly a global speed multiplier, but the
 buff-zoning above it is the duration-mutation pattern: a Ritual buff makes town-zero actions cheaper
 than town-one actions cheaper than town-two actions. The same action queue
 runs at different effective costs depending on which zone it's executing
-in. The player isn't editing the queue's *shape* between loops; they're
+in. The player isn't editing the queue's *shape* between runs; they're
 editing the *cost* of the queue's elements through skill investment, and
-the same queue therefore fits inside the loop budget that previously
+the same queue therefore fits inside the run budget that previously
 overran it.
 
 Mathematically this is a planning problem under evolving costs. Order of
 operations matters because earlier actions in the queue consume budget
 that is no longer available for later actions, and earlier actions can
 also unlock multipliers (like skill levels) that reduce the duration of
-*subsequent* actions in the same loop. A naive solver that treats action
+*subsequent* actions in the same run. A naive solver that treats action
 durations as independent constants gets the wrong answer; the real cost
 function is `d_i(state_after_actions_1..i-1)`, and the planner is searching
 over orderings, not just over inclusion.
@@ -216,18 +216,18 @@ zero of them by sitting at the screen with nothing queued.
 
 Inside an active queue, a pressure function grows exponentially in
 executed seconds, compounding by a fixed factor per minute of queue
-runtime. Once pressure crosses the survival threshold the generation
-ends and the run resets to its meta-progression layer. Skills and
-equipment in the meta-progression layer
+runtime. Once pressure crosses the survival threshold the run
+ends and play restarts from its meta-progression. Skills and
+equipment in the meta-progression
 soften the exponent — that is what raises the queue-second budget on
-subsequent generations and makes harder action sequences reachable.
+subsequent runs and makes harder action sequences reachable.
 
 The optimization target shifts from "maximize production at `t = ∞`"
-to "maximize meta-progress before the threshold trips." That is a
+to "maximize meta-progression before the threshold trips." That is a
 planning problem with a hard deadline measured in queue-seconds: which
 sequence of actions, queued in which order, produces the most
 permanent skill gain before the survival margin runs out. The genre's
-typical late-game framing — accumulate income, idle, return — does not
+typical late-game framing — accumulate currency, idle, return — does not
 apply, because the queue runs the same whether the player watches or
 not, and the budget is shaped by the queue's contents rather than by
 elapsed wall-clock.
@@ -235,7 +235,7 @@ elapsed wall-clock.
 Offline progress runs the active queue while the player is away. Time
 is yoked to queue execution, not to player presence — set up the queue,
 close the tab, and the simulation continues on whatever queue-seconds
-remain in the current generation.
+remain in the current run.
 
 A softer version of the pressure idea shows up in mechanics that run on
 wall-clock time instead of queue-time: starvation timers in Kittens
@@ -254,13 +254,13 @@ quantity the player rescales by buying acceleration. The mutable-duration
 version makes it a cost attached to actions, and the cost is itself
 optimizable. The queue-gated version makes it contingent on action
 execution, with an exponential pressure function that bounds each
-generation in queue-seconds.
+run in queue-seconds.
 
 The mathematical centerpiece in each case is small. Constrained
 optimization with concave objectives — closed-form when yields are square
 roots, numerical when they aren't. The integral `∫ s(τ) dτ` and the
 recurrence problem of `s` depending on game state. Action ordering under
-evolving costs. An exponential pressure function bounding a per-generation
+evolving costs. An exponential pressure function bounding a per-run
 queue-second budget. None of these is research-level math. What's
 interesting is that Pecorella's original framework has no place for any
 of them — and that ten years on, "time as a resource" is one of the
@@ -268,7 +268,7 @@ biggest single dividers between games that feel like Cookie Clicker
 descendants and games that feel like something else entirely.
 
 The split also reshapes what offline progress means. A time-loop game's
-loop budget already represents an active session, so offline simulation
+run budget already represents an active session, so offline simulation
 duplicates a mechanic the game tried to make scarce. Speed-multiplier
 games can offline-progress as long as they cap accumulated speed.
 Queue-gated games run the queue while the player is away rather than
@@ -293,7 +293,7 @@ compatible with the standard offline model.
       repo: 'AntimatterDimensionsSourceCode',
       path: 'src/core/tickspeed.js',
       line: '22-67',
-      note: 'getTickSpeedMultiplier — twelve effect sources collapse into a single Decimal multiplier on game time.',
+      note: 'getTickSpeedMultiplier — twelve modifiers collapse into a single Decimal multiplier on game time.',
     },
     {
       repo: 'Nucaranlaeg.github.io',

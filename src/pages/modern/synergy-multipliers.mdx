@@ -16,8 +16,8 @@ hands it forward. The chain grows; the shape stays linear.
 This page is about a different shape. A *synergy* is a multiplier whose value
 depends on **which combination** of things the player owns, not how many of any
 one thing. The output is a function of the *set* of selected items, and that
-makes the math noticeably different. Adding a new building to your roster can
-bump every other building's rate; selecting one upgrade can light up a row of
+makes the math noticeably different. Adding a new generator to your roster can
+bump every other generator's rate; selecting one upgrade can light up a row of
 others that did nothing on their own. The contributions don't compose by
 multiplication-of-counts — they compose by predicates over the membership of a
 collection.
@@ -25,7 +25,7 @@ collection.
 The distinction matters because the mental model the player builds is
 different. A modifier chain rewards *throughput*: more upgrades, more multipliers,
 bigger number. A synergy graph rewards *coverage*: the right set of choices,
-unlocking the right set of bonuses, even if individually they're modest. Players
+unlocking the right set of modifiers, even if individually they're modest. Players
 who know the synergy structure of a game often outperform players with more
 total upgrades but a worse subset.
 
@@ -36,7 +36,7 @@ hand-rolled modifier chain. Both have been shipped since the early years and
 are the genre's reference implementation.
 
 The first is the *grandma synergy*: each non-grandma building has an associated
-"grandma type" upgrade. Buying it doubles grandma output and adds 1% CpS to that
+"grandma type" upgrade. Buying it doubles grandma production and adds 1% CpS to that
 building per grandma owned.
 
 <Cite repo="cookie-clicker" path="main.js" line="10328-10339" />
@@ -71,16 +71,16 @@ if (me.grandma && Game.Has(me.grandma.name))
   mult *= (1 + Game.Objects['Grandma'].amount * 0.01 * (1 / (me.id - 1)));
 ```
 
-The bonus reads two things: (1) the unlock predicate — *do I own the grandma
+The modifier reads two things: (1) the unlock predicate — *do I own the grandma
 upgrade for this building?* — and (2) the **count of grandmas**, an entirely
 different building. The Farm's production is a function of how many grandmas
 exist in the game, not how many farms. A modifier chain expressed as
-"per-building rate" can't express this directly; the bonus crosses the
+"per-building rate" can't express this directly; the modifier crosses the
 boundary between buildings.
 
 The second mechanic is the *pair synergy*. The `Game.SynergyUpgrade` factory
 creates a new upgrade tied to two buildings. When unlocked, it gives each
-building a percentage boost based on the count of the *other*:
+building a percentage multiplier based on the count of the *other*:
 
 <Cite repo="cookie-clicker" path="main.js" line="10208-10215" />
 
@@ -99,7 +99,7 @@ for (var i in me.synergies) {
 `Game.SynergyUpgrade('Future almanacs', ..., 'Farm', 'Time machine', 'synergy1')`
 adds an edge to the synergy graph between Farms and Time Machines. Buying both
 buildings is required for the upgrade to *unlock*; buying the upgrade is
-required for the bonus to *fire*. The bonus from each side scales with the
+required for the modifier to *fire*. The modifier from each side scales with the
 other side's count. A few dozen pair-synergy upgrades are defined this way, two
 tiers each, forming a dense bipartite graph between buildings.
 
@@ -124,14 +124,14 @@ for (var i in me.synergies) {
 
 The per-building tooltip is the *attribution view* of the synergy graph. Every
 mature game with synergies eventually builds one of these screens, because the
-information is otherwise invisible — a 12% boost from Time Machines doesn't
+information is otherwise invisible — a 12% multiplier from Time Machines doesn't
 appear on the Farm's row of the main UI; it lives in the graph.
 
 ## Realm Grinder: faction as set selector
 
 Realm Grinder's faction system is a synergy structure the player chooses
 explicitly. Each faction defines which subset of buildings it amplifies and
-how. One gates a bonus on building *identity* (a fixed subset of buildings)
+how. One gates a modifier on building *identity* (a fixed subset of buildings)
 and scales it by the count of a different category entirely. Another gates on
 a property predicate over buildings and scales by how many satisfy it. Another
 flatly multiplies the highest-tier buildings. Each faction is a
@@ -195,14 +195,14 @@ of these unlocks produce only as many distinct base values as there are
 
 `Effects.max` and `Effects.sum` are the engine-side primitives that crystallize
 this. Most of the AD codebase uses `timesEffectsOf` (a multiplicative chain), but
-unlock predicates that compete for "the bonus" rather than stacking — the
+unlock predicates that compete for "the modifier" rather than stacking — the
 classic synergy shape — go through `Effects.max`.
 
 ## The math: set functions
 
 Strip the cosmetics and what's left is *set-function maximization*.
 
-Let $U$ be the universe of available items (upgrades, factions, building types).
+Let $U$ be the universe of available items (upgrades, factions, generator types).
 The player chooses a subset $S \subseteq U$, often subject to a constraint
 (budget, slot count, faction-exclusivity). The value of that subset is some
 $f: 2^U \to \mathbb{R}$ — the production rate, the score multiplier, the run
@@ -236,8 +236,8 @@ $$
 In words: the marginal value of adding $i$ to a smaller set is at least as
 large as adding it to a bigger set. *Diminishing returns at the set level.*
 
-Faction bonuses that scale with a logarithm of a count are submodular in that
-count: each new building contributes less to the bonus than the previous one. Cookie Clicker's pair synergies are nearly submodular when the
+Faction modifiers that scale with a logarithm of a count are submodular in that
+count: each new generator contributes less to the modifier than the previous one. Cookie Clicker's pair synergies are nearly submodular when the
 buildings that pair-synergize already exist (the `+0.05 \cdot \text{count}`
 term doesn't compound). Synergism's corruption score has each corruption's
 multiplier diminish in marginal contribution as overall difficulty grows.
@@ -280,13 +280,13 @@ unsolvable spaces (because greedy is a fine fallback).
 
 <SynergyPicker client:visible />
 
-Five buildings, each with a base contribution. Some pairs have a synergy bonus
+Five buildings, each with a base contribution. Some pairs have a synergy modifier
 that fires only when *both* buildings in the pair are selected. Pick any
-subset; the readout shows the total under three regimes:
+subset; the readout shows three values:
 
 - **Sum-only** — additive base contributions, no synergies. The optimal subset
   is "everything affordable," no interaction.
-- **With synergies** — base sums plus the pair bonuses that fired. This is the
+- **With synergies** — base sums plus the pair modifiers that fired. This is the
   set function. Try greedy: pick by largest marginal value at each step. Then
   try the brute-force optimal: the demo enumerates all 32 subsets and shows the
   best one. The gap is where greedy misses a supermodular pocket.
@@ -294,9 +294,9 @@ subset; the readout shows the total under three regimes:
   each unselected item add if you toggle it on? Notice how this changes as you
   add items: an item's marginal value depends on what's already selected.
 
-The buildings and pair bonuses are toy values, but the structure mirrors how
+The buildings and pair modifiers are toy values, but the structure mirrors how
 synergies are wired in Cookie Clicker, Realm Grinder, and others — a base
-value per item plus interaction bonuses keyed on subsets.
+value per item plus interaction modifiers keyed on subsets.
 
 ## Implications for design
 
@@ -335,7 +335,7 @@ numbered list: each entry contributed this much. A synergy graph renders as a
 +8% from Banks, totaling +20%. Cookie Clicker's `synergiesWith` accumulator
 exists exactly because the per-building rate doesn't tell you *who's
 boosting whom*. Players want to know which subsets of their owned items are
-firing which bonuses, and the only honest answer is to walk the graph and
+firing which modifiers, and the only honest answer is to walk the graph and
 display the edges. Synergism builds the same screen for corruption interactions
 in its statistics panel.
 
@@ -373,13 +373,13 @@ production rate at the end is the result of both.
       repo: 'cookie-clicker',
       path: 'main.js',
       line: '10167-10194',
-      note: 'Game.SynergyUpgrade — the pair-synergy factory; ties two buildings, gives reciprocal bonuses scaled by the other building\'s count.',
+      note: 'Game.SynergyUpgrade — the pair-synergy factory; ties two buildings, gives reciprocal modifiers scaled by the other building\'s count.',
     },
     {
       repo: 'cookie-clicker',
       path: 'main.js',
       line: '10195-10220',
-      note: 'GetTieredCpsMult — folds per-tier multipliers and per-synergy bonuses into one per-building multiplier. The `for (var i in me.synergies)` loop is the synergy aggregation.',
+      note: 'GetTieredCpsMult — folds per-tier multipliers and per-synergy modifiers into one per-building multiplier. The `for (var i in me.synergies)` loop is the synergy aggregation.',
     },
     {
       repo: 'cookie-clicker',
@@ -397,7 +397,7 @@ production rate at the end is the result of both.
       repo: 'AntimatterDimensionsSourceCode',
       path: 'src/core/dimboost.js',
       line: '15-46',
-      note: 'DimBoost.power — Effects.max over a set of unlock predicates is the synergy shape; only the maximal element contributes. The chained timesEffectsOf is the modifier-chain layer wrapped around the set function.',
+      note: 'DimBoost.power — Effects.max over a set of unlock predicates is the synergy shape; only the maximal element contributes. The chained timesEffectsOf is the modifier chain wrapped around the set function.',
     },
     {
       repo: 'SynergismOfficial',

@@ -56,7 +56,7 @@ A in a way that doesn't reduce to one-direction dependency, the system is a coup
 ODE and lives in the [bifurcation rows](/rate-functions/composition#what-doesnt-compose-cleanly).
 Most modern games avoid this for exactly the reason the math suggests: the system
 becomes hard to balance, hard to predict, and hard to ship without spreadsheet
-calibration the math layer can't help with.
+calibration the spec layer can't help with.
 
 ## When does a conversion ratio stay closed-form?
 
@@ -90,24 +90,24 @@ system reduces to closure of each scalar.
 Design-side, this is the recipe most modern games follow:
 
 - **Primary currency at the bottom.** Cookies, antimatter, paperclips. Its rate
-  depends on counts of buildings and various multipliers. No back-feed from higher
-  tiers in the _current_ run.
-- **Building counts at the next level.** Each building's count grows as a function
+  depends on counts of generators and various multipliers. No back-feed from higher
+  layers in the _current_ run.
+- **Generator counts at the next level.** Each generator's count grows as a function
   of the primary currency (you spend it to buy them). The dependency is one-way:
-  buildings consume primary currency, don't produce it directly except through
-  their per-tick output.
+  generators consume primary currency, don't produce it directly except through
+  their per-tick production.
 - **Prestige currency above that.** Heavenly Chips, Eternity Points. Its rate
   depends on the primary currency's cumulative across runs, and feeds back into the
   primary currency's rate via prestige multipliers. Within a single run, the
-  dependency is one-way; _across_ runs, it loops, but the loop is at the cycle
-  boundary, not in the rate function.
+  dependency is one-way; _across_ runs, it loops, but the loop is at the reset,
+  not in the rate function.
 - **Layered prestige currencies above that.** Each layer is a function of the
   layer below's cumulative. Same triangular pattern, iterated.
 
 The pattern stays tractable because the dependency is layered. Each scalar in the
 sequence solves on its own; the system as a whole is the iterated chain. What
 _breaks_ triangularity is any rate function that depends on a layer _above_ it
-within a single run — a building whose output depends on the prestige currency the
+within a single run — a generator whose production depends on the prestige currency the
 player will earn at the end of the run, for example, would create a circular
 reference that doesn't close.
 
@@ -126,12 +126,12 @@ export function gainedEternityPoints() {
 ```
 
 `gainedEternityPoints` reads `gainedInfinityPoints()` (which itself reads antimatter
-records) and `totalEPMult()` (which reads time-studies and reality-tier upgrades).
+records) and `totalEPMult()` (which reads time-studies and reality-layer upgrades).
 The reverse direction — IP gain reading EP — doesn't exist within a run; EP is only a
 modifier on the _next_ run's IP curve via `totalIPMult`. The triangle is one-way:
-antimatter → IP → EP, with each higher tier reading the cumulative below it.
+antimatter → IP → EP, with each higher layer reading the cumulative below it.
 
-The genre's working solution: keep the across-run feedback at the cycle boundary
+The genre's working solution: keep the across-run feedback at the reset
 (prestige conversion at end of run), not in the per-tick rate function. Each run is
 triangular; the feedback happens between runs. This is exactly the
 [functional composition](/rate-functions/composition#functional-composition) structure, applied to the
@@ -170,7 +170,7 @@ hard to balance, hard to predict, and hard to ship. The fix is almost always to
 break the cycle: make the dependency triangular by introducing a delay (B uses
 _last tick's_ A rather than current A), an aggregation (B depends on A's
 _cumulative_, not A's _rate_), or a separation (one of the resources is moved to a
-different layer that only feeds at cycle boundaries).
+different layer that only feeds at resets).
 
 When the circular dependency is intentional — predator-prey ecosystem, supply-and-demand
 economic loop — the design is committing to the bifurcation. The math the spec layer
@@ -192,8 +192,8 @@ layers feel meaningful to the player. Three patterns the corpus uses:
   primary currency _and_ secondary currency; some require a milestone in both. The
   triangular dependency is reflected in the upgrade tree's structure.
 - **Each layer's progression is felt in the layer below's pacing.** A run with
-  more prestige currency is visibly faster. A new prestige tier visibly compresses
-  the time-to-milestone of the lower layer. The math is doing this; the design has
+  more prestige currency is visibly faster. A new layer visibly compresses
+  the first-passage time of the lower layer. The math is doing this; the design has
   to _show_ it.
 
 Failure modes — multi-resource systems that feel "tacked on" rather than integrated —
@@ -207,7 +207,7 @@ usually have one of two diagnoses:
   the secondary currency unlocked the upgrade in the primary tree. Math says:
   this is correct, fix the UI.
 
-The diagnoses are different fixes. The math layer can run the first one fast (look
+The diagnoses are different fixes. The spec layer can run the first one fast (look
 at the dependency graph; ship a triangular structure). The second one is UI work
 outside the model's scope.
 
@@ -220,7 +220,7 @@ math takes over when it doesn't. It doesn't tell you:
 - **Which resources to ship.** Whether your game has cookies and Heavenly Chips,
   or just cookies, or cookies and Heavenly Chips and a side currency for events,
   is a content decision. The math runs once you've decided which currencies exist.
-- **What conversion rates to pick.** "$H = C^{1/3}$" is a catalog entry; "$H = C^{1/4}$"
+- **What conversion exponents to pick.** "$H = C^{1/3}$" is a catalog entry; "$H = C^{1/4}$"
   is also a catalog entry. The formula does not decide which exponent fits your game's
   pacing intent. That's a session-shape and prestige-feel call, downstream of the
   math.

@@ -11,23 +11,23 @@ import Sources from '../../components/Sources.astro';
 
 Pecorella's Part I assumes the cost line keeps growing forever. His framework was written in 2016 for a runtime where numbers stop. JavaScript's double-precision float — the only number primitive the language has — caps at $1.7977 \times 10^{308}$. Past that, your variable is `Infinity`, your seesaw is over, and your save file's late-game state is a string of `null`s on reload.
 
-Every post-2016 incremental of any ambition runs on a library that pretends this ceiling doesn't exist. This page is about those libraries — what they store, what they cost, and what they unlocked in the math the genre has done since.
+Every post-2016 incremental of any ambition runs on a library that pretends this limit doesn't exist. This page is about those libraries — what they store, what they cost, and what they unlocked in the math the genre has done since.
 
-## The 2016 ceiling
+## The 2016 limit
 
 JavaScript Numbers are [IEEE 754 doubles](https://en.wikipedia.org/wiki/Double-precision_floating-point_format). The largest representable finite value is `Number.MAX_VALUE` = $1.7976931348623157 \times 10^{308}$. The next operation past that gives back `Infinity`, which is sticky: any further arithmetic propagates it.
 
 Concretely, `Math.pow(2, 1024)` is `Infinity`. So is `1e308 * 10`. So is the cost of the 7,500th generator in a Pecorella-style seesaw with $\text{cost}_\text{base} = 10$ and $\text{rate}_\text{growth} = 1.10$, since $10 \times 1.10^{7500} \approx 10^{311}$.
 
-For Part I purposes, none of this matters — the seesaw is teaching exposition, not a shipping game. But the moment you ship a clicker with a logarithmic prestige formula meant to compress a *trillion* runs into a workable second-currency, you discover that the ratio isn't the problem. The numerator is. You can't compute a prestige reward when the lifetime production has already saturated to `Infinity`.
+For Part I purposes, none of this matters — the seesaw is teaching exposition, not a shipping game. But the moment you ship a clicker with a logarithmic gain formula meant to compress a *trillion* runs into a workable second-currency, you discover that the ratio isn't the problem. The numerator is. You can't compute the gain when the lifetime production has already saturated to `Infinity`.
 
-The genre's first decade lived inside this ceiling, and its second decade started by figuring out how to leave.
+The genre's first decade lived inside this limit, and its second decade started by figuring out how to leave.
 
 ## break_infinity.js
 
-Patashu's `break_infinity.js` was written to keep Antimatter Dimensions running. AD was already public when Pecorella wrote Part I, and within a couple of years had pushed past what JS doubles could carry. AD's author needed a number type with the same arithmetic API as `Number` but a much larger ceiling, and Patashu built one.
+Patashu's `break_infinity.js` was written to keep Antimatter Dimensions running. AD was already public when Pecorella wrote Part I, and within a couple of years had pushed past what JS doubles could carry. AD's author needed a number type with the same arithmetic API as `Number` but a much larger limit, and Patashu built one.
 
-The storage trick is a pair: `{ mantissa, exponent }`, where the value is $\text{mantissa} \times 10^{\text{exponent}}$. The [mantissa](https://en.wikipedia.org/wiki/Significand) is a normal JS Number in the range $[1, 10)$; the exponent is also a normal JS Number, but interpreted as the base-10 exponent rather than as the value itself. The ceiling is now bounded by what a JS Number can hold *as an exponent*: roughly $10^{1.79 \times 10^{308}}$ — a [googolplex](https://en.wikipedia.org/wiki/Googolplex), then another googolplex's worth, then a few hundred more.
+The storage trick is a pair: `{ mantissa, exponent }`, where the value is $\text{mantissa} \times 10^{\text{exponent}}$. The [mantissa](https://en.wikipedia.org/wiki/Significand) is a normal JS Number in the range $[1, 10)$; the exponent is also a normal JS Number, but interpreted as the base-10 exponent rather than as the value itself. The limit is now bounded by what a JS Number can hold *as an exponent*: roughly $10^{1.79 \times 10^{308}}$ — a [googolplex](https://en.wikipedia.org/wiki/Googolplex), then another googolplex's worth, then a few hundred more.
 
 The API is the punchline. Where `Number` has `+`, `*`, `**`, `Math.log10`, etc., a `Decimal` (the type break_infinity exports — confusingly, `break_eternity` later kept the same name) has `.plus`, `.times`, `.pow`, `.log10`. Code looks like:
 
@@ -39,7 +39,7 @@ if (can_afford) money = money.minus(cost);
 
 A dialect of Number, not a new world. Critically, comparison loses its operator: `a < b` is two Decimals being coerced to JS Number (and probably both saturating to `Infinity`); `a.lt(b)` is the right answer. The single most common bug in early-stage incrementals built on these libraries is forgetting which is which.
 
-The non-obvious move in AD's code is that *most of the actual math runs in log space*. AD's bulk-purchase routine never computes the literal cost of a generator at the late-game scale — it works with `logCost`, a regular JS Number, until the very end:
+The non-obvious move in AD's code is that *most of the actual math runs in log space*. AD's bulk buy routine never computes the literal cost of a generator at the late-game scale — it works with `logCost`, a regular JS Number, until the very end:
 
 <Cite repo="AntimatterDimensionsSourceCode" path="src/core/math.js" line="380-385" />
 
@@ -57,16 +57,16 @@ That structure matters. Without it, every cost calculation would do tens of Deci
 
 ## break_eternity.js
 
-`break_infinity` doubles the ceiling once: from $10^{308}$ to $10^{1.8 \times 10^{308}}$. It's enough for AD as designed — but a game whose *prestige reward* is itself meant to grow tetrationally hits the new ceiling on a second pass. If layer-1 prestige currency can be $10^{500}$ and layer-2's reward formula is something like `10^layer1`, layer 2 alone can saturate break_infinity in a single run.
+`break_infinity` doubles the limit once: from $10^{308}$ to $10^{1.8 \times 10^{308}}$. It's enough for AD as designed — but a game whose *gain* is itself meant to grow tetrationally hits the new limit on a second pass. If layer-1 prestige currency can be $10^{500}$ and layer-2's gain formula is something like `10^layer1`, layer 2 alone can saturate break_infinity in a single run.
 
 `break_eternity.js`, also Patashu's, generalizes the trick. The storage is `{ sign, mag, layer }`, where `layer` is a non-negative integer. The interpretation is:
 
 - `layer = 0`: the value is `sign × mag` (a normal small number).
 - `layer ≥ 1`: the value is `sign × ` $\underbrace{10^{10^{\cdots^{10^{\text{mag}}}}}}_{\text{layer tens}}$.
 
-This is [tetration](https://en.wikipedia.org/wiki/Tetration) as a storage primitive. A layer-1 number is what break_infinity stored. A layer-2 number is `10` raised to a break_infinity-sized number. A layer-3 number is `10` raised to *that*. Storage cost grows as `O(layer)` — adding another layer of magnitude is free.
+This is [tetration](https://en.wikipedia.org/wiki/Tetration) as a storage primitive. A `layer` 1 number is what break_infinity stored. A `layer` 2 number is `10` raised to a break_infinity-sized number. A `layer` 3 number is `10` raised to *that*. Storage cost grows as `O(layer)` — adding another `layer` of magnitude is free.
 
-The practical ceiling is bounded by the JS heap and by what notation libraries can render. In practice you hit display problems or game-design problems long before storage problems.
+The practical limit is bounded by the JS heap and by what notation libraries can render. In practice you hit display problems or game-design problems long before storage problems.
 
 The drop-in API is unchanged. `Decimal` still has `.plus`, `.times`, `.pow`. The only difference visible to a calling game is that values that would have been `Infinity` under break_infinity are now finite, and arithmetic on them keeps working.
 
@@ -78,17 +78,17 @@ The cleanest way to feel the difference is to iterate $10^x$. Each step takes th
 
 Native JavaScript dies at step 2 — the second iteration tries to compute $10^{10^{10}}$, whose exponent ($10^{10}$) is itself only ten billion, but the result requires storing an exponent of ten billion in a JS Number, which forces the operation into `Infinity`. break_infinity survives one more round. Its exponent field can hold ten billion comfortably, but at step 3 the *next* exponent — $10^{10^{10}}$ as a JS Number — overflows, and break_infinity inherits its substrate's ceiling.
 
-break_eternity climbs another layer per step indefinitely.
+break_eternity climbs another `layer` per step indefinitely.
 
-The progression isn't pedagogical fluff. It mirrors actual escalation in layered-prestige games: antimatter is a layer-0 quantity, Infinity Points are a layer-1 quantity, Eternity Points push toward layer 2, and Reality's "Broken Infinity" upgrades cross into layer 3. A game that wants those layers to feel like *real arithmetic* — not capped placeholders — needs storage that doesn't run out.
+The progression isn't pedagogical fluff. It mirrors actual escalation in layered-prestige games: antimatter is a `layer` 0 quantity, Infinity Points are a `layer` 1 quantity, Eternity Points push toward `layer` 2, and Reality's "Broken Infinity" upgrades cross into `layer` 3. A game that wants those layers to feel like *real arithmetic* — not capped placeholders — needs storage that doesn't run out.
 
 ## What this enabled
 
 **Layered prestige with real math.** The post-2016 prestige ladder (Transcendence, Eternity, Reality, Pelle...) treats each prior layer's currency as input to the next layer's reward formula. Without break_infinity at minimum, layer-2 currency overflows on its first major run. AD's IP formula is `Decimal.pow(10, antimatter.log10().div(308).sub(0.75))` — it deliberately compresses, but it still needs `antimatter.log10()` to be finite, which only works because antimatter itself is a Decimal.
 
-**Cost acceleration past the seesaw.** Pure exponential cost is what Pecorella's ceiling was built around. Once the storage ceiling moves, cost curves can move with it — quadratic-in-exponent (AD), a steep ratio shifting to a shallower one past a prestige threshold (Realm Grinder), tetrational endgame walls. The `cost-acceleration` page covers the curves themselves; the substrate is what makes them implementable. AD's `getMaxBought` works in log space at <Cite repo="AntimatterDimensionsSourceCode" path="src/core/math.js" line="398-429" /> — it computes how many generators the player can afford by inverting a quadratic in log-of-money, so the user-facing answer is exact at any scale.
+**Cost acceleration past the seesaw.** Pure exponential cost is what Pecorella's limit was built around. Once the storage limit moves, cost curves can move with it — quadratic-in-exponent (AD), a steep ratio shifting to a shallower one past a prestige threshold (Realm Grinder), tetrational endgame walls. The `cost-acceleration` page covers the curves themselves; the substrate is what makes them implementable. AD's `getMaxBought` works in log space at <Cite repo="AntimatterDimensionsSourceCode" path="src/core/math.js" line="398-429" /> — it computes how many generators the player can afford by inverting a quadratic in log-of-money, so the user-facing answer is exact at any scale.
 
-**"Infinity" as a gameplay event, not a runtime accident.** AD's Big Crunch — the first prestige — fires when antimatter reaches $2^{1024}$, the same value at which JS Numbers would overflow. <Cite repo="AntimatterDimensionsSourceCode" path="src/core/constants.js" line="68" /> It's a deliberate design echo. Underneath, the Decimal carrying antimatter never overflows; the threshold is a chosen number, and the moment is gameplay. The post-2016 genre treats "you've hit infinity" as a designed event the same way a 2016 RPG treats a level-up.
+**"Infinity" as a gameplay event, not a runtime accident.** AD's Big Crunch — the first reset — fires when antimatter reaches $2^{1024}$, the same value at which JS Numbers would overflow. <Cite repo="AntimatterDimensionsSourceCode" path="src/core/constants.js" line="68" /> It's a deliberate design echo. Underneath, the Decimal carrying antimatter never overflows; the target is a chosen number, and the moment is gameplay. The post-2016 genre treats "you've hit infinity" as a designed event the same way a 2016 RPG treats a level-up.
 
 **Notation as its own design surface.** Once $10^{10^{10}}$ is an everyday number, the string `1e1e10` is unreadable. The genre developed a vocabulary, covered in its own section below.
 
@@ -96,7 +96,7 @@ The progression isn't pedagogical fluff. It mirrors actual escalation in layered
 
 `break_eternity` will happily compute `Decimal.pow(10, Decimal.pow(10, Decimal.pow(10, 7)))`. Rendering it for a player is a separate problem.
 
-Default scientific (`1e10000000`) loses the tower structure entirely — three layers of magnitude collapse into one exponent, so a layer-2 number and a layer-3 number look indistinguishable to a human reader. The genre's working solutions:
+Default scientific (`1e10000000`) loses the tower structure entirely — three stacked exponents collapse into one exponent, so a `layer` 2 number and a `layer` 3 number look indistinguishable to a human reader. The genre's working solutions:
 
 - **Letter-pair** (Cookie Clicker, AD's default in some modes): `1 AA` = $10^3$, `1 AB` = $10^6$, ... `1 ZZ` = $10^{2106}$. Compact for mid-range numbers, noise above $10^{3000}$ or so. AD ships this as `@antimatter-dimensions/notations` — a sibling library to break_infinity.
 - **Engineering-scientific** (most games): `1.23e8` constrained so the exponent is always a multiple of 3. Reads like SI prefixes the player already knows.
@@ -119,7 +119,7 @@ Three implementation gotchas that bite every project once and never again:
 
 ## What it didn't fix
 
-**Balance.** A logarithmic prestige formula is still useful even when you *can* compute $10^{10^{10^{308}}}$. Cookie Clicker's `(cookies/1e12)^(1/3)` and AD's IP formula both compress their input drastically, by design. Big-num storage doesn't change the fact that you want to compress. It just removes the technical reason you previously *had* to.
+**Balance.** A logarithmic gain formula is still useful even when you *can* compute $10^{10^{10^{308}}}$. Cookie Clicker's `(cookies/1e12)^(1/3)` and AD's IP formula both compress their input drastically, by design. Big-num storage doesn't change the fact that you want to compress. It just removes the technical reason you previously *had* to.
 
 **Performance.** Decimal arithmetic is roughly 10–100× slower than native, depending on the operation. AD's tick code aggressively caches log-space intermediates; not every project does. A naive `Decimal` operation per resource per tick will eat your frame budget on a busy game. The genre's working answer: keep math in log space wherever possible, materialize Decimals at the user-facing boundary.
 
@@ -129,7 +129,7 @@ Three implementation gotchas that bite every project once and never again:
 
 ## Adoption split
 
-Established games tend not to migrate. AD still depends on `break_infinity.js@^2.0.0`. <Cite repo="AntimatterDimensionsSourceCode" path="package.json" line="14" /> So does Synergism. <Cite repo="SynergismOfficial" path="package.json" line="12" /> Their design didn't push past break_infinity's ceiling, so the cost of a switch — risk to saved-game arithmetic, reaudit of every formula — never paid its way. Newer projects (Prestige Tree, Distance Incremental, Incremental Mass Rewritten) start on break_eternity because layered prestige assumes it. The split is real and looks likely to persist.
+Established games tend not to migrate. AD still depends on `break_infinity.js@^2.0.0`. <Cite repo="AntimatterDimensionsSourceCode" path="package.json" line="14" /> So does Synergism. <Cite repo="SynergismOfficial" path="package.json" line="12" /> Their design didn't push past break_infinity's limit, so the cost of a switch — risk to saved-game arithmetic, reaudit of every formula — never paid its way. Newer projects (Prestige Tree, Distance Incremental, Incremental Mass Rewritten) start on break_eternity because layered prestige assumes it. The split is real and looks likely to persist.
 
 <Sources
   cites={[
@@ -166,7 +166,7 @@ Established games tend not to migrate. AD still depends on `break_infinity.js@^2
       repo: 'AntimatterDimensionsSourceCode',
       path: 'src/core/constants.js',
       line: '68',
-      note: 'C2P1024 = Decimal.pow(2, 1024): the Big Crunch threshold, chosen to echo the double-precision ceiling.',
+      note: 'C2P1024 = Decimal.pow(2, 1024): the Big Crunch target, chosen to echo the JavaScript Number limit.',
     },
     {
       repo: 'AntimatterDimensionsSourceCode',

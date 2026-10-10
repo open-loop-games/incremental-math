@@ -44,7 +44,7 @@ const earnedFullSpan = computed(() => capped(hoursMax.value));
   <div class="demo hcd">
     <div class="hcd-controls">
       <label>
-        <span class="demo-label">x range = 0..{{ hoursMax.toFixed(0) }} h away</span>
+        <span class="demo-label">x range = 0..{{ hoursMax.toFixed(0) }} h offline</span>
         <input v-model.number="hoursMax" type="range" min="3" max="168" step="1" />
       </label>
       <label>
@@ -71,7 +71,7 @@ const earnedFullSpan = computed(() => capped(hoursMax.value));
       :height="300"
       :annotations="annotations"
       :deps="[hoursMax, ratePerHour, offlineCap, offlinePct]"
-      x-label="hours away"
+      x-label="hours offline"
       y-label="gain"
     />
   </div>

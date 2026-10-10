@@ -72,7 +72,7 @@ const channelLabel = computed(() => {
         <input v-model.number="baseBeat" type="range" min="1" max="60" step="1" />
       </label>
       <label>
-        <span class="demo-label">target level n = {{ targetLevel }}</span>
+        <span class="demo-label">target purchase count n = {{ targetLevel }}</span>
         <input v-model.number="targetLevel" type="range" min="3" max="50" step="1" />
       </label>
     </div>
@@ -87,7 +87,7 @@ const channelLabel = computed(() => {
 
     <div class="btw-readout">
       <div class="btw-cell btw-headline">
-        <span class="btw-cell-label">cost multiplier</span>
+        <span class="btw-cell-label">cost ratio</span>
         <code>m = {{ Number.isFinite(m) ? m.toFixed(3) : '—' }}</code>
       </div>
       <div class="btw-cell">

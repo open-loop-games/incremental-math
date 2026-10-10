@@ -187,7 +187,7 @@ function setVisible(key: string, value: boolean) {
   <div class="demo ogc">
     <div class="ogc-controls">
       <label>
-        <span class="demo-label">x range = 0..{{ hoursMax.toFixed(0) }} h away</span>
+        <span class="demo-label">x range = 0..{{ hoursMax.toFixed(0) }} h offline</span>
         <input v-model.number="hoursMax" type="range" min="3" max="168" step="1" />
       </label>
       <label>
@@ -208,7 +208,7 @@ function setVisible(key: string, value: boolean) {
       </label>
       <label>
         <span class="demo-label"
-          >tick-sim rate growth = {{ (tickRateGrowth * 100).toFixed(1) }} %/h</span
+          >tick-sim growth rate = {{ (tickRateGrowth * 100).toFixed(1) }} %/h</span
         >
         <input v-model.number="tickRateGrowth" type="range" min="0" max="0.5" step="0.005" />
       </label>
@@ -256,7 +256,9 @@ function setVisible(key: string, value: boolean) {
           {{ nx }}
         </text>
       </g>
-      <text :x="PAD.l + PW / 2" :y="H - 6" text-anchor="middle" class="ogc-tick">hours away</text>
+      <text :x="PAD.l + PW / 2" :y="H - 6" text-anchor="middle" class="ogc-tick">
+        hours offline
+      </text>
       <text
         :x="14"
         :y="PAD.t + PH / 2"
@@ -300,8 +302,8 @@ function setVisible(key: string, value: boolean) {
 
     <p class="ogc-note">
       Banking sits flat on this chart by design — the active payout on return is zero. The
-      {{ bankedReadout.toFixed(0) }} h you spent away becomes a spendable balance you burn at, say,
-      2× speed during the next active session. The other curves answer "what hit my balance";
+      {{ bankedReadout.toFixed(0) }} h you spent offline becomes a spendable balance you burn at,
+      say, 2× speed during the next active session. The other curves answer "what hit my balance";
       banking answers "how much faster does the next hour of <em>active</em> play go."
     </p>
   </div>

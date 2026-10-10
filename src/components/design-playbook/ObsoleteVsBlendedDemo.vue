@@ -213,19 +213,19 @@ const blendedSharesText = computed(() => {
     <div class="demo-controls">
       <label>
         <span class="demo-label"
-          ><span class="dot dot-a" /> mechanic A growth = {{ g1.toFixed(3) }}</span
+          ><span class="dot dot-a" /> mechanic A growth rate = {{ g1.toFixed(3) }}</span
         >
         <input v-model.number="g1" type="range" min="0.01" max="0.3" step="0.005" />
       </label>
       <label>
         <span class="demo-label"
-          ><span class="dot dot-b" /> mechanic B growth = {{ g2.toFixed(3) }}</span
+          ><span class="dot dot-b" /> mechanic B growth rate = {{ g2.toFixed(3) }}</span
         >
         <input v-model.number="g2" type="range" min="0.01" max="0.3" step="0.005" />
       </label>
       <label>
         <span class="demo-label"
-          ><span class="dot dot-c" /> mechanic C growth = {{ g3.toFixed(3) }}</span
+          ><span class="dot dot-c" /> mechanic C growth rate = {{ g3.toFixed(3) }}</span
         >
         <input v-model.number="g3" type="range" min="0.01" max="0.3" step="0.005" />
       </label>

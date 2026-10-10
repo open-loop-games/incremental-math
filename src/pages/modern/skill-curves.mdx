@@ -30,7 +30,7 @@ cost divisor, a gate threshold, or a retention bonus that survives a reset.
 Splitting advancement this way buys two things wealth-based progression doesn't.
 The accumulator is legible — it only ever goes up, and the player can see exactly
 how close the next level is — and the curve is a single, isolated tuning surface.
-Reshape the curve and you reshape pacing, soft-capping, and compounding all at
+Reshape the curve and you reshape pacing, softcapping, and compounding all at
 once, without touching the actions that feed it.
 
 ## XP-to-level curves
@@ -48,7 +48,7 @@ floored inverse:
 **Exponential** leveling instead sets $L = \lfloor \log_b(X) \rfloor$, so each
 level costs a fixed _multiple_ more XP than the last. This is the curve for tracks
 that are meant to span many orders of magnitude with a roughly constant
-"time-to-next-level" feel under exponential XP income — the same geometric-spacing
+"time-to-next-level" feel under exponential XP production — the same geometric-spacing
 trick the [achievements](/modern/achievements) page uses on thresholds.
 
 ## The floor makes a staircase
@@ -66,7 +66,7 @@ as wallpaper.
 
 Notice how the level-up thresholds bunch up early and stretch out late under the
 polynomial curve: quadratic XP cost means each level is a longer haul than the
-last, the sublinear pacing tool the genre reaches for when raw exponential income
+last, the sublinear pacing tool the genre reaches for when raw exponential production
 would otherwise trivialize a track.
 
 ## Checkpoints and persistence
@@ -75,13 +75,13 @@ Some level-ups do more than nudge a multiplier. **Checkpoint** levels unlock
 discrete mechanics — a recipe, a zone, a new action — which act as step shifts in
 the rate function rather than smooth bonuses, and show up as sudden accelerations
 on a log-log progress plot. Super Turtle Idle gates content behind cumulative kill
-counts in exactly this way, each gate a milestone the track has to cross:
+counts in exactly this way, each gate a threshold the track has to cross:
 
 <Cite repo="SuperTurtleIdle.github.io" path="logs.js" line="717-724" note="Bestiary gates at cumulative kill counts (10k, 100k) unlock per-enemy bonuses — checkpoint outputs on an accumulator." />
 
 The other design axis is _when the accumulator resets_. In-run skills zero out
-each cycle, so the curve only ever shapes a single run; cross-reset tracks persist
-through prestige, so retained levels leak power between runs and have to be priced
+each run, so the curve only ever shapes a single run; cross-reset tracks persist
+through resets, so retained levels leak power between runs and have to be priced
 into the reset economy. The "Groundhog Day" loop games run both modes at once —
 an in-run level that drives this run, feeding a permanent accumulator that
 sharpens the next one — which is why their balance is so sensitive to the curve:
