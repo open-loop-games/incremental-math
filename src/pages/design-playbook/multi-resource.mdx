@@ -69,10 +69,10 @@ good for the cumulative, but the inverse may need numerical methods. Lambert-W
 inverses — closed-form formally, but lose interpretive transparency.
 
 The design-side reading: pick a conversion that the catalog has named, and the
-math will behave. Pick a conversion that's a sum or product of named conversions, and
-the math will mostly behave but the inverse may need a calibration table. Pick a
-conversion that's _outside_ the catalog, and the math probably won't close, and
-shipping the conversion will involve solver code the algebra can't help with.
+math will behave. Pick a conversion that's a sum or product of named conversions. Then the math will mostly
+behave, but the inverse may need a calibration table. Pick a conversion that's
+_outside_ the catalog. Then the math probably won't close, and shipping the conversion
+will involve solver code the algebra can't help with.
 
 The corpus's working defaults — cube root, square root, log of cumulative — are all
 catalog entries. Games that ship more exotic conversions usually incur the
@@ -167,10 +167,12 @@ requires numerical integration, but the spec layer can still describe shape.
 The design call: most circular dependencies in shipped incrementals are accidents.
 A designer who didn't realize the coupling was circular ships a system that's
 hard to balance, hard to predict, and hard to ship. The fix is almost always to
-break the cycle: make the dependency triangular by introducing a delay (B uses
-_last tick's_ A rather than current A), an aggregation (B depends on A's
-_cumulative_, not A's _rate_), or a separation (one of the resources is moved to a
-different layer that only feeds at resets).
+break the cycle. Make the dependency triangular by introducing one of these:
+
+- **A delay.** B uses _last tick's_ A rather than current A.
+- **An aggregation.** B depends on A's _cumulative_, not A's _rate_.
+- **A separation.** One of the resources is moved to a different layer that only
+  feeds at resets.
 
 When the circular dependency is intentional — predator-prey ecosystem, supply-and-demand
 economic loop — the design is committing to the bifurcation. The math the spec layer
