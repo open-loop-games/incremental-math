@@ -704,6 +704,9 @@
   "asbury-pines": {
     "host": "local"
   },
+  "balatro": {
+    "host": "local"
+  },
   "ballionaire": {
     "host": "local"
   },
@@ -716,6 +719,9 @@
   "bloons-td-4": {
     "host": "local"
   },
+  "brotato": {
+    "host": "local"
+  },
   "cell-to-singularity": {
     "host": "local"
   },
@@ -723,6 +729,9 @@
     "host": "local"
   },
   "chonkers": {
+    "host": "local"
+  },
+  "city-game-studio": {
     "host": "local"
   },
   "civ-idle": {
@@ -767,6 +776,9 @@
   "gemcraft-frostborn-wrath": {
     "host": "local"
   },
+  "griftlands": {
+    "host": "local"
+  },
   "groundhog-life": {
     "host": "local"
   },
@@ -794,10 +806,19 @@
   "leaf-blower-revolution": {
     "host": "local"
   },
+  "legends-of-idleon": {
+    "host": "local"
+  },
   "legion-td-2": {
     "host": "local"
   },
   "lored": {
+    "host": "local"
+  },
+  "magic-research-2": {
+    "host": "local"
+  },
+  "monster-train": {
     "host": "local"
   },
   "ngu-industries": {
@@ -824,7 +845,13 @@
   "sixty-four": {
     "host": "local"
   },
+  "slay-the-spire": {
+    "host": "local"
+  },
   "spaceplan": {
+    "host": "local"
+  },
+  "stacklands": {
     "host": "local"
   },
   "stone-story-rpg": {

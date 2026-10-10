@@ -31,6 +31,17 @@ This is a content site, not a game: demos are static curves and self-contained s
 - **Link concepts, not games.** Named math/CS concepts (series, theorems, numerical methods, named curves) link to a canonical source (Wikipedia) on first mention only. Game names stay plain text — cited via `<Cite>` and listed in `<Sources>`, never hyperlinked.
 - **Research is confidence, not citation.** Write as an informed author who knows the field; research tells you what's true and how strongly. No variation letters, corpus counts, or "validated across N games" phrasing in page prose.
 
+## Agent entrypoint (game-dev balance work)
+
+Route by question, then read `src/data/pages.ts` (`sections`) for the page table — one-line hooks per page, rendered verbatim by the landing page. Don't grep pages blind.
+
+- Design question (pacing, prestige cadence, softcaps, composition, multi-resource) → `design-playbook/`. Default entry. Pages follow question → math → prescription → boundary.
+- "What shapes exist" → `rate-functions/`. Integrable catalog under the first-passage frame; formulas pair with closed-form demos.
+- "What did shipped games do" → `modern/`. One topic per page, cited to source.
+- Foundations → `part-i/ii/iii`. Vocabulary; one slice of the site.
+
+Demos are self-contained sims on `src/lib/decimal.ts` + `src/lib/formula.ts` — transcribe formulas, don't import demo state. Playbook prescribes curve shape only; fiction, fun, and audience calls stay designer judgment.
+
 ## Research reference
 
 - `open-loop-research/LIBRARY.md` — pattern library, source of truth for "is this validated?"
