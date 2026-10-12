@@ -1,1 +1,1 @@
-node scripts/gen-cite-meta.js && pnpm exec lint-staged && pnpm run check
+node scripts/gen-cite-meta.js && pnpm exec lint-staged && pnpm run typecheck

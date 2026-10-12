@@ -8,7 +8,7 @@
     "prebuild": "node scripts/gen-cite-meta.js",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check",
+    "typecheck": "astro check",
     "lint": "oxlint src/",
     "format": "oxfmt src && prettier --write \"src/**/*.astro\"",
     "format:check": "oxfmt --check src && prettier --check \"src/**/*.astro\"",
