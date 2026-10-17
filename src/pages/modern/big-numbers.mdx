@@ -121,7 +121,7 @@ Three implementation gotchas that affect every project once and never again:
 
 **Balance.** A logarithmic gain formula is still useful even when you *can* compute $10^{10^{10^{308}}}$. Cookie Clicker's `(cookies/1e12)^(1/3)` and AD's IP formula both compress their input drastically, by design. Big-num storage doesn't change the fact that you want to compress. It just removes the technical reason you previously *had* to.
 
-**Performance.** Decimal arithmetic is roughly 10–100× slower than native, depending on the operation. AD's tick code aggressively caches log-space intermediates; not every project does. A naive `Decimal` operation per resource per tick will eat your frame budget on a busy game. The genre's working answer: keep math in log space wherever possible, materialize Decimals at the user-facing boundary.
+**Performance.** Decimal arithmetic is roughly 10–100× slower than native, depending on the operation. A naive `Decimal` operation per resource per tick will eat your frame budget on a busy game. AD answers with two separate techniques. Its cost and purchase math runs on the logarithm, in plain doubles, as covered above. Its tick caches shared multipliers instead. `GameCache` holds `Lazy` products: the multiplier every antimatter dimension shares, and each tier's final multiplier. <Cite repo="AntimatterDimensionsSourceCode" path="src/core/cache.js" line="94-98" /> `gameLoop` clears them once a tick, after the autobuyers run. <Cite repo="AntimatterDimensionsSourceCode" path="src/game.js" line="481-487" /> The cached values are ordinary Decimals, not logarithms. What the cache saves is recomputing one product for every reader. The genre's working answer: keep math on the logarithm where it can run there, compute a shared product once a tick, and materialize Decimals at the user-facing boundary.
 
 **Comparison ergonomics.** `a < b` compiles, runs, returns a wrong answer, and is the most common production bug in code built on Decimal. A lint rule that bans relational operators on Decimal types and forces `.lt`/`.gt`/`.lte`/`.gte` is the standard defence.
 
@@ -150,6 +150,18 @@ Established games tend not to migrate. AD still depends on `break_infinity.js@^2
       path: 'src/core/math.js',
       line: '398-429',
       note: 'getMaxBought inverts a quadratic in log(money) to compute max-affordable at arbitrary scale.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/core/cache.js',
+      line: '94-98',
+      note: 'GameCache: Lazy Decimal products of the shared antimatter-dimension multiplier and each tier\'s final multiplier.',
+    },
+    {
+      repo: 'AntimatterDimensionsSourceCode',
+      path: 'src/game.js',
+      line: '481-487',
+      note: 'gameLoop clears the multiplier caches once a tick, after the autobuyers run.',
     },
     {
       repo: 'SynergismOfficial',
