@@ -56,3 +56,9 @@ src/
 ## Deployment
 
 Pushes to `main` deploy to GitHub Pages via `.github/workflows/pages.yml`, which runs on the GitHub mirror of this repo.
+
+## License
+
+The written pages (`src/pages/**/*.mdx`) are [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): reuse them with attribution. See `LICENSE-CONTENT`.
+
+Everything else, including the demos, components and scripts, is MIT. See `LICENSE`.
