@@ -2,7 +2,7 @@
 
 A content site replicating and extending Anthony Pecorella's [_The Math of Idle Games_ (Part I–III)](https://www.sirpinski.com/the-math-of-idle-games-part-i/), with every chart re-rendered as a live interactive demo.
 
-**Live site:** https://namahanna.codeberg.page/incremental-math/
+**Live site:** https://open-loop-games.github.io/incremental-math/
 
 Faithful Pecorella distillation first; modern evolution (softcaps, synergy multipliers, production graphs, etc.) follows in a dedicated section.
 
@@ -55,4 +55,4 @@ src/
 
 ## Deployment
 
-Pushes to `main` trigger a Codeberg Pages deploy via `.forgejo/workflows/deploy.yml`.
+Pushes to `main` deploy to GitHub Pages via `.github/workflows/pages.yml`, which runs on the GitHub mirror of this repo.
