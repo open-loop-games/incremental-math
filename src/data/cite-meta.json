@@ -695,13 +695,38 @@
     "sha": "eb431145eebb1bda1d06e3346a1a92a5f92aacbc",
     "host": "github"
   },
+  "sc2fmfr": {
+    "webBase": "https://github.com/schrottii/sc2fmfr",
+    "sha": "fba6f917697c4dcd0fee4052753f431f0c9067f3",
+    "host": "github"
+  },
+  "adjacent/rts-games/CnC_Tiberian_Dawn": {
+    "webBase": "https://github.com/electronicarts/CnC_Tiberian_Dawn",
+    "sha": "e0d372dc582c053a699114942b984dad0457f9b3",
+    "host": "github"
+  },
+  "Thronefall": {
+    "host": "local"
+  },
   "adventure-capitalist": {
+    "host": "local"
+  },
+  "adventure-communist": {
+    "host": "local"
+  },
+  "against-the-storm": {
     "host": "local"
   },
   "age-of-war": {
     "host": "local"
   },
   "asbury-pines": {
+    "host": "local"
+  },
+  "auto-rogue": {
+    "host": "local"
+  },
+  "babel-legacy": {
     "host": "local"
   },
   "balatro": {
@@ -719,6 +744,9 @@
   "bloons-td-4": {
     "host": "local"
   },
+  "bookshop-simulator": {
+    "host": "local"
+  },
   "brotato": {
     "host": "local"
   },
@@ -729,6 +757,9 @@
     "host": "local"
   },
   "chonkers": {
+    "host": "local"
+  },
+  "cities-skylines": {
     "host": "local"
   },
   "city-game-studio": {
@@ -743,6 +774,12 @@
   "clickpocalypse-2": {
     "host": "local"
   },
+  "combolands": {
+    "host": "local"
+  },
+  "creeper-world-3": {
+    "host": "local"
+  },
   "crusaders-of-the-lost-idols": {
     "host": "local"
   },
@@ -755,7 +792,22 @@
   "dome-keeper": {
     "host": "local"
   },
+  "dorfromantik": {
+    "host": "local"
+  },
+  "dungeon-tycoon": {
+    "host": "local"
+  },
+  "dungeons": {
+    "host": "local"
+  },
+  "echoes-of-the-plum-grove": {
+    "host": "local"
+  },
   "farmer-against-potatoes-idle": {
+    "host": "local"
+  },
+  "farthest-frontier": {
     "host": "local"
   },
   "fill-up-the-hole": {
@@ -782,6 +834,9 @@
   "groundhog-life": {
     "host": "local"
   },
+  "halls-of-torment": {
+    "host": "local"
+  },
   "idle-champions": {
     "host": "local"
   },
@@ -794,13 +849,25 @@
   "idle-wizard": {
     "host": "local"
   },
+  "igtap": {
+    "host": "local"
+  },
   "infinitode-2": {
+    "host": "local"
+  },
+  "inscryption": {
     "host": "local"
   },
   "journey-to-incrementalia": {
     "host": "local"
   },
   "kiwi-clicker": {
+    "host": "local"
+  },
+  "kynseed": {
+    "host": "local"
+  },
+  "lairchitect": {
     "host": "local"
   },
   "leaf-blower-revolution": {
@@ -821,6 +888,9 @@
   "monster-train": {
     "host": "local"
   },
+  "ngu-idle": {
+    "host": "local"
+  },
   "ngu-industries": {
     "host": "local"
   },
@@ -833,13 +903,37 @@
   "orb-of-creation": {
     "host": "local"
   },
+  "paper-planet": {
+    "host": "local"
+  },
   "papers": {
+    "host": "local"
+  },
+  "parkitect": {
+    "host": "local"
+  },
+  "ratropolis": {
     "host": "local"
   },
   "realm-grinder": {
     "host": "local"
   },
+  "reus": {
+    "host": "local"
+  },
+  "reus-2": {
+    "host": "local"
+  },
+  "rise-to-ruins": {
+    "host": "local"
+  },
   "rustys-retirement": {
+    "host": "local"
+  },
+  "scream-collector": {
+    "host": "local"
+  },
+  "shapez-2": {
     "host": "local"
   },
   "sixty-four": {
@@ -848,10 +942,16 @@
   "slay-the-spire": {
     "host": "local"
   },
+  "slay-the-spire-2": {
+    "host": "local"
+  },
   "spaceplan": {
     "host": "local"
   },
   "stacklands": {
+    "host": "local"
+  },
+  "stardew-valley": {
     "host": "local"
   },
   "stone-story-rpg": {
@@ -860,10 +960,16 @@
   "stuck-in-time": {
     "host": "local"
   },
+  "tcg-card-shop-simulator": {
+    "host": "local"
+  },
   "the-farmer-was-replaced": {
     "host": "local"
   },
   "the-idle-class": {
+    "host": "local"
+  },
+  "the-universim": {
     "host": "local"
   },
   "tiny-pasture": {
@@ -881,6 +987,12 @@
   "upload-labs": {
     "host": "local"
   },
+  "vampire-survivors": {
+    "host": "local"
+  },
+  "wall-world": {
+    "host": "local"
+  },
   "warfare-1917": {
     "host": "local"
   },
@@ -888,6 +1000,9 @@
     "host": "local"
   },
   "widget-inc": {
+    "host": "local"
+  },
+  "wizard-and-minion-idle": {
     "host": "local"
   }
 }
